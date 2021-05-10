@@ -5,7 +5,7 @@ import '../styles/Header.css';
 const Header = () => {
   return (
     <>
-      <Navbar collapseOnSelect fixed='top' expands='sm' bg='dark' variant='dark'>
+      <Navbar collapseOnSelect expands='sm' bg='primary' variant='dark'>
         <Container>
           <Navbar.Brand href='/'>React Calendar App</Navbar.Brand>
           <Navbar.Toggle aria-controls='responsive-navbar-nav' />

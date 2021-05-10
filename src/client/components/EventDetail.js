@@ -4,8 +4,7 @@ import { Row } from 'react-bootstrap'
 import moment from 'moment'
 // import DateRangePicker from 'react-bootstrap-daterangepicker';
 
-// import 'bootstrap-daterangepicker/daterangepicker.css';
-
+import '../styles/EventDetail.css';
 class EventDetail extends Component {
   constructor(...args) {
     super(...args)
@@ -89,38 +88,27 @@ class EventDetail extends Component {
             target='_blank'
             noValidate
           >
+            <label htmlFor='title'>Event Title (required)</label>
+            <textarea
+              name='title'
+              rows='4'
+              onChange={this.handleChange}
 
-            <h2>Event Detail</h2>
-            <div className='event-title-wrap'>
-              <label htmlFor='title'>Event Title (required)</label>
-              <textarea
-                name='title'
-                rows='4'
-                onChange={this.handleChange}
-
-                value='title-test'
-              >
-                enter title
+              value='title-test'
+            >
+              enter title
              </textarea>
-            </div>
-            <div className='event-desc-wrap'>
-              <label htmlFor='desc'>Event Description</label>
-              <textarea
-                name='desc'
-                rows='4'
-                onChange={this.handleChange}
-                value='title-desc'
-              >
-                enter description
+            <label htmlFor='desc'>Event Description</label>
+            <textarea
+              name='desc'
+              rows='4'
+              onChange={this.handleChange}
+              value='title-desc'
+            >
+              enter description
              </textarea>
-            </div>
-            <div className='event-date-picker-wrap'>
-
-            </div>
-            <div className='event-source-wrap'>
-              <label htmlFor='source'>Event Source</label>
-              {/* <SourceSelectMenu disabled onChange={this.handleChange} value={this.state.formValues.source} /> */}
-            </div>
+            <label htmlFor='source'>Event Source</label>
+            {/* <SourceSelectMenu disabled onChange={this.handleChange} value={this.state.formValues.source} /> */}
             <div className='submit'>
               <input
                 type='submit'
@@ -131,7 +119,6 @@ class EventDetail extends Component {
               />
             </div>
           </form>
-
         </Row>
       </div>
     )

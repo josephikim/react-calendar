@@ -1,0 +1,21 @@
+#event-detail {
+  padding-top: 35px;
+  padding-right: 35px;
+}
+
+form {
+  width: 100%;
+}
+
+label {
+  color: dodgerblue;
+}
+
+label:not(:first-of-type) {
+  margin-top: 18px;
+}
+
+textarea {
+  width: 100%;
+  display: block;
+}

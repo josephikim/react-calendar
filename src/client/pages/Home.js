@@ -232,27 +232,23 @@ class Home extends Component {
   render() {
     return (
       <div id="home">
-        <Row className="main align-items-center">
-          <Col xs={12} sm={12} md={8} lg={8}>
-            <Row>
-              <Calendar
-                selectable
-                localizer={localizer}
-                events={this.state.events}
-                defaultView="month"
-                scrollToTime={new Date(1970, 1, 1, 6)}
-                defaultDate={new Date()}
-                onSelectEvent={event => this.openModifyEvent(event)}
-                onSelectSlot={event => this.onSelectSlot(event)}
-                endAccessor={({ end }) => new Date(end.getTime() + 1)}
-              // eventPropGetter={this.eventStyleGetter}
-              />
-            </Row>
+        <Row>
+          <Col xs={12} md={8} lg={8}>
+            <Calendar
+              selectable
+              localizer={localizer}
+              events={this.state.events}
+              defaultView="month"
+              scrollToTime={new Date(1970, 1, 1, 6)}
+              defaultDate={new Date()}
+              onSelectEvent={event => this.openModifyEvent(event)}
+              onSelectSlot={event => this.onSelectSlot(event)}
+              endAccessor={({ end }) => new Date(end.getTime() + 1)}
+            // eventPropGetter={this.eventStyleGetter}
+            />
           </Col>
-          <Col xs={12} sm={12} md={4} lg={4}>
-            <Row>
-              <EventDetail />
-            </Row>
+          <Col xs={12} md={4} lg={4}>
+            <EventDetail />
           </Col>
         </Row>
       </div>

@@ -15,4 +15,5 @@ code {
 /* react-big-calendar */
 .rbc-calendar {
   min-height: 800px;
+  padding: 35px;
 }

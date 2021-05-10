@@ -6,9 +6,6 @@ import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 
 import EventDetail from '../components/EventDetail';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-// import CalendarSettings from '../components/CalendarSettings'
 // import UserSettings from '../components/UserSettings'
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -235,8 +232,6 @@ class Home extends Component {
   render() {
     return (
       <div id="home">
-        <Header />
-
         <Row className="main align-items-center">
           <Col xs={12} sm={12} md={8} lg={8}>
             <Row>
@@ -260,8 +255,6 @@ class Home extends Component {
             </Row>
           </Col>
         </Row>
-
-        <Footer />
       </div>
     )
   }

@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import { Row } from 'react-bootstrap'
 import { connect } from 'react-redux';
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import LoginForm from '../components/LoginForm';
 
 class Login extends Component {
@@ -38,12 +36,9 @@ class Login extends Component {
     render() {
         return (
             <div id="login">
-                <Header />
                 <Row className="main align-items-center">
                     <LoginForm />
                 </Row>
-
-                <Footer />
             </div>
         )
     }

@@ -4,11 +4,12 @@ import App from './App';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import appReducer from './reducers';
+import { devToolsEnhancer } from 'redux-devtools-extension/developmentOnly';
 
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.css';
 
-let store = createStore(appReducer);
+let store = createStore(appReducer, devToolsEnhancer());
 
 ReactDOM.render(
   <Provider store={store}>

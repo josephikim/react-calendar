@@ -219,8 +219,8 @@ class Home extends Component {
   }
 
   // eventStyleGetter = event => {
-  //     let source = event.source
-  //     let backgroundColor = '#' + sources[source.toUpperCase()].color
+  //     let calendar = event.calendar
+  //     let backgroundColor = '#' + calendars[calendar.toUpperCase()].color
   //     let style = {
   //         backgroundColor: backgroundColor,
   //     }
@@ -259,7 +259,7 @@ class Home extends Component {
 const mapStateToProps = (state) => {
   return {
     login: state.login,
-    sources: state.sources
+    calendars: state.calendars
   };
 };
 

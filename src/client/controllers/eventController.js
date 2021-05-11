@@ -14,18 +14,6 @@ const EventController = {
         res.status(401).send('user not found')
       }
       if (user) {
-        // Check if sources are provided, then run query
-        let sources = req.query.source
-
-        if (sources !== undefined) {
-          db.Event.find({ 'source': { $in: sources } })
-            .then(events => {
-              res.send(events)
-            })
-            .catch(error => {
-              res.status(422).json(error)
-            });
-        } else {
           db.Event.find(req.query)
             .sort({
               date: -1,
@@ -34,7 +22,7 @@ const EventController = {
             .catch(err => res.status(422).json(err))
         }
       }
-    })(req, res, next)
+    )(req, res, next)
   },
   create: (req, res, next) => {
     passport.authenticate('jwt', { session: false }, (err, user, info) => {

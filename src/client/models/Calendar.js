@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const SourceSchema = new Schema ({
+const CalendarSchema = new Schema ({
   name: { type: String, required: true },
   visibility: { type: Boolean, required: true, default: true }
 });
 
-module.exports = mongoose.model('Source', SourceSchema)
+module.exports = mongoose.model('Calendar', CalendarSchema)

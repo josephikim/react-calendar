@@ -63,12 +63,9 @@ class EventDetail extends Component {
           id: event._id,
           title: event.title,
           desc: event.desc,
-          source: event.source,
           start: event.start,
           end: event.end,
-          allDay: event.allDay,
-          region: event.region,
-          platform: event.platform,
+          allDay: event.allDay
         },
       })
     }
@@ -91,24 +88,22 @@ class EventDetail extends Component {
             <label htmlFor='title'>Event Title (required)</label>
             <textarea
               name='title'
-              rows='4'
+              rows='1'
               onChange={this.handleChange}
 
               value='title-test'
             >
               enter title
-             </textarea>
+            </textarea>
             <label htmlFor='desc'>Event Description</label>
             <textarea
               name='desc'
-              rows='4'
+              rows='3'
               onChange={this.handleChange}
               value='title-desc'
             >
               enter description
-             </textarea>
-            <label htmlFor='source'>Event Source</label>
-            {/* <SourceSelectMenu disabled onChange={this.handleChange} value={this.state.formValues.source} /> */}
+            </textarea>
             <div className='submit'>
               <input
                 type='submit'

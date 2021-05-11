@@ -5,10 +5,10 @@ export const configReducer = (state = [], action) => {
           ...state, 
           login: action.login
       };
-    case "UPDATE_DATA_SOURCES":
+    case "UPDATE_CALENDARS":
       return {
           ...state, 
-          sources: action.sources
+          calendars: action.calendars
       };
     default:
       return state;

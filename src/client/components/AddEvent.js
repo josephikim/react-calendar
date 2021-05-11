@@ -4,14 +4,12 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 import axios from 'axios'
 import { DateRangePicker } from 'react-dates'
-// import SourceSelectMenu from '../SourceSelectMenu'
 
 const propTypes = {
   start: PropTypes.object,
   end: PropTypes.object,
   title: PropTypes.string,
   desc: PropTypes.string,
-  source: PropTypes.string,
   onEventAdd: PropTypes.func,
 }
 
@@ -24,9 +22,7 @@ class AddEvent extends React.Component {
         desc: '',
         start: this.props.start,
         end: this.props.start,
-        allDay: true,
-        region: '',
-        platform: ''
+        allDay: true
       }
     }
   }
@@ -46,7 +42,6 @@ class AddEvent extends React.Component {
       !this.state.formValues.title ||
       !this.state.formValues.start ||
       !this.state.formValues.end ||
-      !this.state.formValues.source ||
       !this.state.formValues.allDay
     ) return
     // Prepare data
@@ -55,12 +50,8 @@ class AddEvent extends React.Component {
       desc: this.state.formValues.desc.trim(),
       start: this.state.formValues.start,
       end: this.state.formValues.end,
-      source: this.state.formValues.source,
-      allDay: this.state.formValues.allDay,
-      region: this.state.formValues.region.trim(),
-      platform: this.state.formValues.platform.trim()
+      allDay: this.state.formValues.allDay
     }
-    data.source = data.source.toUpperCase()
 
     // Make API call to create event
     const accessString = window.localStorage.getItem('JWT')
@@ -96,79 +87,54 @@ class AddEvent extends React.Component {
         >
           <div id='add-event_scroll'>
             <h2>Add Event</h2>
-            <div className='event-title-wrap'>
-              <label htmlFor='title'>Event Title (required)</label>
-              <textarea
-                name='title'
-                rows='4'
-                onChange={this.handleChange}
-                //  value={this.state.formValues.title}
-                value='title-test'
-              >
-                enter title
-             </textarea>
-            </div>
-            <div className='event-desc-wrap'>
-              <label htmlFor='desc'>Event Description</label>
-              <textarea
-                name='desc'
-                rows='4'
-                onChange={this.handleChange}
-                //  value={this.state.formValues.desc}
-                value='title-desc'
-              >
-                enter description
-             </textarea>
-            </div>
-            <div className='event-date-picker-wrap'>
-              <label>Event Date (required)</label>
-              <DateRangePicker
-                startDate={moment(this.state.formValues.start)} // momentPropTypes.momentObj or null,
-                startDateId='datepicker-start-date' // PropTypes.string.isRequired,
-                endDate={moment(this.state.formValues.end)} // momentPropTypes.momentObj or null,
-                endDateId='datepicker-end-date' // PropTypes.string.isRequired,
-                onDatesChange={({ startDate, endDate }) => {
-                  if (endDate === null) endDate = startDate;
-                  let formValues = { ...this.state.formValues }
-                  formValues.start = startDate.toDate()
-                  formValues.end = endDate.toDate()
-                  this.setState({ formValues })
-                }} // PropTypes.func.isRequired,
-                focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-                onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-              />
-            </div>
-            <div className='event-source-wrap'>
-              <label htmlFor='source'>Event Source</label>
-              {/* <SourceSelectMenu disabled onChange={this.handleChange} value={this.state.formValues.source} /> */}
-            </div>
-            <div className='event-platform-wrap'>
-              <label htmlFor='platform'>Platform</label>
-              <input
-                type='text'
-                name='platform'
-                onChange={this.handleChange}
-                value={this.state.formValues.platform}
-              />
-            </div>
-            <div className='event-region-wrap'>
-              <label htmlFor='region'>Region</label>
-              <input
-                type='text'
-                name='region'
-                onChange={this.handleChange}
-                value={this.state.formValues.region}
-              />
-            </div>
-            <div className='submit'>
-              <input
-                type='submit'
-                value='Add Event'
-                name='add-event-btn'
-                id='add-event-btn'
-                className='button'
-              />
-            </div>
+
+            <label htmlFor='title'>Event Title (required)</label>
+            <textarea
+              name='title'
+              rows='4'
+              onChange={this.handleChange}
+              //  value={this.state.formValues.title}
+              value='title-test'
+            >
+              enter title
+            </textarea>
+
+            <label htmlFor='desc'>Event Description</label>
+            <textarea
+              name='desc'
+              rows='4'
+              onChange={this.handleChange}
+              //  value={this.state.formValues.desc}
+              value='title-desc'
+            >
+              enter description
+            </textarea>
+
+            <label>Event Date (required)</label>
+            <DateRangePicker
+              startDate={moment(this.state.formValues.start)} // momentPropTypes.momentObj or null,
+              startDateId='datepicker-start-date' // PropTypes.string.isRequired,
+              endDate={moment(this.state.formValues.end)} // momentPropTypes.momentObj or null,
+              endDateId='datepicker-end-date' // PropTypes.string.isRequired,
+              onDatesChange={({ startDate, endDate }) => {
+                if (endDate === null) endDate = startDate;
+                let formValues = { ...this.state.formValues }
+                formValues.start = startDate.toDate()
+                formValues.end = endDate.toDate()
+                this.setState({ formValues })
+              }} // PropTypes.func.isRequired,
+              focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+              onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+            />
+
+            <input
+              type='submit'
+              value='Add Event'
+              name='add-event-btn'
+              id='add-event-btn'
+              className='button'
+            />
+
           </div>
         </form>
       </div>

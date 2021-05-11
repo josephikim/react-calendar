@@ -49,12 +49,9 @@ renderDelete = () => {
     nextState.formValues.id = ''
     nextState.formValues.title = ''
     nextState.formValues.desc = ''
-    nextState.formValues.source = ''
     nextState.formValues.start = {}
     nextState.formValues.end = {}
     nextState.formValues.allDay = true
-    nextState.formValues.region = ''
-    nextState.formValues.platform = ''
     nextState.events = []
     // API call
     const accessString = window.localStorage.getItem('JWT')

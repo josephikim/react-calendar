@@ -3,6 +3,7 @@ const nodeExternals = require('webpack-node-externals')
 const HtmlWebPackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const TerserPlugin = require("terser-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: {
@@ -57,6 +58,9 @@ module.exports = {
       template: "public/index.html",
       filename: "index.html",
       excludeChunks: ['server']
+    }),
+    new Dotenv({
+      path: path.resolve(__dirname, './.env.production'),
     })
   ],
 }

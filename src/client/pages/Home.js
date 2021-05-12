@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
-// import axios from 'axios';
+import axios from 'axios';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 
@@ -202,20 +202,21 @@ class Home extends Component {
 
   initData = () => {
     // const accessString = window.localStorage.getItem('JWT')
-    // axios
-    //     .get(`${process.env.API_URL}/events`, {
-    //         headers: { Authorization: `JWT ${accessString}` },
-    //     })
-    //     .then(res => {
-    //         // change startdate and enddate to date objects
-    //         res.data.forEach(function (arrayItem) {
-    //             arrayItem.start = new Date(arrayItem.start)
-    //             arrayItem.end = new Date(arrayItem.end)
-    //         })
-    //         this.setState({
-    //             events: res.data
-    //         })
-    //     })
+    axios
+      // .get(`${process.env.API_URL}/events`, {
+      //   headers: { Authorization: `JWT ${accessString}` },
+      // })
+      .get(`${process.env.API_URL}/events`)
+      .then(res => {
+        // change startdate and enddate to date objects
+        res.data.forEach(function (arrayItem) {
+          arrayItem.start = new Date(arrayItem.start)
+          arrayItem.end = new Date(arrayItem.end)
+        })
+        this.setState({
+          events: res.data
+        })
+      })
   }
 
   // eventStyleGetter = event => {

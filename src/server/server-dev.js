@@ -6,7 +6,8 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import db from './db/connection';
 import config from '../../webpack.dev.config.js';
-import calendarRouter from './routers/calendarRouter.js';
+import apiRouter from './routers/apiRouter.js';
+import appRouter from './routers/appRouter.js';
 
 const app = express();
 const compiler = webpack(config)
@@ -17,7 +18,8 @@ app.use(webpackDevMiddleware(compiler, {
 
 app.use(webpackHotMiddleware(compiler))
 
-app.use('/calendar', calendarRouter);
+app.use('/api', apiRouter);
+app.use('/', appRouter);
 
 app.get('*', (req, res, next) => {
   const HTML_FILE = path.resolve(compiler.outputPath, 'index.html');

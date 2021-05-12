@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebPackPlugin = require("html-webpack-plugin")
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: {
@@ -66,6 +67,9 @@ module.exports = {
       excludeChunks: ['server']
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
+    new Dotenv({
+      path: path.resolve(__dirname, './.env.development'),
+    })
   ],
 }

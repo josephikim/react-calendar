@@ -1,4 +1,5 @@
-const express = require('express');
+import express from 'express';
+
 const router = express.Router();
 
 // Home page route
@@ -11,4 +12,4 @@ router.get('/about', function(req, res) {
   res.send('Calendar about page');
 });
 
-module.exports = router;
+export default appRouter;

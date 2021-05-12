@@ -1,5 +1,5 @@
-var passport = require('passport');
-var db = require('../models');
+import passport from 'passport';
+import { EventModel } from '../models';
 
 const EventController = {
   find: (req, res, next) => {
@@ -14,7 +14,7 @@ const EventController = {
         res.status(401).send('user not found')
       }
       if (user) {
-          db.Event.find(req.query)
+          EventModel.find(req.query)
             .sort({
               date: -1,
             })
@@ -29,7 +29,7 @@ const EventController = {
       if (info !== undefined) {
         res.status(403).send(info.message)
       } else {
-        db.Event.create(req.body)
+        EventModel.create(req.body)
           .then(dbEvent => res.json(dbEvent))
           .catch(err => {
             res.status(422).send(err)
@@ -45,7 +45,7 @@ const EventController = {
       if (info !== undefined) {
         return res.status(403).send(info.message)
       }
-      db.Event.findByIdAndRemove(req.params.eventid)
+      EventModel.findByIdAndRemove(req.params.eventid)
         .then(dbEvent => {
           res.json(dbEvent)
         })
@@ -66,7 +66,7 @@ const EventController = {
         res.status(403).send(info.message)
       } else {
         // Find event and add the request body
-        db.Event.findByIdAndUpdate(req.params.eventid, req.body, { new: true })
+        EventModel.findByIdAndUpdate(req.params.eventid, req.body, { new: true })
           .then(dbEvent => {
             if (!dbEvent) {
               return res.status(404).send({

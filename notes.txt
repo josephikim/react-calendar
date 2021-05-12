@@ -22,3 +22,6 @@ To Do:
   old:
 
   <SourceSelectMenu name='calendar' disabled onChange={this.handleChange} value={this.state.formValues.source} />
+
+  2. Refactor Mongoose code
+  3. Replace all 'require's with 'import'

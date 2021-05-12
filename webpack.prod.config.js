@@ -1,7 +1,7 @@
-const path = require('path')
-const nodeExternals = require('webpack-node-externals')
-const HtmlWebPackPlugin = require("html-webpack-plugin")
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const path = require('path');
+const nodeExternals = require('webpack-node-externals');
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const Dotenv = require('dotenv-webpack');
 

@@ -68,5 +68,5 @@ EventsController.update = async (req, res, next) => {
   }
 }
 
-module.exports = EventsController;
+export default EventsController;
 

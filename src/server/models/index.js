@@ -1,7 +1,7 @@
 import EventsModel from './Event';
 import CalendarsModel from './Calendar';
 
-module.exports = { 
+export default { 
   EventsModel, 
   CalendarsModel 
 };

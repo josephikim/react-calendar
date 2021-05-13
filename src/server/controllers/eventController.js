@@ -1,15 +1,27 @@
+import async from 'async';
 import passport from 'passport';
 import Event from '../models';
 
-const EventsController = {}
+const EventController = {}
 
-EventsController.find = async (req, res, next) => {
+EventController.index = (req, res) => {
+  async.parallel({
+    // event_count: function (callback) {
+    //   Event.countEvents({}, callback);
+    // },
+    // ...add other model data requests here
+  }, function (err, results) {
+    // res.render('index', { title: 'React Calendar Home', error: err, data: results });
+  });
+}
+
+EventController.find = async (req, res, next) => {
   if (err) { return next(err); }
   if (!user) { return res.redirect('/login'); }
   try {
     const events = await Event.getAll(req.query).sort({ date: -1 });
     // logger.info('sending all events...');
-    res.send(cars);
+    res.send(events);
   }
   catch (err) {
     // logger.error('Error in getting events- ' + err);
@@ -17,7 +29,7 @@ EventsController.find = async (req, res, next) => {
   }
 }
 
-EventsController.create = async (req, res, next) => {
+EventController.create = async (req, res, next) => {
   if (err) { return next(err); }
   if (!user) { return res.redirect('/login'); }
   let eventToAdd = Event(req.body);
@@ -32,7 +44,7 @@ EventsController.create = async (req, res, next) => {
   }
 }
 
-EventsController.delete = async (req, res, next) => {
+EventController.delete = async (req, res, next) => {
   if (err) { return next(err); }
   if (!user) { return res.redirect('/login'); }
   let eventId = Event(req.body.eventId);
@@ -47,7 +59,7 @@ EventsController.delete = async (req, res, next) => {
   }
 }
 
-EventsController.update = async (req, res, next) => {
+EventController.update = async (req, res, next) => {
   if (err) { return next(err); }
   if (!user) { return res.redirect('/login'); }
   // Validate request body
@@ -68,5 +80,5 @@ EventsController.update = async (req, res, next) => {
   }
 }
 
-export default EventsController;
+export default EventController;
 

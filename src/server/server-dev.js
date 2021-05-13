@@ -1,13 +1,14 @@
 import path from 'path';
 import express from 'express';
 import webpack from 'webpack';
-
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+import regeneratorRuntime from "regenerator-runtime";
 import db from './db/connection';
 import config from '../../webpack.dev.config.js';
-import apiRouter from './routers/apiRouter.js';
-import appRouter from './routers/appRouter.js';
+import indexRouter from './routes/index.js';
+import usersRouter from './routes/users.js';
+import calendarRouter from './routes/calendar.js';
 
 const app = express();
 const compiler = webpack(config)
@@ -20,8 +21,9 @@ app.use(webpackHotMiddleware(compiler))
 
 app.use(express.json());
 
-app.use('/api', apiRouter);
-app.use('/', appRouter);
+app.use('/', indexRouter);
+app.use('/user', usersRouter);
+app.use('/calendar', calendarRouter);
 
 app.get('*', (req, res, next) => {
   const HTML_FILE = path.resolve(compiler.outputPath, 'index.html');
@@ -34,6 +36,7 @@ app.get('*', (req, res, next) => {
     res.end()
     })
 })
+
 const PORT = process.env.PORT || 8080
 
 app.listen(PORT, () => {

@@ -69,7 +69,13 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new Dotenv({
-      path: path.resolve(__dirname, './.env.development'),
+      path: path.resolve(__dirname, '.env.development'),
     })
   ],
+  resolve: {
+    fallback: {
+      "fs": false,
+      "path": false
+    },
+  }
 }

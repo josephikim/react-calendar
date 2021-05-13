@@ -1,7 +1,7 @@
-import EventModel from './Event';
-import CalendarModel from './Calendar';
+import EventsModel from './Event';
+import CalendarsModel from './Calendar';
 
 module.exports = { 
-  EventModel, 
-  CalendarModel 
+  EventsModel, 
+  CalendarsModel 
 };

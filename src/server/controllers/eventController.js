@@ -1,94 +1,72 @@
 import passport from 'passport';
-import { EventModel } from '../models';
+import Event from '../models';
 
-const EventController = {
-  find: (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, user, info) => {
-      if (err) {
-        res.send(500).send(err)
-      }
-      if (info) {
-        res.status(403).send(info)
-      }
-      if (!user) {
-        res.status(401).send('user not found')
-      }
-      if (user) {
-          EventModel.find(req.query)
-            .sort({
-              date: -1,
-            })
-            .then(dbEvent => res.send(dbEvent))
-            .catch(err => res.status(422).json(err))
-        }
-      }
-    )(req, res, next)
-  },
-  create: (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, user, info) => {
-      if (info !== undefined) {
-        res.status(403).send(info.message)
-      } else {
-        EventModel.create(req.body)
-          .then(dbEvent => res.json(dbEvent))
-          .catch(err => {
-            res.status(422).send(err)
-            if (err.code === 11000) {
-              // handle duplication error
-            }
-          })
-      }
-    })(req, res, next)
-  },
-  delete: (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, user, info) => {
-      if (info !== undefined) {
-        return res.status(403).send(info.message)
-      }
-      EventModel.findByIdAndRemove(req.params.eventid)
-        .then(dbEvent => {
-          res.json(dbEvent)
-        })
-        .catch(err => {
-          if (err) return next(err)
-        })
-    })(req, res, next)
-  },
-  update: (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, user, info) => {
-      // Validate Request
-      if (!req.body) {
-        return res.status(400).send({
-          message: 'Event details cannot be empty',
-        })
-      }
-      if (info !== undefined) {
-        res.status(403).send(info.message)
-      } else {
-        // Find event and add the request body
-        EventModel.findByIdAndUpdate(req.params.eventid, req.body, { new: true })
-          .then(dbEvent => {
-            if (!dbEvent) {
-              return res.status(404).send({
-                message: 'Event not found with id ' + req.params.eventid,
-              })
-            }
-            res.send(dbEvent)
-          })
-          .catch(err => {
-            if (err.kind === 'ObjectId') {
-              return res.status(404).send({
-                message: 'Event not found with id ' + req.params.eventid,
-              })
-            }
-            return res.status(500).send({
-              message: 'error updating event with id ' + req.params.eventid,
-            })
-          })
-      }
-    })(req, res, next)
+const EventsController = {}
+
+EventsController.find = async (req, res, next) => {
+  if (err) { return next(err); }
+  if (!user) { return res.redirect('/login'); }
+  try {
+    const events = await Event.getAll(req.query).sort({ date: -1 });
+    // logger.info('sending all events...');
+    res.send(cars);
+  }
+  catch (err) {
+    // logger.error('Error in getting events- ' + err);
+    res.send('Got error in getAll');
   }
 }
 
-module.exports = EventController;
+EventsController.create = async (req, res, next) => {
+  if (err) { return next(err); }
+  if (!user) { return res.redirect('/login'); }
+  let eventToAdd = Event(req.body);
+  try {
+    const savedEvent = await Event.addevent(eventToAdd);
+    logger.info('Adding event...');
+    res.send('added: ' + savedEvent);
+  }
+  catch (err) {
+    logger.error('Error in saving event- ' + err);
+    res.send('Got error in addEvent');
+  }
+}
+
+EventsController.delete = async (req, res, next) => {
+  if (err) { return next(err); }
+  if (!user) { return res.redirect('/login'); }
+  let eventId = Event(req.body.eventId);
+  try {
+    const removedEvent = await Event.removeEvent(eventId);
+    logger.info('Deleted event-' + removedEvent);
+    res.send('Event successfully deleted');
+  }
+  catch (err) {
+    logger.error('Failed to delete event- ' + err);
+    res.send('Delete failed..!');
+  }
+}
+
+EventsController.update = async (req, res, next) => {
+  if (err) { return next(err); }
+  if (!user) { return res.redirect('/login'); }
+  // Validate request body
+  if (!req.body) {
+    return res.status(400).send({
+      message: 'Event details cannot be empty',
+    })
+  }
+  let eventId = Event(req.body.eventId);
+  try {
+    const updatedEvent = await Event.updateEvent(eventId);
+    logger.info('Updated event-' + updatedEvent);
+    res.send('Event successfully updated');
+  }
+  catch (err) {
+    logger.error('Failed to update event- ' + err);
+    res.send('Update failed..!');
+  }
+}
+
+module.exports = EventsController;
 

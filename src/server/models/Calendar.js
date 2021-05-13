@@ -5,4 +5,6 @@ const CalendarSchema = new mongoose.Schema ({
   visibility: { type: Boolean, required: true, default: true }
 });
 
-module.exports = mongoose.model('Calendar', CalendarSchema);
+let CalendarsModel = mongoose.model('Event', CalendarSchema);
+
+export default CalendarsModel;

@@ -60,7 +60,7 @@ module.exports = {
       excludeChunks: ['server']
     }),
     new Dotenv({
-      path: path.resolve(__dirname, './.env.production'),
+      path: path.resolve(__dirname, '.env.production'),
     })
   ],
 }

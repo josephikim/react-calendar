@@ -18,6 +18,8 @@ app.use(webpackDevMiddleware(compiler, {
 
 app.use(webpackHotMiddleware(compiler))
 
+app.use(express.json());
+
 app.use('/api', apiRouter);
 app.use('/', appRouter);
 

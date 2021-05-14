@@ -69,7 +69,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new Dotenv({
-      path: path.resolve(__dirname, '.env.development'),
+      path: './.env.development',
     })
   ],
   resolve: {

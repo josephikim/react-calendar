@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Row } from 'react-bootstrap'
 
-import moment from 'moment'
+// import moment from 'moment'
 // import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 import '../styles/EventDetail.css';
@@ -9,7 +9,10 @@ class EventDetail extends Component {
   constructor(...args) {
     super(...args)
     this.state = {
-      events: []
+      title: 'test-title',
+      description: 'test-description',
+      startDate: '',
+      endDate: ''
     }
   }
   componentDidMount = () => {
@@ -18,58 +21,54 @@ class EventDetail extends Component {
 
   handleChange = event => {
     event.preventDefault()
+    const { target: { name, value } } = event;
+    this.setState({ [name]: value });
   }
 
-  openAddEvent = event => {
-    let momentNow = moment(new Date()) // today's date
-    let momentStart = moment(event.start)
-    let momentEnd = moment(event.end)
+  // openAddEvent = event => {
+  //   let momentNow = moment(new Date()) // today's date
+  //   let momentStart = moment(event.start)
+  //   let momentEnd = moment(event.end)
 
-    if (
-      !momentStart.isBefore(momentNow, 'day') &&
-      !momentEnd.isBefore(momentNow, 'day') &&
-      !momentEnd.isBefore(momentStart, 'day')
-    ) {
-      this.setState({
-        addIsOpen: true,
-        modifyIsOpen: false,
-        formValues: {
-          start: event.start,
-          end: event.end,
-          title: '',
-          desc: ''
-        },
-      })
-    } else {
-      this.setState({
-        addIsOpen: true,
-        modifyIsOpen: false,
-        formValues: {
-          start: new Date(),
-          end: new Date(),
-          title: '',
-          desc: ''
-        },
-      })
-    }
-  }
+  //   if (
+  //     !momentStart.isBefore(momentNow, 'day') &&
+  //     !momentEnd.isBefore(momentNow, 'day') &&
+  //     !momentEnd.isBefore(momentStart, 'day')
+  //   ) {
+  //     this.setState({
+  //       addIsOpen: true,
+  //       modifyIsOpen: false,
+  //       start: event.start,
+  //         end: event.end,
+  //         title: '',
+  //         description: ''
+  //     })
+  //   } else {
+  //     this.setState({
+  //       addIsOpen: true,
+  //       modifyIsOpen: false,
+  //       start: new Date(),
+  //         end: new Date(),
+  //         title: '',
+  //         description: ''
+  //     })
+  //   }
+  // }
 
-  openModifyEvent = event => {
-    if (event._id) {
-      this.setState({
-        addIsOpen: false,
-        modifyIsOpen: true,
-        formValues: {
-          id: event._id,
-          title: event.title,
-          desc: event.desc,
-          start: event.start,
-          end: event.end,
-          allDay: event.allDay
-        },
-      })
-    }
-  }
+  // openModifyEvent = event => {
+  //   if (event._id) {
+  //     this.setState({
+  //       addIsOpen: false,
+  //       modifyIsOpen: true,
+  //       id: event._id,
+  //         title: event.title,
+  //         description: event.description,
+  //         start: event.start,
+  //         end: event.end,
+  //         allDay: event.allDay
+  //     })
+  //   }
+  // }
 
   render() {
     return (
@@ -90,19 +89,18 @@ class EventDetail extends Component {
               name='title'
               rows='1'
               onChange={this.handleChange}
-
-              value='title-test'
+              value={this.state.title}
             >
               enter title
             </textarea>
-            <label htmlFor='desc'>Event Description</label>
+            <label htmlFor='description'>Event Description</label>
             <textarea
-              name='desc'
+              name='description'
               rows='3'
               onChange={this.handleChange}
-              value='title-desc'
+              value={this.state.description}
             >
-              enter description
+              enter descriptionription
             </textarea>
             <div className='submit'>
               <input

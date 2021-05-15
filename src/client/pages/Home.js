@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import axios from 'axios';
+// import axios from 'axios';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 

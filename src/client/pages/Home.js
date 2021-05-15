@@ -197,27 +197,27 @@ class Home extends Component {
     }
   }
   componentDidMount = () => {
-    this.initData()
+    // this.initData()
   }
 
-  initData = () => {
-    // const accessString = window.localStorage.getItem('JWT')
-    axios
-      // .get(`${process.env.API_URL}/events`, {
-      //   headers: { Authorization: `JWT ${accessString}` },
-      // })
-      .get(`${process.env.API_URL}/events`)
-      .then(res => {
-        // change startdate and enddate to date objects
-        res.data.forEach(function (arrayItem) {
-          arrayItem.start = new Date(arrayItem.start)
-          arrayItem.end = new Date(arrayItem.end)
-        })
-        this.setState({
-          events: res.data
-        })
-      })
-  }
+  // initData = () => {
+  //   // const accessString = window.localStorage.getItem('JWT')
+  //   axios
+  //     // .get(`${process.env.API_URL}/events`, {
+  //     //   headers: { Authorization: `JWT ${accessString}` },
+  //     // })
+  //     .get(`${process.env.API_URL}/events`)
+  //     .then(res => {
+  //       // change startdate and enddate to date objects
+  //       res.data.forEach(function (arrayItem) {
+  //         arrayItem.start = new Date(arrayItem.start)
+  //         arrayItem.end = new Date(arrayItem.end)
+  //       })
+  //       this.setState({
+  //         events: res.data
+  //       })
+  //     })
+  // }
 
   // eventStyleGetter = event => {
   //     let calendar = event.calendar

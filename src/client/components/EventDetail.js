@@ -1,10 +1,14 @@
-import React, { Component } from 'react'
-import { Row } from 'react-bootstrap'
+import React, { Component } from 'react';
+import { Row } from 'react-bootstrap';
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import { formatDate, parseDate } from 'react-day-picker/moment';
 
 // import moment from 'moment'
 // import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 import '../styles/EventDetail.css';
+import 'react-day-picker/lib/style.css';
+
 class EventDetail extends Component {
   constructor(...args) {
     super(...args)
@@ -102,6 +106,18 @@ class EventDetail extends Component {
             >
               enter descriptionription
             </textarea>
+            <label htmlFor='startDate'>Event Start</label>
+            <DayPickerInput
+              formatDate={formatDate}
+              parseDate={parseDate}
+              placeholder={`${formatDate(this.state.startDate)}`}
+            />
+            <label htmlFor='endDate'>Event End</label>
+            <DayPickerInput
+              formatDate={formatDate}
+              parseDate={parseDate}
+              placeholder={`${formatDate(this.state.endDate)}`}
+            />
             <div className='submit'>
               <input
                 type='submit'

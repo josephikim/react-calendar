@@ -19,3 +19,11 @@ textarea {
   width: 100%;
   display: block;
 }
+
+#event-detail-form .DayPickerInput {
+  display: block;
+}
+
+.submit {
+  margin-top: 24px;
+}

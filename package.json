@@ -61,6 +61,7 @@
     "react-big-calendar": "^0.33.2",
     "react-bootstrap": "^1.5.2",
     "react-dates": "^21.8.0",
+    "react-day-picker": "^7.4.10",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "redux": "^4.1.0",

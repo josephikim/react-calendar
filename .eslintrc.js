@@ -8,5 +8,9 @@ module.exports = {
     "browser": true,
     "node": true
   },
-  "parser": "babel-eslint"
+  "parser": "babel-eslint",
+  "rules": {
+    "no-debugger": "warn",
+    "react/prop-types": "off"
+}
 };

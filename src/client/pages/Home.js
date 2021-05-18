@@ -8,6 +8,8 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import EventDetail from '../components/EventDetail';
 // import UserSettings from '../components/UserSettings'
 
+import { updateSelectedSlot } from '../actions/calendarActions'
+
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
@@ -230,6 +232,11 @@ class Home extends Component {
   //     }
   // }
 
+  onSelectSlot = (event) => {
+    const { start } = event; // Date object
+    this.props.onSelectSlot(start);
+  }
+  
   render() {
     return (
       <div id="home">
@@ -259,9 +266,14 @@ class Home extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    login: state.login,
-    calendars: state.calendars
+    login: state.config.login,
+    calendars: state.config.calendars,
+    selectedSlot: state.calendar.selectedSlot
   };
 };
 
-export default connect(mapStateToProps)(Home);
+const mapActionsToProps = {
+  onSelectSlot: updateSelectedSlot
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(Home);

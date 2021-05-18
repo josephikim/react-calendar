@@ -24,7 +24,7 @@ class EventDetail extends Component {
   }
 
   handleChange = event => {
-    event.preventDefault()
+    // event.preventDefault()
     const { target: { name, value } } = event;
     this.setState({ [name]: value });
   }

@@ -1,5 +1,11 @@
-// import axios from 'axios';
-// import eventReducer from '../reducers';
+export const updateSelectedSlot = (date) => {
+  return {
+    type: 'UPDATE_SELECTED_SLOT',
+    payload: {
+      selectedSlot: date
+    }
+  }
+}
 
 // export const addEvent = event => {
 //   const accessString = window.localStorage.getItem('JWT')

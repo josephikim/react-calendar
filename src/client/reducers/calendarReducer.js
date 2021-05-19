@@ -1,4 +1,4 @@
-export const calendarReducer = (state = [], action) => {
+export const calendarReducer = (state = [], action) => {  
   switch (action.type) {
     case "UPDATE_SELECTED_SLOT":
       return {

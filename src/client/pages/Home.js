@@ -8,7 +8,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import EventDetail from '../components/EventDetail';
 // import UserSettings from '../components/UserSettings'
 
-import { updateSelectedSlot } from '../actions/calendarActions'
+import { updateSelectedSlot, updateSelectedEvent } from '../actions/calendarActions'
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -233,9 +233,14 @@ class Home extends Component {
   // }
 
   onSelectSlot = (event) => {
-    const { start, end } = event; // Date object
-    this.props.onSelectSlot(start, end);
+    // const { start, end } = event; // Date object
+    this.props.onSelectSlot(event);
   }
+
+  onSelectEvent = (event) => {
+    this.props.onSelectEvent(event);
+  }
+
   
   render() {
     return (
@@ -249,14 +254,17 @@ class Home extends Component {
               defaultView="month"
               scrollToTime={new Date(1970, 1, 1, 6)}
               defaultDate={new Date()}
-              onSelectEvent={event => this.openModifyEvent(event)}
+              onSelectEvent={event => this.onSelectEvent(event)}
               onSelectSlot={event => this.onSelectSlot(event)}
               endAccessor={({ end }) => new Date(end.getTime() + 1)}
             // eventPropGetter={this.eventStyleGetter}
             />
           </Col>
           <Col xs={12} md={4} lg={4}>
-            <EventDetail />
+            <EventDetail 
+              selectedSlot={this.props.selectedSlot}
+              selectedEvent={this.props.selectedSlot}
+              />
           </Col>
         </Row>
       </div>
@@ -267,12 +275,15 @@ class Home extends Component {
 const mapStateToProps = (state) => {
   return {
     login: state.config.login,
-    calendars: state.config.calendars
+    calendars: state.config.calendars,
+    selectedSlot: state.calendar.selectedSlot,
+    selectedEvent: state.calendar.selectedEvent
   };
 };
 
 const mapActionsToProps = {
-  onSelectSlot: updateSelectedSlot
+  onSelectSlot: updateSelectedSlot,
+  onSelectEvent: updateSelectedEvent
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(Home);

@@ -1,11 +1,17 @@
-export const updateSelectedSlot = (start, end) => {
+export const updateSelectedSlot = (event) => {
   return {
     type: 'UPDATE_SELECTED_SLOT',
     payload: {
-      selectedSlot: {
-        start,
-        end
-      }
+      selectedSlot: event
+    }
+  }
+}
+
+export const updateSelectedEvent = (event) => {
+  return {
+    type: 'UPDATE_SELECTED_EVENT',
+    payload: {
+      selectedEvent: event
     }
   }
 }

@@ -15,11 +15,29 @@ class EventDetail extends Component {
     super(...args)
     this.state = {
       title: 'test-title',
-      description: 'test-description'
+      desc: 'test-description',
+      startDate: new Date(),
+      endDate: new Date()
     }
   }
-  componentDidMount = () => {
-    // this.initData()
+
+  componentDidUpdate = (prevProps) => {
+    if(prevProps.selectedSlot !== this.props.selectedSlot) {
+      this.setState({
+        title: '',
+        desc: '',
+        startDate: this.props.selectedSlot.start,
+        endDate: this.props.selectedSlot.end
+      })
+    }
+    if(prevProps.selectedEvent !== this.props.selectedEvent) {
+      this.setState({
+        title: this.props.selectedEvent.title,
+        desc: this.props.selectedEvent.desc,
+        startDate: this.props.selectedEvent.start,
+        endDate: this.props.selectedEvent.end
+      })
+    }
   }
 
   handleChange = event => {
@@ -43,7 +61,7 @@ class EventDetail extends Component {
   //       start: event.start,
   //         end: event.end,
   //         title: '',
-  //         description: ''
+  //         desc: ''
   //     })
   //   } else {
   //     this.setState({
@@ -52,7 +70,7 @@ class EventDetail extends Component {
   //       start: new Date(),
   //         end: new Date(),
   //         title: '',
-  //         description: ''
+  //         desc: ''
   //     })
   //   }
   // }
@@ -64,7 +82,7 @@ class EventDetail extends Component {
   //       modifyIsOpen: true,
   //       id: event._id,
   //         title: event.title,
-  //         description: event.description,
+  //         desc: event.desc,
   //         start: event.start,
   //         end: event.end,
   //         allDay: event.allDay
@@ -73,7 +91,6 @@ class EventDetail extends Component {
   // }
 
   render() {
-    const { start, end } = this.props.selectedSlot ? this.props.selectedSlot : {};
     return (
       <div id="event-detail">
         <Row>
@@ -96,26 +113,26 @@ class EventDetail extends Component {
             >
               enter title
             </textarea>
-            <label htmlFor='description'>Event Description</label>
+            <label htmlFor='desc'>Event Description</label>
             <textarea
-              name='description'
+              name='desc'
               rows='3'
               onChange={this.handleChange}
-              value={this.state.description}
+              value={this.state.desc}
             >
-              enter descriptionription
+              enter description
             </textarea>
             <label htmlFor='startDate'>Event Start</label>
             <DayPickerInput
               formatDate={formatDate}
               parseDate={parseDate}
-              placeholder={`${formatDate(start)}`}
+              placeholder={`${formatDate(this.state.startDate)}`}
             />
             <label htmlFor='endDate'>Event End</label>
             <DayPickerInput
               formatDate={formatDate}
               parseDate={parseDate}
-              placeholder={`${formatDate(end)}`}
+              placeholder={`${formatDate(this.state.endDate)}`}
             />
             <div className='submit'>
               <input
@@ -135,7 +152,8 @@ class EventDetail extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    selectedSlot: state.calendar.selectedSlot
+    selectedSlot: state.calendar.selectedSlot,
+    selectedEvent: state.calendar.selectedEvent
   };
 };
 

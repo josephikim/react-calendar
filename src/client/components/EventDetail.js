@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Row } from 'react-bootstrap';
+import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
 
@@ -14,9 +15,7 @@ class EventDetail extends Component {
     super(...args)
     this.state = {
       title: 'test-title',
-      description: 'test-description',
-      startDate: '',
-      endDate: ''
+      description: 'test-description'
     }
   }
   componentDidMount = () => {
@@ -24,7 +23,6 @@ class EventDetail extends Component {
   }
 
   handleChange = event => {
-    // event.preventDefault()
     const { target: { name, value } } = event;
     this.setState({ [name]: value });
   }
@@ -75,6 +73,7 @@ class EventDetail extends Component {
   // }
 
   render() {
+    const { start, end } = this.props.selectedSlot ? this.props.selectedSlot : {};
     return (
       <div id="event-detail">
         <Row>
@@ -110,13 +109,13 @@ class EventDetail extends Component {
             <DayPickerInput
               formatDate={formatDate}
               parseDate={parseDate}
-              placeholder={`${formatDate(this.state.startDate)}`}
+              placeholder={`${formatDate(start)}`}
             />
             <label htmlFor='endDate'>Event End</label>
             <DayPickerInput
               formatDate={formatDate}
               parseDate={parseDate}
-              placeholder={`${formatDate(this.state.endDate)}`}
+              placeholder={`${formatDate(end)}`}
             />
             <div className='submit'>
               <input
@@ -134,4 +133,10 @@ class EventDetail extends Component {
   }
 }
 
-export default EventDetail
+const mapStateToProps = (state) => {
+  return {
+    selectedSlot: state.calendar.selectedSlot
+  };
+};
+
+export default connect(mapStateToProps)(EventDetail);

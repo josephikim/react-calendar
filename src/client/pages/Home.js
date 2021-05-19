@@ -233,8 +233,8 @@ class Home extends Component {
   // }
 
   onSelectSlot = (event) => {
-    const { start } = event; // Date object
-    this.props.onSelectSlot(start);
+    const { start, end } = event; // Date object
+    this.props.onSelectSlot(start, end);
   }
   
   render() {
@@ -267,8 +267,7 @@ class Home extends Component {
 const mapStateToProps = (state) => {
   return {
     login: state.config.login,
-    calendars: state.config.calendars,
-    selectedSlot: state.calendar.selectedSlot
+    calendars: state.config.calendars
   };
 };
 

@@ -1,8 +1,11 @@
-export const updateSelectedSlot = (date) => {
+export const updateSelectedSlot = (start, end) => {
   return {
     type: 'UPDATE_SELECTED_SLOT',
     payload: {
-      selectedSlot: date
+      selectedSlot: {
+        start,
+        end
+      }
     }
   }
 }

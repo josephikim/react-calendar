@@ -4,16 +4,16 @@ import Event from '../models';
 
 const UserController = {}
 
-UserController.index = (req, res) => {
-  async.parallel({
-    // user: function (callback) {
-    //   User.findById({}, callback);
-    // },
-    // ...add other model data requests here
-  }, function (err, results) {
-    // res.render('index', { title: 'User Page', error: err, data: results });
-  });
-}
+// UserController.index = (req, res) => {
+//   async.parallel({
+//     // user: function (callback) {
+//     //   User.findById({}, callback);
+//     // },
+//     // ...add other model data requests here
+//   }, function (err, results) {
+//     // res.render('index', { title: 'User Page', error: err, data: results });
+//   });
+// }
 
 UserController.findById = async (req, res, next) => {
   if (err) { return next(err); }

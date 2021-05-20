@@ -4,7 +4,7 @@ import eventController from '../controllers/eventController';
 const calendarRouter = express.Router();
 
 // GET calendar home page
-calendarRouter.get('/', eventController.index);
+calendarRouter.get('/event', eventController.findAll);
 
 // POST request to create event
 calendarRouter.post('/event/create', eventController.create);

@@ -4,18 +4,20 @@ import Event from '../models';
 
 const EventController = {}
 
-EventController.index = (req, res) => {
-  async.parallel({
-    // event_count: function (callback) {
-    //   Event.countEvents({}, callback);
-    // },
-    // ...add other model data requests here
-  }, function (err, results) {
-    // res.render('index', { title: 'React Calendar Home', error: err, data: results });
-  });
-}
+// getEventCount = () => {
+//   return Event.countEvents();
+// }
 
-EventController.find = async (req, res, next) => {
+// EventController.index = () => {
+//   async.parallel({
+//     event_count: getEventCount,
+//     events: EventController.findAll()
+//   }, function (err, results) {
+//     res.json(results)
+//   });
+// }
+
+EventController.findAll = async (req, res, next) => {
   if (err) { return next(err); }
   if (!user) { return res.redirect('/login'); }
   try {

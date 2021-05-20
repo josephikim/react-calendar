@@ -3,12 +3,22 @@ export const calendarReducer = (state = [], action) => {
     case "UPDATE_SELECTED_SLOT":
       return {
         ...state,
-        selectedSlot: action.payload.selectedSlot
+        selectedSlot: action.payload
       };
     case "UPDATE_SELECTED_EVENT":
       return {
         ...state,
-        selectedEvent: action.payload.selectedEvent
+        selectedEvent: action.payload
+      };
+    case "RETRIEVE_EVENTS":
+      return {
+        ...state,
+        events: [...action.payload]
+      };
+    case "CREATE_EVENT":
+      return {
+        ...state,
+        events: [...state.events, action.payload]
       };
     default:
       return state;

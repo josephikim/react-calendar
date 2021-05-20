@@ -8,7 +8,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import EventDetail from '../components/EventDetail';
 // import UserSettings from '../components/UserSettings'
 
-import { updateSelectedSlot, updateSelectedEvent } from '../actions/calendarActions'
+import { updateSelectedSlot, updateSelectedEvent, retrieveEvents } from '../actions/calendarActions';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -199,27 +199,12 @@ class Home extends Component {
     }
   }
   componentDidMount = () => {
-    // this.initData()
+    this.initData()
   }
 
-  // initData = () => {
-  //   // const accessString = window.localStorage.getItem('JWT')
-  //   axios
-  //     // .get(`${process.env.API_URL}/events`, {
-  //     //   headers: { Authorization: `JWT ${accessString}` },
-  //     // })
-  //     .get(`${process.env.API_URL}/events`)
-  //     .then(res => {
-  //       // change startdate and enddate to date objects
-  //       res.data.forEach(function (arrayItem) {
-  //         arrayItem.start = new Date(arrayItem.start)
-  //         arrayItem.end = new Date(arrayItem.end)
-  //       })
-  //       this.setState({
-  //         events: res.data
-  //       })
-  //     })
-  // }
+  initData = () => {
+    retrieveEvents();
+  }
 
   // eventStyleGetter = event => {
   //     let calendar = event.calendar
@@ -240,7 +225,6 @@ class Home extends Component {
   onSelectEvent = (event) => {
     this.props.onSelectEvent(event);
   }
-
   
   render() {
     return (

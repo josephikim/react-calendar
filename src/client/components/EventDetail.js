@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
 
-// import moment from 'moment'
-// import DateRangePicker from 'react-bootstrap-daterangepicker';
+import { createEvent } from '../actions/calendarActions';
 
 import '../styles/EventDetail.css';
 import 'react-day-picker/lib/style.css';
@@ -45,58 +44,28 @@ class EventDetail extends Component {
     this.setState({ [name]: value });
   }
 
-  // openAddEvent = event => {
-  //   let momentNow = moment(new Date()) // today's date
-  //   let momentStart = moment(event.start)
-  //   let momentEnd = moment(event.end)
+  handleSubmit = (event) => {
+    event.preventDefault();
 
-  //   if (
-  //     !momentStart.isBefore(momentNow, 'day') &&
-  //     !momentEnd.isBefore(momentNow, 'day') &&
-  //     !momentEnd.isBefore(momentStart, 'day')
-  //   ) {
-  //     this.setState({
-  //       addIsOpen: true,
-  //       modifyIsOpen: false,
-  //       start: event.start,
-  //         end: event.end,
-  //         title: '',
-  //         desc: ''
-  //     })
-  //   } else {
-  //     this.setState({
-  //       addIsOpen: true,
-  //       modifyIsOpen: false,
-  //       start: new Date(),
-  //         end: new Date(),
-  //         title: '',
-  //         desc: ''
-  //     })
-  //   }
-  // }
+    const data = {
+      title: this.state.title,
+      desc: this.state.desc,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate     
+    }
 
-  // openModifyEvent = event => {
-  //   if (event._id) {
-  //     this.setState({
-  //       addIsOpen: false,
-  //       modifyIsOpen: true,
-  //       id: event._id,
-  //         title: event.title,
-  //         desc: event.desc,
-  //         start: event.start,
-  //         end: event.end,
-  //         allDay: event.allDay
-  //     })
-  //   }
-  // }
+    // if (!data.title || !data.startDate || !data.endDate) {
+    //   // alert user and return
+    // }
+    alert('creatEvent hit')
+    createEvent(data);
+  }
 
   render() {
     return (
       <div id="event-detail">
         <Row>
           <form
-            action='action_url'
-            method='post'
             id='event-detail-form'
             name='event-detail-form'
             className='validate'

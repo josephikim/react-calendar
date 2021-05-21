@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
+import thunk from "redux-thunk";
+import { createStore, applyMiddleware } from 'redux';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux';
-import { devToolsEnhancer } from 'redux-devtools-extension/developmentOnly';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 import App from './App';
 import appReducer from './reducers';
@@ -10,7 +12,13 @@ import appReducer from './reducers';
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.css';
 
-let store = createStore(appReducer, devToolsEnhancer());
+const middleware = [
+  thunk,
+];
+
+const store = createStore(appReducer, composeWithDevTools(
+  applyMiddleware(...middleware)
+));
 
 ReactDOM.render(
   <Provider store={store}>

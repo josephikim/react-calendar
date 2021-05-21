@@ -219,11 +219,11 @@ class Home extends Component {
 
   onSelectSlot = (event) => {
     // const { start, end } = event; // Date object
-    this.props.onSelectSlot(event);
+    this.props.updateSelectedSlot(event);
   }
 
   onSelectEvent = (event) => {
-    this.props.onSelectEvent(event);
+    this.props.updateSelectedEvent(event);
   }
   
   render() {
@@ -266,8 +266,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapActionsToProps = {
-  onSelectSlot: updateSelectedSlot,
-  onSelectEvent: updateSelectedEvent
+  updateSelectedSlot,
+  updateSelectedEvent
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(Home);

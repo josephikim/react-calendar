@@ -57,8 +57,7 @@ class EventDetail extends Component {
     // if (!data.title || !data.startDate || !data.endDate) {
     //   // alert user and return
     // }
-    alert('creatEvent hit')
-    createEvent(data);
+    this.props.createEvent(data);
   }
 
   render() {
@@ -126,4 +125,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(EventDetail);
+const mapActionsToProps = {
+  createEvent
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(EventDetail);

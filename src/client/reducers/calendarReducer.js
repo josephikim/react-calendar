@@ -16,6 +16,7 @@ export const calendarReducer = (state = [], action) => {
         events: [...action.payload]
       };
     case "CREATE_EVENT":
+      alert('CREATE_EVENT hit')
       return {
         ...state,
         events: [...state.events, action.payload]

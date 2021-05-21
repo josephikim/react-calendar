@@ -27,3 +27,7 @@ textarea {
 .submit {
   margin-top: 24px;
 }
+
+.input--fail {
+  border: 2px solid red;
+}

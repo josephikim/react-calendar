@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware } from 'redux';
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 

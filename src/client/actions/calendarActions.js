@@ -24,7 +24,7 @@ export const retrieveEvents = () => async (dispatch) => {
     });
 
   } catch (err) {
-    console.log(err);
+    return err;
   }
 };
 

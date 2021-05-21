@@ -16,7 +16,8 @@ class EventDetail extends Component {
       title: 'test-title',
       desc: 'test-description',
       startDate: new Date(),
-      endDate: new Date()
+      endDate: new Date(),
+      error: null
     }
   }
 
@@ -46,7 +47,6 @@ class EventDetail extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-
     const data = {
       title: this.state.title,
       desc: this.state.desc,
@@ -54,16 +54,25 @@ class EventDetail extends Component {
       endDate: this.state.endDate     
     }
 
-    // if (!data.title || !data.startDate || !data.endDate) {
-    //   // alert user and return
-    // }
-    this.props.createEvent(data);
+    try {
+      this.props.createEvent(data);
+    } catch (err) {
+      this.setState({error: err.response.data})
+    }
   }
 
   render() {
+    let invalidFields;
+    this.state.error ? invalidFields = error.fields : invalidFields = [];
+    const titleFail = invalidFields.includes("titles");
+    const startDateFail = invalidFields.includes("startDate");
+    const endDateFail = invalidFields.includes("endDate");
     return (
       <div id="event-detail">
         <Row>
+          <div className="notif">
+            {this.state.error && <Error error={error.messages}/> }
+          </div>
           <form
             id='event-detail-form'
             name='event-detail-form'
@@ -75,33 +84,41 @@ class EventDetail extends Component {
             <label htmlFor='title'>Event Title (required)</label>
             <textarea
               name='title'
+              className={`input ${titleFail ? "input--fail" : null} `}
               rows='1'
               onChange={this.handleChange}
               value={this.state.title}
             >
               enter title
             </textarea>
+
             <label htmlFor='desc'>Event Description</label>
             <textarea
               name='desc'
+              className={`input ${fail ? "input--fail" : null} `}
               rows='3'
               onChange={this.handleChange}
               value={this.state.desc}
             >
               enter description
             </textarea>
+
             <label htmlFor='startDate'>Event Start</label>
             <DayPickerInput
+              className={`input ${startDateFail ? "input--fail" : null} `}
               formatDate={formatDate}
               parseDate={parseDate}
               placeholder={`${formatDate(this.state.startDate)}`}
             />
+
             <label htmlFor='endDate'>Event End</label>
             <DayPickerInput
+              className={`input ${endDateFail ? "input--fail" : null} `}
               formatDate={formatDate}
               parseDate={parseDate}
               placeholder={`${formatDate(this.state.endDate)}`}
             />
+
             <div className='submit'>
               <input
                 type='submit'

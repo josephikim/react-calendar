@@ -3,12 +3,14 @@ import express from 'express';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import regeneratorRuntime from "regenerator-runtime";
+
 import db from './db/connection';
-import config from '../../webpack.dev.config.js';
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
 import calendarRouter from './routes/calendar.js';
+
+import config from '../../webpack.dev.config.js';
+import errorController from './controllers/errorController';
 
 const app = express();
 const compiler = webpack(config)
@@ -36,6 +38,8 @@ app.get('*', (req, res, next) => {
     res.end()
     })
 })
+
+app.use(errorController);
 
 const PORT = process.env.PORT || 8080
 

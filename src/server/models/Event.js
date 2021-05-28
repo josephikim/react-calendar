@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const EventSchema = new mongoose.Schema ({
+const eventSchema = mongoose.Schema ({
   title: { 
     type: String, 
     required: [true, 'Enter a title.'] 
@@ -16,25 +16,44 @@ const EventSchema = new mongoose.Schema ({
     type: Date, 
     required: [true, 'Enter an end date.'] 
   }
-}, {collection : 'Event'});
+});
 
-let EventsModel = mongoose.model('Event', EventSchema);
+// const eventSchema = new mongoose.Schema ({
+//   title: { 
+//     type: String, 
+//     required: [true, 'Enter a title.'] 
+//   },
+//   desc: { 
+//     type: String 
+//   },
+//   startDate: { 
+//     type: Date, 
+//     required: [true, 'Enter a start date.'] 
+//   },
+//   endDate: { 
+//     type: Date, 
+//     required: [true, 'Enter an end date.'] 
+//   }
+// }, {collection : 'Event'});
 
-EventsModel.getAll = (query) => {
-  return EventsModel.find(query);
-}
+const Event = mongoose.model('Event', eventSchema);
 
-EventsModel.addEvent = (eventToAdd) => {
-  return eventToAdd.save();
-}
+// Event.getAll = () => {
+//   console.log('Event.getAll hit')
+//   return Event.find({});
+// }
 
-EventsModel.updateEvent = (req) => {
-  return EventsModel.findByIdAndUpdate(req.params.eventid, req.body, { new: true });
-}
+// Event.addEvent = (eventToAdd) => {
+//   return Event.save(eventToAdd);
+// }
 
-EventsModel.removeEvent = (eventId) => {
-  return EventsModel.remove({id: eventId});
-}
+// Event.updateEvent = (req) => {
+//   return Event.findByIdAndUpdate(req.params.eventid, req.body, { new: true });
+// }
+
+// Event.removeEvent = (eventId) => {
+//   return Event.remove({id: eventId});
+// }
 
 
-export default EventsModel;
+export default Event;

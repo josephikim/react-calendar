@@ -5,15 +5,15 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 
 import db from './db/connection';
-import indexRouter from './routes/index.js';
-import usersRouter from './routes/users.js';
-import calendarRouter from './routes/calendar.js';
-
+import apiRouter from './api';
 import config from '../../webpack.dev.config.js';
-import errorController from './controllers/errorController';
 
 const app = express();
-const compiler = webpack(config)
+const BUILD_DIR = __dirname;
+const HTML_FILE = path.join(BUILD_DIR, 'index.html');
+
+// webpack dev middleware
+const compiler = webpack(config);
 
 app.use(webpackDevMiddleware(compiler, {
   publicPath: config.output.publicPath
@@ -21,25 +21,19 @@ app.use(webpackDevMiddleware(compiler, {
 
 app.use(webpackHotMiddleware(compiler))
 
-app.use(express.json());
+// support data from POST requests
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
-app.use('/', indexRouter);
-app.use('/user', usersRouter);
-app.use('/calendar', calendarRouter);
+// serve static files
+app.use(express.static(BUILD_DIR));
 
-app.get('*', (req, res, next) => {
-  const HTML_FILE = path.resolve(compiler.outputPath, 'index.html');
-  compiler.outputFileSystem.readFile(HTML_FILE, (err, result) => {
-    if (err) {
-      return next(err)
-    }
-    res.set('content-type', 'text/html')
-    res.send(result)
-    res.end()
-    })
-})
+// Use API routes
+app.use("/api", apiRouter);
 
-app.use(errorController);
+app.get('/', function (req,res) {
+  res.sendFile(HTML_FILE);
+});
 
 const PORT = process.env.PORT || 8080
 

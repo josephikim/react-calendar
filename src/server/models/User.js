@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, 'Enter a username.'],
@@ -34,7 +34,7 @@ const UserSchema = new mongoose.Schema({
 }, {collection : 'User'});
 
 //schema middleware to apply before saving 
-UserSchema.pre('save', async function (next) {
+userSchema.pre('save', async function (next) {
 
   //hash the password, set hash cost to 12  
   this.password = await bcrypt.hash(this.password, 12);
@@ -44,22 +44,22 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
-let UsersModel = mongoose.model('User', UserSchema);
+let User = mongoose.model('User', userSchema);
 
-UsersModel.get = (query) => {
-  return UsersModel.find(query);
+User.get = (query) => {
+  return User.find(query);
 }
 
-UsersModel.addUser = (userToAdd) => {
+User.addUser = (userToAdd) => {
   return userToAdd.save();
 }
 
-UsersModel.updateUser = (req) => {
-  return UsersModel.findByIdAndUpdate(req.params.userid, req.body, { new: true });
+User.updateUser = (req) => {
+  return User.findByIdAndUpdate(req.params.userid, req.body, { new: true });
 }
 
-UsersModel.removeUser = (userId) => {
-  return UsersModel.remove({ id: userId });
+User.removeUser = (userId) => {
+  return User.remove({ id: userId });
 }
 
-export default UsersModel;
+export default User;

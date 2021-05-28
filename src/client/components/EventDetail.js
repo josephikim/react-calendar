@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
 
+import Error from './Error';
 import { createEvent } from '../actions/calendarActions';
 
 import '../styles/EventDetail.css';
@@ -47,7 +48,7 @@ class EventDetail extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const data = {
+    const formData = {
       title: this.state.title,
       desc: this.state.desc,
       startDate: this.state.startDate,
@@ -55,7 +56,7 @@ class EventDetail extends Component {
     }
 
     try {
-      this.props.createEvent(data);
+      this.props.createEvent(formData);
     } catch (err) {
       this.setState({error: err.response.data})
     }
@@ -63,7 +64,7 @@ class EventDetail extends Component {
 
   render() {
     let invalidFields;
-    this.state.error ? invalidFields = error.fields : invalidFields = [];
+    this.state.error ? invalidFields = this.state.error.fields : invalidFields = [];
     const titleFail = invalidFields.includes("titles");
     const startDateFail = invalidFields.includes("startDate");
     const endDateFail = invalidFields.includes("endDate");
@@ -71,7 +72,7 @@ class EventDetail extends Component {
       <div id="event-detail">
         <Row>
           <div className="notif">
-            {this.state.error && <Error error={error.messages}/> }
+            {this.state.error && <Error error={this.state.error.messages}/> }
           </div>
           <form
             id='event-detail-form'
@@ -81,6 +82,7 @@ class EventDetail extends Component {
             target='_blank'
             noValidate
           >
+            <div> HMR TEST 2</div>
             <label htmlFor='title'>Event Title (required)</label>
             <textarea
               name='title'
@@ -95,7 +97,6 @@ class EventDetail extends Component {
             <label htmlFor='desc'>Event Description</label>
             <textarea
               name='desc'
-              className={`input ${fail ? "input--fail" : null} `}
               rows='3'
               onChange={this.handleChange}
               value={this.state.desc}

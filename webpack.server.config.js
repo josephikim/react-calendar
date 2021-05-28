@@ -6,16 +6,17 @@ module.exports = (env, argv) => {
   const SERVER_PATH = (argv.mode === 'production') ?
     './src/server/server-prod.js' :
     './src/server/server-dev.js'
-
+  console.log('argv.mode', argv.mode)
   return ({
     entry: {
-      server: SERVER_PATH,
+      server: SERVER_PATH
     },
     output: {
       path: path.join(__dirname, 'build'),
       publicPath: '/',
       filename: '[name].js'
     },
+    mode: argv.mode,
     target: 'node',
     node: {
       // Need this when working with express, otherwise the build fails

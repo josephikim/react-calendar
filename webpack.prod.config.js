@@ -56,7 +56,7 @@ module.exports = {
     }),
     new HtmlWebPackPlugin({
       template: "public/index.html",
-      filename: "index.html",
+      filename: "./index.html",
       excludeChunks: ['server']
     }),
     new Dotenv({

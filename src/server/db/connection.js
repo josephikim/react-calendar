@@ -8,7 +8,11 @@ const MONGO_DB = 'react-calendar';
 
 // const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
 
-const url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+// with auth
+// const url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+
+// no auth
+const url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}`;
 
 mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true});
 
@@ -21,3 +25,5 @@ db.once('open', _ => {
 db.on('error', err => {
   console.error('connection error:', err)
 })
+
+export default db;

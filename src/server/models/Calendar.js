@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
-const CalendarSchema = new mongoose.Schema ({
+const calendarSchema = new mongoose.Schema ({
   name: { type: String, required: true },
   visibility: { type: Boolean, required: true, default: true }
 });
 
-let CalendarsModel = mongoose.model('Calendar', CalendarSchema);
+let Calendar = mongoose.model('Calendar', calendarSchema);
 
-export default CalendarsModel;
+export default Calendar;

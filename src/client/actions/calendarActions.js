@@ -30,9 +30,10 @@ export const retrieveEvents = () => async (dispatch) => {
 
 export const createEvent = (data) => async (dispatch) => {
   try {
-    const res = await axios.post(`${process.env.API_URL}/calendar/event/create`, data)
-
+    const res = await axios.post(`${process.env.API_URL}/api/calendar/event`, data)
+    
     return Promise.resolve(res.data).then(res => {
+      console.log('res.data', res.data)
       dispatch({
         type: 'CREATE_EVENT',
         payload: res.data

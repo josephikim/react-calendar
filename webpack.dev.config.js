@@ -14,7 +14,7 @@ module.exports = {
   },
   mode: 'development',
   target: 'web',
-  devtool: 'eval-cheap-source-map',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -55,21 +55,16 @@ module.exports = {
       },
     ]
   },
-  devServer: {
-    contentBase: './build',
-    hot: true,
-    historyApiFallback: true
-  },
   plugins: [
     new HtmlWebPackPlugin({
       template: "public/index.html",
-      filename: "index.html",
+      filename: "./index.html",
       excludeChunks: ['server']
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new Dotenv({
-      path: './.env.development',
+      path: '.env.development',
     })
   ],
   resolve: {

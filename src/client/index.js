@@ -15,9 +15,20 @@ const middleware = [
   thunk,
 ];
 
-const store = createStore(appReducer, composeWithDevTools(
-  applyMiddleware(...middleware)
-));
+const initialState = {
+  config: {},
+  calendar: {
+    events: {}
+  }
+}
+
+const store = createStore(
+  appReducer,
+  initialState,
+  composeWithDevTools(
+    applyMiddleware(...middleware)
+  )
+);
 
 ReactDOM.render(
   <Provider store={store}>

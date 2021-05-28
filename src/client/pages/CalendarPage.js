@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
-// import axios from 'axios';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 
 import EventDetail from '../components/EventDetail';
-// import UserSettings from '../components/UserSettings'
-
 import { updateSelectedSlot, updateSelectedEvent, retrieveEvents } from '../actions/calendarActions';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
 
-class Home extends Component {
+class CalendarPage extends Component {
   constructor(...args) {
     super(...args)
     this.state = {
@@ -203,7 +200,7 @@ class Home extends Component {
   }
 
   initData = () => {
-    retrieveEvents();
+    this.props.retrieveEvents();
   }
 
   // eventStyleGetter = event => {
@@ -228,7 +225,7 @@ class Home extends Component {
   
   render() {
     return (
-      <div id="home">
+      <div id="calendar">
         <Row>
           <Col xs={12} md={8} lg={8}>
             <Calendar
@@ -267,7 +264,8 @@ const mapStateToProps = (state) => {
 
 const mapActionsToProps = {
   updateSelectedSlot,
-  updateSelectedEvent
+  updateSelectedEvent,
+  retrieveEvents
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(Home);
+export default connect(mapStateToProps, mapActionsToProps)(CalendarPage);

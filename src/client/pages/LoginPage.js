@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import LoginForm from '../components/LoginForm';
 
-class Login extends Component {
+class LoginPage extends Component {
   constructor(...args) {
     super(...args)
     this.state = {
@@ -51,4 +51,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(LoginPage);

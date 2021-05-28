@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-const About = () => {
+const AboutPage = () => {
   return (
     <div id='about'>
       <Row className='about'>
@@ -19,4 +19,4 @@ const About = () => {
   )
 };
 
-export default About;
+export default AboutPage;

@@ -16,15 +16,16 @@ export const updateSelectedEvent = (event) => {
 
 export const retrieveEvents = () => async (dispatch) => {
   try {
-    const res = await axios.get(`${process.env.API_URL}/calendar/event`)
-
-    dispatch({
-      type: 'RETRIEVE_EVENTS',
-      payload: res
+    const res = await axios.get(`${process.env.API_URL}/api/calendar/event`)
+    
+    return Promise.resolve(res.data).then(res => {
+      dispatch({
+        type: 'RETRIEVE_EVENTS',
+        payload: res.data
+      });
     });
-
   } catch (err) {
-    return err;
+    return Promise.reject(err);
   }
 };
 

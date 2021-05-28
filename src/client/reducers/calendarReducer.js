@@ -13,7 +13,7 @@ export const calendarReducer = (state = [], action) => {
     case "RETRIEVE_EVENTS":
       return {
         ...state,
-        events: [...action.payload]
+        events: [action.payload]
       };
     case "CREATE_EVENT":
       return {

@@ -1,13 +1,9 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 
-import Home from './pages/Home'
-import Login from './pages/Login'
-import About from './pages/About'
-// import Register from './pages/Register'
-// import Profile from './pages/Profile'
-// import NoMatch from './pages/NoMatch'
-
+import CalendarPage from './pages/CalendarPage'
+import LoginPage from './pages/LoginPage'
+import AboutPage from './pages/AboutPage'
 import Header from './components/Header';
 
 class App extends Component {
@@ -24,14 +20,13 @@ class App extends Component {
         <Header />
         <BrowserRouter>
           <Switch>
-            {/* <Route exact path="/register" component={Register} /> */}
             {/* <Route exact path="/profile/:userid" component={Profile} />
        <Route component={NoMatch} /> */}
-            <Route path="/about" component={About} />
-            <Route path="/login" component={Login} />
+            <Route path="/about" component={AboutPage} />
+            <Route path="/login" component={LoginPage} />
             <Route path="/" render={() => (
               this.state.loggedIn ?
-                <Home /> :
+                <CalendarPage /> :
                 <Redirect to='/login' />
             )} />
           </Switch>

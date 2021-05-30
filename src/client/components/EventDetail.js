@@ -36,11 +36,18 @@ class EventDetail extends Component {
     this.setState({ [name]: value });
   }
 
-  handleStartDayChange(day) {
-    this.setState({ startDate: day });
+  handleStartDayChange = day => {
+    const newState = {
+      startDate: day
+    }
+    // only update endDate when a later date is selected
+    if(day > this.state.endDate){
+      newState.endDate = day;
+    }
+    this.setState(newState);
   }
 
-  handleEndDayChange(day) {
+  handleEndDayChange = day => {
     this.setState({ endDate: day });
   }
 

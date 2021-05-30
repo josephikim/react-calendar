@@ -14,36 +14,34 @@ class EventDetail extends Component {
   constructor(...args) {
     super(...args)
     this.state = {
-      title: 'test-title',
-      desc: 'test-description',
-      startDate: new Date(),
-      endDate: new Date(),
+      title: '',
+      desc: '',
+      startDate: this.props.selectedSlot.start,
+      endDate: this.props.selectedSlot.end,
       error: null
     }
   }
-
+  
   componentDidUpdate = (prevProps) => {
     if(prevProps.selectedSlot !== this.props.selectedSlot) {
-      this.setState({
-        title: '',
-        desc: '',
+      this.setState({ 
         startDate: this.props.selectedSlot.start,
         endDate: this.props.selectedSlot.end
-      })
-    }
-    if(prevProps.selectedEvent !== this.props.selectedEvent) {
-      this.setState({
-        title: this.props.selectedEvent.title,
-        desc: this.props.selectedEvent.desc,
-        startDate: this.props.selectedEvent.start,
-        endDate: this.props.selectedEvent.end
-      })
+      });
     }
   }
 
   handleChange = event => {
     const { target: { name, value } } = event;
     this.setState({ [name]: value });
+  }
+
+  handleStartDayChange(day) {
+    this.setState({ startDate: day });
+  }
+
+  handleEndDayChange(day) {
+    this.setState({ endDate: day });
   }
 
   handleSubmit = (event) => {
@@ -54,7 +52,6 @@ class EventDetail extends Component {
       startDate: this.state.startDate,
       endDate: this.state.endDate     
     }
-
     try {
       this.props.createEvent(formData);
     } catch (err) {
@@ -110,6 +107,7 @@ class EventDetail extends Component {
               formatDate={formatDate}
               parseDate={parseDate}
               placeholder={`${formatDate(this.state.startDate)}`}
+              onDayChange={this.handleStartDayChange}
             />
 
             <label htmlFor='endDate'>Event End</label>
@@ -118,6 +116,7 @@ class EventDetail extends Component {
               formatDate={formatDate}
               parseDate={parseDate}
               placeholder={`${formatDate(this.state.endDate)}`}
+              onDayChange={this.handleEndDayChange}
             />
 
             <div className='submit'>
@@ -139,7 +138,8 @@ class EventDetail extends Component {
 const mapStateToProps = (state) => {
   return {
     selectedSlot: state.calendar.selectedSlot,
-    selectedEvent: state.calendar.selectedEvent
+    selectedEvent: state.calendar.selectedEvent,
+    newEvent: state.calendar.newEvent
   };
 };
 

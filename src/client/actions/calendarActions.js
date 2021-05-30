@@ -34,9 +34,15 @@ export const createEvent = (data) => async (dispatch) => {
     const res = await axios.post(`${process.env.API_URL}/api/calendar/event`, data)
     
     return Promise.resolve(res.data).then(res => {
+      const createdEvent = {
+        title: res.data.title,
+        desc: res.data.desc,
+        startDate: new Date(res.data.startDate),
+        endDate: new Date(res.data.endDate)
+      }
       dispatch({
         type: 'CREATE_EVENT',
-        payload: res.data
+        payload: createdEvent
       });
     });
   } catch (err) {

@@ -203,19 +203,7 @@ class CalendarPage extends Component {
     this.props.retrieveEvents();
   }
 
-  // eventStyleGetter = event => {
-  //     let calendar = event.calendar
-  //     let backgroundColor = '#' + calendars[calendar.toUpperCase()].color
-  //     let style = {
-  //         backgroundColor: backgroundColor,
-  //     }
-  //     return {
-  //         style: style,
-  //     }
-  // }
-
   onSelectSlot = (event) => {
-    // const { start, end } = event; // Date object
     this.props.updateSelectedSlot(event);
   }
 
@@ -231,6 +219,7 @@ class CalendarPage extends Component {
             <Calendar
               selectable
               localizer={localizer}
+              // events={retrievedEvents}
               events={this.state.events}
               defaultView="month"
               scrollToTime={new Date(1970, 1, 1, 6)}
@@ -242,10 +231,7 @@ class CalendarPage extends Component {
             />
           </Col>
           <Col xs={12} md={4} lg={4}>
-            <EventDetail 
-              selectedSlot={this.props.selectedSlot}
-              selectedEvent={this.props.selectedSlot}
-              />
+            <EventDetail/>
           </Col>
         </Row>
       </div>
@@ -257,8 +243,7 @@ const mapStateToProps = (state) => {
   return {
     login: state.config.login,
     calendars: state.config.calendars,
-    selectedSlot: state.calendar.selectedSlot,
-    selectedEvent: state.calendar.selectedEvent
+    events: state.calendar.events
   };
 };
 

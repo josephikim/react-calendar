@@ -18,7 +18,11 @@ const middleware = [
 const initialState = {
   config: {},
   calendar: {
-    events: {}
+    events: [],
+    selectedSlot: {
+      start: new Date(),
+      end: new Date(),
+    }
   }
 }
 

@@ -11,7 +11,7 @@ calendarRouter.get("/event", async (req, res) => {
 
 // POST request to create event
 calendarRouter.post('/event', async (req, res) => {
-  const createdEvent = new Event(req.body);
+  const createdEvent = new Event(req.body)
   await createdEvent.save();
   return res.send({data: createdEvent});
 });       

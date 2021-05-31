@@ -19,6 +19,11 @@ export const retrieveEvents = () => async (dispatch) => {
     const res = await axios.get(`${process.env.API_URL}/api/calendar/event`)
     
     return Promise.resolve(res.data).then(res => {
+      // use Date type on event dates
+      res.data.map(event => {
+        event.startDate = new Date(event.startDate),
+        event.endDate = new Date(event.endDate)
+      })
       dispatch({
         type: 'RETRIEVE_EVENTS',
         payload: res.data
@@ -34,6 +39,7 @@ export const createEvent = (data) => async (dispatch) => {
     const res = await axios.post(`${process.env.API_URL}/api/calendar/event`, data)
     
     return Promise.resolve(res.data).then(res => {
+      // use Date type on event dates
       const createdEvent = {
         title: res.data.title,
         desc: res.data.desc,

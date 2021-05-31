@@ -30,6 +30,15 @@ class EventDetail extends Component {
         endDate: this.props.selectedSlot.end
       });
     }
+    // Update state based on user selected calendar event
+    if(prevProps.selectedEvent !== this.props.selectedEvent) {
+      this.setState({
+        title: this.props.selectedEvent.title,
+        desc: this.props.selectedEvent.desc,
+        startDate: this.props.selectedSlot.start,
+        endDate: this.props.selectedSlot.end
+      });
+    }
   }
 
   handleChange = event => {

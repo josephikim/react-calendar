@@ -24,6 +24,7 @@ export const retrieveEvents = () => async (dispatch) => {
         event.startDate = new Date(event.startDate),
         event.endDate = new Date(event.endDate)
       })
+      
       dispatch({
         type: 'RETRIEVE_EVENTS',
         payload: res.data
@@ -40,15 +41,12 @@ export const createEvent = (data) => async (dispatch) => {
     
     return Promise.resolve(res.data).then(res => {
       // use Date type on event dates
-      const createdEvent = {
-        title: res.data.title,
-        desc: res.data.desc,
-        startDate: new Date(res.data.startDate),
-        endDate: new Date(res.data.endDate)
-      }
+      res.data.startDate = new Date(res.data.startDate);
+      res.data.endDate = new Date(res.data.endDate);
+
       dispatch({
         type: 'CREATE_EVENT',
-        payload: createdEvent
+        payload: res.data
       });
     });
   } catch (err) {

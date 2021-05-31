@@ -23,6 +23,7 @@ class EventDetail extends Component {
   }
   
   componentDidUpdate = (prevProps) => {
+    // Update state based on user selected calendar slot
     if(prevProps.selectedSlot !== this.props.selectedSlot) {
       this.setState({ 
         startDate: this.props.selectedSlot.start,
@@ -48,7 +49,14 @@ class EventDetail extends Component {
   }
 
   handleEndDayChange = day => {
-    this.setState({ endDate: day });
+    const newState = {
+      endDate: day
+    }
+    // only update startDate when an earlier date is selected
+    if(day < this.state.startDate){
+      newState.startDate = day;
+    }
+    this.setState(newState);
   }
 
   handleSubmit = (event) => {
@@ -114,6 +122,7 @@ class EventDetail extends Component {
               formatDate={formatDate}
               parseDate={parseDate}
               placeholder={`${formatDate(this.state.startDate)}`}
+              value={`${formatDate(this.state.startDate)}`}
               onDayChange={this.handleStartDayChange}
             />
 
@@ -123,6 +132,7 @@ class EventDetail extends Component {
               formatDate={formatDate}
               parseDate={parseDate}
               placeholder={`${formatDate(this.state.endDate)}`}
+              value={`${formatDate(this.state.endDate)}`}
               onDayChange={this.handleEndDayChange}
             />
 

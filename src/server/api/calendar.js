@@ -1,4 +1,5 @@
 import express from 'express';
+import { resolve } from '../../../webpack.dev.config';
 import Event from '../models/Event';
 
 const calendarRouter = express.Router();
@@ -18,9 +19,10 @@ calendarRouter.post('/event', async (req, res) => {
 
 // POST request to delete event
 calendarRouter.post('/event/:id/delete', async (req, res) => {
-  const eventId = req.body.eventId;
-  const deletedEvent = await Event.removeEvent(eventId);
-  return res.send({data: deletedEvent, msg: "Deleted Event"});
+  const eventId = req.params.id;
+  const deletedEvent = await Event.findOneAndDelete({ _id: eventId }, (err, doc) => {
+    return res.send({data: doc, msg: "Deleted Event"});
+  });
 });
 
 // GET request to update event

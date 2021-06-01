@@ -5,7 +5,7 @@ import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
 
 import Error from './Error';
-import { createEvent } from '../actions/calendarActions';
+import { createEvent, deleteEvent } from '../actions/calendarActions';
 
 import '../styles/EventDetail.css';
 import 'react-day-picker/lib/style.css';
@@ -35,8 +35,8 @@ class EventDetail extends Component {
       this.setState({
         title: this.props.selectedEvent.title,
         desc: this.props.selectedEvent.desc,
-        startDate: this.props.selectedSlot.start,
-        endDate: this.props.selectedSlot.end
+        startDate: this.props.selectedEvent.startDate,
+        endDate: this.props.selectedEvent.endDate
       });
     }
   }
@@ -78,6 +78,18 @@ class EventDetail extends Component {
     }
     try {
       this.props.createEvent(formData);
+    } catch (err) {
+      this.setState({error: err.response.data})
+    }
+  }
+
+  handleDelete = (event) => {
+    if(!this.props.selectedEvent) return;
+
+    event.preventDefault();
+    const eventId = this.props.selectedEvent._id;
+    try {
+      this.props.deleteEvent(eventId);
     } catch (err) {
       this.setState({error: err.response.data})
     }
@@ -153,6 +165,14 @@ class EventDetail extends Component {
                 id='add-event-btn'
                 className='button'
               />
+              <input
+                type='button'
+                value='Delete Event'
+                name='delete-event-btn'
+                id='delete-event-btn'
+                className='button'
+                onClick={this.handleDelete}
+              />
             </div>
           </form>
         </Row>
@@ -170,7 +190,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapActionsToProps = {
-  createEvent
+  createEvent,
+  deleteEvent
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(EventDetail);

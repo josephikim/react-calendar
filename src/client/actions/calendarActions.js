@@ -54,6 +54,28 @@ export const createEvent = (data) => async (dispatch) => {
   }
 };
 
+export const deleteEvent = (eventId) => async (dispatch) => {
+  try {
+    const res = await axios.post(`${process.env.API_URL}/api/calendar/event/${eventId}/delete`)
+  
+    return Promise.resolve(res.data).then(res => {
+      debugger
+      // use Date type on event dates
+      res.data.map(event => {
+        event.startDate = new Date(event.startDate),
+        event.endDate = new Date(event.endDate)
+      })
+      
+      dispatch({
+        type: 'RETRIEVE_EVENTS',
+        payload: res.data
+      });
+    });
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+
 // export const updateEvent = event => {
 //   const accessString = window.localStorage.getItem('JWT')
 //   if (accessString) {

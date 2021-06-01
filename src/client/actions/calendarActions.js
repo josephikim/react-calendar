@@ -59,16 +59,9 @@ export const deleteEvent = (eventId) => async (dispatch) => {
     const res = await axios.post(`${process.env.API_URL}/api/calendar/event/${eventId}/delete`)
   
     return Promise.resolve(res.data).then(res => {
-      debugger
-      // use Date type on event dates
-      res.data.map(event => {
-        event.startDate = new Date(event.startDate),
-        event.endDate = new Date(event.endDate)
-      })
-      
       dispatch({
-        type: 'RETRIEVE_EVENTS',
-        payload: res.data
+        type: 'DELETE_EVENT',
+        payload: res.data._id
       });
     });
   } catch (err) {

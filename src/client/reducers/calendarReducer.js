@@ -20,6 +20,11 @@ export const calendarReducer = (state = [], action) => {
         ...state,
         events: [...state.events, action.payload]
       };
+    case "DELETE_EVENT":
+      return {
+        ...state,
+        events: [...state.events.filter(element => element._id !== action.payload)]
+      };
     default:
       return state;
   }

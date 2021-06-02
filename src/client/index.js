@@ -22,7 +22,8 @@ const initialState = {
     selectedSlot: {
       start: new Date(),
       end: new Date(),
-    }
+    },
+    selectedEvent: {}
   }
 }
 

@@ -5,7 +5,7 @@ import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 
 import EventDetail from '../components/EventDetail';
-import { updateSelectedSlot, updateSelectedEvent, retrieveEvents } from '../actions/calendarActions';
+import { onSelectSlot, onSelectEvent, retrieveEvents } from '../actions/calendarActions';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -36,11 +36,33 @@ class CalendarPage extends Component {
   }
 
   onSelectSlot = (event) => {
-    this.props.updateSelectedSlot(event);
+    if (Object.keys(this.props.selectedSlot).length === 0 || this.props.selectedSlot === undefined) {
+      this.props.onSelectSlot(event);
+    } else {
+      const selectedSlotStartDate = new Date(this.props.selectedSlot.start.toDateString());
+      const selectedSlotEndDate = new Date(this.props.selectedSlot.end.toDateString());
+
+      const sameSlotSelected = 
+        event.start.valueOf() === selectedSlotStartDate.valueOf() && 
+        event.end.valueOf() === selectedSlotEndDate.valueOf();
+
+      if (!sameSlotSelected) this.props.onSelectSlot(event);
+    }
   }
 
   onSelectEvent = (event) => {
-    this.props.updateSelectedEvent(event);
+    if (Object.keys(this.props.selectedEvent).length === 0 || this.props.selectedEvent === undefined) {
+      this.props.onSelectEvent(event);
+    } else {
+      const selectedEventStartDate = new Date(this.props.selectedEvent.startDate.toDateString());
+      const selectedEventEndDate = new Date(this.props.selectedEvent.endDate.toDateString());
+      
+      const sameEventSelected =
+        event.startDate.valueOf() === selectedEventStartDate.valueOf() && 
+        event.endDate.valueOf() === selectedEventEndDate.valueOf();
+
+      if (!sameEventSelected) this.props.onSelectEvent(event);
+    }
   }
   
   render() {
@@ -76,13 +98,15 @@ const mapStateToProps = (state) => {
   return {
     login: state.config.login,
     calendars: state.config.calendars,
-    events: state.calendar.events
+    events: state.calendar.events,
+    selectedSlot: state.calendar.selectedSlot,
+    selectedEvent: state.calendar.selectedEvent
   };
 };
 
 const mapActionsToProps = {
-  updateSelectedSlot,
-  updateSelectedEvent,
+  onSelectSlot,
+  onSelectEvent,
   retrieveEvents
 }
 

@@ -23,15 +23,21 @@ class EventDetail extends Component {
   }
   
   componentDidUpdate = (prevProps) => {
-    // Update state based on user selected calendar slot
-    if(prevProps.selectedSlot !== this.props.selectedSlot) {
-      this.setState({ 
+    // Update state based on props.selectedSlot
+    if(this.props.selectedSlot &&
+      Object.keys(this.props.selectedSlot).length > 0 &&
+      prevProps.selectedSlot !== this.props.selectedSlot) {
+      this.setState({
+        title: '',
+        desc: '',
         startDate: this.props.selectedSlot.start,
         endDate: this.props.selectedSlot.end
       });
     }
-    // Update state based on user selected calendar event
-    if(prevProps.selectedEvent !== this.props.selectedEvent) {
+    // Update state based on props.selectedEvent
+    if(this.props.selectedEvent && 
+      Object.keys(this.props.selectedEvent).length > 0 && 
+      prevProps.selectedEvent !== this.props.selectedEvent) {
       this.setState({
         title: this.props.selectedEvent.title,
         desc: this.props.selectedEvent.desc,
@@ -142,7 +148,6 @@ class EventDetail extends Component {
               className={`input ${startDateFail ? "input--fail" : null} `}
               formatDate={formatDate}
               parseDate={parseDate}
-              placeholder={`${formatDate(this.state.startDate)}`}
               value={`${formatDate(this.state.startDate)}`}
               onDayChange={this.handleStartDayChange}
             />
@@ -152,7 +157,6 @@ class EventDetail extends Component {
               className={`input ${endDateFail ? "input--fail" : null} `}
               formatDate={formatDate}
               parseDate={parseDate}
-              placeholder={`${formatDate(this.state.endDate)}`}
               value={`${formatDate(this.state.endDate)}`}
               onDayChange={this.handleEndDayChange}
             />

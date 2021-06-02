@@ -1,5 +1,19 @@
 import axios from 'axios';
 
+export const onSelectSlot = (event => {
+  return (dispatch) => {
+    dispatch(updateSelectedSlot(event))
+    dispatch(updateSelectedEvent({}))
+  }
+})
+
+export const onSelectEvent = (event => {
+  return (dispatch) => {
+    dispatch(updateSelectedEvent(event))
+    dispatch(updateSelectedSlot({}))
+  }
+})
+
 export const updateSelectedSlot = (event) => {
   return {
     type: 'UPDATE_SELECTED_SLOT',

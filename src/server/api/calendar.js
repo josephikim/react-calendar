@@ -1,5 +1,4 @@
 import express from 'express';
-import { resolve } from '../../../webpack.dev.config';
 import Event from '../models/Event';
 
 const calendarRouter = express.Router();

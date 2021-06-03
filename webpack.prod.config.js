@@ -14,13 +14,6 @@ module.exports = {
     publicPath: '/',
     filename: '[name].js'
   },
-  target: 'web',
-  node: {
-    // Need this when working with express, otherwise the build fails
-    __dirname: false,   // if you don't put this is, __dirname
-    __filename: false,  // and __filename return blank or /
-  },
-  externals: [nodeExternals()], // Need this to avoid error when working with Express
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin()],
@@ -60,7 +53,7 @@ module.exports = {
       excludeChunks: ['server']
     }),
     new Dotenv({
-      path: './.env.production',
+      path: '.env.production',
     })
   ],
 }

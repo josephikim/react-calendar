@@ -6,7 +6,7 @@ module.exports = (env, argv) => {
   const SERVER_PATH = (argv.mode === 'production') ?
     './src/server/server-prod.js' :
     './src/server/server-dev.js'
-  console.log('argv.mode', argv.mode)
+  
   return ({
     entry: {
       server: SERVER_PATH
@@ -18,11 +18,6 @@ module.exports = (env, argv) => {
     },
     mode: argv.mode,
     target: 'node',
-    node: {
-      // Need this when working with express, otherwise the build fails
-      __dirname: false,   // if you don't put this is, __dirname
-      __filename: false,  // and __filename return blank or /
-    },
     externals: [nodeExternals()], // Need this to avoid error when working with Express
     module: {
       rules: [
@@ -30,9 +25,7 @@ module.exports = (env, argv) => {
           // Transpiles ES6-8 into ES5
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
-          use: {
-            loader: "babel-loader"
-          }
+          loader: "babel-loader"
         }
       ]
     }

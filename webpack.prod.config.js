@@ -11,7 +11,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'build'),
-    publicPath: '/',
+    publicPath: '/calendar',
     filename: '[name].js'
   },
   optimization: {

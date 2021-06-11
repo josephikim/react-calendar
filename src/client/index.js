@@ -27,13 +27,10 @@ const initialState = {
   }
 }
 
-const store = createStore(
-  appReducer,
-  initialState,
-  composeWithDevTools(
-    applyMiddleware(...middleware)
-  )
-);
+const composeEnhancers = composeWithDevTools({});
+const store = createStore(appReducer, initialState, composeEnhancers(
+  applyMiddleware(...middleware)
+));
 
 ReactDOM.render(
   <Provider store={store}>

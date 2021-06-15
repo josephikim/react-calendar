@@ -42,16 +42,17 @@ class CalendarPage extends Component {
   }
 
   onSelectEvent = (event) => {
-    if (Object.keys(this.props.selectedEvent).length === 0 || this.props.selectedEvent === undefined) {
+    const noneSelected = Object.keys(this.props.selectedEvent).length === 0
+    if(noneSelected) {
       this.props.onSelectEvent(event);
-    } else {
+    } else { // check for same dates only, not times
+      const eventStartDate = new Date(event.startDate.toDateString());
+      const eventEndDate = new Date(event.endDate.toDateString());
       const selectedEventStartDate = new Date(this.props.selectedEvent.startDate.toDateString());
-      const selectedEventEndDate = new Date(this.props.selectedEvent.endDate.toDateString());
-      
+      const selectedEventEndDate = new Date(this.props.selectedEvent.endDate.toDateString());   
       const sameEventSelected =
-        event.startDate.valueOf() === selectedEventStartDate.valueOf() && 
-        event.endDate.valueOf() === selectedEventEndDate.valueOf();
-
+        eventStartDate.valueOf() === selectedEventStartDate.valueOf() && 
+        eventEndDate.valueOf() === selectedEventEndDate.valueOf();
       if (!sameEventSelected) this.props.onSelectEvent(event);
     }
   }
@@ -72,7 +73,6 @@ class CalendarPage extends Component {
               onSelectSlot={event => this.onSelectSlot(event)}
               startAccessor={event => event.startDate}
               endAccessor={event => event.endDate}
-            // eventPropGetter={this.eventStyleGetter}
             />
           </Col>
           <Col xs={12} md={4} lg={4}>

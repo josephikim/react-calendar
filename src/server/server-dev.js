@@ -8,9 +8,11 @@ import db from './db/connection';
 import apiRouter from './api';
 import config from '../../webpack.dev.config.js';
 
-const app = express();
 const BUILD_DIR = __dirname;
 const HTML_FILE = path.join(BUILD_DIR, 'index.html');
+const PORT = process.env.PORT || 8080
+
+const app = express();
 
 // webpack dev middleware
 const compiler = webpack(config);
@@ -34,8 +36,6 @@ app.use("/api", apiRouter);
 app.get('/', function (req,res) {
   res.sendFile(HTML_FILE);
 });
-
-const PORT = process.env.PORT || 8080
 
 app.listen(PORT, () => {
   console.log(`App listening to ${PORT}....`)

@@ -1,11 +1,16 @@
-const path = require('path')
-const webpack = require('webpack')
-const nodeExternals = require('webpack-node-externals')
+const path = require('path');
+const webpack = require('webpack');
+const nodeExternals = require('webpack-node-externals');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
   const SERVER_PATH = (argv.mode === 'production') ?
     './src/server/server-prod.js' :
     './src/server/server-dev.js'
+
+  const ENV_PATH = (argv.mode === 'production') ?
+    '.env.production' :
+    '.env.development'
   
   return ({
     entry: {
@@ -28,6 +33,11 @@ module.exports = (env, argv) => {
           loader: "babel-loader"
         }
       ]
-    }
+    },
+    plugins: [
+      new Dotenv({
+        path: ENV_PATH,
+      })
+    ],
   })
 }

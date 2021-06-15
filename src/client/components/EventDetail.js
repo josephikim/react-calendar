@@ -5,7 +5,7 @@ import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
 
 import Error from './Error';
-import { createEvent, deleteEvent } from '../actions/calendarActions';
+import { createEvent, updateEvent, deleteEvent } from '../actions/calendarActions';
 
 import '../styles/EventDetail.css';
 import 'react-day-picker/lib/style.css';
@@ -18,6 +18,12 @@ class EventDetail extends Component {
       desc: '',
       startDate: this.props.selectedSlot.start,
       endDate: this.props.selectedSlot.end,
+      formData: {
+        title: '',
+        desc: '',
+        startDate: this.props.selectedSlot.start,
+        endDate: this.props.selectedSlot.end,
+      },
       error: null
     }
   }
@@ -31,7 +37,13 @@ class EventDetail extends Component {
         title: '',
         desc: '',
         startDate: this.props.selectedSlot.start,
-        endDate: this.props.selectedSlot.end
+        endDate: this.props.selectedSlot.end,
+        formData: {
+          title: '',
+          desc: '',
+          startDate: this.props.selectedSlot.start,
+          endDate: this.props.selectedSlot.end
+        }
       });
     }
     // Update state based on props.selectedEvent
@@ -42,14 +54,25 @@ class EventDetail extends Component {
         title: this.props.selectedEvent.title,
         desc: this.props.selectedEvent.desc,
         startDate: this.props.selectedEvent.startDate,
-        endDate: this.props.selectedEvent.endDate
+        endDate: this.props.selectedEvent.endDate,
+        formData: {
+          title: this.props.selectedEvent.title,
+          desc: this.props.selectedEvent.desc,
+          startDate: this.props.selectedEvent.startDate,
+          endDate: this.props.selectedEvent.endDate
+        }
       });
     }
   }
 
   handleChange = event => {
     const { target: { name, value } } = event;
-    this.setState({ [name]: value });
+    this.setState({ 
+      formData: { 
+        ...this.state.formData,
+        [name]: value 
+      }
+    });
   }
 
   handleStartDayChange = day => {
@@ -60,7 +83,12 @@ class EventDetail extends Component {
     if(day > this.state.endDate){
       newState.endDate = day;
     }
-    this.setState(newState);
+    this.setState({ 
+      formData: {
+        ...this.state.formData,
+        ...newState
+      }
+    });
   }
 
   handleEndDayChange = day => {
@@ -71,19 +99,47 @@ class EventDetail extends Component {
     if(day < this.state.startDate){
       newState.startDate = day;
     }
-    this.setState(newState);
+    this.setState({ 
+      formData: {
+        ...this.state.formData,
+        ...newState
+      }
+    });
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const formData = {
-      title: this.state.title,
-      desc: this.state.desc,
-      startDate: this.state.startDate,
-      endDate: this.state.endDate     
+    const data = {
+      title: this.state.formData.title,
+      desc: this.state.formData.desc,
+      startDate: this.state.formData.startDate,
+      endDate: this.state.formData.endDate     
     }
     try {
-      this.props.createEvent(formData);
+      this.props.createEvent(data);
+    } catch (err) {
+      this.setState({error: err.response.data})
+    }
+  }
+
+  handleSave = (event) => {
+    event.preventDefault();
+    const data = {
+      _id: this.props.selectedEvent._id,
+      title: this.state.formData.title,
+      desc: this.state.formData.desc,
+      startDate: this.state.formData.startDate,
+      endDate: this.state.formData.endDate     
+    }
+    const titleChanged = data.title !== this.state.title;
+    const descChanged = data.desc !== this.state.desc;
+    const startDateChanged = data.startDate !== this.state.startDate;
+    const endDateChanged = data.endDate !== this.state.endDate;
+    if (!titleChanged && !descChanged && !startDateChanged && !endDateChanged) {
+      console.log('please make changes before saving')
+    }
+    try {
+      this.props.updateEvent(data);
     } catch (err) {
       this.setState({error: err.response.data})
     }
@@ -121,14 +177,13 @@ class EventDetail extends Component {
             target='_blank'
             noValidate
           >
-            <div> HMR TEST 2</div>
             <label htmlFor='title'>Event Title (required)</label>
             <textarea
               name='title'
               className={`input ${titleFail ? "input--fail" : null} `}
               rows='1'
               onChange={this.handleChange}
-              value={this.state.title}
+              value={this.state.formData.title}
             >
               enter title
             </textarea>
@@ -138,7 +193,7 @@ class EventDetail extends Component {
               name='desc'
               rows='3'
               onChange={this.handleChange}
-              value={this.state.desc}
+              value={this.state.formData.desc}
             >
               enter description
             </textarea>
@@ -148,7 +203,7 @@ class EventDetail extends Component {
               className={`input ${startDateFail ? "input--fail" : null} `}
               formatDate={formatDate}
               parseDate={parseDate}
-              value={`${formatDate(this.state.startDate)}`}
+              value={`${formatDate(this.state.formData.startDate)}`}
               onDayChange={this.handleStartDayChange}
             />
 
@@ -157,7 +212,7 @@ class EventDetail extends Component {
               className={`input ${endDateFail ? "input--fail" : null} `}
               formatDate={formatDate}
               parseDate={parseDate}
-              value={`${formatDate(this.state.endDate)}`}
+              value={`${formatDate(this.state.formData.endDate)}`}
               onDayChange={this.handleEndDayChange}
             />
 
@@ -168,6 +223,14 @@ class EventDetail extends Component {
                 name='add-event-btn'
                 id='add-event-btn'
                 className='button'
+              />
+              <input
+                type='button'
+                value='Save Changes'
+                name='save-changes-btn'
+                id='save-changes-btn'
+                className='button'
+                onClick={this.handleSave}
               />
               <input
                 type='button'
@@ -188,13 +251,13 @@ class EventDetail extends Component {
 const mapStateToProps = (state) => {
   return {
     selectedSlot: state.calendar.selectedSlot,
-    selectedEvent: state.calendar.selectedEvent,
-    newEvent: state.calendar.newEvent
+    selectedEvent: state.calendar.selectedEvent
   };
 };
 
 const mapActionsToProps = {
   createEvent,
+  updateEvent,
   deleteEvent
 }
 

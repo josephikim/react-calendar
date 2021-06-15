@@ -1,4 +1,4 @@
-const dotenv = require('dotenv').config({ path: '.env.production' })
+const dotenv = require('dotenv').config({ path: '.env.development' })
 const faker = require('faker');
 const MongoClient = require('mongodb').MongoClient;
 
@@ -22,7 +22,7 @@ async function seedDB() {
     collection.drop();
     // make a bunch of calendar events
     let events = [];
-    for (let i = 0; i < 99; i++) {
+    for (let i = 0; i < 50; i++) {
       const futureDate = faker.date.future();
       const startDate = new Date(futureDate)
       const endDate = new Date(futureDate)
@@ -34,9 +34,10 @@ async function seedDB() {
       }
       events.push(newEvent);
     }
-    const loadedEvents = await collection.insertMany(events);
+    collection.insertMany(events, () => {
+      client.close();
+    });
     console.log("Database seeded!");
-    client.close();
   } catch (err) {
     console.log(err.stack);
   }

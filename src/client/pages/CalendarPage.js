@@ -72,6 +72,7 @@ class CalendarPage extends Component {
                 defaultDate={new Date()}
                 onSelectEvent={event => this.onSelectEvent(event)}
                 onSelectSlot={event => this.onSelectSlot(event)}
+                selected={this.props.selectedEvent}
                 startAccessor={event => event.startDate}
                 endAccessor={event => event.endDate}
               />

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
@@ -17,7 +17,7 @@ class CalendarPage extends Component {
     this.state = {
     }
   }
-  
+
   componentDidMount = () => {
     this.initData()
   }
@@ -33,8 +33,8 @@ class CalendarPage extends Component {
       const selectedSlotStartDate = new Date(this.props.selectedSlot.start.toDateString());
       const selectedSlotEndDate = new Date(this.props.selectedSlot.end.toDateString());
 
-      const sameSlotSelected = 
-        event.start.valueOf() === selectedSlotStartDate.valueOf() && 
+      const sameSlotSelected =
+        event.start.valueOf() === selectedSlotStartDate.valueOf() &&
         event.end.valueOf() === selectedSlotEndDate.valueOf();
 
       if (!sameSlotSelected) this.props.onSelectSlot(event);
@@ -43,42 +43,44 @@ class CalendarPage extends Component {
 
   onSelectEvent = (event) => {
     const noneSelected = Object.keys(this.props.selectedEvent).length === 0
-    if(noneSelected) {
+    if (noneSelected) {
       this.props.onSelectEvent(event);
     } else { // check for same dates only, not times
       const eventStartDate = new Date(event.startDate.toDateString());
       const eventEndDate = new Date(event.endDate.toDateString());
       const selectedEventStartDate = new Date(this.props.selectedEvent.startDate.toDateString());
-      const selectedEventEndDate = new Date(this.props.selectedEvent.endDate.toDateString());   
+      const selectedEventEndDate = new Date(this.props.selectedEvent.endDate.toDateString());
       const sameEventSelected =
-        eventStartDate.valueOf() === selectedEventStartDate.valueOf() && 
+        eventStartDate.valueOf() === selectedEventStartDate.valueOf() &&
         eventEndDate.valueOf() === selectedEventEndDate.valueOf();
       if (!sameEventSelected) this.props.onSelectEvent(event);
     }
   }
-  
+
   render() {
     return (
       <div id="calendar">
-        <Row>
-          <Col xs={12} md={8} lg={8}>
-            <Calendar
-              selectable
-              localizer={localizer}
-              events={this.props.events}
-              defaultView="month"
-              scrollToTime={new Date(1970, 1, 1, 6)}
-              defaultDate={new Date()}
-              onSelectEvent={event => this.onSelectEvent(event)}
-              onSelectSlot={event => this.onSelectSlot(event)}
-              startAccessor={event => event.startDate}
-              endAccessor={event => event.endDate}
-            />
-          </Col>
-          <Col xs={12} md={4} lg={4}>
-            <EventDetail/>
-          </Col>
-        </Row>
+        <Container>
+          <Row>
+            <Col xs={12} md={8} lg={8}>
+              <Calendar
+                selectable
+                localizer={localizer}
+                events={this.props.events}
+                defaultView="month"
+                scrollToTime={new Date(1970, 1, 1, 6)}
+                defaultDate={new Date()}
+                onSelectEvent={event => this.onSelectEvent(event)}
+                onSelectSlot={event => this.onSelectSlot(event)}
+                startAccessor={event => event.startDate}
+                endAccessor={event => event.endDate}
+              />
+            </Col>
+            <Col xs={12} md={4} lg={4}>
+              <EventDetail />
+            </Col>
+          </Row>
+        </Container>
       </div>
     )
   }

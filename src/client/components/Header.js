@@ -4,7 +4,7 @@ import '../styles/Header.css';
 
 const Header = () => {
   return (
-    <>
+    <div className='fixed-header'>
       <Navbar collapseOnSelect expands='sm' bg='primary' variant='dark'>
         <Container>
           <Navbar.Brand href='/'>React Calendar App</Navbar.Brand>
@@ -17,7 +17,7 @@ const Header = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar >
-    </>
+    </div>
   )
 };
 

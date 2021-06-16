@@ -5,6 +5,7 @@ import CalendarPage from './pages/CalendarPage'
 import LoginPage from './pages/LoginPage'
 import AboutPage from './pages/AboutPage'
 import Header from './components/Header';
+import Footer from './components/Footer';
 
 class App extends Component {
   constructor(props) {
@@ -31,8 +32,8 @@ class App extends Component {
             )} />
           </Switch>
         </BrowserRouter>
+        <Footer />
       </div>
-
     )
   }
 }

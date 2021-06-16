@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
@@ -27,10 +27,10 @@ class EventDetail extends Component {
       error: null
     }
   }
-  
+
   componentDidUpdate = (prevProps) => {
     // Update state based on props.selectedSlot
-    if(this.props.selectedSlot &&
+    if (this.props.selectedSlot &&
       Object.keys(this.props.selectedSlot).length > 0 &&
       prevProps.selectedSlot !== this.props.selectedSlot) {
       this.setState({
@@ -47,8 +47,8 @@ class EventDetail extends Component {
       });
     }
     // Update state based on props.selectedEvent
-    if(this.props.selectedEvent && 
-      Object.keys(this.props.selectedEvent).length > 0 && 
+    if (this.props.selectedEvent &&
+      Object.keys(this.props.selectedEvent).length > 0 &&
       prevProps.selectedEvent !== this.props.selectedEvent) {
       this.setState({
         title: this.props.selectedEvent.title,
@@ -67,10 +67,10 @@ class EventDetail extends Component {
 
   handleChange = event => {
     const { target: { name, value } } = event;
-    this.setState({ 
-      formData: { 
+    this.setState({
+      formData: {
         ...this.state.formData,
-        [name]: value 
+        [name]: value
       }
     });
   }
@@ -80,10 +80,10 @@ class EventDetail extends Component {
       startDate: day
     }
     // only update endDate when a later date is selected
-    if(day > this.state.endDate){
+    if (day > this.state.endDate) {
       newState.endDate = day;
     }
-    this.setState({ 
+    this.setState({
       formData: {
         ...this.state.formData,
         ...newState
@@ -96,10 +96,10 @@ class EventDetail extends Component {
       endDate: day
     }
     // only update startDate when an earlier date is selected
-    if(day < this.state.startDate){
+    if (day < this.state.startDate) {
       newState.startDate = day;
     }
-    this.setState({ 
+    this.setState({
       formData: {
         ...this.state.formData,
         ...newState
@@ -113,12 +113,12 @@ class EventDetail extends Component {
       title: this.state.formData.title,
       desc: this.state.formData.desc,
       startDate: this.state.formData.startDate,
-      endDate: this.state.formData.endDate     
+      endDate: this.state.formData.endDate
     }
     try {
       this.props.createEvent(data);
     } catch (err) {
-      this.setState({error: err.response.data})
+      this.setState({ error: err.response.data })
     }
   }
 
@@ -129,7 +129,7 @@ class EventDetail extends Component {
       title: this.state.formData.title,
       desc: this.state.formData.desc,
       startDate: this.state.formData.startDate,
-      endDate: this.state.formData.endDate     
+      endDate: this.state.formData.endDate
     }
     const titleChanged = data.title !== this.state.title;
     const descChanged = data.desc !== this.state.desc;
@@ -141,19 +141,19 @@ class EventDetail extends Component {
     try {
       this.props.updateEvent(data);
     } catch (err) {
-      this.setState({error: err.response.data})
+      this.setState({ error: err.response.data })
     }
   }
 
   handleDelete = (event) => {
-    if(!this.props.selectedEvent) return;
+    if (!this.props.selectedEvent) return;
 
     event.preventDefault();
     const eventId = this.props.selectedEvent._id;
     try {
       this.props.deleteEvent(eventId);
     } catch (err) {
-      this.setState({error: err.response.data})
+      this.setState({ error: err.response.data })
     }
   }
 
@@ -165,9 +165,9 @@ class EventDetail extends Component {
     const endDateFail = invalidFields.includes("endDate");
     return (
       <div id="event-detail">
-        <Row>
+        <Container>
           <div className="notif">
-            {this.state.error && <Error error={this.state.error.messages}/> }
+            {this.state.error && <Error error={this.state.error.messages} />}
           </div>
           <form
             id='event-detail-form'
@@ -242,7 +242,7 @@ class EventDetail extends Component {
               />
             </div>
           </form>
-        </Row>
+        </Container>
       </div>
     )
   }

@@ -8,7 +8,7 @@ const Footer = () => {
       <Navbar expands='sm' bg='primary' variant='dark'>
         <Container className='justify-content-center'>
           <Navbar.Text>
-            View in <a href='https://github.com/josephikim/react-calendar' target='_blank'>Github</a>
+            View on <a href='https://github.com/josephikim/react-calendar' target='_blank'>Github</a>
           </Navbar.Text>
         </Container>
       </Navbar>

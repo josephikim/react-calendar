@@ -14,10 +14,6 @@ class EventDetail extends Component {
   constructor(...args) {
     super(...args)
     this.state = {
-      title: '',
-      desc: '',
-      startDate: this.props.selectedSlot.start,
-      endDate: this.props.selectedSlot.end,
       formData: {
         title: '',
         desc: '',
@@ -34,10 +30,6 @@ class EventDetail extends Component {
       Object.keys(this.props.selectedSlot).length > 0 &&
       prevProps.selectedSlot !== this.props.selectedSlot) {
       this.setState({
-        title: '',
-        desc: '',
-        startDate: this.props.selectedSlot.start,
-        endDate: this.props.selectedSlot.end,
         formData: {
           title: '',
           desc: '',
@@ -51,10 +43,6 @@ class EventDetail extends Component {
       Object.keys(this.props.selectedEvent).length > 0 &&
       prevProps.selectedEvent !== this.props.selectedEvent) {
       this.setState({
-        title: this.props.selectedEvent.title,
-        desc: this.props.selectedEvent.desc,
-        startDate: this.props.selectedEvent.startDate,
-        endDate: this.props.selectedEvent.endDate,
         formData: {
           title: this.props.selectedEvent.title,
           desc: this.props.selectedEvent.desc,
@@ -80,7 +68,7 @@ class EventDetail extends Component {
       startDate: day
     }
     // only update endDate when a later date is selected
-    if (day > this.state.endDate) {
+    if (day > this.state.formData.endDate) {
       newState.endDate = day;
     }
     this.setState({
@@ -96,7 +84,7 @@ class EventDetail extends Component {
       endDate: day
     }
     // only update startDate when an earlier date is selected
-    if (day < this.state.startDate) {
+    if (day < this.state.formData.startDate) {
       newState.startDate = day;
     }
     this.setState({
@@ -131,10 +119,11 @@ class EventDetail extends Component {
       startDate: this.state.formData.startDate,
       endDate: this.state.formData.endDate
     }
-    const titleChanged = data.title !== this.state.title;
-    const descChanged = data.desc !== this.state.desc;
-    const startDateChanged = data.startDate !== this.state.startDate;
-    const endDateChanged = data.endDate !== this.state.endDate;
+    const titleChanged = data.title !== this.props.selectedEvent.title;
+    const descChanged = data.desc !== this.props.selectedEvent.desc;
+    const startDateChanged = data.startDate !== this.props.selectedEvent.startDate;
+    const endDateChanged = data.endDate !== this.props.selectedEvent.endDate;
+
     if (!titleChanged && !descChanged && !startDateChanged && !endDateChanged) {
       console.log('please make changes before saving')
     }
@@ -146,9 +135,8 @@ class EventDetail extends Component {
   }
 
   handleDelete = (event) => {
-    if (!this.props.selectedEvent) return;
-
     event.preventDefault();
+    if (!this.props.selectedEvent) return;
     const eventId = this.props.selectedEvent._id;
     try {
       this.props.deleteEvent(eventId);

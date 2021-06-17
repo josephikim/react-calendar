@@ -38,7 +38,9 @@ class EventDetail extends Component {
           desc: '',
           startDate: this.props.selectedSlot.start,
           endDate: this.props.selectedSlot.end
-        }
+        },
+        validateTitleOnChange: false,
+        titleError: '',
       });
     }
     // Update state based on props.selectedEvent
@@ -52,7 +54,9 @@ class EventDetail extends Component {
           desc: this.props.selectedEvent.desc,
           startDate: this.props.selectedEvent.startDate,
           endDate: this.props.selectedEvent.endDate
-        }
+        },
+        validateTitleOnChange: false,
+        titleError: '',
       });
     }
   }
@@ -156,6 +160,8 @@ class EventDetail extends Component {
 
   handleSave = (event) => {
     event.preventDefault();
+    if (this.state.titleError) return;
+
     const data = {
       _id: this.props.selectedEvent._id,
       title: this.state.formData.title,
@@ -167,14 +173,21 @@ class EventDetail extends Component {
     const descChanged = data.desc !== this.props.selectedEvent.desc;
     const startDateChanged = data.startDate !== this.props.selectedEvent.startDate;
     const endDateChanged = data.endDate !== this.props.selectedEvent.endDate;
-
-    if (!titleChanged && !descChanged && !startDateChanged && !endDateChanged) {
-      alert('please make changes before saving')
-    }
-    try {
-      this.props.updateEvent(data);
-    } catch (err) {
-      this.setState({ error: err.response.data })
+    const formValuesChanged = titleChanged || descChanged || startDateChanged || endDateChanged;
+    
+    if (formValuesChanged) {
+      try {
+        const newState = {
+          ...this.state,
+          validateTitleOnChange: false,
+          titleError: ''
+        }
+        this.props.updateEvent(data).then(this.setState(newState));
+      } catch (err) {
+        this.setState({ error: err.response.data })
+      }
+    } else {
+      alert('Please make changes before saving')
     }
   }
 
@@ -213,7 +226,7 @@ class EventDetail extends Component {
             >
               enter title
             </textarea>
-            <div class="text-danger">
+            <div className="text-danger">
               <small>{this.state.titleError}</small>
             </div>
 
@@ -262,6 +275,7 @@ class EventDetail extends Component {
                 id='save-changes-btn'
                 className='button'
                 onClick={this.handleSave}
+                
               />
               <input
                 type='button'

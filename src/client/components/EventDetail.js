@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
 
-import Error from './Error';
 import { createEvent, updateEvent, deleteEvent } from '../actions/calendarActions';
+import { validateFields } from '../validation.js';
 
 import '../styles/EventDetail.css';
 import 'react-day-picker/lib/style.css';
@@ -20,7 +20,9 @@ class EventDetail extends Component {
         startDate: this.props.selectedSlot.start,
         endDate: this.props.selectedSlot.end,
       },
-      error: null
+      validateTitleOnChange: false,
+      titleError: '',
+      submitCalled: false
     }
   }
 
@@ -30,6 +32,7 @@ class EventDetail extends Component {
       Object.keys(this.props.selectedSlot).length > 0 &&
       prevProps.selectedSlot !== this.props.selectedSlot) {
       this.setState({
+        ...this.state,
         formData: {
           title: '',
           desc: '',
@@ -43,6 +46,7 @@ class EventDetail extends Component {
       Object.keys(this.props.selectedEvent).length > 0 &&
       prevProps.selectedEvent !== this.props.selectedEvent) {
       this.setState({
+        ...this.state,
         formData: {
           title: this.props.selectedEvent.title,
           desc: this.props.selectedEvent.desc,
@@ -53,14 +57,39 @@ class EventDetail extends Component {
     }
   }
 
+  handleBlur = event => {
+    const { target: { name, value } } = event;
+    if (
+      this.state.validateTitleOnChange === false &&
+      this.state.submitCalled === false
+    ) {
+      const newState = {
+        ...this.state,
+        formData: {
+          ...this.state.formData,
+          [name]: value
+        },
+        validateTitleOnChange: true,
+        titleError: validateFields.validateTitle(value)
+      }
+      this.setState(newState);
+    }
+    return;
+  }
+
   handleChange = event => {
     const { target: { name, value } } = event;
-    this.setState({
+    const newState = {
+      ...this.state,
       formData: {
         ...this.state.formData,
         [name]: value
       }
-    });
+    }
+    if (name === 'title') {
+      newState.titleError = this.state.validateTitleOnChange ? validateFields.validateTitle(value) : ''
+    }
+    this.setState(newState);
   }
 
   handleStartDayChange = day => {
@@ -103,10 +132,25 @@ class EventDetail extends Component {
       startDate: this.state.formData.startDate,
       endDate: this.state.formData.endDate
     }
-    try {
-      this.props.createEvent(data);
-    } catch (err) {
-      this.setState({ error: err.response.data })
+    const titleError = validateFields.validateTitle(data.title);
+    if (!titleError) {
+      try {
+        const newState = {
+          ...this.state,
+          validateTitleOnChange: false,
+          titleError: '',
+          submitCalled: false
+        }
+        this.props.createEvent(data).then(this.setState(newState));
+      } catch (err) {
+        this.setState({ error: err.response.data })
+      }
+    } else {
+      const newState = {
+        validateTitleOnChange: true,
+        titleError
+      }
+      this.setState(newState);
     }
   }
 
@@ -125,7 +169,7 @@ class EventDetail extends Component {
     const endDateChanged = data.endDate !== this.props.selectedEvent.endDate;
 
     if (!titleChanged && !descChanged && !startDateChanged && !endDateChanged) {
-      console.log('please make changes before saving')
+      alert('please make changes before saving')
     }
     try {
       this.props.updateEvent(data);
@@ -146,17 +190,10 @@ class EventDetail extends Component {
   }
 
   render() {
-    let invalidFields;
-    this.state.error ? invalidFields = this.state.error.fields : invalidFields = [];
-    const titleFail = invalidFields.includes("titles");
-    const startDateFail = invalidFields.includes("startDate");
-    const endDateFail = invalidFields.includes("endDate");
+    const titleFail = !!this.state.titleError;
     return (
       <div id="event-detail">
         <Container>
-          <div className="notif">
-            {this.state.error && <Error error={this.state.error.messages} />}
-          </div>
           <form
             id='event-detail-form'
             name='event-detail-form'
@@ -171,14 +208,19 @@ class EventDetail extends Component {
               className={`input ${titleFail ? "input--fail" : null} `}
               rows='1'
               onChange={this.handleChange}
+              onBlur={this.handleBlur}
               value={this.state.formData.title}
             >
               enter title
             </textarea>
+            <div class="text-danger">
+              <small>{this.state.titleError}</small>
+            </div>
 
             <label htmlFor='desc'>Event Description</label>
             <textarea
               name='desc'
+              className='input'
               rows='3'
               onChange={this.handleChange}
               value={this.state.formData.desc}
@@ -188,7 +230,7 @@ class EventDetail extends Component {
 
             <label htmlFor='startDate'>Event Start</label>
             <DayPickerInput
-              className={`input ${startDateFail ? "input--fail" : null} `}
+              className='day-picker-input'
               formatDate={formatDate}
               parseDate={parseDate}
               value={`${formatDate(this.state.formData.startDate)}`}
@@ -197,7 +239,7 @@ class EventDetail extends Component {
 
             <label htmlFor='endDate'>Event End</label>
             <DayPickerInput
-              className={`input ${endDateFail ? "input--fail" : null} `}
+              className='day-picker-input'
               formatDate={formatDate}
               parseDate={parseDate}
               value={`${formatDate(this.state.formData.endDate)}`}
@@ -211,6 +253,7 @@ class EventDetail extends Component {
                 name='add-event-btn'
                 id='add-event-btn'
                 className='button'
+                onMouseDown={() => this.setState({ submitCalled: true })}
               />
               <input
                 type='button'

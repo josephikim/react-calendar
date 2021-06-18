@@ -45,15 +45,9 @@ class CalendarPage extends Component {
     const noneSelected = Object.keys(this.props.selectedEvent).length === 0
     if (noneSelected) {
       this.props.onSelectEvent(event);
-    } else { // check for same dates only, not times
-      const eventStartDate = new Date(event.startDate.toDateString());
-      const eventEndDate = new Date(event.endDate.toDateString());
-      const selectedEventStartDate = new Date(this.props.selectedEvent.startDate.toDateString());
-      const selectedEventEndDate = new Date(this.props.selectedEvent.endDate.toDateString());
-      const sameEventSelected =
-        eventStartDate.valueOf() === selectedEventStartDate.valueOf() &&
-        eventEndDate.valueOf() === selectedEventEndDate.valueOf();
-      if (!sameEventSelected) this.props.onSelectEvent(event);
+    } else { // check event IDs
+      const sameEventId = event._id === this.props.selectedEvent._id;
+      if (!sameEventId) this.props.onSelectEvent(event);
     }
   }
 

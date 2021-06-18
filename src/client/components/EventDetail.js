@@ -174,7 +174,7 @@ class EventDetail extends Component {
     const startDateChanged = data.startDate !== this.props.selectedEvent.startDate;
     const endDateChanged = data.endDate !== this.props.selectedEvent.endDate;
     const formValuesChanged = titleChanged || descChanged || startDateChanged || endDateChanged;
-    
+
     if (formValuesChanged) {
       try {
         const newState = {
@@ -204,6 +204,8 @@ class EventDetail extends Component {
 
   render() {
     const titleFail = !!this.state.titleError;
+    const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
+    const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
     return (
       <div id="event-detail">
         <Container>
@@ -260,31 +262,37 @@ class EventDetail extends Component {
             />
 
             <div className='submit'>
-              <input
-                type='submit'
-                value='Add Event'
-                name='add-event-btn'
-                id='add-event-btn'
-                className='button'
-                onMouseDown={() => this.setState({ submitCalled: true })}
-              />
-              <input
-                type='button'
-                value='Save Changes'
-                name='save-changes-btn'
-                id='save-changes-btn'
-                className='button'
-                onClick={this.handleSave}
-                
-              />
-              <input
-                type='button'
-                value='Delete Event'
-                name='delete-event-btn'
-                id='delete-event-btn'
-                className='button'
-                onClick={this.handleDelete}
-              />
+              {slotSelected &&
+                <input
+                  type='submit'
+                  value='Add Event'
+                  name='add-event-btn'
+                  id='add-event-btn'
+                  className='button'
+                  onMouseDown={() => this.setState({ submitCalled: true })}
+                />
+              }
+              {eventSelected &&
+                <input
+                  type='button'
+                  value='Save Changes'
+                  name='save-changes-btn'
+                  id='save-changes-btn'
+                  className='button'
+                  onClick={this.handleSave}
+
+                />
+              }
+              {eventSelected &&
+                <input
+                  type='button'
+                  value='Delete Event'
+                  name='delete-event-btn'
+                  id='delete-event-btn'
+                  className='button'
+                  onClick={this.handleDelete}
+                />
+              }
             </div>
           </form>
         </Container>

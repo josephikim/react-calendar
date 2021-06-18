@@ -59,6 +59,7 @@
     "express": "^4.17.1",
     "faker": "^5.5.3",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "mongoose": "^5.12.7",
     "passport": "^0.4.1",

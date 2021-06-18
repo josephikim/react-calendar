@@ -28,7 +28,10 @@ calendarRouter.post('/event', async (req, res) => {
 // POST request to delete event
 calendarRouter.post('/event/:id/delete', async (req, res) => {
   const eventId = req.params.id;
-  const deletedEvent = await Event.findOneAndDelete({ _id: eventId }, (err, doc) => {
+  const deletedEvent = await Event.findOneAndDelete({ _id: ObjectId(eventId)}, (err, doc) => {
+    if (err) {
+      return reject(err);
+    }
     return res.send({data: doc, msg: "Deleted Event"});
   });
 });

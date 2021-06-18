@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
+import _ from 'lodash';
 
 import { createEvent, updateEvent, deleteEvent } from '../actions/calendarActions';
 import { validateFields } from '../validation.js';
@@ -27,38 +28,44 @@ class EventDetail extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    // Update state based on props.selectedSlot
-    if (this.props.selectedSlot &&
-      Object.keys(this.props.selectedSlot).length > 0 &&
-      prevProps.selectedSlot !== this.props.selectedSlot) {
-      this.setState({
-        ...this.state,
-        formData: {
-          title: '',
-          desc: '',
-          startDate: this.props.selectedSlot.start,
-          endDate: this.props.selectedSlot.end
-        },
-        validateTitleOnChange: false,
-        titleError: '',
-      });
+    const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
+    const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
+    const noneSelected = !slotSelected && !eventSelected;
+    
+    const slotUnchanged = _.isEqual(this.props.selectedSlot, prevProps.selectedSlot)
+    const eventUnchanged = _.isEqual(this.props.selectedEvent, prevProps.selectedEvent)
+    
+    if (slotUnchanged && eventUnchanged) return;
+    
+    const newState = {
+      ...this.state,
+      validateTitleOnChange: false,
+      titleError: '',
     }
-    // Update state based on props.selectedEvent
-    if (this.props.selectedEvent &&
-      Object.keys(this.props.selectedEvent).length > 0 &&
-      prevProps.selectedEvent !== this.props.selectedEvent) {
-      this.setState({
-        ...this.state,
-        formData: {
-          title: this.props.selectedEvent.title,
-          desc: this.props.selectedEvent.desc,
-          startDate: this.props.selectedEvent.startDate,
-          endDate: this.props.selectedEvent.endDate
-        },
-        validateTitleOnChange: false,
-        titleError: '',
-      });
+
+    if (noneSelected) {
+      newState.formData = {
+        title: '',
+        desc: '',
+        startDate: new Date(),
+        endDate: new Date()
+      }
+    } else if (slotSelected) {
+      newState.formData = {
+        title: '',
+        desc: '',
+        startDate: this.props.selectedSlot.start,
+        endDate: this.props.selectedSlot.end
+      }
+    } else if (eventSelected) {
+      newState.formData = {
+        title: this.props.selectedEvent.title,
+        desc: this.props.selectedEvent.desc,
+        startDate: this.props.selectedEvent.startDate,
+        endDate: this.props.selectedEvent.endDate
+      }
     }
+    this.setState(newState);
   }
 
   handleBlur = event => {

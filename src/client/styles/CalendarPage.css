@@ -1,0 +1,24 @@
+#calendar .container, .container-sm, .container-md {
+  max-width: 800px;
+}
+
+/* react-big-calendar */
+.rbc-calendar {
+  min-height: 800px;
+  padding-top: 35px;
+}
+
+.rbc-calendar .rbc-toolbar {
+  font-size: 11px;
+  flex-wrap: nowrap;
+  margin-bottom: 18px;
+}
+
+.rbc-calendar .rbc-toolbar .rbc-toolbar-label {
+  color: dodgerblue;
+  font-size: 18px;
+}
+
+.rbc-calendar .rbc-toolbar button {
+  padding: .375rem .5rem;
+}

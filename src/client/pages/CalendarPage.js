@@ -7,6 +7,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import EventDetail from '../components/EventDetail';
 import { onSelectSlot, onSelectEvent, retrieveEvents } from '../actions/calendarActions';
 
+import '../styles/CalendarPage.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);

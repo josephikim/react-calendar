@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
@@ -26,7 +26,8 @@ class EventDetail extends Component {
       },
       validateTitleOnChange: false,
       titleError: '',
-      submitCalled: false
+      submitCalled: false,
+      timeFormat: 'h:mm a'
     }
   }
 
@@ -140,12 +141,12 @@ class EventDetail extends Component {
 
   handleStartTimeChange = (value) => {
     console.log('value', value)
-    console.log(value && value.format(format));
+    console.log(value && value.format(this.state.timeFormat));
   }
 
   handleEndTimeChange = (value) => {
     console.log('value', value)
-    console.log(value && value.format(format));
+    console.log(value && value.format(this.state.timeFormat));
   }
 
   handleSubmit = (event) => {
@@ -223,22 +224,21 @@ class EventDetail extends Component {
   }
 
   render() {
-    const format = 'h:mm a';
     const now = moment().hour(0).minute(0);
     const titleFail = !!this.state.titleError;
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
     return (
       <div id="event-detail">
-        <Container>
-          <form
-            id='event-detail-form'
-            name='event-detail-form'
-            className='validate'
-            onSubmit={this.handleSubmit}
-            target='_blank'
-            noValidate
-          >
+        <form
+          id='event-detail-form'
+          name='event-detail-form'
+          className='validate'
+          onSubmit={this.handleSubmit}
+          target='_blank'
+          noValidate
+        >
+          <Row>
             <label htmlFor='title'>Event Title (required)</label>
             <textarea
               name='title'
@@ -253,7 +253,8 @@ class EventDetail extends Component {
             <div className="text-danger">
               <small>{this.state.titleError}</small>
             </div>
-
+          </Row>
+          <Row>
             <label htmlFor='desc'>Event Description</label>
             <textarea
               name='desc'
@@ -264,47 +265,52 @@ class EventDetail extends Component {
             >
               enter description
             </textarea>
-
-            <label htmlFor='startDate'>Start Date</label>
-            <DayPickerInput
-              className='day-picker-input'
-              formatDate={formatDate}
-              parseDate={parseDate}
-              value={`${formatDate(this.state.formData.startDate)}`}
-              onDayChange={this.handleStartDayChange}
-            />
-
-            <label htmlFor='startTime'>Start Time</label>
-            <TimePicker
-              showSecond={false}
-              defaultValue={now}
-              className='time-picker-input'
-              onChange={this.handleStartTimeChange}
-              format={format}
-              use12Hours
-              inputReadOnly
-            />
-
-            <label htmlFor='endDate'>End Date</label>
-            <DayPickerInput
-              className='day-picker-input'
-              formatDate={formatDate}
-              parseDate={parseDate}
-              value={`${formatDate(this.state.formData.endDate)}`}
-              onDayChange={this.handleEndDayChange}
-            />
-
-            <label htmlFor='endTime'>End Time</label>
-            <TimePicker
-              showSecond={false}
-              defaultValue={now}
-              className='time-picker-input'
-              onChange={this.handleEndTimeChange}
-              format={format}
-              use12Hours
-              inputReadOnly
-            />
-
+          </Row>
+          <Row className='two-column'>
+            <Col>
+              <label htmlFor='startDate'>Start Date</label>
+              <DayPickerInput
+                formatDate={formatDate}
+                parseDate={parseDate}
+                value={`${formatDate(this.state.formData.startDate)}`}
+                onDayChange={this.handleStartDayChange}
+              />
+            </Col>
+            <Col>
+              <label htmlFor='startTime'>Start Time</label>
+              <TimePicker
+                showSecond={false}
+                defaultValue={now}
+                onChange={this.handleStartTimeChange}
+                format={this.state.timeFormat}
+                use12Hours
+                inputReadOnly
+              />
+            </Col>
+          </Row>
+          <Row className='two-column'>
+            <Col>
+              <label htmlFor='endDate'>End Date</label>
+              <DayPickerInput
+                formatDate={formatDate}
+                parseDate={parseDate}
+                value={`${formatDate(this.state.formData.endDate)}`}
+                onDayChange={this.handleEndDayChange}
+              />
+            </Col>
+            <Col>
+              <label htmlFor='endTime'>End Time</label>
+              <TimePicker
+                showSecond={false}
+                defaultValue={now}
+                onChange={this.handleEndTimeChange}
+                format={this.state.timeFormat}
+                use12Hours
+                inputReadOnly
+              />
+            </Col>
+          </Row>
+          <Row>
             <div className='submit'>
               {slotSelected &&
                 <Button
@@ -341,8 +347,8 @@ class EventDetail extends Component {
                 />
               }
             </div>
-          </form>
-        </Container>
+          </Row>
+        </form>
       </div>
     )
   }

@@ -30,3 +30,8 @@ textarea {
 .input--fail {
   border: 2px solid red;
 }
+
+.button {
+  max-width: 135px;
+  margin-right: 20px;
+}

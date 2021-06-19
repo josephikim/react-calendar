@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container } from 'react-bootstrap';
+import { Container, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
@@ -31,12 +31,12 @@ class EventDetail extends Component {
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
     const noneSelected = !slotSelected && !eventSelected;
-    
+
     const slotUnchanged = _.isEqual(this.props.selectedSlot, prevProps.selectedSlot)
     const eventUnchanged = _.isEqual(this.props.selectedEvent, prevProps.selectedEvent)
-    
+
     if (slotUnchanged && eventUnchanged) return;
-    
+
     const newState = {
       ...this.state,
       validateTitleOnChange: false,
@@ -270,33 +270,36 @@ class EventDetail extends Component {
 
             <div className='submit'>
               {slotSelected &&
-                <input
+                <Button
+                  as='input'
                   type='submit'
                   value='Add Event'
                   name='add-event-btn'
                   id='add-event-btn'
                   className='button'
+                  variant='primary'
                   onMouseDown={() => this.setState({ submitCalled: true })}
                 />
               }
               {eventSelected &&
-                <input
-                  type='button'
+                <Button
+                  as='input'
                   value='Save Changes'
                   name='save-changes-btn'
                   id='save-changes-btn'
                   className='button'
+                  variant='success'
                   onClick={this.handleSave}
-
                 />
               }
               {eventSelected &&
-                <input
-                  type='button'
+                <Button
+                  as='input'
                   value='Delete Event'
                   name='delete-event-btn'
                   id='delete-event-btn'
                   className='button'
+                  variant='danger'
                   onClick={this.handleDelete}
                 />
               }

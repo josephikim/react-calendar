@@ -64,6 +64,7 @@
     "mongoose": "^5.12.7",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
+    "rc-time-picker": "^3.7.3",
     "react-big-calendar": "^0.33.2",
     "react-bootstrap": "^1.5.2",
     "react-dates": "^21.8.0",

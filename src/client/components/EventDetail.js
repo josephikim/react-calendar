@@ -3,6 +3,8 @@ import { Container, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
+import TimePicker from 'rc-time-picker';
+import moment from 'moment';
 import _ from 'lodash';
 
 import { createEvent, updateEvent, deleteEvent } from '../actions/calendarActions';
@@ -10,6 +12,7 @@ import { validateFields } from '../validation.js';
 
 import '../styles/EventDetail.css';
 import 'react-day-picker/lib/style.css';
+import 'rc-time-picker/assets/index.css';
 
 class EventDetail extends Component {
   constructor(...args) {
@@ -119,7 +122,7 @@ class EventDetail extends Component {
     });
   }
 
-  handleEndDayChange = day => {
+  handleEndDayChange = (day) => {
     const newState = {
       endDate: day
     }
@@ -133,6 +136,16 @@ class EventDetail extends Component {
         ...newState
       }
     });
+  }
+
+  handleStartTimeChange = (value) => {
+    console.log('value', value)
+    console.log(value && value.format(format));
+  }
+
+  handleEndTimeChange = (value) => {
+    console.log('value', value)
+    console.log(value && value.format(format));
   }
 
   handleSubmit = (event) => {
@@ -210,6 +223,8 @@ class EventDetail extends Component {
   }
 
   render() {
+    const format = 'h:mm a';
+    const now = moment().hour(0).minute(0);
     const titleFail = !!this.state.titleError;
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
@@ -250,7 +265,7 @@ class EventDetail extends Component {
               enter description
             </textarea>
 
-            <label htmlFor='startDate'>Event Start</label>
+            <label htmlFor='startDate'>Start Date</label>
             <DayPickerInput
               className='day-picker-input'
               formatDate={formatDate}
@@ -259,13 +274,35 @@ class EventDetail extends Component {
               onDayChange={this.handleStartDayChange}
             />
 
-            <label htmlFor='endDate'>Event End</label>
+            <label htmlFor='startTime'>Start Time</label>
+            <TimePicker
+              showSecond={false}
+              defaultValue={now}
+              className='time-picker-input'
+              onChange={this.handleStartTimeChange}
+              format={format}
+              use12Hours
+              inputReadOnly
+            />
+
+            <label htmlFor='endDate'>End Date</label>
             <DayPickerInput
               className='day-picker-input'
               formatDate={formatDate}
               parseDate={parseDate}
               value={`${formatDate(this.state.formData.endDate)}`}
               onDayChange={this.handleEndDayChange}
+            />
+
+            <label htmlFor='endTime'>End Time</label>
+            <TimePicker
+              showSecond={false}
+              defaultValue={now}
+              className='time-picker-input'
+              onChange={this.handleEndTimeChange}
+              format={format}
+              use12Hours
+              inputReadOnly
             />
 
             <div className='submit'>

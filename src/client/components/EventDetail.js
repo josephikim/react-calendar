@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
@@ -23,11 +23,13 @@ class EventDetail extends Component {
         desc: '',
         startDate: this.props.selectedSlot.start,
         endDate: this.props.selectedSlot.end,
+        startTime: moment().hour(0).minute(0),
+        endTime: moment().hour(0).minute(0)
       },
       validateTitleOnChange: false,
       titleError: '',
       submitCalled: false,
-      timeFormat: 'h:mm a'
+      timeFormat: 'h:mm a',
     }
   }
 
@@ -111,7 +113,7 @@ class EventDetail extends Component {
     const newState = {
       startDate: day
     }
-    // only update endDate when a later date is selected
+    // only update end date when a later date is selected
     if (day > this.state.formData.endDate) {
       newState.endDate = day;
     }
@@ -127,7 +129,7 @@ class EventDetail extends Component {
     const newState = {
       endDate: day
     }
-    // only update startDate when an earlier date is selected
+    // only update start date when an earlier date is selected
     if (day < this.state.formData.startDate) {
       newState.startDate = day;
     }
@@ -140,13 +142,35 @@ class EventDetail extends Component {
   }
 
   handleStartTimeChange = (value) => {
-    console.log('value', value)
-    console.log(value && value.format(this.state.timeFormat));
+    const newState = {
+      startTime: value
+    }
+    // only update end time when a later time is selected
+    if (this.state.formData.endTime.isSameOrBefore(value)) {
+      newState.endTime = newState.startTime.clone().add(15, 'minutes');
+    }
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        ...newState
+      }
+    });
   }
 
   handleEndTimeChange = (value) => {
-    console.log('value', value)
-    console.log(value && value.format(this.state.timeFormat));
+    const newState = {
+      endTime: value
+    }
+    // only update start time when an earlier time is selected
+    if (this.state.formData.startTime.isSameOrAfter(value)) {
+      newState.startTime = newState.endTime.clone().subtract(15, 'minutes');
+    }
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        ...newState
+      }
+    });
   }
 
   handleSubmit = (event) => {
@@ -224,7 +248,6 @@ class EventDetail extends Component {
   }
 
   render() {
-    const now = moment().hour(0).minute(0);
     const titleFail = !!this.state.titleError;
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
@@ -280,9 +303,10 @@ class EventDetail extends Component {
               <label htmlFor='startTime'>Start Time</label>
               <TimePicker
                 showSecond={false}
-                defaultValue={now}
+                value={this.state.formData.startTime}
                 onChange={this.handleStartTimeChange}
                 format={this.state.timeFormat}
+                minuteStep={15}
                 use12Hours
                 inputReadOnly
               />
@@ -302,9 +326,10 @@ class EventDetail extends Component {
               <label htmlFor='endTime'>End Time</label>
               <TimePicker
                 showSecond={false}
-                defaultValue={now}
+                value={this.state.formData.endTime}
                 onChange={this.handleEndTimeChange}
                 format={this.state.timeFormat}
+                minuteStep={15}
                 use12Hours
                 inputReadOnly
               />

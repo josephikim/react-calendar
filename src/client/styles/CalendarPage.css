@@ -1,5 +1,6 @@
 #calendar .container, .container-sm, .container-md {
   max-width: 800px;
+  padding-bottom: 150px;
 }
 
 /* react-big-calendar */

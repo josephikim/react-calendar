@@ -35,16 +35,18 @@ textarea {
 }
 
 .submit {
-  margin-top: 24px;
+  margin-top: 18px;
 }
 
 .input--fail {
   border: 2px solid red;
 }
 
-.button {
-  max-width: 135px;
-  margin-right: 20px;
+.submit .btn {
+  display: block;
+  max-width: 120px;
+  margin-bottom: 20px;
+  font-size: .85rem;
 }
 
 .rc-time-picker-input {

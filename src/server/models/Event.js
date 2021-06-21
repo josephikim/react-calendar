@@ -8,11 +8,11 @@ const eventSchema = new mongoose.Schema ({
   desc: { 
     type: String 
   },
-  startDate: { 
+  start: { 
     type: Date, 
     required: [true, 'Enter a start date.'] 
   },
-  endDate: { 
+  end: { 
     type: Date, 
     required: [true, 'Enter an end date.'] 
   }

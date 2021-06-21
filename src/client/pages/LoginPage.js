@@ -22,7 +22,7 @@ class LoginPage extends Component {
     //         headers: { Authorization: `JWT ${accessString}` },
     //     })
     //     .then(res => {
-    //         // change startdate and enddate to date objects
+    //         // change event start and end to date objects
     //         res.data.forEach(function (arrayItem) {
     //             arrayItem.start = new Date(arrayItem.start)
     //             arrayItem.end = new Date(arrayItem.end)

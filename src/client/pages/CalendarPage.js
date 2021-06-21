@@ -31,12 +31,12 @@ class CalendarPage extends Component {
     if (Object.keys(this.props.selectedSlot).length === 0 || this.props.selectedSlot === undefined) {
       this.props.onSelectSlot(event);
     } else {
-      const selectedSlotStartDate = new Date(this.props.selectedSlot.start.toDateString());
-      const selectedSlotEndDate = new Date(this.props.selectedSlot.end.toDateString());
+      const selectedSlotStart = new Date(this.props.selectedSlot.start.toDateString());
+      const selectedSlotEnd = new Date(this.props.selectedSlot.end.toDateString());
 
       const sameSlotSelected =
-        event.start.valueOf() === selectedSlotStartDate.valueOf() &&
-        event.end.valueOf() === selectedSlotEndDate.valueOf();
+        event.start.valueOf() === selectedSlotStart.valueOf() &&
+        event.end.valueOf() === selectedSlotEnd.valueOf();
 
       if (!sameSlotSelected) this.props.onSelectSlot(event);
     }
@@ -68,8 +68,8 @@ class CalendarPage extends Component {
                 onSelectEvent={event => this.onSelectEvent(event)}
                 onSelectSlot={event => this.onSelectSlot(event)}
                 selected={this.props.selectedEvent}
-                startAccessor={event => event.startDate}
-                endAccessor={event => event.endDate}
+                startAccessor={event => event.start}
+                endAccessor={event => event.end}
               />
             </Col>
             <Col xs={12} md={4} lg={4}>

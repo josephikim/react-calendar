@@ -24,13 +24,15 @@ async function seedDB() {
     let events = [];
     for (let i = 0; i < 50; i++) {
       const futureDate = faker.date.future();
-      const startDate = new Date(futureDate)
-      const endDate = new Date(futureDate)
+      let start = new Date(futureDate)
+      let end = new Date(futureDate)
+      end = new Date(end.setHours(end.getHours() + 1));
+
       let newEvent = {
         title: faker.lorem.words(),
         desc: faker.lorem.text(),
-        startDate,
-        endDate
+        start,
+        end
       }
       events.push(newEvent);
     }

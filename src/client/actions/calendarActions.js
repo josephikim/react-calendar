@@ -44,8 +44,8 @@ export const retrieveEvents = () => async (dispatch) => {
           _id: element._id,
           title: element.title,
           desc: element.desc,
-          startDate: new Date(element.startDate),
-          endDate: new Date(element.endDate)
+          start: new Date(element.start),
+          end: new Date(element.end)
         }
         return event;
       })
@@ -65,8 +65,9 @@ export const createEvent = (data) => async (dispatch) => {
 
     return Promise.resolve(res.data).then(res => {
       // convert dates to type Date
-      res.data.startDate = new Date(res.data.startDate);
-      res.data.endDate = new Date(res.data.endDate);
+      res.data.start = new Date(res.data.start);
+      res.data.end = new Date(res.data.end);
+
       batch(() => {
         dispatch({
           type: 'CREATE_EVENT',
@@ -115,8 +116,8 @@ export const updateEvent = (event) => async (dispatch) => {
 
     return Promise.resolve(res.data).then(res => {
       // convert dates to type Date
-      res.data.startDate = new Date(res.data.startDate);
-      res.data.endDate = new Date(res.data.endDate);
+      res.data.start = new Date(res.data.start);
+      res.data.end = new Date(res.data.end);
 
       batch(() => {
         dispatch({

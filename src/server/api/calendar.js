@@ -6,7 +6,7 @@ const calendarRouter = express.Router();
 
 // GET request for all events
 calendarRouter.get("/event", async (req, res) => {
-  const events = await Event.find({}).sort({ startDate: -1 });
+  const events = await Event.find({}).sort({ start: -1 });
   return res.send({data: events});
 });
 
@@ -19,8 +19,8 @@ calendarRouter.post('/event', async (req, res) => {
       _id: createdEvent._id,
       title: createdEvent.title,
       desc: createdEvent.desc,
-      startDate: createdEvent.startDate,
-      endDate: createdEvent.endDate
+      start: createdEvent.start,
+      end: createdEvent.end
     }
   });
 });       
@@ -40,16 +40,16 @@ calendarRouter.post('/event/:id/delete', async (req, res) => {
 calendarRouter.post('/event/:id/update', async (req, res) => {
   const payload = req.body;
   payload._id = ObjectId(payload._id);
-  payload.startDate = new Date(payload.startDate)
-  payload.endDate = new Date(payload.endDate)
+  payload.start = new Date(payload.start)
+  payload.end = new Date(payload.end)
   const updatedEvent = await Event.findOneAndUpdate({"_id" : payload._id}, payload, {new: true}, (err, doc) => {
     return res.send({
       data: {
         _id: doc._id,
         title: doc.title,
         desc: doc.desc,
-        startDate: doc.startDate,
-        endDate: doc.endDate
+        start: doc.start,
+        end: doc.end
       },
       msg: "Updated Event"
     });

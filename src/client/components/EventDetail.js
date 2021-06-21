@@ -21,8 +21,8 @@ class EventDetail extends Component {
       formData: {
         title: '',
         desc: '',
-        startDate: this.props.selectedSlot.start,
-        endDate: this.props.selectedSlot.end,
+        startDate: new Date(),
+        endDate: new Date(),
         startTime: moment().hour(0).minute(0),
         endTime: moment().hour(0).minute(0)
       },
@@ -54,21 +54,31 @@ class EventDetail extends Component {
         title: '',
         desc: '',
         startDate: new Date(),
-        endDate: new Date()
+        endDate: new Date(),
+        startTime: moment().hour(0).minute(0),
+        endTime: moment().hour(0).minute(0)
       }
     } else if (slotSelected) {
       newState.formData = {
         title: '',
         desc: '',
         startDate: this.props.selectedSlot.start,
-        endDate: this.props.selectedSlot.end
+        endDate: this.props.selectedSlot.end,
+        startTime: moment().hour(0).minute(0),
+        endTime: moment().hour(0).minute(0)
       }
     } else if (eventSelected) {
+      const startDate = new Date(this.props.selectedEvent.start.toDateString());
+      const endDate = new Date(this.props.selectedEvent.end.toDateString());
+      const startTime = moment().hour(this.props.selectedEvent.start.getHours()).minute(this.props.selectedEvent.start.getMinutes());
+      const endTime = moment().hour(this.props.selectedEvent.end.getHours()).minute(this.props.selectedEvent.end.getMinutes());
       newState.formData = {
         title: this.props.selectedEvent.title,
         desc: this.props.selectedEvent.desc,
-        startDate: this.props.selectedEvent.startDate,
-        endDate: this.props.selectedEvent.endDate
+        startDate,
+        endDate,
+        startTime,
+        endTime
       }
     }
     this.setState(newState);
@@ -175,12 +185,16 @@ class EventDetail extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    const start = this.appendDateToTime(this.state.formData.startDate, this.state.formData.startTime)
+    const end = this.appendDateToTime(this.state.formData.endDate, this.state.formData.endTime)
+
     const data = {
       title: this.state.formData.title,
       desc: this.state.formData.desc,
-      startDate: this.state.formData.startDate,
-      endDate: this.state.formData.endDate
+      start,
+      end
     }
+
     const titleError = validateFields.validateTitle(data.title);
     if (!titleError) {
       try {
@@ -203,22 +217,36 @@ class EventDetail extends Component {
     }
   }
 
+  appendDateToTime = (date, time) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+    time.set('year', year);
+    time.set('month', month);
+    time.set('date', day);
+    const newDate = time.toDate();
+    return newDate;
+  }
+
   handleSave = (event) => {
     event.preventDefault();
     if (this.state.titleError) return;
+    const start = this.appendDateToTime(this.state.formData.startDate, this.state.formData.startTime)
+    const end = this.appendDateToTime(this.state.formData.endDate, this.state.formData.endTime)
 
     const data = {
       _id: this.props.selectedEvent._id,
       title: this.state.formData.title,
       desc: this.state.formData.desc,
-      startDate: this.state.formData.startDate,
-      endDate: this.state.formData.endDate
+      start,
+      end
     }
+
     const titleChanged = data.title !== this.props.selectedEvent.title;
     const descChanged = data.desc !== this.props.selectedEvent.desc;
-    const startDateChanged = data.startDate !== this.props.selectedEvent.startDate;
-    const endDateChanged = data.endDate !== this.props.selectedEvent.endDate;
-    const formValuesChanged = titleChanged || descChanged || startDateChanged || endDateChanged;
+    const startChanged = data.start !== this.props.selectedEvent.start;
+    const endChanged = data.end !== this.props.selectedEvent.end;
+    const formValuesChanged = titleChanged || descChanged || startChanged || endChanged;
 
     if (formValuesChanged) {
       try {

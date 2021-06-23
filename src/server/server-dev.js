@@ -18,10 +18,15 @@ const app = express();
 const compiler = webpack(config);
 
 app.use(webpackDevMiddleware(compiler, {
+  logLevel: 'warn',
   publicPath: config.output.publicPath
 }))
 
-app.use(webpackHotMiddleware(compiler))
+app.use(webpackHotMiddleware(compiler, {
+  log: console.log,
+  path: '/__webpack_hmr', 
+  heartbeat: 10 * 1000
+}))
 
 // support data from POST requests
 app.use(express.json())

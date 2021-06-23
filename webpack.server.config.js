@@ -4,14 +4,14 @@ const nodeExternals = require('webpack-node-externals');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
-  const SERVER_PATH = (argv.mode === 'production') ?
+  const isProduction = argv.mode === 'production'
+  const SERVER_PATH = isProduction ?
     './src/server/server-prod.js' :
     './src/server/server-dev.js'
-
-  const ENV_PATH = (argv.mode === 'production') ?
+  const ENV_PATH = isProduction ?
     '.env.production' :
     '.env.development'
-  
+
   return ({
     entry: {
       server: SERVER_PATH
@@ -23,7 +23,7 @@ module.exports = (env, argv) => {
     },
     mode: argv.mode,
     target: 'node',
-    externals: [nodeExternals()], // Need this to avoid error when working with Express
+    externals: [nodeExternals()],
     module: {
       rules: [
         {

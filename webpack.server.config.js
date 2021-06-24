@@ -37,8 +37,7 @@ module.exports = (env, argv) => {
     plugins: [
       new Dotenv({
         path: ENV_PATH,
-      }),
-      new webpack.HotModuleReplacementPlugin()
+      })
     ],
   })
 }

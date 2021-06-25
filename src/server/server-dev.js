@@ -38,7 +38,7 @@ app.use(express.static(BUILD_DIR));
 // Use API routes
 app.use("/api", apiRouter);
 
-app.get('/', function (req,res) {
+app.get('*', (req, res) => {
   res.sendFile(HTML_FILE);
 });
 

@@ -1,11 +1,12 @@
-import React, { Component } from 'react'
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
+import React, { Component } from 'react';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
-import CalendarPage from './pages/CalendarPage'
-import LoginPage from './pages/LoginPage'
-import AboutPage from './pages/AboutPage'
+import CalendarPage from './pages/CalendarPage';
+import LoginPage from './pages/LoginPage';
+import AboutPage from './pages/AboutPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import NoMatch from './components/NoMatch';
 
 class App extends Component {
   constructor(props) {
@@ -19,19 +20,23 @@ class App extends Component {
     return (
       <div className="App">
         <Header />
-        <BrowserRouter>
-          <Switch>
-            {/* <Route exact path="/profile/:userid" component={Profile} />
-       <Route component={NoMatch} /> */}
-            <Route path="/about" component={AboutPage} />
-            <Route path="/login" component={LoginPage} />
-            <Route path="/" render={() => (
-              this.state.loggedIn ?
-                <CalendarPage /> :
-                <Redirect to='/login' />
-            )} />
-          </Switch>
-        </BrowserRouter>
+        <Switch>
+          <Route exact path="/">
+            {this.state.loggedIn ?
+              <CalendarPage /> :
+              <Redirect to='/login' />
+            }
+          </Route>
+          <Route path="/about">
+            <AboutPage />
+          </Route>
+          <Route path="/login">
+            <LoginPage />
+          </Route>
+          <Route>
+            <NoMatch />
+          </Route>
+        </Switch>
         <Footer />
       </div>
     )

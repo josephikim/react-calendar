@@ -54,7 +54,7 @@ class CalendarPage extends Component {
 
   render() {
     return (
-      <div id="calendar">
+      <div id="calendar-page">
         <Container>
           <Row>
             <Col xs={12} md={8} lg={8}>

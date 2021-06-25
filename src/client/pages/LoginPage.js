@@ -13,8 +13,8 @@ class LoginPage extends Component {
     return (
       <div id="login-page">
         <Container>
-          <Row className="align-items-center">
-            <Col>
+          <Row>
+            <Col s={{ span: 8, offset: 2 }} md={{ span: 6, offset: 3 }}>
               <LoginForm />
             </Col>
           </Row>

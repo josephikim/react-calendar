@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { Form, Button } from 'react-bootstrap'
+
+import '../styles/LoginForm.css';
 class LoginForm extends Component {
   constructor(...args) {
     super(...args)
@@ -18,27 +20,24 @@ class LoginForm extends Component {
 
   render() {
     return (
-      <div id="login-form">
+      <div id='login-form'>
         <Form>
-          <Form.Group controlId="formEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" />
-            <Form.Text className="text-muted">
-              We&apos;ll never share your email with anyone else.
-            </Form.Text>
+          <Form.Group controlId='formUsername'>
+            <Form.Label>Username</Form.Label>
+            <Form.Control placeholder='Enter username' />
           </Form.Group>
 
-          <Form.Group controlId="formPassword">
+          <Form.Group controlId='formPassword'>
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" />
+            <Form.Control type='password' placeholder='Enter password' />
           </Form.Group>
 
-          <Form.Group controlId="formPasswordConfirm">
-            <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" />
+          <Form.Group controlId='formPasswordConfirm'>
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control type='password' placeholder='Confirm password' />
           </Form.Group>
 
-          <Button variant="primary" type="submit">
+          <Button variant='primary' type='submit'>
             Submit
           </Button>
         </Form>

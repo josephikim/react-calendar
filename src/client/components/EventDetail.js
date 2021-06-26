@@ -246,9 +246,9 @@ class EventDetail extends Component {
     const descChanged = data.desc !== this.props.selectedEvent.desc;
     const startChanged = data.start !== this.props.selectedEvent.start;
     const endChanged = data.end !== this.props.selectedEvent.end;
-    const formValuesChanged = titleChanged || descChanged || startChanged || endChanged;
+    const validChange = titleChanged || descChanged || startChanged || endChanged;
 
-    if (formValuesChanged) {
+    if (validChange) {
       try {
         const newState = {
           ...this.state,

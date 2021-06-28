@@ -33,7 +33,7 @@ const initialState= {
     value: moment().hour(0).minute(0)
   },
   endTime: {
-    value: moment().hour(0).minute(0)
+    value: moment().hour(0).minute(15)
   },
   submitCalled: false,
   timeFormat: 'h:mm a',
@@ -145,35 +145,25 @@ class EventDetail extends Component {
       }));
     }
   }
-  
-  handleStartDayChange = day => {
+
+  handleDayChange = (value, id) => {
     const newState = {
-      startDate: {
-        value: day
+      [id]: {
+        value: value
       }
     }
 
-    // update end date if a later date is selected
-    if (day > this.state.endDate.value) {
+    // update endDate if later startDate is selected
+    if (id === 'startDate' && value > this.state.endDate.value) {
       newState.endDate = {
-        value: day
+        value: value
       }
     }
 
-    this.setState(newState);
-  }
-
-  handleEndDayChange = (day) => {
-    const newState = {
-      endDate: {
-        value: day
-      }
-    }
-
-    // update start date if an earlier date is selected
-    if (day < this.state.startDate.value) {
+    // update startDate if earlier endDate is selected
+    if (id === 'endDate' && value < this.state.startDate.value) {
       newState.startDate = {
-        value: day
+        value: value
       }
     }
 
@@ -358,7 +348,7 @@ class EventDetail extends Component {
                 formatDate={formatDate}
                 parseDate={parseDate}
                 value={`${formatDate(this.state.startDate.value)}`}
-                onDayChange={this.handleStartDayChange}
+                onDayChange={(value) => this.handleDayChange(value, 'startDate')}
               />
             </Col>
 
@@ -387,7 +377,7 @@ class EventDetail extends Component {
                 formatDate={formatDate}
                 parseDate={parseDate}
                 value={`${formatDate(this.state.endDate.value)}`}
-                onDayChange={this.handleEndDayChange}
+                onDayChange={(value) => this.handleDayChange(value, 'endDate')}
               />
             </Col>
 

@@ -32,6 +32,7 @@ class LoginForm extends Component {
   
   handleBlur = event => {
     const { target: { name, value } } = event;
+
     switch (name) {
       case 'username':
         this.handleUsernameBlur(value);
@@ -61,6 +62,7 @@ class LoginForm extends Component {
         validateUsernameOnChange: true,
         usernameError: validateFields.validateUsername(value)
       }
+
       this.setState(newState);
     }
     return;
@@ -80,6 +82,7 @@ class LoginForm extends Component {
         validatePasswordOnChange: true,
         passwordError: validateFields.validatePassword(value)
       }
+
       this.setState(newState);
     }
     return;
@@ -99,6 +102,7 @@ class LoginForm extends Component {
         validatePasswordConfirmOnChange: true,
         passwordConfirmError: validateFields.validatePasswordConfirm(value, this.state.formData.passsword)
       }
+
       this.setState(newState);
     }
     return;
@@ -113,23 +117,42 @@ class LoginForm extends Component {
         [name]: value
       }
     }
+
     if (name === 'username') {
       newState.usernameError = this.state.validateUsernameOnChange ? validateFields.validateUsername(value) : ''
     }
+
     if (name === 'password') {
       newState.passwordError = this.state.validatePasswordOnChange ? validateFields.validatePassword(value) : ''
     }
+
     if (name === 'passwordConfirm') {
       newState.passwordConfirmError = this.state.validatePasswordConfirmOnChange ? validateFields.validatePasswordConfirm(value, this.state.password) : ''
     }
+
     this.setState(newState);
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
-    // format input data
-    // validate input data
-    // update component state
+    // const data = {
+    //   username: this.state.formData.username,
+    //   password: this.state.formData.password,
+    //   passwordConfirm: this.state.formData.passwordConfirm
+    // }
+    // console.log('!!data.username.trim()', !!data.username.trim())
+    // console.log('!!data.password.trim()', !!data.password.trim())
+    // console.log('!!data.passwordConfirm.trim()', !!data.passwordConfirm.trim())
+    // const validInput = !!data.username.trim() && 
+    //   !!data.password.trim() && 
+    //   !!data.passwordConfirm.trim() &&
+    //   !this.state.usernameError &&
+    //   !this.state.passwordError &&
+    //   !this.state.passwordConfirmError
+
+    // if (validInput) {
+
+    // }
   }
 
   render() {
@@ -145,6 +168,7 @@ class LoginForm extends Component {
               onBlur={this.handleBlur}
               />
           </Form.Group>
+          
           <div className="text-danger">
             <small>{this.state.usernameError}</small>
           </div>
@@ -159,6 +183,7 @@ class LoginForm extends Component {
               onBlur={this.handleBlur}
               />
           </Form.Group>
+
           <div className="text-danger">
             <small>{this.state.passwordError}</small>
           </div>
@@ -173,6 +198,7 @@ class LoginForm extends Component {
               onBlur={this.handleBlur}
               />
           </Form.Group>
+
           <div className="text-danger">
             <small>{this.state.passwordConfirmError}</small>
           </div>

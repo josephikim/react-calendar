@@ -14,206 +14,229 @@ import '../styles/EventDetail.css';
 import 'react-day-picker/lib/style.css';
 import 'rc-time-picker/assets/index.css';
 
+const initialState= {
+  title: {
+    value: '',
+    validateOnChange: false,
+    error: ''
+  },
+  desc: {
+    value: ''
+  },
+  startDate: {
+    value: new Date()
+  },
+  endDate: {
+    value: new Date()
+  },
+  startTime: {
+    value: moment().hour(0).minute(0)
+  },
+  endTime: {
+    value: moment().hour(0).minute(0)
+  },
+  submitCalled: false,
+  timeFormat: 'h:mm a',
+  error: ''
+}
 class EventDetail extends Component {
   constructor(...args) {
     super(...args)
-    this.state = {
-      formData: {
-        title: '',
-        desc: '',
-        startDate: new Date(),
-        endDate: new Date(),
-        startTime: moment().hour(0).minute(0),
-        endTime: moment().hour(0).minute(0)
-      },
-      validateTitleOnChange: false,
-      titleError: '',
-      submitCalled: false,
-      timeFormat: 'h:mm a',
-    }
+    this.state = initialState
   }
 
   componentDidUpdate = (prevProps) => {
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
     const noneSelected = !slotSelected && !eventSelected;
-
     const slotUnchanged = _.isEqual(this.props.selectedSlot, prevProps.selectedSlot)
     const eventUnchanged = _.isEqual(this.props.selectedEvent, prevProps.selectedEvent)
 
     if (slotUnchanged && eventUnchanged) return;
 
-    const newState = {
-      ...this.state,
-      validateTitleOnChange: false,
-      titleError: '',
+    let newState = {};
+
+    if (noneSelected) newState = initialState;
+
+    if (slotSelected) {
+      newState = {
+        startDate: {
+          value: this.props.selectedSlot.start
+        },
+        endDate: {
+          value: this.props.selectedSlot.end
+        },
+        startTime: {
+          value: moment().hour(0).minute(0)
+        },
+        endTime: {
+          value: moment().hour(0).minute(0)
+        }
+      }
     }
 
-    if (noneSelected) {
-      newState.formData = {
-        title: '',
-        desc: '',
-        startDate: new Date(),
-        endDate: new Date(),
-        startTime: moment().hour(0).minute(0),
-        endTime: moment().hour(0).minute(0)
-      }
-    } else if (slotSelected) {
-      newState.formData = {
-        title: '',
-        desc: '',
-        startDate: this.props.selectedSlot.start,
-        endDate: this.props.selectedSlot.end,
-        startTime: moment().hour(0).minute(0),
-        endTime: moment().hour(0).minute(0)
-      }
-    } else if (eventSelected) {
+    if (eventSelected) {
       const startDate = new Date(this.props.selectedEvent.start.toDateString());
       const endDate = new Date(this.props.selectedEvent.end.toDateString());
       const startTime = moment().hour(this.props.selectedEvent.start.getHours()).minute(this.props.selectedEvent.start.getMinutes());
       const endTime = moment().hour(this.props.selectedEvent.end.getHours()).minute(this.props.selectedEvent.end.getMinutes());
-      newState.formData = {
-        title: this.props.selectedEvent.title,
-        desc: this.props.selectedEvent.desc,
-        startDate,
-        endDate,
-        startTime,
-        endTime
+      
+      newState = {
+        title: {
+          ...this.state.title,
+          value: this.props.selectedEvent.title
+        },
+        desc: {
+          value: this.props.selectedEvent.desc
+        },
+        startDate: {
+          value: startDate
+        },
+        endDate: {
+          value: endDate
+        },
+        startTime: {
+          value: startTime
+        },
+        endTime: {
+          value: endTime
+        },
       }
     }
+
     this.setState(newState);
   }
 
-  handleBlur = event => {
-    const { target: { name, value } } = event;
+  handleBlur = (validationFunc, event) => {
+    const { target: { name } } = event;
+
     if (
-      this.state.validateTitleOnChange === false &&
+      this.state[name]['validateOnChange'] === false &&
       this.state.submitCalled === false
     ) {
-      const newState = {
-        ...this.state,
-        formData: {
-          ...this.state.formData,
-          [name]: value
-        },
-        validateTitleOnChange: true,
-        titleError: validateFields.validateTitle(value)
-      }
-      this.setState(newState);
+      this.setState(state => ({
+        [name]: {
+          ...state[name],
+          validateOnChange: true,
+          error: validationFunc(state[name].value)
+        }
+      }));
     }
     return;
   }
 
-  handleChange = event => {
+  handleChange = (validationFunc, event) => {
     const { target: { name, value } } = event;
-    const newState = {
-      ...this.state,
-      formData: {
-        ...this.state.formData,
-        [name]: value
-      }
+    
+    if (validationFunc === null) { // handle fields without validation
+      this.setState(state => ({
+        [name]: {
+          ...state[name],
+          value: value
+        }
+      }));
+    } else {  // handle fields with validation
+      this.setState(state => ({
+        [name]: {
+          ...state[name],
+          value: value,
+          error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+        }
+      }));
     }
-    if (name === 'title') {
-      newState.titleError = this.state.validateTitleOnChange ? validateFields.validateTitle(value) : ''
-    }
-    this.setState(newState);
   }
-
+  
   handleStartDayChange = day => {
     const newState = {
-      startDate: day
-    }
-    // only update end date when a later date is selected
-    if (day > this.state.formData.endDate) {
-      newState.endDate = day;
-    }
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        ...newState
+      startDate: {
+        value: day
       }
-    });
+    }
+
+    // update end date if a later date is selected
+    if (day > this.state.endDate.value) {
+      newState.endDate = {
+        value: day
+      }
+    }
+
+    this.setState(newState);
   }
 
   handleEndDayChange = (day) => {
     const newState = {
-      endDate: day
-    }
-    // only update start date when an earlier date is selected
-    if (day < this.state.formData.startDate) {
-      newState.startDate = day;
-    }
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        ...newState
+      endDate: {
+        value: day
       }
-    });
+    }
+
+    // update start date if an earlier date is selected
+    if (day < this.state.startDate.value) {
+      newState.startDate = {
+        value: day
+      }
+    }
+
+    this.setState(newState);
   }
 
-  handleStartTimeChange = (value) => {
-    const newState = {
-      startTime: value
-    }
-    // only update end time when a later time is selected
-    if (this.state.formData.endTime.isSameOrBefore(value)) {
-      newState.endTime = newState.startTime.clone().add(15, 'minutes');
-    }
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        ...newState
+  handleTimeChange = (value, id) => {
+    let newState = {
+      [id]: {
+        value: value
       }
-    });
-  }
+    }
 
-  handleEndTimeChange = (value) => {
-    const newState = {
-      endTime: value
-    }
-    // only update start time when an earlier time is selected
-    if (this.state.formData.startTime.isSameOrAfter(value)) {
-      newState.startTime = newState.endTime.clone().subtract(15, 'minutes');
-    }
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        ...newState
+    if (id === 'startTime' && this.state.endTime.value.isSameOrBefore(value)) {
+      newState.endTime = {
+        value: value.clone().add(15, 'minutes')
       }
-    });
+    }
+
+    if (id === 'endTime' && this.state.startTime.value.isSameOrAfter(value)) {
+      newState.startTime = {
+        value: value.clone().subtract(15, 'minutes')
+      }
+    }
+
+    this.setState(newState);
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const start = this.appendDateToTime(this.state.formData.startDate, this.state.formData.startTime)
-    const end = this.appendDateToTime(this.state.formData.endDate, this.state.formData.endTime)
 
-    const data = {
-      title: this.state.formData.title,
-      desc: this.state.formData.desc,
-      start,
-      end
-    }
+    const titleError = validateFields.validateTitle(this.state.title.value);
 
-    const titleError = validateFields.validateTitle(data.title);
-    if (!titleError) {
+    if (titleError === false) {
       try {
-        const newState = {
-          ...this.state,
-          validateTitleOnChange: false,
-          titleError: '',
-          submitCalled: false
+        const start = this.appendDateToTime(this.state.startDate.value, this.state.startTime.value)
+        const end = this.appendDateToTime(this.state.endDate.value, this.state.endTime.value)
+        const data = {
+          title: this.state.title.value,
+          desc: this.state.desc.value,
+          start: start,
+          end: end
         }
-        this.props.createEvent(data).then(this.setState(newState));
+
+        this.props.createEvent(data).then(this.setState(state => ({
+          title: {
+            ...state.title,
+            validateOnChange: false,
+            error: ''
+          },
+          submitCalled: false
+        })));
       } catch (err) {
-        this.setState({ error: err.response.data })
+        this.setState({error: err.response.data});
       }
     } else {
-      const newState = {
-        validateTitleOnChange: true,
-        titleError
-      }
-      this.setState(newState);
+      this.setState(state => ({
+        title: {
+          ...state.title,
+          validateOnChange: true,
+          error: titleError
+        }
+      }));
     }
   }
 
@@ -221,43 +244,44 @@ class EventDetail extends Component {
     const year = date.getFullYear();
     const month = date.getMonth();
     const day = date.getDate();
+
     time.set('year', year);
     time.set('month', month);
     time.set('date', day);
-    const newDate = time.toDate();
-    return newDate;
+
+    return time.toDate();
   }
 
   handleSave = (event) => {
     event.preventDefault();
-    if (this.state.titleError) return;
-    const start = this.appendDateToTime(this.state.formData.startDate, this.state.formData.startTime)
-    const end = this.appendDateToTime(this.state.formData.endDate, this.state.formData.endTime)
 
-    const data = {
-      _id: this.props.selectedEvent._id,
-      title: this.state.formData.title,
-      desc: this.state.formData.desc,
-      start,
-      end
-    }
+    if (this.state.title.error) return;
 
-    const titleChanged = data.title !== this.props.selectedEvent.title;
-    const descChanged = data.desc !== this.props.selectedEvent.desc;
-    const startChanged = data.start !== this.props.selectedEvent.start;
-    const endChanged = data.end !== this.props.selectedEvent.end;
+    const start = this.appendDateToTime(this.state.startDate.value, this.state.startTime.value)
+    const end = this.appendDateToTime(this.state.endDate.value, this.state.endTime.value)
+    const titleChanged = this.state.title.value !== this.props.selectedEvent.title;
+    const descChanged = this.state.desc.value !== this.props.selectedEvent.desc;
+    const startChanged = start !== this.props.selectedEvent.start;
+    const endChanged = end !== this.props.selectedEvent.end;
     const validChange = titleChanged || descChanged || startChanged || endChanged;
 
     if (validChange) {
       try {
+        const data = {
+          _id: this.props.selectedEvent._id,
+          title: this.state.title.value,
+          desc: this.state.desc.value,
+          start,
+          end
+        }
         const newState = {
-          ...this.state,
           validateTitleOnChange: false,
           titleError: ''
         }
+
         this.props.updateEvent(data).then(this.setState(newState));
       } catch (err) {
-        this.setState({ error: err.response.data })
+        this.setState({error: err.response.data});
       }
     } else {
       alert('Please make changes before saving')
@@ -266,19 +290,23 @@ class EventDetail extends Component {
 
   handleDelete = (event) => {
     event.preventDefault();
+
     if (!this.props.selectedEvent) return;
+
     const eventId = this.props.selectedEvent._id;
+
     try {
       this.props.deleteEvent(eventId);
     } catch (err) {
-      this.setState({ error: err.response.data })
+      this.setState({error: err.response.data});
     }
   }
 
   render() {
-    const titleFail = !!this.state.titleError;
+    const titleError = !!this.state.title.error;
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
+
     return (
       <div id="event-detail">
         <form
@@ -292,47 +320,56 @@ class EventDetail extends Component {
           <Row>
             <label htmlFor='title'>Event Title (required)</label>
             <textarea
+              id='title'
               name='title'
-              className={`input ${titleFail ? "input--fail" : null} `}
+              className={`input ${titleError ? "input--fail" : null} `}
               rows='1'
-              onChange={this.handleChange}
+              onChange={event => this.handleChange(validateFields.validateTitle, event)}
               onBlur={this.handleBlur}
-              value={this.state.formData.title}
+              value={this.state.title.value}
             >
               enter title
             </textarea>
             <div className="text-danger">
-              <small>{this.state.titleError}</small>
+              <small>{this.state.title.error}</small>
             </div>
           </Row>
+
           <Row>
             <label htmlFor='desc'>Event Description</label>
             <textarea
+              id='desc'
               name='desc'
               className='input'
               rows='3'
-              onChange={this.handleChange}
-              value={this.state.formData.desc}
+              onChange={event => this.handleChange(null, event)}
+              value={this.state.desc.value}
             >
               enter description
             </textarea>
           </Row>
+
           <Row className='two-column'>
             <Col>
               <label htmlFor='startDate'>Start Date</label>
               <DayPickerInput
+                id='startDate'
+                name='startDate'
                 formatDate={formatDate}
                 parseDate={parseDate}
-                value={`${formatDate(this.state.formData.startDate)}`}
+                value={`${formatDate(this.state.startDate.value)}`}
                 onDayChange={this.handleStartDayChange}
               />
             </Col>
+
             <Col>
               <label htmlFor='startTime'>Start Time</label>
               <TimePicker
+                id='startTime'
+                name='startTime'
                 showSecond={false}
-                value={this.state.formData.startTime}
-                onChange={this.handleStartTimeChange}
+                value={this.state.startTime.value}
+                onChange={(value, id='startTime') => this.handleTimeChange(value, id)}
                 format={this.state.timeFormat}
                 minuteStep={15}
                 use12Hours
@@ -340,22 +377,28 @@ class EventDetail extends Component {
               />
             </Col>
           </Row>
+
           <Row className='two-column'>
             <Col>
               <label htmlFor='endDate'>End Date</label>
               <DayPickerInput
+                id='endDate'
+                name='endDate'
                 formatDate={formatDate}
                 parseDate={parseDate}
-                value={`${formatDate(this.state.formData.endDate)}`}
+                value={`${formatDate(this.state.endDate.value)}`}
                 onDayChange={this.handleEndDayChange}
               />
             </Col>
+
             <Col>
               <label htmlFor='endTime'>End Time</label>
               <TimePicker
+                id='endTime'
+                name='endTime'
                 showSecond={false}
-                value={this.state.formData.endTime}
-                onChange={this.handleEndTimeChange}
+                value={this.state.endTime.value}
+                onChange={(value, id='endTime') => this.handleTimeChange(value, id)}
                 format={this.state.timeFormat}
                 minuteStep={15}
                 use12Hours
@@ -363,6 +406,7 @@ class EventDetail extends Component {
               />
             </Col>
           </Row>
+
           <Row>
             <div className='submit'>
               {slotSelected &&
@@ -377,6 +421,7 @@ class EventDetail extends Component {
                   onMouseDown={() => this.setState({ submitCalled: true })}
                 />
               }
+
               {eventSelected &&
                 <Button
                   as='input'
@@ -388,6 +433,7 @@ class EventDetail extends Component {
                   onClick={this.handleSave}
                 />
               }
+
               {eventSelected &&
                 <Button
                   as='input'

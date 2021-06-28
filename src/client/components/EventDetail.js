@@ -60,6 +60,14 @@ class EventDetail extends Component {
 
     if (slotSelected) {
       newState = {
+        title: {
+          value: '',
+          validateOnChange: false,
+          error: ''
+        },
+        desc: {
+          value: ''
+        },
         startDate: {
           value: this.props.selectedSlot.start
         },

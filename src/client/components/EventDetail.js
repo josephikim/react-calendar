@@ -70,7 +70,7 @@ class EventDetail extends Component {
           value: moment().hour(0).minute(0)
         },
         endTime: {
-          value: moment().hour(0).minute(0)
+          value: moment().hour(0).minute(15)
         }
       }
     }

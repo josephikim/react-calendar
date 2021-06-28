@@ -325,7 +325,7 @@ class EventDetail extends Component {
               className={`input ${titleError ? "input--fail" : null} `}
               rows='1'
               onChange={event => this.handleChange(validateFields.validateTitle, event)}
-              onBlur={this.handleBlur}
+              onBlur={event => this.handleBlur(validateFields.validateTitle, event)}
               value={this.state.title.value}
             >
               enter title

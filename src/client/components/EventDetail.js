@@ -88,7 +88,7 @@ class EventDetail extends Component {
       const endDate = new Date(this.props.selectedEvent.end.toDateString());
       const startTime = moment().hour(this.props.selectedEvent.start.getHours()).minute(this.props.selectedEvent.start.getMinutes());
       const endTime = moment().hour(this.props.selectedEvent.end.getHours()).minute(this.props.selectedEvent.end.getMinutes());
-      
+
       newState = {
         title: {
           ...this.state.title,
@@ -209,6 +209,12 @@ class EventDetail extends Component {
       try {
         const start = this.appendDateToTime(this.state.startDate.value, this.state.startTime.value)
         const end = this.appendDateToTime(this.state.endDate.value, this.state.endTime.value)
+
+        if (end < start) { // Check for invalide end date
+          alert('End date should be after start date.')
+          return
+        }
+
         const data = {
           title: this.state.title.value,
           desc: this.state.desc.value,

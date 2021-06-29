@@ -14,7 +14,7 @@ import '../styles/EventDetail.css';
 import 'react-day-picker/lib/style.css';
 import 'rc-time-picker/assets/index.css';
 
-const initialState= {
+const initialState = {
   title: {
     value: '',
     validateOnChange: false,
@@ -211,7 +211,7 @@ class EventDetail extends Component {
         const end = this.appendDateToTime(this.state.endDate.value, this.state.endTime.value)
 
         if (end < start) { // Check for invalide end date
-          alert('End date should be after start date.')
+          alert('End date should be after start date')
           return
         }
 

@@ -3,23 +3,29 @@ import { Form, Button } from 'react-bootstrap'
 import { validateFields } from '../validation.js';
 
 import '../styles/LoginForm.css';
+
+const initialState = {
+  username: {
+    value: '',
+    validateOnChange: false,
+    error: ''
+  },
+  password: {
+    value: '',
+    validateOnChange: false,
+    error: ''
+  },
+  passwordConfirm: {
+    value: '',
+    validateOnChange: false,
+    error: ''
+  },
+  submitCalled: false,
+}
 class LoginForm extends Component {
   constructor(...args) {
     super(...args)
-    this.state = {
-      formData: {
-        userName: '',
-        password: '',
-        passwordConfirm: ''
-      },
-      validateUsernameOnChange: false,
-      validatePasswordOnChange: false,
-      validatePasswordConfirmOnChange: false,
-      usernameError: '',
-      passwordError: '',
-      passwordConfirmError: '',
-      submitCalled: false,
-    }
+    this.state = initialState
   }
 
   componentDidMount = () => {
@@ -30,115 +36,70 @@ class LoginForm extends Component {
     // load locally stored returning user info
   }
   
-  handleBlur = event => {
+  handleBlur = (validationFunc, event) => {
+    const { target: { name } } = event;
+
+    if (
+      this.state[name]['validateOnChange'] === false &&
+      this.state.submitCalled === false
+    ) {
+      this.setState(state => ({
+        [name]: {
+          ...state[name],
+          validateOnChange: true,
+          error: validationFunc(state[name].value)
+        }
+      }));
+    }
+    return;
+  }
+
+  handlePasswordConfirmBlur = (validationFunc) => {
+    if (
+      this.state.passwordConfirm.validateOnChange === false &&
+      this.state.submitCalled === false
+    ) {
+      this.setState(state => ({
+        passwordConfirm: {
+          ...state.passwordConfirm,
+          validateOnChange: true,
+          error: validationFunc(state.passwordConfirm.value, state.password.value)
+        }
+      }));
+    }
+    return;
+  }
+
+  handleChange = (validationFunc, event) => {
     const { target: { name, value } } = event;
-
-    switch (name) {
-      case 'username':
-        this.handleUsernameBlur(value);
-        break;
-      case 'password':
-        this.handlePasswordBlur(value);
-        break;
-      case 'passwordConfirm':
-        this.handlePasswordConfirmBlur(value);
-        break;
-      default:
-        return;
-    }
+    
+    this.setState(state => ({
+      [name]: {
+        ...state[name],
+        value: value,
+        error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+      }
+    }));
   }
 
-  handleUsernameBlur = (value) => {
-    if (
-      this.state.validateUsernameOnChange === false &&
-      this.state.submitCalled === false
-    ) {
-      const newState = {
-        ...this.state,
-        formData: {
-          ...this.state.formData,
-          username: value
-        },
-        validateUsernameOnChange: true,
-        usernameError: validateFields.validateUsername(value)
+  handlePasswordConfirmChange = (validationFunc, event) => {
+    const value = event.target.value;
+    
+    this.setState(state => ({
+      passwordConfirm: {
+        ...state.passwordConfirm,
+        value: value,
+        error: state.passwordConfirm.validateOnChange ? validationFunc(value, state.password.value) : ''
       }
-
-      this.setState(newState);
-    }
-    return;
-  }
-
-  handlePasswordBlur = (value) => {
-    if (
-      this.state.validatePasswordOnChange === false &&
-      this.state.submitCalled === false
-    ) {
-      const newState = {
-        ...this.state,
-        formData: {
-          ...this.state.formData,
-          password: value
-        },
-        validatePasswordOnChange: true,
-        passwordError: validateFields.validatePassword(value)
-      }
-
-      this.setState(newState);
-    }
-    return;
-  }
-
-  handlePasswordConfirmBlur = (value) => {
-    if (
-      this.state.validatePasswordConfirmOnChange === false &&
-      this.state.submitCalled === false
-    ) {
-      const newState = {
-        ...this.state,
-        formData: {
-          ...this.state.formData,
-          passwordConfirm: value
-        },
-        validatePasswordConfirmOnChange: true,
-        passwordConfirmError: validateFields.validatePasswordConfirm(value, this.state.formData.passsword)
-      }
-
-      this.setState(newState);
-    }
-    return;
-  }
-
-  handleChange = (event) => {
-    const { target: { name, value } } = event;
-    const newState = {
-      ...this.state,
-      formData: {
-        ...this.state.formData,
-        [name]: value
-      }
-    }
-
-    if (name === 'username') {
-      newState.usernameError = this.state.validateUsernameOnChange ? validateFields.validateUsername(value) : ''
-    }
-
-    if (name === 'password') {
-      newState.passwordError = this.state.validatePasswordOnChange ? validateFields.validatePassword(value) : ''
-    }
-
-    if (name === 'passwordConfirm') {
-      newState.passwordConfirmError = this.state.validatePasswordConfirmOnChange ? validateFields.validatePasswordConfirm(value, this.state.password) : ''
-    }
-
-    this.setState(newState);
+    }));
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
     // const data = {
-    //   username: this.state.formData.username,
-    //   password: this.state.formData.password,
-    //   passwordConfirm: this.state.formData.passwordConfirm
+    //   username: this.state.username.value,
+    //   password: this.state.password.value,
+    //   passwordConfirm: this.state.passwordConfirm.value
     // }
     // console.log('!!data.username.trim()', !!data.username.trim())
     // console.log('!!data.password.trim()', !!data.password.trim())
@@ -164,13 +125,13 @@ class LoginForm extends Component {
             <Form.Control
               name='username'
               placeholder='Enter username' 
-              onChange={this.handleChange}
-              onBlur={this.handleBlur}
+              onChange={event => this.handleChange(validateFields.validateUsername, event)}
+              onBlur={event => this.handleBlur(validateFields.validateUsername, event)}
               />
           </Form.Group>
           
           <div className="text-danger">
-            <small>{this.state.usernameError}</small>
+            <small>{this.state.username.error}</small>
           </div>
 
           <Form.Group controlId='password'>
@@ -179,13 +140,13 @@ class LoginForm extends Component {
               name='password'
               type='password' 
               placeholder='Enter password' 
-              onChange={this.handleChange}
-              onBlur={this.handleBlur}
+              onChange={event => this.handleChange(validateFields.validatePassword, event)}
+              onBlur={event => this.handleBlur(validateFields.validatePassword, event)}
               />
           </Form.Group>
 
           <div className="text-danger">
-            <small>{this.state.passwordError}</small>
+            <small>{this.state.password.error}</small>
           </div>
 
           <Form.Group controlId='passwordConfirm'>
@@ -194,13 +155,13 @@ class LoginForm extends Component {
               name='passwordConfirm'
               type='password' 
               placeholder='Confirm password' 
-              onChange={this.handleChange}
-              onBlur={this.handleBlur}
+              onChange={event => this.handlePasswordConfirmChange(validateFields.validatePasswordConfirm, event)}
+              onBlur={this.handlePasswordConfirmBlur(validateFields.validatePasswordConfirm)}
               />
           </Form.Group>
 
           <div className="text-danger">
-            <small>{this.state.passwordConfirmError}</small>
+            <small>{this.state.passwordConfirm.error}</small>
           </div>
 
           <Button 

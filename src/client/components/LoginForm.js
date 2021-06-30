@@ -54,66 +54,63 @@ class LoginForm extends Component {
     return;
   }
 
-  handlePasswordConfirmBlur = (validationFunc) => {
-    if (
-      this.state.passwordConfirm.validateOnChange === false &&
-      this.state.submitCalled === false
-    ) {
-      this.setState(state => ({
-        passwordConfirm: {
-          ...state.passwordConfirm,
-          validateOnChange: true,
-          error: validationFunc(state.passwordConfirm.value, state.password.value)
-        }
-      }));
-    }
-    return;
-  }
-
   handleChange = (validationFunc, event) => {
     const { target: { name, value } } = event;
     
-    this.setState(state => ({
-      [name]: {
-        ...state[name],
-        value: value,
-        error: state[name]['validateOnChange'] ? validationFunc(value) : ''
-      }
-    }));
-  }
-
-  handlePasswordConfirmChange = (validationFunc, event) => {
-    const value = event.target.value;
-    
-    this.setState(state => ({
-      passwordConfirm: {
-        ...state.passwordConfirm,
-        value: value,
-        error: state.passwordConfirm.validateOnChange ? validationFunc(value, state.password.value) : ''
-      }
-    }));
+    if (validationFunc === null) { // handle fields without validation
+      this.setState(state => ({
+        [name]: {
+          ...state[name],
+          value: value
+        }
+      }));
+    } else {  // handle fields with validation
+      this.setState(state => ({
+        [name]: {
+          ...state[name],
+          value: value,
+          error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+        }
+      }));
+    }
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
-    // const data = {
-    //   username: this.state.username.value,
-    //   password: this.state.password.value,
-    //   passwordConfirm: this.state.passwordConfirm.value
-    // }
-    // console.log('!!data.username.trim()', !!data.username.trim())
-    // console.log('!!data.password.trim()', !!data.password.trim())
-    // console.log('!!data.passwordConfirm.trim()', !!data.passwordConfirm.trim())
-    // const validInput = !!data.username.trim() && 
-    //   !!data.password.trim() && 
-    //   !!data.passwordConfirm.trim() &&
-    //   !this.state.usernameError &&
-    //   !this.state.passwordError &&
-    //   !this.state.passwordConfirmError
+    
+    const { username, password, passwordConfirm } = this.state;
+    const usernameError = validateFields.validateUsername(username.value);
+    const passwordError = validateFields.validatePassword(password.value);
+    const passwordConfirmError = validateFields.validatePasswordConfirm(passwordConfirm.value, password.value);
 
-    // if (validInput) {
-
-    // }
+    if ([usernameError, passwordError, passwordConfirmError].every(e => e === false)) {
+      // no errors submit the form
+      console.log('success');
+      // const data = {
+      //   username: username.value,
+      //   password: password.value
+      // }
+      // this.props.loginUser(data).then(this.setState(initialState));
+    } else {
+      // update state with errors
+      this.setState(state => ({
+        username: {
+          ...state.username,
+          validateOnChange: true,
+          error: usernameError
+        },
+        password: {
+          ...state.password,
+          validateOnChange: true,
+          error: passwordError
+        },
+        passwordConfirm: {
+          ...state.passwordConfirm,
+          validateOnChange: true,
+          error: passwordConfirmError
+        }
+      }));
+    }
   }
 
   render() {
@@ -154,9 +151,8 @@ class LoginForm extends Component {
             <Form.Control
               name='passwordConfirm'
               type='password' 
-              placeholder='Confirm password' 
-              onChange={event => this.handlePasswordConfirmChange(validateFields.validatePasswordConfirm, event)}
-              onBlur={this.handlePasswordConfirmBlur(validateFields.validatePasswordConfirm)}
+              placeholder='Confirm password'
+              onChange={event => this.handleChange(null, event)}
               />
           </Form.Group>
 

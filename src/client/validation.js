@@ -9,13 +9,16 @@ class ValidateFields {
   }
   validateUsername(username) {
     if (!validator.isAlphanumeric(username)) {
-      return 'Usernames may only contain letters and numbers';
+      return 'Username should only contain letters and numbers';
     }
     return false;
   }
   validatePassword(password) {
     if (validator.isEmpty(password)) {
       return 'Password is required';
+    }
+    if (!validator.isAlphanumeric(password)) {
+      return 'Password should only contain letters and numbers';
     }
     if (!validator.isLength(password, { min: 4 })) {
       return 'Password should be at least four characters';

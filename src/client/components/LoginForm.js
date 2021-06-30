@@ -1,6 +1,8 @@
-import React, { Component } from 'react'
-import { Form, Button } from 'react-bootstrap'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Form, Button } from 'react-bootstrap';
 import { validateFields } from '../validation.js';
+import { createUser } from '../actions/userActions';
 
 import '../styles/LoginForm.css';
 
@@ -86,11 +88,12 @@ class LoginForm extends Component {
     if ([usernameError, passwordError, passwordConfirmError].every(e => e === false)) {
       // no errors submit the form
       console.log('success');
-      // const data = {
-      //   username: username.value,
-      //   password: password.value
-      // }
-      // this.props.loginUser(data).then(this.setState(initialState));
+      const data = {
+        username: username.value,
+        password: password.value,
+        passwordConfirm: passwordConfirm.value
+      }
+      this.props.createUser(data).then(this.setState(initialState));
     } else {
       // update state with errors
       this.setState(state => ({
@@ -173,4 +176,14 @@ class LoginForm extends Component {
   }
 }
 
-export default LoginForm;
+const mapStateToProps = (state) => {
+  return {
+    user: state.config.user
+  };
+};
+
+const mapActionsToProps = {
+  createUser
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(LoginForm);

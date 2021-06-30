@@ -1,14 +1,14 @@
 export const configReducer = (state = [], action) => {
   switch (action.type) {
-    case "UPDATE_LOGIN":
+    case "UPDATE_USER":
       return {
           ...state, 
-          login: action.login
+          user: action.payload
       };
     case "UPDATE_CALENDARS":
       return {
           ...state, 
-          calendars: action.calendars
+          calendars: action.payload
       };
     default:
       return state;

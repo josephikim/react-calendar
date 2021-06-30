@@ -1,6 +1,6 @@
 import express from 'express';
 import calendarRouter from './calendar';
-// import userRouter from './user';
+import userRouter from './user';
 
 const router = express.Router();
 
@@ -11,6 +11,6 @@ router.get("/test",  async (req, res) => {
 });
 
 router.use("/calendar", calendarRouter);
-// router.use("/user", userRouter);
+router.use("/user", userRouter);
 
 export default router;

@@ -1,15 +1,16 @@
 import express from 'express';
+import User from '../models/User';
 import jwt from 'jsonwebtoken';
 
 const userRouter = express.Router();
 
 // POST request to create user
-userRouter.post('/user/create', async (req, res) => {
-  const { email, password } = req.body;
-  //Check If User Exists
-  let foundUser = await User.findOne({ email });
+userRouter.post('/create', async (req, res) => {
+  const { username, password, passwordConfirm } = req.body;
+  // If user exists, log them in
+  let foundUser = await User.findOne({ username });
   if (foundUser) {
-    return res.status(403).json({ error: 'Email is already in use' });
+    return res.status(403).json({ error: 'Username is already in use' });
   }
 
   const genToken = user => {
@@ -22,44 +23,45 @@ userRouter.post('/user/create', async (req, res) => {
   }
 
   try {
-    const newUser = new User({ email, password });
+    const newUser = new User({ username, password, passwordConfirm });
     await newUser.save();
     // Generate JWT token
     const token = genToken(newUser);
-    res.status(200).json({ token });
+    // res.status(200).json({ token });
+    return res.status(200).send({data: newUser, msg: "User Created", token});
   }
   catch (err) {
-    res.send('Got error in save user');
+    res.send({ error: err });
   }
 });
 
 // POST request to delete user
-userRouter.post('/user/:id/delete', async (req, res) => {
-  let userId = req.body.userId;
-  try {
-    const removedUser = await User.removeUser(userId);
-    res.send('User successfully deleted');
-  }
-  catch (err) {
-    res.send('Delete failed..!');
-  }
-});
+// userRouter.post('/:id/delete', async (req, res) => {
+//   let userId = req.body.userId;
+//   try {
+//     const removedUser = await User.removeUser(userId);
+//     res.send('User successfully deleted');
+//   }
+//   catch (err) {
+//     res.send('Delete failed..!');
+//   }
+// });
 
 // GET request to update user
-userRouter.get('/user/:id/update', async (req, res) => {
-  if (!req.body) {
-    return res.status(400).send({
-      message: 'User details cannot be empty',
-    })
-  }
-  let userId = req.body.userId;
-  try {
-    const updatedUser = await User.updateUser(userId);
-    res.send('User successfully updated');
-  }
-  catch (err) {
-    res.send('Update failed..!');
-  }
-});
+// userRouter.get('/:id/update', async (req, res) => {
+//   if (!req.body) {
+//     return res.status(400).send({
+//       message: 'User details cannot be empty',
+//     })
+//   }
+//   let userId = req.body.userId;
+//   try {
+//     const updatedUser = await User.updateUser(userId);
+//     res.send('User successfully updated');
+//   }
+//   catch (err) {
+//     res.send('Update failed..!');
+//   }
+// });
 
 export default userRouter;

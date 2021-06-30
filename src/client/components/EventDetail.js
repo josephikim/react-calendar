@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Row, Col, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { Row, Col, Button } from 'react-bootstrap';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
 import TimePicker from 'rc-time-picker';

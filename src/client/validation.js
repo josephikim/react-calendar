@@ -14,9 +14,6 @@ class ValidateFields {
     return false;
   }
   validatePassword(password) {
-    if (validator.isEmpty(password)) {
-      return 'Password is required';
-    }
     if (!validator.isAlphanumeric(password)) {
       return 'Password should only contain letters and numbers';
     }

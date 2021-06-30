@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import { validateFields } from '../validation.js';
-import { loginUser } from '../actions/userActions';
+import { registerUser } from '../actions/userActions';
 
-import '../styles/LoginForm.css';
+import '../styles/RegisterForm.css';
 
 const initialState = {
   username: {
@@ -24,18 +24,10 @@ const initialState = {
   },
   submitCalled: false,
 }
-class LoginForm extends Component {
+class RegisterForm extends Component {
   constructor(...args) {
     super(...args)
     this.state = initialState
-  }
-
-  componentDidMount = () => {
-    this.initData()
-  }
-
-  initData = () => {
-    // load locally stored returning user info
   }
   
   handleBlur = (validationFunc, event) => {
@@ -93,7 +85,7 @@ class LoginForm extends Component {
         password: password.value,
         passwordConfirm: passwordConfirm.value
       }
-      this.props.loginUser(data).then(this.setState(initialState));
+      this.props.registerUser(data).then(this.setState(initialState));
     } else {
       // update state with errors
       this.setState(state => ({
@@ -118,7 +110,7 @@ class LoginForm extends Component {
 
   render() {
     return (
-      <div id='login-form'>
+      <div id='register-form'>
         <Form>
           <Form.Group controlId='username'>
             <Form.Label>Username</Form.Label>
@@ -165,10 +157,10 @@ class LoginForm extends Component {
 
           <Button 
             type='submit'
-            name='login-form-btn'
+            name='register-form-btn'
             variant='primary'
             onClick={this.handleSubmit}>
-            Login
+            Register
           </Button>
         </Form>
       </div>
@@ -183,7 +175,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapActionsToProps = {
-  loginUser
+  registerUser
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(LoginForm);
+export default connect(mapStateToProps, mapActionsToProps)(RegisterForm);

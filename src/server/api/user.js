@@ -4,10 +4,10 @@ import jwt from 'jsonwebtoken';
 
 const userRouter = express.Router();
 
-// POST request to create user
-userRouter.post('/create', async (req, res) => {
+// POST request to register user
+userRouter.post('/register', async (req, res) => {
   const { username, password, passwordConfirm } = req.body;
-  // If user exists, log them in
+  // If user exists, send error msg
   let foundUser = await User.findOne({ username });
   if (foundUser) {
     return res.status(403).json({ error: 'Username is already in use' });
@@ -19,7 +19,7 @@ userRouter.post('/create', async (req, res) => {
       sub: user.id,
       iat: new Date().getTime(),
       exp: new Date().setDate(new Date().getDate() + 1)
-    }, 'mysecretket');
+    }, 'mysecretkey');
   }
 
   try {
@@ -27,12 +27,34 @@ userRouter.post('/create', async (req, res) => {
     await newUser.save();
     // Generate JWT token
     const token = genToken(newUser);
-    // res.status(200).json({ token });
-    return res.status(200).send({data: newUser, msg: "User Created", token});
+    return res.status(200).send({data: newUser, msg: "User registered", token});
   }
   catch (err) {
     res.send({ error: err });
   }
+});
+
+// POST request to login user
+userRouter.post('/login', async (req, res) => {
+  const { username, password, passwordConfirm } = req.body;
+  // If user not found, send error msg
+  let foundUser = await User.findOne({ username });
+  if (!foundUser) {
+    return res.status(403).json({ error: 'User not found' });
+  }
+  console.log('logging in existing user...')
+
+  // try {
+  //   const newUser = new User({ username, password, passwordConfirm });
+  //   await newUser.save();
+  //   // Generate JWT token
+  //   const token = genToken(newUser);
+  //   // res.status(200).json({ token });
+  //   return res.status(200).send({data: newUser, msg: "User registered", token});
+  // }
+  // catch (err) {
+  //   res.send({ error: err });
+  // }
 });
 
 // POST request to delete user

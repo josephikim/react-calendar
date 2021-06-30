@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import CalendarPage from './pages/CalendarPage';
+import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import AboutPage from './pages/AboutPage';
 import Header from './components/Header';
@@ -29,6 +30,9 @@ class App extends Component {
           </Route>
           <Route path="/about">
             <AboutPage />
+          </Route>
+          <Route path="/register">
+            <RegisterPage />
           </Route>
           <Route path="/login">
             <LoginPage />

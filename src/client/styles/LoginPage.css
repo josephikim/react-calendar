@@ -1,0 +1,12 @@
+#tabs-wrapper {
+  margin-top: 35px;
+}
+
+#tabs-wrapper .nav-tabs .nav-link {
+  border: none;
+}
+
+#tabs-wrapper .active,
+.tab-content {
+  background: #E8E8E8
+}

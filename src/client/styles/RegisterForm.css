@@ -1,7 +1,6 @@
 #register-form {
   width: 100%;
-  max-width: 330px;
-  margin: 35px auto 0;
+  padding: 35px;
 }
 
 .btn {

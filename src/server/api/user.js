@@ -42,7 +42,6 @@ userRouter.post('/login', async (req, res) => {
   if (!foundUser) {
     return res.status(403).json({ error: 'User not found' });
   }
-  console.log('logging in existing user...')
 
   // try {
   //   const newUser = new User({ username, password, passwordConfirm });

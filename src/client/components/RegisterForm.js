@@ -79,7 +79,6 @@ class RegisterForm extends Component {
 
     if ([usernameError, passwordError, passwordConfirmError].every(e => e === false)) {
       // no errors submit the form
-      console.log('success');
       const data = {
         username: username.value,
         password: password.value,
@@ -129,8 +128,8 @@ class RegisterForm extends Component {
           <Form.Group controlId='password'>
             <Form.Label>Password</Form.Label>
             <Form.Control
+              type='password'
               name='password'
-              type='password' 
               placeholder='Enter password' 
               onChange={event => this.handleChange(validateFields.validatePassword, event)}
               onBlur={event => this.handleBlur(validateFields.validatePassword, event)}
@@ -144,8 +143,8 @@ class RegisterForm extends Component {
           <Form.Group controlId='passwordConfirm'>
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
+              type='password'
               name='passwordConfirm'
-              type='password' 
               placeholder='Confirm password'
               onChange={event => this.handleChange(null, event)}
               />

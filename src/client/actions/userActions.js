@@ -21,11 +21,6 @@ export const registerUser = (data) => async (dispatch) => {
   try {
     await axios.post(`${process.env.API_URL}/api/user/register`, data)
   } catch (err) {
-    return Promise.reject(err).then(err => {
-      dispatch({
-        type: 'UPDATE_REGISTRATION_ERROR',
-        payload: err.error
-      });
-    })
+    return Promise.reject(err)
   }
 };

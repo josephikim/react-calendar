@@ -164,7 +164,7 @@ class RegisterForm extends Component {
         </Form>
       </div>
     )
-  }
+  } 
 }
 
 const mapStateToProps = (state) => {

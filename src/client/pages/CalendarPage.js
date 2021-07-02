@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 
-import EventDetail from '../components/EventDetail';
+import EventForm from '../components/EventForm';
 import { onSelectSlot, onSelectEvent, retrieveEvents } from '../actions/calendarActions';
 
 import '../styles/CalendarPage.css';
@@ -73,7 +73,7 @@ class CalendarPage extends Component {
               />
             </Col>
             <Col xs={12} md={4} lg={4}>
-              <EventDetail />
+              <EventForm />
             </Col>
           </Row>
         </Container>

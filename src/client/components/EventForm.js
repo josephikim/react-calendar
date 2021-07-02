@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { createEvent, updateEvent, deleteEvent } from '../actions/calendarActions';
 import { validateFields } from '../validation.js';
 
-import '../styles/EventDetail.css';
+import '../styles/EventForm.css';
 import 'react-day-picker/lib/style.css';
 import 'rc-time-picker/assets/index.css';
 
@@ -39,7 +39,7 @@ const initialState = {
   timeFormat: 'h:mm a',
   error: ''
 }
-class EventDetail extends Component {
+class EventForm extends Component {
   constructor(...args) {
     super(...args)
     this.state = initialState
@@ -312,10 +312,10 @@ class EventDetail extends Component {
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
 
     return (
-      <div id="event-detail">
+      <div>
         <form
-          id='event-detail-form'
-          name='event-detail-form'
+          id='event-form'
+          name='event-form'
           className='validate'
           onSubmit={this.handleSubmit}
           target='_blank'
@@ -470,4 +470,4 @@ const mapActionsToProps = {
   deleteEvent
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(EventDetail);
+export default connect(mapStateToProps, mapActionsToProps)(EventForm);

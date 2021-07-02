@@ -117,8 +117,8 @@ class LoginForm extends Component {
 
   render() {
     return (
-      <div id='login-form'>
-        <Form>
+      <div>
+        <Form id='login-form'>
           <Form.Group controlId='username'>
             <Form.Label>Username</Form.Label>
             <Form.Control

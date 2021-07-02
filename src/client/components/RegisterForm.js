@@ -78,7 +78,7 @@ class RegisterForm extends Component {
     const passwordConfirmError = validateFields.validatePasswordConfirm(passwordConfirm.value, password.value);
 
     if ([usernameError, passwordError, passwordConfirmError].every(e => e === false)) {
-      // no errors submit the form
+      // no input errors, submit the form
       const data = {
         username: username.value,
         password: password.value,
@@ -99,7 +99,7 @@ class RegisterForm extends Component {
           }));
         });
     } else {
-      // update state with errors
+      // update state with input errors
       this.setState(state => ({
         username: {
           ...state.username,
@@ -122,8 +122,8 @@ class RegisterForm extends Component {
 
   render() {
     return (
-      <div id='register-form'>
-        <Form>
+      <div>
+        <Form id='register-form'>
           <Form.Group controlId='username'>
             <Form.Label>Username</Form.Label>
             <Form.Control

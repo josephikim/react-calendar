@@ -12,24 +12,24 @@ textarea {
   display: block;
 }
 
-#event-detail {
+#event-form {
   padding-top: 35px;
 }
 
-#event-detail-form .DayPickerInput input {
+#event-form .DayPickerInput input {
   max-width: 110px;
 }
 
-#event-detail-form .row {
+#event-form .row {
   padding-left: 15px;
   padding-right: 15px;
   margin-bottom: 18px;
 }
 
-#event-detail-form .two-column .col:first-of-type {
+#event-form .two-column .col:first-of-type {
   padding-left: 0;
 }
-#event-detail-form .two-column .col:last-of-type {
+#event-form .two-column .col:last-of-type {
   padding-left: 0;
   padding-right: 0;
 }

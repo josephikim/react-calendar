@@ -49,6 +49,7 @@ export const retrieveEvents = () => async (dispatch) => {
         }
         return event;
       })
+      
       dispatch({
         type: 'RETRIEVE_EVENTS',
         payload: payload

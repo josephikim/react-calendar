@@ -27,10 +27,10 @@ userRouter.post('/register', async (req, res) => {
     await newUser.save();
     // Generate JWT token
     const token = genToken(newUser);
-    return res.status(200).send({data: newUser, msg: "User registered", token});
+    return res.status(200).json({data: newUser, msg: "User registered", token});
   }
   catch (err) {
-    res.send({ error: err });
+    res.json({ error: err });
   }
 });
 

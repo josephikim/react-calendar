@@ -84,7 +84,20 @@ class RegisterForm extends Component {
         password: password.value,
         passwordConfirm: passwordConfirm.value
       }
-      this.props.registerUser(data).then(this.setState(initialState));
+
+      this.props.registerUser(data)
+        .then(() => {
+          this.setState(initialState)
+        })
+        .catch(err => {
+          const errorMsg = err.error;
+          this.setState(state => ({
+            username: {
+              ...state.username,
+              error: errorMsg
+            }
+          }));
+        });
     } else {
       // update state with errors
       this.setState(state => ({

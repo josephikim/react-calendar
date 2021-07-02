@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const loginUser = (data) => async (dispatch) => {
   try {
-    const res = await axios.post(`${process.env.API_URL}/api/user/login`, data)
+    const res = await axios.post(`${process.env.API_URL}/api/user/login`, data);
 
     return Promise.resolve(res.data).then(res => {
       const user = res.data.user;
@@ -17,10 +17,13 @@ export const loginUser = (data) => async (dispatch) => {
   }
 };
 
-export const registerUser = (data) => async (dispatch) => {
+// NOT AN ACTION
+export const registerUser = (data) => async () => {
   try {
-    await axios.post(`${process.env.API_URL}/api/user/register`, data)
+    const res = await axios.post(`${process.env.API_URL}/api/user/register`, data);
+
+    return Promise.resolve(res.data);
   } catch (err) {
-    return Promise.reject(err)
+    return Promise.reject(err.response.data);
   }
 };

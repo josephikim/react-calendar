@@ -7,11 +7,8 @@ const calendarRouter = express.Router();
 // GET request for all events
 calendarRouter.get("/event", async (req, res) => {
   const events = await Event.find({}).sort({ start: -1 });
-  if (!events.length) {
-    throw new Error('No events found')
-  } else {
-    return res.send({ data: events });
-  }
+  
+  return res.send({ data: events });
 });
 
 // POST request to create event

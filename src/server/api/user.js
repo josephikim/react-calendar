@@ -7,30 +7,34 @@ const userRouter = express.Router();
 // POST request to register user
 userRouter.post('/register', async (req, res) => {
   const { username, password, passwordConfirm } = req.body;
+
   // If user exists, send error msg
   let foundUser = await User.findOne({ username });
   if (foundUser) {
-    return res.status(403).json({ error: 'Username is already in use' });
+    return res.status(403).send({ error: 'Username is already in use' });
   }
 
   const genToken = user => {
-    return jwt.sign({
-      iss: 'Joseph Kim',
+    const options = {
+      iss: 'React Calendar',
       sub: user.id,
       iat: new Date().getTime(),
       exp: new Date().setDate(new Date().getDate() + 1)
-    }, 'mysecretkey');
+    }
+    return jwt.sign(options, 'mysecretkey');
   }
 
   try {
     const newUser = new User({ username, password, passwordConfirm });
     await newUser.save();
+
     // Generate JWT token
     const token = genToken(newUser);
-    return res.status(200).json({data: newUser, msg: "User registered", token});
+
+    return res.status(200).json({ data: newUser, msg: "User registered", token });
   }
   catch (err) {
-    res.json({ error: err });
+    res.send({ error: err });
   }
 });
 

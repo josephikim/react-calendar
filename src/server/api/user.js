@@ -10,6 +10,7 @@ userRouter.post('/register', async (req, res) => {
 
   // If user exists, send error msg
   let foundUser = await User.findOne({ username });
+  
   if (foundUser) {
     return res.status(403).send({ error: 'Username is already in use' });
   }
@@ -21,6 +22,7 @@ userRouter.post('/register', async (req, res) => {
       iat: new Date().getTime(),
       exp: new Date().setDate(new Date().getDate() + 1)
     }
+
     return jwt.sign(options, 'mysecretkey');
   }
 

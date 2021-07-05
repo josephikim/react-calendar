@@ -16,22 +16,26 @@ textarea {
   padding-top: 35px;
 }
 
-#event-form .DayPickerInput input {
-  max-width: 110px;
-}
-
 #event-form .row {
   padding-left: 15px;
   padding-right: 15px;
   margin-bottom: 18px;
 }
 
+#event-form .two-column .col {
+  max-width: 50%;
+}
+
 #event-form .two-column .col:first-of-type {
   padding-left: 0;
 }
 #event-form .two-column .col:last-of-type {
-  padding-left: 0;
   padding-right: 0;
+}
+
+.DayPickerInput,
+.DayPickerInput input {
+  max-width: 100%;
 }
 
 .submit {

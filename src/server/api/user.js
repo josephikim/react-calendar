@@ -46,7 +46,7 @@ userRouter.post('/login', async (req, res) => {
   // If user not found, send error msg
   let foundUser = await User.findOne({ username });
   if (!foundUser) {
-    return res.status(403).json({ error: 'User not found' });
+    return res.status(403).send({ error: 'User not found' });
   }
 
   // try {

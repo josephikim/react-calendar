@@ -13,7 +13,7 @@ export const loginUser = (data) => async (dispatch) => {
       });
     });
   } catch (err) {
-    return Promise.reject(err);
+    return Promise.reject(err.response.data);
   }
 };
 

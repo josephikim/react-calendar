@@ -285,7 +285,7 @@ class EventForm extends Component {
 
         this.props.updateEvent(data).then(this.setState(newState));
       } catch (err) {
-        this.setState({error: err.response.data});
+        this.setState({ error: err.response.data });
       }
     } else {
       alert('Please make changes before saving')

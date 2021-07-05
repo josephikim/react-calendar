@@ -23,6 +23,7 @@ const initialState = {
     error: ''
   },
   submitCalled: false,
+  error: ''
 }
 class LoginForm extends Component {
   constructor(...args) {
@@ -92,7 +93,14 @@ class LoginForm extends Component {
         password: password.value,
         passwordConfirm: passwordConfirm.value
       }
-      this.props.loginUser(data).then(this.setState(initialState));
+      this.props.loginUser(data)
+        .then(() => {
+          this.setState(initialState)
+        })
+        .catch(err => {
+          const errorMsg = err.error;
+          this.setState({ error: errorMsg });
+        });
     } else {
       // update state with errors
       this.setState(state => ({
@@ -169,6 +177,11 @@ class LoginForm extends Component {
             onClick={this.handleSubmit}>
             Login
           </Button>
+
+          <div className="text-danger">
+            <small>{this.state.error}</small>
+          </div>
+
         </Form>
       </div>
     )

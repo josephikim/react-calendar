@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 const userRouter = express.Router();
 
@@ -15,25 +16,11 @@ userRouter.post('/register', async (req, res) => {
     return res.status(403).send({ error: 'Username is already in use' });
   }
 
-  const genToken = user => {
-    const options = {
-      iss: 'React Calendar',
-      sub: user.id,
-      iat: new Date().getTime(),
-      exp: new Date().setDate(new Date().getDate() + 1)
-    }
-
-    return jwt.sign(options, 'mysecretkey');
-  }
-
   try {
     const newUser = new User({ username, password, passwordConfirm });
     await newUser.save();
 
-    // Generate JWT token
-    const token = genToken(newUser);
-
-    return res.status(200).json({ data: newUser, msg: "User registered", token });
+    return res.status(200).json({ data: newUser, msg: "User registered" });
   }
   catch (err) {
     res.send({ error: err });
@@ -49,17 +36,37 @@ userRouter.post('/login', async (req, res) => {
     return res.status(403).send({ error: 'User not found' });
   }
 
-  // try {
-  //   const newUser = new User({ username, password, passwordConfirm });
-  //   await newUser.save();
-  //   // Generate JWT token
-  //   const token = genToken(newUser);
-  //   // res.status(200).json({ token });
-  //   return res.status(200).send({data: newUser, msg: "User registered", token});
-  // }
-  // catch (err) {
-  //   res.send({ error: err });
-  // }
+  const passwordIsValid = bcrypt.compareSync(
+    password,
+    foundUser.password
+  );
+
+  if (!passwordIsValid) {
+    return res.status(401).send({
+      accessToken: null,
+      message: "Invalid Password!"
+    });
+  }
+
+  const genToken = user => {
+    const options = {
+      iss: 'React Calendar',
+      sub: user.id,
+      iat: new Date().getTime(),
+      exp: new Date().setDate(new Date().getDate() + 1)
+    }
+    
+    return jwt.sign(options, 'mysecretkey');
+  }
+
+  // Generate JWT token
+  const token = genToken(foundUser);
+
+  return res.status(200).send({
+    id: foundUser._id,
+    username: foundUser.username,
+    accessToken: token
+  });
 });
 
 // POST request to delete user

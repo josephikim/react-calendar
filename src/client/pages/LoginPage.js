@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Col, Container, Row, Tabs, Tab } from 'react-bootstrap'
+import { Col, Container, Row, Tabs, Tab, Alert } from 'react-bootstrap'
 import { connect } from 'react-redux';
 
 import RegisterForm from '../components/RegisterForm';
@@ -44,6 +44,9 @@ class LoginPage extends Component {
                   </Tab>
                 </Tabs>
               </div>
+              <Alert variant='primary'>
+                Please register in order to access private calendars!
+              </Alert>
             </Col>
           </Row>
         </Container>

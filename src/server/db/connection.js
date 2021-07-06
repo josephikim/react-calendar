@@ -1,28 +1,68 @@
-import mongoose from 'mongoose';
+import db from '../models';
+import { MONGO_URL } from '../config/dbConfig';
 
-// const MONGO_USERNAME = 'josephikim';
-// const MONGO_PASSWORD = 'your_password';
-const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME;
-const MONGO_PORT = process.env.MONGO_PORT;
-const MONGO_DB = process.env.MONGO_DB;
-// const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+const Role = db.role;
 
-// with auth
-// const url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+db.mongoose
+  .connect(MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    console.log("Successfully connect to MongoDB.");
+    initial();
+  })
+  .catch(err => {
+    console.error("Connection error", err);
+    process.exit();
+  });
 
-// no auth
-const url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}`;
+const initial = () => {
+  Role.estimatedDocumentCount((err, count) => {
+    if (!err && count === 0) {
+      new Role({
+        name: "user"
+      }).save(err => {
+        if (err) {
+          console.log("error", err);
+        }
 
-mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false});
+        console.log("added 'user' to roles collection");
+      });
 
-const db = mongoose.connection;
+      new Role({
+        name: "moderator"
+      }).save(err => {
+        if (err) {
+          console.log("error", err);
+        }
 
-db.once('open', _ => {
-  console.log('Database connected:', url)
-})
+        console.log("added 'moderator' to roles collection");
+      });
 
-db.on('error', err => {
-  console.error('connection error:', err)
-})
+      new Role({
+        name: "admin"
+      }).save(err => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'admin' to roles collection");
+      });
+    }
+  })
+};
+
+// mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false});
+
+// const db = mongoose.connection;
+
+// db.once('open', _ => {
+//   console.log('Database connected:', url)
+// })
+
+// db.on('error', err => {
+//   console.error('connection error:', err)
+// })
 
 export default db;

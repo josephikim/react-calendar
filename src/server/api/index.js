@@ -1,6 +1,6 @@
 import express from 'express';
-import calendarRouter from './calendar';
-import userRouter from './user';
+import userRouter from './userRouter';
+import authRouter from './authRouter';
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.get("/test",  async (req, res) => {
   res.send(JSON.stringify("Hello test", null, 4));
 });
 
-router.use("/calendar", calendarRouter);
 router.use("/user", userRouter);
+router.use("/auth", authRouter);
 
 export default router;

@@ -2,11 +2,12 @@ import express from 'express';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import '../config/authConfig';
 
-const userRouter = express.Router();
+const authRouter = express.Router();
 
 // POST request to register user
-userRouter.post('/register', async (req, res) => {
+authRouter.post('/register', async (req, res) => {
   const { username, password, passwordConfirm } = req.body;
 
   // If user exists, send error msg
@@ -28,7 +29,7 @@ userRouter.post('/register', async (req, res) => {
 });
 
 // POST request to login user
-userRouter.post('/login', async (req, res) => {
+authRouter.post('/login', async (req, res) => {
   const { username, password, passwordConfirm } = req.body;
   // If user not found, send error msg
   let foundUser = await User.findOne({ username });
@@ -56,7 +57,7 @@ userRouter.post('/login', async (req, res) => {
       exp: new Date().setDate(new Date().getDate() + 1)
     }
     
-    return jwt.sign(options, 'mysecretkey');
+    return jwt.sign(options, SECRET);
   }
 
   // Generate JWT token
@@ -70,7 +71,7 @@ userRouter.post('/login', async (req, res) => {
 });
 
 // POST request to delete user
-// userRouter.post('/:id/delete', async (req, res) => {
+// authRouter.post('/:id/delete', async (req, res) => {
 //   let userId = req.body.userId;
 //   try {
 //     const removedUser = await User.removeUser(userId);
@@ -82,7 +83,7 @@ userRouter.post('/login', async (req, res) => {
 // });
 
 // GET request to update user
-// userRouter.get('/:id/update', async (req, res) => {
+// authRouter.get('/:id/update', async (req, res) => {
 //   if (!req.body) {
 //     return res.status(400).send({
 //       message: 'User details cannot be empty',
@@ -98,4 +99,4 @@ userRouter.post('/login', async (req, res) => {
 //   }
 // });
 
-export default userRouter;
+export default authRouter;

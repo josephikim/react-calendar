@@ -24,7 +24,13 @@ const userSchema = new mongoose.Schema({
         return el === this.password;
       }, message: 'Passwords don\'t match.'
     }
-  }
+  },
+  roles: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role"
+    }
+  ]
 });
 
 //schema middleware to apply before saving 

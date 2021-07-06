@@ -1,8 +1,8 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = {
@@ -22,13 +22,13 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        loader: "babel-loader"
+        loader: 'babel-loader'
       },
       {
         // Loads the javacript into html template provided.
         // Entry point is set below in HtmlWebPackPlugin in Plugins 
         test: /\.html$/,
-        loader: "html-loader"
+        loader: 'html-loader'
       },
       {
         test: /\.css$/,
@@ -37,7 +37,7 @@ module.exports = {
       {
         // Loads images into CSS and Javascript files
         test: /\.jpg$/,
-        use: [{loader: "url-loader"}]
+        use: [{loader: 'url-loader'}]
       },
     ]
   },
@@ -47,8 +47,8 @@ module.exports = {
       chunkFilename: '[id].css'
     }),
     new HtmlWebPackPlugin({
-      template: "public/index.html",
-      filename: "./index.html",
+      template: 'public/index.html',
+      filename: './index.html',
       excludeChunks: ['server']
     }),
     new Dotenv({

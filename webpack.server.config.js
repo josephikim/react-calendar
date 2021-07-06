@@ -30,7 +30,7 @@ module.exports = (env, argv) => {
           // Transpiles ES6-8 into ES5
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
-          loader: "babel-loader"
+          loader: 'babel-loader'
         }
       ]
     },

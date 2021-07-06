@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const HtmlWebPackPlugin = require("html-webpack-plugin");
+const HtmlWebPackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = {
@@ -21,10 +21,10 @@ module.exports = {
   module: {
     rules: [
       {
-        enforce: "pre",
+        enforce: 'pre',
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: "eslint-loader",
+        loader: 'eslint-loader',
         options: {
           emitWarning: true,
           failOnError: false,
@@ -34,7 +34,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        loader: "babel-loader"
+        loader: 'babel-loader'
       },
       {
         // Loads the javacript into html template provided.
@@ -42,7 +42,7 @@ module.exports = {
         test: /\.html$/,
         use: [
           {
-            loader: "html-loader",
+            loader: 'html-loader',
             //options: { minimize: true }
           }
         ]
@@ -50,7 +50,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"]
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -60,8 +60,8 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: "public/index.html",
-      filename: "./index.html",
+      template: 'public/index.html',
+      filename: './index.html',
       excludeChunks: ['server']
     }),
     new webpack.HotModuleReplacementPlugin(),
@@ -72,8 +72,8 @@ module.exports = {
   ],
   resolve: {
     fallback: {
-      "fs": false,
-      "path": false
+      'fs': false,
+      'path': false
     },
   }
 }

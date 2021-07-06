@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 const userRouter = express.Router();
 
 // GET request for all events
-userRouter.get("/event", async (req, res) => {
+userRouter.get('/event', async (req, res) => {
   const events = await Event.find({}).sort({ start: -1 });
   
   return res.send({ data: events });
@@ -34,7 +34,7 @@ userRouter.post('/event/:id/delete', async (req, res) => {
 
   const deletedEvent = await Event.findOneAndDelete({ _id: ObjectId(eventId)});
 
-  return res.send({ data: deletedEvent, msg: "Deleted event" });
+  return res.send({ data: deletedEvent, msg: 'Deleted event' });
 });
 
 // GET request to update event
@@ -44,7 +44,7 @@ userRouter.post('/event/:id/update', async (req, res) => {
   payload.start = new Date(payload.start)
   payload.end = new Date(payload.end)
 
-  const updatedEvent = await Event.findOneAndUpdate({"_id" : payload._id}, payload, {new: true});
+  const updatedEvent = await Event.findOneAndUpdate({'_id' : payload._id}, payload, {new: true});
 
   const trimmed = {
     _id: updatedEvent._id,
@@ -54,7 +54,7 @@ userRouter.post('/event/:id/update', async (req, res) => {
     end: updatedEvent.end
   }
   
-  return res.send({ data: trimmed, msg: "Updated event" });
+  return res.send({ data: trimmed, msg: 'Updated event' });
 });
 
 export default userRouter;

@@ -15,8 +15,8 @@ async function seedDB() {
 
   try {
     await client.connect();
-    console.log("Connected correctly to server");
-    const collection = client.db("react-calendar").collection("events");
+    console.log('Connected correctly to server');
+    const collection = client.db('react-calendar').collection('events');
     // The drop() command destroys all data from a collection.
     // Make sure you run it against proper database and collection.
     collection.drop();
@@ -39,7 +39,7 @@ async function seedDB() {
     collection.insertMany(events, () => {
       client.close();
     });
-    console.log("Database seeded!");
+    console.log('Database seeded!');
   } catch (err) {
     console.log(err.stack);
   }

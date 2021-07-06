@@ -137,7 +137,7 @@ class LoginForm extends Component {
               />
           </Form.Group>
           
-          <div className="text-danger">
+          <div className='text-danger'>
             <small>{this.state.username.error}</small>
           </div>
 
@@ -152,7 +152,7 @@ class LoginForm extends Component {
               />
           </Form.Group>
 
-          <div className="text-danger">
+          <div className='text-danger'>
             <small>{this.state.password.error}</small>
           </div>
 
@@ -166,7 +166,7 @@ class LoginForm extends Component {
               />
           </Form.Group>
 
-          <div className="text-danger">
+          <div className='text-danger'>
             <small>{this.state.passwordConfirm.error}</small>
           </div>
 
@@ -178,7 +178,7 @@ class LoginForm extends Component {
             Login
           </Button>
 
-          <div className="text-danger">
+          <div className='text-danger'>
             <small>{this.state.error}</small>
           </div>
 

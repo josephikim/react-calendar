@@ -54,7 +54,7 @@ class CalendarPage extends Component {
 
   render() {
     return (
-      <div id="calendar-page">
+      <div id='calendar-page'>
         <Container>
           <Row>
             <Col xs={12} md={8} lg={8}>
@@ -62,7 +62,7 @@ class CalendarPage extends Component {
                 selectable
                 localizer={localizer}
                 events={this.props.events}
-                defaultView="month"
+                defaultView='month'
                 scrollToTime={new Date(1970, 1, 1, 6)}
                 defaultDate={new Date()}
                 onSelectEvent={event => this.onSelectEvent(event)}

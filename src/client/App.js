@@ -18,19 +18,19 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className='App'>
         <Header />
         <Switch>
-          <Route exact path="/">
+          <Route exact path='/'>
             {this.state.loggedIn ?
               <CalendarPage /> :
               <Redirect to='/login' />
             }
           </Route>
-          <Route path="/about">
+          <Route path='/about'>
             <AboutPage />
           </Route>
-          <Route path="/login">
+          <Route path='/login'>
             <LoginPage />
           </Route>
           <Route>

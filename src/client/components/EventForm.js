@@ -326,7 +326,7 @@ class EventForm extends Component {
             <textarea
               id='title'
               name='title'
-              className={`input ${titleError ? "input--fail" : null} `}
+              className={`input ${titleError ? 'input--fail' : null} `}
               rows='1'
               onChange={event => this.handleChange(validateFields.validateTitle, event)}
               onBlur={event => this.handleBlur(validateFields.validateTitle, event)}
@@ -334,7 +334,7 @@ class EventForm extends Component {
             >
               enter title
             </textarea>
-            <div className="text-danger">
+            <div className='text-danger'>
               <small>{this.state.title.error}</small>
             </div>
           </Row>

@@ -21,7 +21,7 @@ authRouter.post('/register', async (req, res) => {
     const newUser = new User({ username, password, passwordConfirm });
     await newUser.save();
 
-    return res.status(200).json({ data: newUser, msg: "User registered" });
+    return res.status(200).json({ data: newUser, msg: 'User registered' });
   }
   catch (err) {
     res.send({ error: err });
@@ -45,7 +45,7 @@ authRouter.post('/login', async (req, res) => {
   if (!passwordIsValid) {
     return res.status(401).send({
       accessToken: null,
-      message: "Invalid Password!"
+      message: 'Invalid Password!'
     });
   }
 

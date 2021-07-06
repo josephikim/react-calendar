@@ -1,5 +1,7 @@
 const SECRET = 'mysecretkey';
 
-module.exports = {
+const authConfig = {
   SECRET
 }
+
+export default authConfig;

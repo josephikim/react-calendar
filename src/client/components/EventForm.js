@@ -8,7 +8,7 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import { createEvent, updateEvent, deleteEvent } from '../actions/userActions';
-import { validateFields } from '../validation.js';
+import { validateFields } from '../../validation.js';
 
 import '../styles/EventForm.css';
 import 'react-day-picker/lib/style.css';

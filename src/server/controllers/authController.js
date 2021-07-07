@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import authConfig from '../config/authConfig';
 import db from '../models';
+import { validateFields } from '../../validation.js';
 
 const User = db.user;
 const Role = db.role;
@@ -9,9 +10,34 @@ const Role = db.role;
 const register = (req, res) => {
   const user = new User({
     username: req.body.username,
-    password: bcrypt.hashSync(req.body.password, 8)
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm
   });
 
+  // Pre schema validation
+  const usernameError = validateFields.validateUsername(user.username);
+  const passwordError = validateFields.validatePassword(user.password);
+  const passwordConfirmError = validateFields.validatePasswordConfirm(user.passwordConfirm, user.password);
+
+  let preSchemaErrors = {
+    username: usernameError,
+    password: passwordError,
+    passwordConfirm: passwordConfirmError
+  };
+
+  for (const err in preSchemaErrors) {
+    if (!preSchemaErrors[err]) {
+      delete preSchemaErrors[err]
+    }
+  }
+
+  if (Object.keys(preSchemaErrors).length > 0) {
+    console.log('preSchemaErrors', preSchemaErrors)
+    res.status(500).send({ errors: preSchemaErrors });
+    return;
+  }
+  
+  // If no errors, register user
   user.save((err, user) => {
     if (err) {
       res.status(500).send({ message: err });

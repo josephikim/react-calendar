@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
-import { validateFields } from '../validation.js';
+import { validateFields } from '../../validation.js';
 import { registerUser } from '../actions/authActions';
 
 import '../styles/RegisterForm.css';
@@ -90,13 +90,15 @@ class RegisterForm extends Component {
           this.setState(initialState)
         })
         .catch(err => {
-          const errorMsg = err.error;
-          this.setState(state => ({
-            username: {
-              ...state.username,
-              error: errorMsg
-            }
-          }));
+          const errorsObj = err.errors;
+          for (const property in errorsObj) {
+            this.setState(state => ({
+              [property]: {
+                ...state[property],
+                error: errorsObj[property]
+              }
+            }));
+          }
         });
     } else {
       // update state with input errors

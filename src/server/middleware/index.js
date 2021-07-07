@@ -1,9 +1,7 @@
 import authJwt from './authJwt';
 import verifyRegistration from './verifyRegistration';
 
-const middleware = {
+export {
   authJwt,
   verifyRegistration
 };
-
-export default middleware;

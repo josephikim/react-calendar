@@ -7,7 +7,7 @@ import TimePicker from 'rc-time-picker';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { createEvent, updateEvent, deleteEvent } from '../actions/calendarActions';
+import { createEvent, updateEvent, deleteEvent } from '../actions/userActions';
 import { validateFields } from '../validation.js';
 
 import '../styles/EventForm.css';
@@ -459,8 +459,8 @@ class EventForm extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    selectedSlot: state.calendar.selectedSlot,
-    selectedEvent: state.calendar.selectedEvent
+    selectedSlot: state.user.selectedSlot,
+    selectedEvent: state.user.selectedEvent
   };
 };
 

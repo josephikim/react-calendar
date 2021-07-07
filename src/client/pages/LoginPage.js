@@ -45,7 +45,7 @@ class LoginPage extends Component {
                 </Tabs>
               </div>
               <Alert variant='primary'>
-                Please register in order to access private calendars!
+                Please register your username to access private calendars.
               </Alert>
             </Col>
           </Row>
@@ -57,8 +57,7 @@ class LoginPage extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    login: state.login,
-    calendars: state.calendars
+    auth: state.auth,
   };
 };
 

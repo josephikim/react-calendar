@@ -1,11 +1,11 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 
-import {configReducer} from './configReducer';
-import {calendarReducer} from './calendarReducer';
+import { authReducer } from './authReducer';
+import { userReducer } from './userReducer';
 
 const appReducer = combineReducers({
-    config: configReducer,
-    calendar: calendarReducer
+  auth: authReducer,
+  user: userReducer
 });
 
 export default appReducer;

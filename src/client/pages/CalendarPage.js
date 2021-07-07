@@ -5,7 +5,7 @@ import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 
 import EventForm from '../components/EventForm';
-import { onSelectSlot, onSelectEvent, retrieveEvents } from '../actions/calendarActions';
+import { onSelectSlot, onSelectEvent, retrieveEvents } from '../actions/userActions';
 
 import '../styles/CalendarPage.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -84,9 +84,9 @@ class CalendarPage extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    events: state.calendar.events,
-    selectedSlot: state.calendar.selectedSlot,
-    selectedEvent: state.calendar.selectedEvent
+    events: state.user.events,
+    selectedSlot: state.user.selectedSlot,
+    selectedEvent: state.user.selectedEvent
   };
 };
 

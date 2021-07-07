@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import { validateFields } from '../validation.js';
-import { loginUser } from '../actions/userActions';
+import { loginUser } from '../actions/authActions';
 
 import '../styles/LoginForm.css';
 
@@ -190,7 +190,7 @@ class LoginForm extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.config.user
+    user: state.auth.user
   };
 };
 

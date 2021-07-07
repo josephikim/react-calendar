@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import * as config from '../config/authConfig';
+import authConfig from '../config/authConfig';
 import db from '../models';
 
 const User = db.user;
@@ -12,7 +12,7 @@ verifyToken = (req, res, next) => {
     return res.status(403).send({ message: 'No token provided!' });
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, authConfig.secret, (err, decoded) => {
     if (err) {
       return res.status(401).send({ message: 'Unauthorized!' });
     }

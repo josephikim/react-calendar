@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Enter a username.'],
     unique: [true, 'That username is taken.'],
-    lowercase: true,
     validate: [validator.isAlphanumeric, 'Usernames may only have letters and numbers.']
   },
   password: {

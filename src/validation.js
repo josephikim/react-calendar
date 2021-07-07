@@ -7,12 +7,14 @@ class ValidateFields {
     }
     return false;
   }
+
   validateUsername(username) {
     if (!validator.isAlphanumeric(username)) {
       return 'Username should only contain letters and numbers';
     }
     return false;
   }
+
   validatePassword(password) {
     if (!validator.isAlphanumeric(password)) {
       return 'Password should only contain letters and numbers';
@@ -22,8 +24,9 @@ class ValidateFields {
     }
     return false;
   }
-  validatePasswordConfirm(passwordConfirm, password) {
-    if (passwordConfirm !== password) {
+  
+  validatePasswordConfirm(candidatePassword, password) {
+    if (candidatePassword !== password) {
       return 'Passwords don\'t match';
     }
     return false;

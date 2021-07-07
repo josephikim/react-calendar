@@ -32,7 +32,6 @@ const register = (req, res) => {
   }
 
   if (Object.keys(preSchemaErrors).length > 0) {
-    console.log('preSchemaErrors', preSchemaErrors)
     res.status(500).send({ errors: preSchemaErrors });
     return;
   }

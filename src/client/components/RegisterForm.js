@@ -90,7 +90,7 @@ class RegisterForm extends Component {
           this.setState(initialState)
         })
         .catch(err => {
-          const errorsObj = err.errors;
+          const errorsObj = err.errors ? err.errors : err.error;
           for (const property in errorsObj) {
             this.setState(state => ({
               [property]: {

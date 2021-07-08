@@ -22,8 +22,7 @@ const initialState = {
     validateOnChange: false,
     error: ''
   },
-  submitCalled: false,
-  error: ''
+  submitCalled: false
 }
 class LoginForm extends Component {
   constructor(...args) {
@@ -98,8 +97,15 @@ class LoginForm extends Component {
           this.setState(initialState)
         })
         .catch(err => {
-          const errorMsg = err.error;
-          this.setState({ error: errorMsg });
+          const errorsObj = err.errors ? err.errors : err.error;
+          for (const property in errorsObj) {
+            this.setState(state => ({
+              [property]: {
+                ...state[property],
+                error: errorsObj[property]
+              }
+            }));
+          }
         });
     } else {
       // update state with errors

@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 import authConfig from '../config/authConfig';
 import db from '../models';
 import { validateFields } from '../../validation.js';
@@ -91,33 +90,30 @@ const login = (req, res) => {
     username: req.body.username
   })
     .populate("roles", "-__v")
-    .exec((err, user) => {
+    .exec(async (err, user) => {
       if (err) {
         res.status(500).send({ message: err });
         return;
       }
 
       if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+        return res.status(404).send({ error: { username: "User Not found." } });
       }
 
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
+      const passwordIsValid = await user.validatePassword(req.body.password) 
 
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          message: "Invalid Password!"
+          error: { password: "Invalid Password!" }
         });
       }
 
-      var token = jwt.sign({ id: user.id }, authConfig.secret, {
+      const token = jwt.sign({ id: user.id }, authConfig.secret, {
         expiresIn: 86400 // 24 hours
       });
 
-      var authorities = [];
+      let authorities = [];
 
       for (let i = 0; i < user.roles.length; i++) {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());

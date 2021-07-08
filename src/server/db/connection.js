@@ -1,10 +1,10 @@
 import db from '../models';
-import dbConfig from '../config/dbConfig';
+import { MONGO_URL } from '../config/dbConfig';
 
 const Role = db.role;
 
 db.mongoose
-  .connect(dbConfig.MONGO_URL, {
+  .connect(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false

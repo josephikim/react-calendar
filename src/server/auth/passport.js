@@ -1,7 +1,7 @@
 import passport from 'passport';
 import passportJWT from 'passport-jwt';
 import User from '../Models/User';
-import '../config/authConfig';
+import { SECRET } from '../config/authConfig';
 
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt; 

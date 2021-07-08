@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import authConfig from '../config/authConfig';
 import db from '../models';
+import { SECRET } from '../config/authConfig';
 import { validateFields } from '../../validation.js';
 
 const User = db.user;
@@ -97,7 +97,7 @@ const login = (req, res) => {
       }
 
       if (!user) {
-        return res.status(404).send({ error: { username: "User Not found." } });
+        return res.status(404).send({ error: { username: "User not found!" } });
       }
 
       const passwordIsValid = await user.validatePassword(req.body.password) 
@@ -105,11 +105,13 @@ const login = (req, res) => {
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          error: { password: "Invalid Password!" }
+          error: { password: "Invalid password!" }
         });
       }
 
-      const token = jwt.sign({ id: user.id }, authConfig.secret, {
+      // If password is valid, create JWT token
+      console.log('user.id', user.id)
+      const token = jwt.sign({ id: user.id }, SECRET, {
         expiresIn: 86400 // 24 hours
       });
 

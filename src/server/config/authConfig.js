@@ -1,7 +1,5 @@
 const SECRET = 'mysecretkey';
 
-const authConfig = {
+export {
   SECRET
-}
-
-export default authConfig;
+};

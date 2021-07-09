@@ -110,7 +110,6 @@ const login = (req, res) => {
       }
 
       // If password is valid, create JWT token
-      console.log('user.id', user.id)
       const token = jwt.sign({ id: user.id }, SECRET, {
         expiresIn: 86400 // 24 hours
       });

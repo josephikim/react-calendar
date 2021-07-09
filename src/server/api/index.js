@@ -11,6 +11,6 @@ apiRouter.get('/test',  async (req, res) => {
 });
 
 apiRouter.use('/auth', authRouter);
-apiRouter.use('/user', userRouter);
+apiRouter.use('/', userRouter);
 
 export default apiRouter;

@@ -17,7 +17,10 @@ const middleware = [
 ];
 
 const initialState = {
-  auth: {},
+  auth: {
+    authenticatedUser: '',
+    isLoading: false
+  },
   user: {
     events: [],
     selectedSlot: {

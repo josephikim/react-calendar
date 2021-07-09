@@ -184,7 +184,7 @@ class RegisterForm extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.auth.user
+    user: state.auth.authenticatedUser
   };
 };
 

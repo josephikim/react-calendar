@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-import CalendarPage from './pages/CalendarPage';
+import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import AboutPage from './pages/AboutPage';
+import CalendarPage from './pages/CalendarPage';
+import PublicRoute from './components/PublicRoute';
+import PrivateRoute from './components/PrivateRoute';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import NoMatch from './components/NoMatch';
 
+const initialState = {};
+
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      loggedIn: true
-    }
+    this.state = initialState;
   }
 
   render() {
@@ -21,21 +24,10 @@ class App extends Component {
       <div className='App'>
         <Header />
         <Switch>
-          <Route exact path='/'>
-            {this.state.loggedIn ?
-              <CalendarPage /> :
-              <Redirect to='/login' />
-            }
-          </Route>
-          <Route path='/about'>
-            <AboutPage />
-          </Route>
-          <Route path='/login'>
-            <LoginPage />
-          </Route>
-          <Route>
-            <NoMatch />
-          </Route>
+          <PublicRoute restricted={false} component={HomePage} path="/" exact />
+          <PublicRoute restricted={this.props.user ? true : false} component={LoginPage} path="/login" exact />
+          <PrivateRoute component={CalendarPage} path="/calendar" exact />
+          <PublicRoute restricted={false} component={NoMatch} />
         </Switch>
         <Footer />
       </div>
@@ -43,4 +35,10 @@ class App extends Component {
   }
 }
 
-export default App
+const mapStateToProps = (state) => {
+  return {
+    user: state.auth.authenticatedUser
+  };
+};
+
+export default connect(mapStateToProps)(App);

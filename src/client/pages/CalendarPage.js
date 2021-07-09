@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 
+import LoadingPage from '../pages/LoadingPage';
 import EventForm from '../components/EventForm';
 import { onSelectSlot, onSelectEvent, retrieveEvents } from '../actions/userActions';
 
@@ -53,6 +54,12 @@ class CalendarPage extends Component {
   }
 
   render() {
+    const isLoading = this.props.isLoading;
+    if (isLoading) {
+      return (
+       <LoadingPage />
+      )
+    }
     return (
       <div id='calendar-page'>
         <Container>
@@ -84,6 +91,7 @@ class CalendarPage extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    isLoading: state.auth.isLoading,
     events: state.user.events,
     selectedSlot: state.user.selectedSlot,
     selectedEvent: state.user.selectedEvent

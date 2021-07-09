@@ -1,10 +1,11 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   return (
     // Show the component only when the user is logged in
-    // Otherwise, redirect the user to /signin page
+    // Otherwise, redirect the user to /login page
     <Route {...rest} render={props => (
       this.props.user ?
         <Component {...props} />
@@ -15,7 +16,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.auth.user
+    user: state.auth.authenticatedUser
   };
 };
 

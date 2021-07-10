@@ -1,6 +1,5 @@
-#login-form {
-  width: 100%;
-  padding: 35px;
+#login-form h4 {
+  margin-bottom: 24px;
 }
 
 .btn {

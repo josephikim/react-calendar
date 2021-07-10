@@ -16,11 +16,11 @@ class HomePage extends Component {
       <div id='home-page'>
         <Container>
           <Row>
-            
+
             <Col md={6}>
               <div className='col-content-wrap'>
                 <div id='about'>
-                  <p><strong>React Calendar</strong> is an easy-to-use online calendar app powered by Node.js and React.</p>
+                  <p><strong>React Calendar</strong> is an easy-to-use online calendar app powered by <a href='https://reactjs.org/' target='_blank'>React</a>.</p>
                   <p>Register your username to get started!</p>
                 </div>
                 <img id='calendar-img' src={icon}></img>

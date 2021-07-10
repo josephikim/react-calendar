@@ -1,12 +1,5 @@
-#tabs-wrapper {
-  margin: 35px 0px 24px;
-}
-
-#tabs-wrapper .nav-tabs .nav-link {
-  border: none;
-}
-
-#tabs-wrapper .active,
-.tab-content {
-  background: #E8E8E8
+#login-page .col-content-wrap {
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 35px;
 }

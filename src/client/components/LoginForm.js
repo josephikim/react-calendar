@@ -133,6 +133,11 @@ class LoginForm extends Component {
     return (
       <div>
         <Form id='login-form'>
+
+          <div className='text-primary'>
+            <h4>User Login</h4>
+          </div>
+
           <Form.Group controlId='username'>
             <Form.Label>Username</Form.Label>
             <Form.Control

@@ -19,8 +19,10 @@ class LoginPage extends Component {
       <div id='login-page'>
         <Container>
           <Row>
-            <Col s={{ span: 8, offset: 2 }} md={{ span: 6, offset: 3 }}>
-              <LoginForm />
+            <Col md={{ span: 8, offset: 2 }} >
+              <div className='col-content-wrap'>
+                <LoginForm />
+              </div>
             </Col>
           </Row>
         </Container>

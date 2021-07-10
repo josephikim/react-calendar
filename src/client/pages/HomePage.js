@@ -16,16 +16,26 @@ class HomePage extends Component {
       <div id='home-page'>
         <Container>
           <Row>
-            <Col s={{ span: 4, offset: 1 }}>
-              <div id='about'>About info goes here</div>
-              <img id='calendar-img' src={icon}></img>
+            
+            <Col md={6}>
+              <div className='col-content-wrap'>
+                <div id='about'>
+                  <p><strong>React Calendar</strong> is an easy-to-use online calendar app powered by Node.js and React.</p>
+                  <p>Register your username to get started!</p>
+                </div>
+                <img id='calendar-img' src={icon}></img>
+              </div>
             </Col>
-            <Col s={{ span: 4, offset: 1 }}>
-              <RegisterForm />
-              <span>
-                Already registered? Please <a href='/login'>login</a>
-              </span>
+
+            <Col md={6}>
+              <div className='col-content-wrap'>
+                <RegisterForm />
+                <span>
+                  Already registered? Please <a href='/login'>login</a>.
+                </span>
+              </div>
             </Col>
+
           </Row>
         </Container>
       </div>

@@ -7,7 +7,7 @@ const Header = () => {
     <div className='fixed-header'>
       <Navbar collapseOnSelect expands='sm' bg='primary' variant='dark'>
         <Container>
-          <Navbar.Brand href='/'>React Calendar App</Navbar.Brand>
+          <Navbar.Brand href='/'>React Calendar</Navbar.Brand>
           <Navbar.Toggle aria-controls='responsive-navbar-nav' />
           <Navbar.Collapse id='responsive-navbar-nav' className='justify-content-end' >
             <Nav>

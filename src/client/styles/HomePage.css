@@ -1,3 +1,17 @@
+.col-md-6 .col-content-wrap {
+  max-width: 85%;
+  margin: 0 auto;
+}
+
+#about {
+  margin: 35px 0px;
+  font-size: 18px;
+}
+
+#about p {
+  margin-bottom: 18px;
+}
+
 #calendar-img {
-  max-width: 500px;
+  max-width: 100%;
 }

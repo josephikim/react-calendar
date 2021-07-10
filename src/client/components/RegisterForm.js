@@ -126,6 +126,11 @@ class RegisterForm extends Component {
     return (
       <div>
         <Form id='register-form'>
+
+          <div className='text-primary'>
+            <h4>New User Registration</h4>
+          </div>
+
           <Form.Group controlId='username'>
             <Form.Label>Username</Form.Label>
             <Form.Control

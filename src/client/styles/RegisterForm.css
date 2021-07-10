@@ -1,8 +1,11 @@
 #register-form {
   width: 100%;
-  padding: 35px;
+  padding: 35px 0px;
 }
 
+#register-form h4 {
+  margin-bottom: 24px;
+}
 .btn {
   margin-top: 18px;
 }

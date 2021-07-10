@@ -3,9 +3,14 @@ import axios from 'axios';
 export const loginUser = (data) => async (dispatch) => {
   try {
     const res = await axios.post(`${process.env.API_URL}/api/auth/login`, data);
-
+    
     return Promise.resolve(res.data).then(res => {
-      const user = res.data.user;
+      // Store token in localstorage
+      const token = res.accessToken;
+      localStorage.setItem('SavedToken', token);
+
+      // Update state
+      const user = res.id;
 
       dispatch({
         type: 'UPDATE_USER',

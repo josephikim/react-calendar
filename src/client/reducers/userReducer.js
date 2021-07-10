@@ -10,6 +10,11 @@ export const userReducer = (state = [], action) => {
         ...state,
         selectedEvent: action.payload
       };
+    case 'UPDATE_CALENDARS':
+      return {
+        ...state,
+        calendars: action.payload
+      };
     case 'RETRIEVE_EVENTS':
       return {
         ...state,

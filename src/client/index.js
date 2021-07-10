@@ -27,7 +27,8 @@ const initialState = {
       start: new Date(),
       end: new Date(),
     },
-    selectedEvent: {}
+    selectedEvent: {},
+    calendars: {}
   }
 }
 

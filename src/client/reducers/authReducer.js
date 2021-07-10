@@ -3,12 +3,12 @@ export const authReducer = (state = [], action) => {
     case 'UPDATE_USER':
       return {
         ...state,
-        user: action.payload
+        authenticatedUser: action.payload
       };
-    case 'UPDATE_CALENDARS':
+    case 'UPDATE_LOADING_STATUS':
       return {
         ...state,
-        calendars: action.payload
+        isLoading: action.payload
       };
     default:
       return state;

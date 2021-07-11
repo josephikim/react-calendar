@@ -21,8 +21,7 @@ const initialState = {
     value: '',
     validateOnChange: false,
     error: ''
-  },
-  submitCalled: false,
+  }
 }
 class RegisterForm extends Component {
   constructor(...args) {
@@ -34,8 +33,7 @@ class RegisterForm extends Component {
     const { target: { name } } = event;
 
     if (
-      this.state[name]['validateOnChange'] === false &&
-      this.state.submitCalled === false
+      this.state[name]['validateOnChange'] === false
     ) {
       this.setState(state => ({
         [name]: {

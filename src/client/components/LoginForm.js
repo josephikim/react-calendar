@@ -21,8 +21,7 @@ const initialState = {
     value: '',
     validateOnChange: false,
     error: ''
-  },
-  submitCalled: false
+  }
 }
 class LoginForm extends Component {
   constructor(...args) {
@@ -42,8 +41,7 @@ class LoginForm extends Component {
     const { target: { name } } = event;
 
     if (
-      this.state[name]['validateOnChange'] === false &&
-      this.state.submitCalled === false
+      this.state[name]['validateOnChange'] === false
     ) {
       this.setState(state => ({
         [name]: {
@@ -199,14 +197,8 @@ class LoginForm extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.auth.authenticatedUser
-  };
-};
-
 const mapActionsToProps = {
   loginUser
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(LoginForm);
+export default connect(mapActionsToProps)(LoginForm);

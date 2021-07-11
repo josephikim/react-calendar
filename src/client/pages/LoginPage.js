@@ -8,10 +8,6 @@ import '../styles/LoginPage.css';
 class LoginPage extends Component {
   constructor(...args) {
     super(...args)
-    this.state = {
-      returningUser: true,
-      activeKey: 'register'
-    }
   }
 
   render() {

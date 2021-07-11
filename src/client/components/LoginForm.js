@@ -24,13 +24,20 @@ const initialState = {
   }
 }
 class LoginForm extends Component {
+  _isMounted = false;
+
   constructor(...args) {
     super(...args)
     this.state = initialState
   }
 
   componentDidMount = () => {
+    this._isMounted = true;
     this.initData();
+  }
+
+  componentWillUnmount = () => {
+    this._isMounted = false;
   }
 
   initData = () => {
@@ -92,7 +99,7 @@ class LoginForm extends Component {
       }
       this.props.loginUser(data)
         .then(() => {
-          this.setState(initialState)
+          if (this._isMounted) this.setState(initialState)
         })
         .catch(err => {
           const errorsObj = err.errors ? err.errors : err.error;
@@ -201,4 +208,4 @@ const mapActionsToProps = {
   loginUser
 }
 
-export default connect(mapActionsToProps)(LoginForm);
+export default connect(null, mapActionsToProps)(LoginForm);

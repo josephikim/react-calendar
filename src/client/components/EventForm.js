@@ -415,39 +415,39 @@ class EventForm extends Component {
             <div className='submit'>
               {slotSelected &&
                 <Button
-                  as='input'
                   type='submit'
-                  value='Add Event'
                   name='add-event-btn'
                   id='add-event-btn'
                   className='button'
                   variant='primary'
                   onMouseDown={() => this.setState({ submitCalled: true })}
-                />
+                >
+                  Add Event
+                </Button>
               }
 
               {eventSelected &&
                 <Button
-                  as='input'
-                  value='Save Changes'
                   name='save-changes-btn'
                   id='save-changes-btn'
                   className='button'
                   variant='success'
                   onClick={this.handleSave}
-                />
+                >
+                  Save Changes
+                </Button>
               }
 
               {eventSelected &&
                 <Button
-                  as='input'
-                  value='Delete Event'
                   name='delete-event-btn'
                   id='delete-event-btn'
                   className='button'
                   variant='danger'
                   onClick={this.handleDelete}
-                />
+                >
+                  Delete Event
+                </Button>
               }
             </div>
           </Row>

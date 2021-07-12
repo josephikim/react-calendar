@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { batch } from 'react-redux'
+import { batch } from 'react-redux';
+
+const accessToken = localStorage.getItem('SavedToken');
+const headers = {
+  'Content-Type': 'application/json',
+  'x-access-token': accessToken
+}
 
 export const onSelectSlot = (event => {
   return (dispatch) => {
@@ -35,7 +41,9 @@ export const updateSelectedEvent = (event) => {
 
 export const retrieveEvents = () => async (dispatch) => {
   try {
-    const res = await axios.get(`${process.env.API_URL}/api/user/event`)
+    const res = await axios.get(`${process.env.API_URL}/api/event`,
+      { headers: headers }
+    )
 
     return Promise.resolve(res.data).then(res => {
       // use Date type on event dates
@@ -62,7 +70,7 @@ export const retrieveEvents = () => async (dispatch) => {
 
 export const createEvent = (data) => async (dispatch) => {
   try {
-    const res = await axios.post(`${process.env.API_URL}/api/user/event`, data)
+    const res = await axios.post(`${process.env.API_URL}/api/event`, data, { headers: headers })
 
     return Promise.resolve(res.data).then(res => {
       // convert dates to type Date
@@ -91,7 +99,7 @@ export const createEvent = (data) => async (dispatch) => {
 
 export const deleteEvent = (eventId) => async (dispatch) => {
   try {
-    const res = await axios.post(`${process.env.API_URL}/api/user/event/${eventId}/delete`)
+    const res = await axios.delete(`${process.env.API_URL}/api/event/${eventId}/delete`, { headers: headers })
 
     return Promise.resolve(res.data).then(res => {
       const deletedId = res.data._id;
@@ -113,7 +121,7 @@ export const deleteEvent = (eventId) => async (dispatch) => {
 
 export const updateEvent = (event) => async (dispatch) => {
   try {
-    const res = await axios.post(`${process.env.API_URL}/api/user/event/${event.id}/update`, event)
+    const res = await axios.post(`${process.env.API_URL}/api/event/${event.id}/update`, event, { headers: headers })
 
     return Promise.resolve(res.data).then(res => {
       // convert dates to type Date

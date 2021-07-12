@@ -92,7 +92,8 @@ class EventForm extends Component {
       newState = {
         title: {
           ...this.state.title,
-          value: this.props.selectedEvent.title
+          value: this.props.selectedEvent.title,
+          error: ''
         },
         desc: {
           value: this.props.selectedEvent.desc

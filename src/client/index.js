@@ -18,7 +18,7 @@ const middleware = [
 
 const initialState = {
   auth: {
-    authenticatedUser: 'devUser',
+    authenticatedUser: 'devUser', // set as empty string in prod
     isLoading: false
   },
   user: {

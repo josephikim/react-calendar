@@ -188,8 +188,8 @@ class EventForm extends Component {
 
     if (titleError === false) {
       try {
-        if (this.state.end.value < this.state.start.value) { // Check for invalid end date
-          alert('End date should be after start date')
+        if (this.state.end.value <= this.state.start.value) { // Check for invalid end time
+          alert('End time should be after start time')
           return
         }
 
@@ -219,6 +219,11 @@ class EventForm extends Component {
   handleSave = (event) => {
     event.preventDefault();
     if (this.state.title.error) return;
+
+    if (this.state.end.value <= this.state.start.value) { // Check for invalid end time
+      alert('End time should be after start time')
+      return
+    }
 
     const titleChanged = this.state.title.value !== this.props.selectedEvent.title;
     const descChanged = this.state.desc.value !== this.props.selectedEvent.desc;

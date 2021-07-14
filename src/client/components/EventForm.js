@@ -23,18 +23,13 @@ const initialState = {
   desc: {
     value: ''
   },
-  startDate: {
-    value: new Date()
+  start: {
+    value: moment(new Date()).hour(0).minute(0).seconds(0).toDate()
   },
-  endDate: {
-    value: new Date()
+  end: {
+    value: moment(new Date()).hour(0).minute(0).seconds(0).add(15, 'm').toDate()
   },
-  startTime: {
-    value: moment().hour(0).minute(0)
-  },
-  endTime: {
-    value: moment().hour(0).minute(15)
-  },
+  formValuesChanged: false,
   submitCalled: false,
   timeFormat: 'h:mm a',
   error: ''
@@ -60,56 +55,33 @@ class EventForm extends Component {
 
     if (slotSelected) {
       newState = {
-        title: {
-          value: '',
-          validateOnChange: false,
-          error: ''
-        },
-        desc: {
-          value: ''
-        },
-        startDate: {
+        ...initialState,
+        start: {
           value: this.props.selectedSlot.start
         },
-        endDate: {
-          value: this.props.selectedSlot.end
-        },
-        startTime: {
-          value: moment().hour(0).minute(0)
-        },
-        endTime: {
-          value: moment().hour(0).minute(15)
+        end: {
+          value: moment(this.props.selectedSlot.end).add(15, 'm').toDate()
         }
       }
     }
 
     if (eventSelected) {
-      const startDate = new Date(this.props.selectedEvent.start.toDateString());
-      const endDate = new Date(this.props.selectedEvent.end.toDateString());
-      const startTime = moment().hour(this.props.selectedEvent.start.getHours()).minute(this.props.selectedEvent.start.getMinutes());
-      const endTime = moment().hour(this.props.selectedEvent.end.getHours()).minute(this.props.selectedEvent.end.getMinutes());
-
+      // Update component state with selectedEvent values
       newState = {
+        ...initialState,
         title: {
-          ...this.state.title,
+          ...initialState.title,
           value: this.props.selectedEvent.title,
-          error: ''
         },
         desc: {
           value: this.props.selectedEvent.desc
         },
-        startDate: {
-          value: startDate
+        start: {
+          value: this.props.selectedEvent.start
         },
-        endDate: {
-          value: endDate
-        },
-        startTime: {
-          value: startTime
-        },
-        endTime: {
-          value: endTime
-        },
+        end: {
+          value: this.props.selectedEvent.end
+        }
       }
     }
 
@@ -142,7 +114,8 @@ class EventForm extends Component {
         [name]: {
           ...state[name],
           value: value
-        }
+        },
+        formValuesChanged: true,
       }));
     } else {  // handle fields with validation
       this.setState(state => ({
@@ -150,52 +123,60 @@ class EventForm extends Component {
           ...state[name],
           value: value,
           error: state[name]['validateOnChange'] ? validationFunc(value) : ''
-        }
+        },
+        formValuesChanged: true,
       }));
     }
   }
 
   handleDayChange = (value, id) => {
-    const newState = {
-      [id]: {
-        value: value
+    const target = id.startsWith('start') ? 'start' : 'end';
+    let update = new Date(value);
+    let targetValue = new Date(this.state[target].value)
+
+    // Update day, month, year of target value
+    const [month, day, year] = [update.getMonth(), update.getDate(), update.getFullYear()];
+    targetValue.setFullYear(year, month, day)
+          
+    let newState = {
+      [target]: {
+        value: targetValue
+      },
+      formValuesChanged: true
+    }
+
+    // update end date if later start date is selected
+    if (target === 'start' && targetValue > this.state.end.value) {
+      let endDate = new Date(this.state.end.value)
+      endDate.setFullYear(year, month, day)
+      
+      newState.end = {
+        value: endDate
       }
     }
 
-    // update endDate if later startDate is selected
-    if (id === 'startDate' && value > this.state.endDate.value) {
-      newState.endDate = {
-        value: value
+    // update start date if earlier end date is selected
+    if (target === 'end' && targetValue < this.state.start.value) {
+      let startDate = new Date(this.state.start.value)
+      startDate.setFullYear(year, month, day)
+      
+      newState.start = {
+        value: startDate
       }
     }
-
-    // update startDate if earlier endDate is selected
-    if (id === 'endDate' && value < this.state.startDate.value) {
-      newState.startDate = {
-        value: value
-      }
-    }
-
+    
     this.setState(newState);
   }
 
   handleTimeChange = (value, id) => {
+    const target = id.startsWith('start') ? 'start' : 'end';
+    const update = value.toDate();
+          
     let newState = {
-      [id]: {
-        value: value
-      }
-    }
-
-    if (id === 'startTime' && this.state.endTime.value.isSameOrBefore(value)) {
-      newState.endTime = {
-        value: value.clone().add(15, 'minutes')
-      }
-    }
-
-    if (id === 'endTime' && this.state.startTime.value.isSameOrAfter(value)) {
-      newState.startTime = {
-        value: value.clone().subtract(15, 'minutes')
-      }
+      [target]: {
+        value: update
+      },
+      formValuesChanged: true
     }
 
     this.setState(newState);
@@ -203,15 +184,11 @@ class EventForm extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-
     const titleError = validateFields.validateTitle(this.state.title.value);
 
     if (titleError === false) {
       try {
-        const start = this.appendDateToTime(this.state.startDate.value, this.state.startTime.value)
-        const end = this.appendDateToTime(this.state.endDate.value, this.state.endTime.value)
-
-        if (end < start) { // Check for invalide end date
+        if (this.state.end.value < this.state.start.value) { // Check for invalid end date
           alert('End date should be after start date')
           return
         }
@@ -219,18 +196,11 @@ class EventForm extends Component {
         const data = {
           title: this.state.title.value,
           desc: this.state.desc.value,
-          start: start,
-          end: end
+          start: this.state.start.value,
+          end: this.state.end.value
         }
 
-        this.props.createEvent(data).then(this.setState(state => ({
-          title: {
-            ...state.title,
-            validateOnChange: false,
-            error: ''
-          },
-          submitCalled: false
-        })));
+        this.props.createEvent(data);
       } catch (err) {
         this.setState({error: err.response.data});
       }
@@ -240,34 +210,20 @@ class EventForm extends Component {
           ...state.title,
           validateOnChange: true,
           error: titleError
-        }
+        },
+        submitCalled: false
       }));
     }
   }
 
-  appendDateToTime = (date, time) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const day = date.getDate();
-
-    time.set('year', year);
-    time.set('month', month);
-    time.set('date', day);
-
-    return time.toDate();
-  }
-
   handleSave = (event) => {
     event.preventDefault();
-
     if (this.state.title.error) return;
 
-    const start = this.appendDateToTime(this.state.startDate.value, this.state.startTime.value)
-    const end = this.appendDateToTime(this.state.endDate.value, this.state.endTime.value)
     const titleChanged = this.state.title.value !== this.props.selectedEvent.title;
     const descChanged = this.state.desc.value !== this.props.selectedEvent.desc;
-    const startChanged = start !== this.props.selectedEvent.start;
-    const endChanged = end !== this.props.selectedEvent.end;
+    const startChanged = this.state.start.value !== this.props.selectedEvent.start;
+    const endChanged = this.state.end.value !== this.props.selectedEvent.end;
     const validChange = titleChanged || descChanged || startChanged || endChanged;
 
     if (validChange) {
@@ -276,15 +232,11 @@ class EventForm extends Component {
           _id: this.props.selectedEvent._id,
           title: this.state.title.value,
           desc: this.state.desc.value,
-          start,
-          end
-        }
-        const newState = {
-          validateTitleOnChange: false,
-          titleError: ''
+          start: this.state.start.value,
+          end: this.state.end.value
         }
 
-        this.props.updateEvent(data).then(this.setState(newState));
+        this.props.updateEvent(data);
       } catch (err) {
         this.setState({ error: err.response.data });
       }
@@ -295,7 +247,6 @@ class EventForm extends Component {
 
   handleDelete = (event) => {
     event.preventDefault();
-
     if (!this.props.selectedEvent) return;
 
     const eventId = this.props.selectedEvent._id;
@@ -362,7 +313,7 @@ class EventForm extends Component {
                 name='startDate'
                 formatDate={formatDate}
                 parseDate={parseDate}
-                value={`${formatDate(this.state.startDate.value)}`}
+                value={`${formatDate(this.state.start.value)}`}
                 onDayChange={(value) => this.handleDayChange(value, 'startDate')}
               />
             </Col>
@@ -373,7 +324,7 @@ class EventForm extends Component {
                 id='startTime'
                 name='startTime'
                 showSecond={false}
-                value={this.state.startTime.value}
+                value={moment(this.state.start.value)}
                 onChange={(value, id='startTime') => this.handleTimeChange(value, id)}
                 format={this.state.timeFormat}
                 minuteStep={15}
@@ -391,7 +342,7 @@ class EventForm extends Component {
                 name='endDate'
                 formatDate={formatDate}
                 parseDate={parseDate}
-                value={`${formatDate(this.state.endDate.value)}`}
+                value={`${formatDate(this.state.end.value)}`}
                 onDayChange={(value) => this.handleDayChange(value, 'endDate')}
               />
             </Col>
@@ -402,7 +353,7 @@ class EventForm extends Component {
                 id='endTime'
                 name='endTime'
                 showSecond={false}
-                value={this.state.endTime.value}
+                value={moment(this.state.end.value)}
                 onChange={(value, id='endTime') => this.handleTimeChange(value, id)}
                 format={this.state.timeFormat}
                 minuteStep={15}

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { batch } from 'react-redux';
 
 const accessToken = localStorage.getItem('SavedToken');
+console.log('accessToken', accessToken)
 const headers = {
   'Content-Type': 'application/json',
   'x-access-token': accessToken

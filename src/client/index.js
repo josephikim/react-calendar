@@ -1,41 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import thunk from 'redux-thunk';
-import { createStore, applyMiddleware } from 'redux';
+import store from './store/createStore';
 import { Provider } from 'react-redux';
-import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 
 import App from './App';
-import appReducer from './reducers';
 
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.css';
-
-const middleware = [
-  thunk,
-];
-
-const initialState = {
-  auth: {
-    authenticatedUser: 'devUser', // set as empty string in prod
-    isLoading: false
-  },
-  user: {
-    events: [],
-    selectedSlot: {
-      start: new Date(),
-      end: new Date(),
-    },
-    selectedEvent: {},
-    calendars: {}
-  }
-}
-
-const composeEnhancers = composeWithDevTools({});
-const store = createStore(appReducer, initialState, composeEnhancers(
-  applyMiddleware(...middleware)
-));
 
 ReactDOM.render(
   <Provider store={store}>

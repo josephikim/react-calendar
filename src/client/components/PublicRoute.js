@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 
 const PublicRoute = ({ component: Component, restricted, ...rest }) => {
   const isLoggedIn = useSelector((state) => state.auth.authenticatedUser)
+  
   return (
     // restricted = false meaning public route
     // restricted = true meaning restricted route

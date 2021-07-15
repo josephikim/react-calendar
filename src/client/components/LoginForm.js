@@ -63,15 +63,16 @@ class LoginForm extends Component {
 
   handleChange = (validationFunc, event) => {
     const { target: { name, value } } = event;
-    
-    if (validationFunc === null) { // handle fields without validation
+
+    if (name === 'passwordConfirm') { // handle passwordConfirm validation
       this.setState(state => ({
         [name]: {
           ...state[name],
-          value: value
+          value: value,
+          error: state[name]['validateOnChange'] ? validationFunc(value, this.state.password.value) : ''
         }
       }));
-    } else {  // handle fields with validation
+    } else {  // handle all other validation
       this.setState(state => ({
         [name]: {
           ...state[name],
@@ -178,7 +179,7 @@ class LoginForm extends Component {
               type='password'
               name='passwordConfirm'
               placeholder='Confirm password'
-              onChange={event => this.handleChange(null, event)}
+              onChange={event => this.handleChange(validateFields.validatePasswordConfirm, event)}
               />
           </Form.Group>
 

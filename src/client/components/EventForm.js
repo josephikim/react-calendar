@@ -225,28 +225,18 @@ class EventForm extends Component {
       return
     }
 
-    const titleChanged = this.state.title.value !== this.props.selectedEvent.title;
-    const descChanged = this.state.desc.value !== this.props.selectedEvent.desc;
-    const startChanged = this.state.start.value !== this.props.selectedEvent.start;
-    const endChanged = this.state.end.value !== this.props.selectedEvent.end;
-    const validChange = titleChanged || descChanged || startChanged || endChanged;
-
-    if (validChange) {
-      try {
-        const data = {
-          _id: this.props.selectedEvent._id,
-          title: this.state.title.value,
-          desc: this.state.desc.value,
-          start: this.state.start.value,
-          end: this.state.end.value
-        }
-
-        this.props.updateEvent(data);
-      } catch (err) {
-        this.setState({ error: err.response.data });
+    try {
+      const data = {
+        _id: this.props.selectedEvent._id,
+        title: this.state.title.value,
+        desc: this.state.desc.value,
+        start: this.state.start.value,
+        end: this.state.end.value
       }
-    } else {
-      alert('Please make changes before saving')
+
+      this.props.updateEvent(data);
+    } catch (err) {
+      this.setState({ error: err.response.data });
     }
   }
 
@@ -267,6 +257,7 @@ class EventForm extends Component {
     const titleError = !!this.state.title.error;
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
+    const formValuesChanged = this.state.formValuesChanged;
 
     return (
       <div>
@@ -389,6 +380,7 @@ class EventForm extends Component {
                   id='save-changes-btn'
                   className='button'
                   variant='success'
+                  disabled={!formValuesChanged}
                   onClick={this.handleSave}
                 >
                   Save Changes

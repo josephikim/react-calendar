@@ -5,11 +5,6 @@ export const authReducer = (state = [], action) => {
         ...state,
         authenticatedUser: action.payload
       };
-    case 'UPDATE_LOADING_STATUS':
-      return {
-        ...state,
-        isLoading: action.payload
-      };
     default:
       return state;
   }

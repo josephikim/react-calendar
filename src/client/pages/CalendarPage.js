@@ -54,12 +54,6 @@ class CalendarPage extends Component {
   }
 
   render() {
-    const isLoading = this.props.isLoading;
-    if (isLoading) {
-      return (
-       <LoadingPage />
-      )
-    }
     return (
       <div id='calendar-page'>
         <Container>
@@ -91,7 +85,6 @@ class CalendarPage extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    isLoading: state.auth.isLoading,
     events: state.user.events,
     selectedSlot: state.user.selectedSlot,
     selectedEvent: state.user.selectedEvent

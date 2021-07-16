@@ -20,14 +20,28 @@ class App extends Component {
   }
 
   render() {
+    const isAuthenticated = this.props.user;
     return (
       <div className='App'>
         <Header />
         <Switch>
-          <PublicRoute restricted={false} component={HomePage} path="/" exact />
-          <PublicRoute restricted={this.props.user ? true : false} component={LoginPage} path="/login" exact />
-          <PrivateRoute component={CalendarPage} path="/calendar" exact />
-          <PublicRoute restricted={false} component={NoMatch} />
+          <PublicRoute
+            restricted={false}
+            component={HomePage}
+            path="/"
+            exact />
+          <PublicRoute
+            restricted={isAuthenticated ? true : false}
+            component={LoginPage}
+            path="/login"
+            exact />
+          <PrivateRoute
+            component={CalendarPage}
+            path="/calendar"
+            exact />
+          <PublicRoute
+            restricted={false}
+            component={NoMatch} />
         </Switch>
         <Footer />
       </div>

@@ -1,12 +1,6 @@
 import axios from 'axios';
 import { batch } from 'react-redux';
 
-const accessToken = localStorage.getItem('SavedToken');
-const headers = {
-  'Content-Type': 'application/json',
-  'x-access-token': accessToken
-}
-
 export const onSelectSlot = (event => {
   return (dispatch) => {
     batch(() => {
@@ -40,6 +34,12 @@ export const updateSelectedEvent = (event) => {
 }
 
 export const retrieveEvents = () => async (dispatch) => {
+  const accessToken = localStorage.getItem('SavedToken');
+  const headers = {
+    'Content-Type': 'application/json',
+    'x-access-token': accessToken
+  }
+
   try {
     const res = await axios.get(`${process.env.API_URL}/api/event`,
       { headers: headers }

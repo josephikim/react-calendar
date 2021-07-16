@@ -5,13 +5,13 @@ export const loginUser = (data) => async (dispatch) => {
     const res = await axios.post(`${process.env.API_URL}/api/auth/login`, data);
     
     return Promise.resolve(res.data).then(res => {
-      // Store token in localstorage
       const token = res.accessToken;
+      const user = res.id;
+
+      // Store token in localstorage
       localStorage.setItem('SavedToken', token);
 
       // Update state
-      const user = res.id;
-
       dispatch({
         type: 'UPDATE_USER',
         payload: user

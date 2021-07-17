@@ -16,15 +16,9 @@ const localizer = momentLocalizer(moment);
 class CalendarPage extends Component {
   constructor(...args) {
     super(...args)
-    this.state = {
-    }
   }
 
   componentDidMount = () => {
-    this.initData()
-  }
-
-  initData = () => {
     this.props.retrieveEvents();
   }
 

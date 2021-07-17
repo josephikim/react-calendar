@@ -38,9 +38,7 @@ const doCreateStore = () => {
   );
 
   store.subscribe(throttle(() => {
-    saveState({
-      auth: store.getState().auth
-    });
+    saveState(store.getState());
   }, 1000));
 
   return store;

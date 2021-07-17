@@ -1,12 +1,13 @@
-#register-form {
-  width: 100%;
+.RegisterForm {
+  max-width: 350px;
+  margin: 0 auto;
   padding: 35px 0px;
 }
 
-#register-form h4 {
+.RegisterForm h4 {
   margin-bottom: 24px;
 }
 
 .btn {
-  margin-top: 18px;
+  margin: 18px 0;
 }

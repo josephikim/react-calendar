@@ -1,10 +1,9 @@
 import React from 'react';
 import { Navbar, Container } from 'react-bootstrap';
-import '../styles/Footer.css';
 
 const Footer = () => {
   return (
-    <div className='fixed-bottom'>
+    <div className='Footer fixed-bottom'>
       <Navbar expands='sm' bg='primary' variant='dark'>
         <Container className='justify-content-center'>
           <Navbar.Text>

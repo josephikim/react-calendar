@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 
-import LoadingPage from '../pages/LoadingPage';
 import EventForm from '../components/EventForm';
 import { onSelectSlot, onSelectEvent, retrieveEvents } from '../actions/userActions';
 
@@ -38,7 +37,7 @@ class CalendarPage extends Component {
   }
 
   onSelectEvent = (event) => {
-    const noneSelected = Object.keys(this.props.selectedEvent).length === 0
+    const noneSelected = Object.keys(this.props.selectedEvent).length === 0;
     if (noneSelected) {
       this.props.onSelectEvent(event);
     } else { // check event IDs
@@ -49,7 +48,7 @@ class CalendarPage extends Component {
 
   render() {
     return (
-      <div id='calendar-page'>
+      <div className='CalendarPage'>
         <Container>
           <Row>
             <Col xs={12} md={8} lg={8}>

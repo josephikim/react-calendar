@@ -1,17 +1,9 @@
-#home-page .col-md-6 .col-content-wrap {
-  max-width: 75%;
-  margin: 0 auto;
-}
-
-#about {
-  margin: 35px 0px;
+.HomePage #about {
+  max-width: 85%;
+  margin: 35px auto;
   font-size: 18px;
 }
 
-#about p {
-  margin-bottom: 18px;
-}
-
-#calendar-img {
+.HomePage #calendar-img {
   max-width: 100%;
 }

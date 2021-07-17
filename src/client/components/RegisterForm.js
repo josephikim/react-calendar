@@ -28,13 +28,11 @@ class RegisterForm extends Component {
     super(...args)
     this.state = initialState
   }
-  
+
   handleBlur = (validationFunc, event) => {
     const { target: { name } } = event;
 
-    if (
-      this.state[name]['validateOnChange'] === false
-    ) {
+    if (this.state[name]['validateOnChange'] === false) {
       this.setState(state => ({
         [name]: {
           ...state[name],
@@ -48,7 +46,7 @@ class RegisterForm extends Component {
 
   handleChange = (validationFunc, event) => {
     const { target: { name, value } } = event;
-    
+
     if (validationFunc === null) { // handle fields without validation
       this.setState(state => ({
         [name]: {
@@ -69,7 +67,7 @@ class RegisterForm extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    
+
     const { username, password, passwordConfirm } = this.state;
     const usernameError = validateFields.validateUsername(username.value);
     const passwordError = validateFields.validatePassword(password.value);
@@ -122,9 +120,8 @@ class RegisterForm extends Component {
 
   render() {
     return (
-      <div>
-        <Form id='register-form'>
-
+      <div className='RegisterForm'>
+        <Form>
           <div className='text-primary'>
             <h4>New User Registration</h4>
           </div>
@@ -133,12 +130,12 @@ class RegisterForm extends Component {
             <Form.Label>Username</Form.Label>
             <Form.Control
               name='username'
-              placeholder='Enter username' 
+              placeholder='Enter username'
               onChange={event => this.handleChange(validateFields.validateUsername, event)}
               onBlur={event => this.handleBlur(validateFields.validateUsername, event)}
-              />
+            />
           </Form.Group>
-          
+
           <div className='text-danger'>
             <small>{this.state.username.error}</small>
           </div>
@@ -148,10 +145,10 @@ class RegisterForm extends Component {
             <Form.Control
               type='password'
               name='password'
-              placeholder='Enter password' 
+              placeholder='Enter password'
               onChange={event => this.handleChange(validateFields.validatePassword, event)}
               onBlur={event => this.handleBlur(validateFields.validatePassword, event)}
-              />
+            />
           </Form.Group>
 
           <div className='text-danger'>
@@ -165,14 +162,14 @@ class RegisterForm extends Component {
               name='passwordConfirm'
               placeholder='Confirm password'
               onChange={event => this.handleChange(null, event)}
-              />
+            />
           </Form.Group>
 
           <div className='text-danger'>
             <small>{this.state.passwordConfirm.error}</small>
           </div>
 
-          <Button 
+          <Button
             type='submit'
             name='register-form-btn'
             variant='primary'
@@ -180,9 +177,13 @@ class RegisterForm extends Component {
             Register
           </Button>
         </Form>
+        
+        <span>
+          Already registered? Please <a href='/login'>login</a>.
+        </span>
       </div>
     )
-  } 
+  }
 }
 
 const mapActionsToProps = {

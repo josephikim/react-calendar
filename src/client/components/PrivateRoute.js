@@ -3,7 +3,7 @@ import { Route, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const accessToken = useSelector((state) => state.auth.accessToken)
+  const accessToken = useSelector((state) => state.auth.accessToken);
 
   return (
     // Show the component only when the user is logged in

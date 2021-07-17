@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button, Form } from 'react-bootstrap';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
 import TimePicker from 'rc-time-picker';
@@ -108,7 +108,7 @@ class EventForm extends Component {
 
   handleChange = (validationFunc, event) => {
     const { target: { name, value } } = event;
-    
+
     if (validationFunc === null) { // handle fields without validation
       this.setState(state => ({
         [name]: {
@@ -137,7 +137,7 @@ class EventForm extends Component {
     // Update day, month, year of target value
     const [month, day, year] = [update.getMonth(), update.getDate(), update.getFullYear()];
     targetValue.setFullYear(year, month, day)
-          
+
     let newState = {
       [target]: {
         value: targetValue
@@ -149,7 +149,7 @@ class EventForm extends Component {
     if (target === 'start' && targetValue > this.state.end.value) {
       let endDate = new Date(this.state.end.value)
       endDate.setFullYear(year, month, day)
-      
+
       newState.end = {
         value: endDate
       }
@@ -159,19 +159,19 @@ class EventForm extends Component {
     if (target === 'end' && targetValue < this.state.start.value) {
       let startDate = new Date(this.state.start.value)
       startDate.setFullYear(year, month, day)
-      
+
       newState.start = {
         value: startDate
       }
     }
-    
+
     this.setState(newState);
   }
 
   handleTimeChange = (value, id) => {
     const target = id.startsWith('start') ? 'start' : 'end';
     const update = value.toDate();
-          
+
     let newState = {
       [target]: {
         value: update
@@ -202,7 +202,7 @@ class EventForm extends Component {
 
         this.props.createEvent(data);
       } catch (err) {
-        this.setState({error: err.response.data});
+        this.setState({ error: err.response.data });
       }
     } else {
       this.setState(state => ({
@@ -249,7 +249,7 @@ class EventForm extends Component {
     try {
       this.props.deleteEvent(eventId);
     } catch (err) {
-      this.setState({error: err.response.data});
+      this.setState({ error: err.response.data });
     }
   }
 
@@ -260,125 +260,138 @@ class EventForm extends Component {
     const formValuesChanged = this.state.formValuesChanged;
 
     return (
-      <div>
-        <form
-          id='event-form'
-          name='event-form'
-          className='validate'
-          onSubmit={this.handleSubmit}
-          target='_blank'
-          noValidate
-        >
+      <div className='EventForm'>
+        <Form>
           <Row>
-            <label htmlFor='title'>Event Title (required)</label>
-            <textarea
-              id='title'
-              name='title'
-              className={`input ${titleError ? 'input--fail' : null} `}
-              rows='1'
-              onChange={event => this.handleChange(validateFields.validateTitle, event)}
-              onBlur={event => this.handleBlur(validateFields.validateTitle, event)}
-              value={this.state.title.value}
-            >
-              enter title
-            </textarea>
-            <div className='text-danger'>
-              <small>{this.state.title.error}</small>
-            </div>
-          </Row>
-
-          <Row>
-            <label htmlFor='desc'>Event Description</label>
-            <textarea
-              id='desc'
-              name='desc'
-              className='input'
-              rows='3'
-              onChange={event => this.handleChange(null, event)}
-              value={this.state.desc.value}
-            >
-              enter description
-            </textarea>
-          </Row>
-
-          <Row className='two-column'>
             <Col>
-              <label htmlFor='startDate'>Start Date</label>
-              <DayPickerInput
-                id='startDate'
-                name='startDate'
-                formatDate={formatDate}
-                parseDate={parseDate}
-                value={`${formatDate(this.state.start.value)}`}
-                onDayChange={(value) => this.handleDayChange(value, 'startDate')}
-              />
+              <label htmlFor='title'>Event Title (required)</label>
+              <textarea
+                id='title'
+                name='title'
+                className='input'
+                rows='1'
+                onChange={event => this.handleChange(validateFields.validateTitle, event)}
+                onBlur={event => this.handleBlur(validateFields.validateTitle, event)}
+                value={this.state.title.value}
+              >
+                enter title
+              </textarea>
+              <div className='text-danger'>
+                <small>{this.state.title.error}</small>
+              </div>
             </Col>
+          </Row>
 
+          <Row>
             <Col>
-              <label htmlFor='startTime'>Start Time</label>
-              <TimePicker
-                id='startTime'
-                name='startTime'
-                showSecond={false}
-                value={moment(this.state.start.value)}
-                onChange={(value, id='startTime') => this.handleTimeChange(value, id)}
-                format={this.state.timeFormat}
-                minuteStep={15}
-                use12Hours
-                inputReadOnly
-              />
+              <label htmlFor='desc'>Event Description</label>
+              <textarea
+                id='desc'
+                name='desc'
+                className='input'
+                rows='3'
+                onChange={event => this.handleChange(null, event)}
+                value={this.state.desc.value}
+              >
+                enter description
+              </textarea>
             </Col>
           </Row>
 
           <Row className='two-column'>
-            <Col>
-              <label htmlFor='endDate'>End Date</label>
-              <DayPickerInput
-                id='endDate'
-                name='endDate'
-                formatDate={formatDate}
-                parseDate={parseDate}
-                value={`${formatDate(this.state.end.value)}`}
-                onDayChange={(value) => this.handleDayChange(value, 'endDate')}
-              />
+            <Col xs={6}>
+              <Row>
+                <Col>
+                  <label htmlFor='startDate'>Start Date</label>
+                  <DayPickerInput
+                    id='startDate'
+                    name='startDate'
+                    formatDate={formatDate}
+                    parseDate={parseDate}
+                    value={`${formatDate(this.state.start.value)}`}
+                    onDayChange={(value) => this.handleDayChange(value, 'startDate')}
+                  />
+                </Col>
+              </Row>
             </Col>
 
-            <Col>
-              <label htmlFor='endTime'>End Time</label>
-              <TimePicker
-                id='endTime'
-                name='endTime'
-                showSecond={false}
-                value={moment(this.state.end.value)}
-                onChange={(value, id='endTime') => this.handleTimeChange(value, id)}
-                format={this.state.timeFormat}
-                minuteStep={15}
-                use12Hours
-                inputReadOnly
-              />
+            <Col xs={6}>
+              <Row>
+                <Col>
+                  <label htmlFor='startTime'>Start Time</label>
+                  <TimePicker
+                    id='startTime'
+                    name='startTime'
+                    showSecond={false}
+                    value={moment(this.state.start.value)}
+                    onChange={(value, id = 'startTime') => this.handleTimeChange(value, id)}
+                    format={this.state.timeFormat}
+                    minuteStep={15}
+                    use12Hours
+                    inputReadOnly
+                  />
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+
+          <Row className='two-column'>
+            <Col xs={6}>
+              <Row>
+                <Col>
+                  <label htmlFor='endDate'>End Date</label>
+                  <DayPickerInput
+                    id='endDate'
+                    name='endDate'
+                    formatDate={formatDate}
+                    parseDate={parseDate}
+                    value={`${formatDate(this.state.end.value)}`}
+                    onDayChange={(value) => this.handleDayChange(value, 'endDate')}
+                  />
+                </Col>
+              </Row>
+            </Col>
+
+            <Col xs={6}>
+              <Row>
+                <Col>
+                  <label htmlFor='endTime'>End Time</label>
+                  <TimePicker
+                    id='endTime'
+                    name='endTime'
+                    showSecond={false}
+                    value={moment(this.state.end.value)}
+                    onChange={(value, id = 'endTime') => this.handleTimeChange(value, id)}
+                    format={this.state.timeFormat}
+                    minuteStep={15}
+                    use12Hours
+                    inputReadOnly
+                  />
+                </Col>
+              </Row>
             </Col>
           </Row>
 
           <Row>
-            <div className='submit'>
+            <Col>
               {slotSelected &&
                 <Button
                   type='submit'
                   name='add-event-btn'
                   id='add-event-btn'
-                  className='button'
+                  className='btn'
                   variant='primary'
                   onMouseDown={() => this.setState({ submitCalled: true })}
+                  onClick={this.handleSubmit}
                 >
                   Add Event
                 </Button>
               }
-
               {eventSelected &&
                 <Button
                   name='save-changes-btn'
                   id='save-changes-btn'
-                  className='button'
+                  className='btn'
                   variant='success'
                   disabled={!formValuesChanged}
                   onClick={this.handleSave}
@@ -386,21 +399,20 @@ class EventForm extends Component {
                   Save Changes
                 </Button>
               }
-
               {eventSelected &&
                 <Button
                   name='delete-event-btn'
                   id='delete-event-btn'
-                  className='button'
+                  className='btn'
                   variant='danger'
                   onClick={this.handleDelete}
                 >
                   Delete Event
                 </Button>
               }
-            </div>
+            </Col>
           </Row>
-        </form>
+        </Form>
       </div>
     )
   }

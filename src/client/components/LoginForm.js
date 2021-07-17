@@ -132,9 +132,8 @@ class LoginForm extends Component {
 
   render() {
     return (
-      <div>
-        <Form id='login-form'>
-
+      <div className='LoginForm'>
+        <Form >
           <div className='text-primary'>
             <h4>User Login</h4>
           </div>
@@ -193,7 +192,6 @@ class LoginForm extends Component {
           <div className='text-danger'>
             <small>{this.state.error}</small>
           </div>
-
         </Form>
       </div>
     )

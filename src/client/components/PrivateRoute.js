@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { tokenSaved } from '../utils/tokenSaved';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
+  const accessToken = useSelector((state) => state.auth.accessToken)
+
   return (
     // Show the component only when the user is logged in
     // Otherwise, redirect the user to /login page
     <Route {...rest} render={props => (
-      tokenSaved() ?
+      accessToken ?
         <Component {...props} />
         : <Redirect to='/login' />
     )} />

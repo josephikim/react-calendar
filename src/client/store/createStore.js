@@ -11,7 +11,7 @@ const middleware = [
 
 const initialState = {
   auth: {
-    authenticatedUser: ''
+    accessToken: ''
   },
   user: {
     events: [],
@@ -38,7 +38,9 @@ const doCreateStore = () => {
   );
 
   store.subscribe(throttle(() => {
-    saveState(store.getState());
+    saveState({
+      auth: store.getState().auth
+    });
   }, 1000));
 
   return store;

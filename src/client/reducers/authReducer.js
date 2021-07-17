@@ -1,9 +1,9 @@
 export const authReducer = (state = [], action) => {
   switch (action.type) {
-    case 'UPDATE_USER':
+    case 'UPDATE_ACCESS_TOKEN':
       return {
         ...state,
-        authenticatedUser: action.payload
+        accessToken: action.payload
       };
     default:
       return state;

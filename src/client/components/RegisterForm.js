@@ -185,14 +185,8 @@ class RegisterForm extends Component {
   } 
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.auth.authenticatedUser
-  };
-};
-
 const mapActionsToProps = {
   registerUser
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(RegisterForm);
+export default connect(null, mapActionsToProps)(RegisterForm);

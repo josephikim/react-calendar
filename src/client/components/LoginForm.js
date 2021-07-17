@@ -33,17 +33,12 @@ class LoginForm extends Component {
 
   componentDidMount = () => {
     this._isMounted = true;
-    this.initData();
   }
 
   componentWillUnmount = () => {
     this._isMounted = false;
   }
 
-  initData = () => {
-    // load locally stored returning user info
-  }
-  
   handleBlur = (validationFunc, event) => {
     const { target: { name } } = event;
 

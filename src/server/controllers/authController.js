@@ -60,7 +60,10 @@ const register = (req, res) => {
               return;
             }
 
-            res.send({ message: "User was registered successfully!" });
+            res.send({
+              user: user,
+              message: "User was registered successfully!"
+            });
           });
         }
       );
@@ -78,7 +81,10 @@ const register = (req, res) => {
             return;
           }
 
-          res.send({ message: "User was registered successfully!" });
+          res.send({
+            username: user.username,
+            message: "User was registered successfully!"
+          });
         });
       });
     }
@@ -100,7 +106,7 @@ const login = (req, res) => {
         return res.status(404).send({ error: { username: "User not found!" } });
       }
 
-      const passwordIsValid = await user.validatePassword(req.body.password) 
+      const passwordIsValid = req.body.redirect ? true : await user.validatePassword(req.body.password);
 
       if (!passwordIsValid) {
         return res.status(401).send({

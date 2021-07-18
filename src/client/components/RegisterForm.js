@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import { validateFields } from '../../validation.js';
-import { registerUser } from '../actions/authActions';
+import { registerUser, loginUser } from '../actions/authActions';
 
 import '../styles/RegisterForm.css';
 
@@ -82,8 +82,12 @@ class RegisterForm extends Component {
       }
 
       this.props.registerUser(data)
-        .then(() => {
-          this.setState(initialState)
+        .then(res => {
+          const redirectData = {
+            username: res.username,
+            redirect: true
+          }
+          this.props.loginUser(redirectData);
         })
         .catch(err => {
           const errorsObj = err.errors ? err.errors : err.error;
@@ -187,7 +191,8 @@ class RegisterForm extends Component {
 }
 
 const mapActionsToProps = {
-  registerUser
+  registerUser,
+  loginUser
 }
 
 export default connect(null, mapActionsToProps)(RegisterForm);

@@ -26,7 +26,7 @@ class App extends Component {
         <Header />
         <Switch>
           <PublicRoute
-            restricted={false}
+            restricted={isAuthenticated ? true : false}
             component={HomePage}
             path="/"
             exact />

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import CalendarPage from './pages/CalendarPage';
+import AccountPage from './pages/AccountPage';
 import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
 import Header from './components/Header';
@@ -38,6 +39,10 @@ class App extends Component {
           <PrivateRoute
             component={CalendarPage}
             path="/calendar"
+            exact />
+          <PrivateRoute
+            component={AccountPage}
+            path="/account"
             exact />
           <PublicRoute
             restricted={false}

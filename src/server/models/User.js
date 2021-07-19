@@ -14,9 +14,6 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Enter a password.'],
     minLength: [4, 'Password should be at least four characters']
   },
-  passwordConfirm: {
-    
-  },
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -33,9 +30,6 @@ userSchema.pre('save', async function save(next) {
   try {
     const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
     this.password = await bcrypt.hash(this.password, salt);
-
-    //remove the passwordConfirm field 
-    this.passwordConfirm = undefined;
 
     return next();
   } catch (err) {

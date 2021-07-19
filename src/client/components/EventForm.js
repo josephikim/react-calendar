@@ -254,7 +254,6 @@ class EventForm extends Component {
   }
 
   render() {
-    const titleError = !!this.state.title.error;
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
     const formValuesChanged = this.state.formValuesChanged;

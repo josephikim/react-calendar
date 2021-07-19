@@ -90,8 +90,7 @@ class LoginForm extends Component {
       // no errors submit the form
       const data = {
         username: username.value,
-        password: password.value,
-        passwordConfirm: passwordConfirm.value
+        password: password.value
       }
       this.props.loginUser(data)
         .then(() => {

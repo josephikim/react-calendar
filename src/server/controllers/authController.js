@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
 import { SECRET } from '../config/authConfig';
-import { validateFields } from '../../validation.js';
 
 const User = db.user;
 const Role = db.role;
@@ -9,36 +8,13 @@ const Role = db.role;
 const register = (req, res) => {
   const user = new User({
     username: req.body.username,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm
+    password: req.body.password
   });
-
-  // Pre schema validation
-  const usernameError = validateFields.validateUsername(user.username);
-  const passwordError = validateFields.validatePassword(user.password);
-  const passwordConfirmError = validateFields.validatePasswordConfirm(user.passwordConfirm, user.password);
-
-  let preSchemaErrors = {
-    username: usernameError,
-    password: passwordError,
-    passwordConfirm: passwordConfirmError
-  };
-
-  for (const err in preSchemaErrors) {
-    if (!preSchemaErrors[err]) {
-      delete preSchemaErrors[err]
-    }
-  }
-
-  if (Object.keys(preSchemaErrors).length > 0) {
-    res.status(500).send({ errors: preSchemaErrors });
-    return;
-  }
   
   // If no errors, register user
   user.save((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
+      res.status(500).send({ error: err });
       return;
     }
 
@@ -49,14 +25,14 @@ const register = (req, res) => {
         },
         (err, roles) => {
           if (err) {
-            res.status(500).send({ message: err });
+            res.status(500).send({ error: err });
             return;
           }
 
           user.roles = roles.map(role => role._id);
           user.save(err => {
             if (err) {
-              res.status(500).send({ message: err });
+              res.status(500).send({ error: err });
               return;
             }
 
@@ -70,14 +46,14 @@ const register = (req, res) => {
     } else {
       Role.findOne({ name: "user" }, (err, role) => {
         if (err) {
-          res.status(500).send({ message: err });
+          res.status(500).send({ error: err });
           return;
         }
 
         user.roles = [role._id];
         user.save(err => {
           if (err) {
-            res.status(500).send({ message: err });
+            res.status(500).send({ error: err });
             return;
           }
 
@@ -98,7 +74,7 @@ const login = (req, res) => {
     .populate("roles", "-__v")
     .exec(async (err, user) => {
       if (err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({ error: err });
         return;
       }
 

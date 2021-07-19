@@ -77,8 +77,7 @@ class RegisterForm extends Component {
       // no input errors, submit the form
       const data = {
         username: username.value,
-        password: password.value,
-        passwordConfirm: passwordConfirm.value
+        password: password.value
       }
 
       this.props.registerUser(data)

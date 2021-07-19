@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
-const calendarSchema = new mongoose.Schema ({
+const calendarSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true 
+    required: true
   },
   visibility: {
     type: Boolean,
@@ -13,6 +13,10 @@ const calendarSchema = new mongoose.Schema ({
   color: {
     type: String,
     required: true
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
 });
 

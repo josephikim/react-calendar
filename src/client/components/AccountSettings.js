@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import { validateFields } from '../../validation';
+import { updateUser } from '../actions/userActions';
 
 import AccountSettingsItem from './AccountSettingsItem';
 
 import '../styles/AccountSettings.css';
-
 
 const initialState = {
   username: {
@@ -39,6 +39,17 @@ class AccountSettings extends Component {
         value: this.props.username
       }
     }))
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if(this.props.username !== prevProps.username) {
+      this.setState(state => ({
+        username: {
+          ...state.username,
+          value: this.props.username
+        }
+      }))
+    }
   }
 
   handleBlur = (validationFunc, event) => {
@@ -77,7 +88,27 @@ class AccountSettings extends Component {
 
     if ([usernameError, passwordError, passwordConfirmError].every(e => e === false)) {
       // no input errors, submit the form
-      
+      const data = {
+        _id: this.props.userId,
+        username: username.value,
+        password: password.value
+      }
+
+      this.props.updateUser(data)
+        .then(() => {
+          alert('changes saved!')
+        })
+        .catch(err => {
+          const errorsObj = err.errors ? err.errors : err.error;
+          for (const property in errorsObj) {
+            this.setState(state => ({
+              [property]: {
+                ...state[property],
+                error: errorsObj[property]
+              }
+            }));
+          }
+        });
     } else {
       // update state with input errors
       this.setState(state => ({
@@ -217,6 +248,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapActionsToProps = {
+  updateUser
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(AccountSettings);

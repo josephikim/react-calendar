@@ -135,3 +135,24 @@ export const updateEvent = (event) => async (dispatch) => {
     return Promise.reject(err);
   }
 }
+
+export const updateUser = (user) => async (dispatch) => {
+  try {
+    const res = await userApi.post(`/user/${user._id}/update`, user)
+
+    return Promise.resolve(res.data).then(res => {
+      batch(() => {
+        dispatch({
+          type: 'UPDATE_USERNAME',
+          payload: res.data.username
+        });
+        dispatch({
+          type: 'UPDATE_USER_ID',
+          payload: res.data.userId
+        });
+      })
+    });
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}

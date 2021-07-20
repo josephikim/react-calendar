@@ -1,6 +1,7 @@
 import db from '../models';
 
 const Event = db.event;
+const User = db.user;
 
 const allAccess = (req, res) => {
   res.status(200).send("Public content")
@@ -67,6 +68,19 @@ const updateEvent = async (req, res) => {
   return res.status(200).send({ data: trimmed, msg: 'Updated event' });
 };
 
+const updateUser = async (req, res) => {
+  const payload = req.body;
+  payload._id = db.mongoose.Types.ObjectId(payload._id);
+  const updatedUser = await User.findOneAndUpdate({'_id' : payload._id}, payload, {new: true});
+
+  const trimmed = {
+    userId: updatedUser._id,
+    username: updatedUser.username
+  }
+  
+  return res.status(200).send({ data: trimmed, msg: 'Updated user' });
+};
+
 const userController = {
   allAccess,
   userAccess,
@@ -75,7 +89,8 @@ const userController = {
   retrieveEvents,
   createEvent,
   deleteEvent,
-  updateEvent
+  updateEvent,
+  updateUser
 }
 
 export default userController;

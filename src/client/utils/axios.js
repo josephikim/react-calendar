@@ -13,7 +13,7 @@ userApi.interceptors.request.use(
   request => {
     const accessToken = store.getState().auth.accessToken;
     headers['x-access-token'] = accessToken;
-    if(request.url.includes('test') || request.url.includes('event')) {
+    if(request.url.includes('test') || request.url.includes('event') || request.url.includes('user')) {
       request.headers = headers;
     }
     return request;

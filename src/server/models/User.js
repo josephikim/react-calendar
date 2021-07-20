@@ -37,6 +37,19 @@ userSchema.pre('save', async function save(next) {
   }
 });
 
+// schema middleware to apply before updating 
+userSchema.pre('findOneAndUpdate', async function save(next) {
+  try {
+    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+    this._update.password = await bcrypt.hash(this._update.password, salt);
+
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
 userSchema.methods.validatePassword = async function validatePassword(data) {
   return bcrypt.compare(data, this.password);
 };

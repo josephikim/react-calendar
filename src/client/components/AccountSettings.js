@@ -19,8 +19,8 @@ const initialState = {
     validateOnChange: false,
     error: ''
   },
-  passwordConfirm: {
-    value: 'asdf',
+  newPassword: {
+    value: '',
     validateOnChange: false,
     error: ''
   },
@@ -42,7 +42,7 @@ class AccountSettings extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    if(this.props.username !== prevProps.username) {
+    if (this.props.username !== prevProps.username) {
       this.setState(state => ({
         username: {
           ...state.username,
@@ -67,31 +67,41 @@ class AccountSettings extends Component {
     return;
   }
 
-  handleChange = (event) => {
+  handleChange = (validationFunc, event) => {
     const { target: { name, value } } = event;
 
-    this.setState(state => ({
-      [name]: {
-        ...state[name],
-        value: value
-      }
-    }));
+    if (validationFunc === null) { // handle fields without validation
+      this.setState(state => ({
+        [name]: {
+          ...state[name],
+          value: value
+        }
+      }));
+    } else {  // handle fields with validation
+      this.setState(state => ({
+        [name]: {
+          ...state[name],
+          value: value,
+          error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+        }
+      }));
+    }
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
 
-    const { username, password, passwordConfirm } = this.state;
+    const { username, password, newPassword } = this.state;
     const usernameError = validateFields.validateUsername(username.value);
-    const passwordError = validateFields.validatePassword(password.value);
-    const passwordConfirmError = validateFields.validatePasswordConfirm(passwordConfirm.value, password.value);
+    const newPasswordError = validateFields.validatePassword(newPassword.value);
 
-    if ([usernameError, passwordError, passwordConfirmError].every(e => e === false)) {
+    if ([usernameError, newPasswordError].every(e => e === false)) {
       // no input errors, submit the form
       const data = {
         _id: this.props.userId,
         username: username.value,
-        password: password.value
+        password: password.value,
+        newPassword: newPassword.value
       }
 
       this.props.updateUser(data)
@@ -117,15 +127,10 @@ class AccountSettings extends Component {
           validateOnChange: true,
           error: usernameError
         },
-        password: {
-          ...state.password,
+        newPassword: {
+          ...state.newPassword,
           validateOnChange: true,
-          error: passwordError
-        },
-        passwordConfirm: {
-          ...state.passwordConfirm,
-          validateOnChange: true,
-          error: passwordConfirmError
+          error: newPasswordError
         }
       }));
     }
@@ -135,10 +140,6 @@ class AccountSettings extends Component {
     this.setState(state => ({
       password: {
         ...state.password,
-        value: ''
-      },
-      passwordConfirm: {
-        ...state.passwordConfirm,
         value: ''
       },
       editMode: !this.state.editMode
@@ -170,7 +171,7 @@ class AccountSettings extends Component {
             label='Username'
             defaultValue={this.state.username.value}
             readOnly={readOnly}
-            onChange={event => this.handleChange(event)}
+            onChange={event => this.handleChange(validateFields.validateUsername, event)}
             onBlur={event => this.handleBlur(validateFields.validateUsername, event)}
           />
 
@@ -181,29 +182,33 @@ class AccountSettings extends Component {
           <AccountSettingsItem
             id='password'
             type='password'
-            label='Password'
+            label={this.state.editMode ? 'Enter Current Password' : 'Password'}
             defaultValue={this.state.password.value}
             readOnly={readOnly}
-            onChange={event => this.handleChange(event)}
-            onBlur={event => this.handleBlur(validateFields.validatePassword, event)}
+            onChange={event => this.handleChange(null, event)}
           />
 
           <div className='text-danger'>
             <small>{this.state.password.error}</small>
           </div>
 
-          <AccountSettingsItem
-            id='passwordConfirm'
-            type='password'
-            label='Confirm Password'
-            defaultValue={this.state.passwordConfirm.value}
-            readOnly={readOnly}
-            onChange={event => this.handleChange(event)}
-          />
+          {this.state.editMode === true &&
+            <AccountSettingsItem
+              id='newPassword'
+              type='password'
+              label='Enter New Password'
+              defaultValue={this.state.newPassword.value}
+              readOnly={readOnly}
+              onChange={event => this.handleChange(validateFields.validatePassword, event)}
+              onBlur={event => this.handleBlur(validateFields.validatePassword, event)}
+            />
+          }
 
-          <div className='text-danger'>
-            <small>{this.state.passwordConfirm.error}</small>
-          </div>
+          {this.state.editMode === true &&
+            <div className='text-danger'>
+              <small>{this.state.newPassword.error}</small>
+            </div>
+          }
 
           {this.state.editMode === false &&
             <Button

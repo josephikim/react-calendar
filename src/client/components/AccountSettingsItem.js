@@ -14,10 +14,9 @@ const AccountSettingsItem = (props) => {
           value={props.defaultValue}
           readOnly={props.readOnly}
           onChange={props.onChange}
-          onBlur={props.id === 'passwordConfirm' ? undefined : props.onBlur}
+          onBlur={props.id === 'password' ? undefined : props.onBlur}
         />
       </Form.Group>
-
     </div>
   )
 }

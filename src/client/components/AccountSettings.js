@@ -10,17 +10,17 @@ import '../styles/AccountSettings.css';
 
 const initialState = {
   username: {
-    value: 'myusername',
+    value: '',
     validateOnChange: false,
     error: ''
   },
   password: {
-    value: 'mypassword',
+    value: 'asdf',
     validateOnChange: false,
     error: ''
   },
   passwordConfirm: {
-    value: 'mypassword',
+    value: 'asdf',
     validateOnChange: false,
     error: ''
   },
@@ -30,6 +30,15 @@ class AccountSettings extends Component {
   constructor(...args) {
     super(...args)
     this.state = initialState
+  }
+
+  componentDidMount = () => {
+    this.setState(state => ({
+      username: {
+        ...state.username,
+        value: this.props.username
+      }
+    }))
   }
 
   handleBlur = (validationFunc, event) => {
@@ -92,13 +101,27 @@ class AccountSettings extends Component {
   }
 
   handleEdit = () => {
-    this.setState({
+    this.setState(state => ({
+      password: {
+        ...state.password,
+        value: ''
+      },
+      passwordConfirm: {
+        ...state.passwordConfirm,
+        value: ''
+      },
       editMode: !this.state.editMode
-    })
+    }))
   }
 
   handleCancel = () => {
-    this.setState(initialState)
+    this.setState(state => ({
+      ...initialState,
+      username: {
+        ...state.username,
+        value: this.props.username
+      }
+    }))
   }
 
   render() {
@@ -112,6 +135,7 @@ class AccountSettings extends Component {
 
           <AccountSettingsItem
             id='username'
+            type='text'
             label='Username'
             defaultValue={this.state.username.value}
             readOnly={readOnly}
@@ -125,6 +149,7 @@ class AccountSettings extends Component {
 
           <AccountSettingsItem
             id='password'
+            type='password'
             label='Password'
             defaultValue={this.state.password.value}
             readOnly={readOnly}
@@ -138,6 +163,7 @@ class AccountSettings extends Component {
 
           <AccountSettingsItem
             id='passwordConfirm'
+            type='password'
             label='Confirm Password'
             defaultValue={this.state.passwordConfirm.value}
             readOnly={readOnly}
@@ -183,7 +209,14 @@ class AccountSettings extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    username: state.auth.username,
+    userId: state.auth.userId
+  };
+};
+
 const mapActionsToProps = {
 }
 
-export default connect(null, mapActionsToProps)(AccountSettings);
+export default connect(mapStateToProps, mapActionsToProps)(AccountSettings);

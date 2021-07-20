@@ -102,7 +102,7 @@ const login = (req, res) => {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }
       res.status(200).send({
-        id: user._id,
+        userId: user._id,
         username: user.username,
         roles: authorities,
         accessToken: token

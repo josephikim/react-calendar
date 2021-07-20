@@ -6,11 +6,23 @@ export const loginUser = (data) => async (dispatch) => {
     
     return Promise.resolve(res.data).then(res => {
       const token = res.accessToken;
-
+      const username = res.username;
+      const userId = res.userId;
+      
       // Update state
       dispatch({
         type: 'UPDATE_ACCESS_TOKEN',
         payload: token
+      });
+
+      dispatch({
+        type: 'UPDATE_USERNAME',
+        payload: username
+      });
+
+      dispatch({
+        type: 'UPDATE_USER_ID',
+        payload: userId
       });
     });
   } catch (err) {

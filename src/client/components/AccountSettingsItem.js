@@ -10,7 +10,8 @@ const AccountSettingsItem = (props) => {
         <Form.Label>{props.label}</Form.Label>
         <Form.Control
           name={props.id}
-          placeholder={props.defaultValue}
+          type={props.type}
+          value={props.defaultValue}
           readOnly={props.readOnly}
           onChange={props.onChange}
           onBlur={props.id === 'passwordConfirm' ? undefined : props.onBlur}

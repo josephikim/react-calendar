@@ -12,6 +12,9 @@ class ValidateFields {
     if (!validator.isAlphanumeric(username)) {
       return 'Username should only contain letters and numbers';
     }
+    if (!validator.isLength(username, { min: 4 })) {
+      return 'Username should be at least four characters';
+    }
     return false;
   }
 

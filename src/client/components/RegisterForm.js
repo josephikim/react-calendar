@@ -31,8 +31,8 @@ class RegisterForm extends Component {
 
   handleBlur = (validationFunc, event) => {
     const { target: { name } } = event;
-
-    if (this.state[name]['validateOnChange'] === false) {
+    
+    if (this.state[name].value && this.state[name]['validateOnChange'] === false) {
       this.setState(state => ({
         [name]: {
           ...state[name],

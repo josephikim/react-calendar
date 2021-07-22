@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
 import '../styles/AccountSettingsItem.css';
 
 const AccountSettingsItem = (props) => {
-  const [editMode, setEditMode] = useState(false);
-  const [value, setValue] = useState(props.defaultValue);
+  const newPasswordComponent = props.id === 'newPassword';
   const error = props.error;
+
   return (
     <div className='AccountSettingsItem'>
       <Container>
@@ -15,54 +15,52 @@ const AccountSettingsItem = (props) => {
             <Form.Label htmlFor={props.id}>{props.label}</Form.Label>
           </Col>
         </Row>
+
         <Row className='twoColumn'>
           <Col xs={12} md={6} >
             <Form.Group controlId={props.id}>
               <Form.Control
                 name={props.id}
                 type={props.type}
-                defaultValue={props.defaultValue}
-                readOnly={!editMode}
-                onChange={(event) => 
-                  setValue(event.target.value)
-                  
-                }
-                onBlur={props.id === 'password' ? undefined : props.onBlur}
+                value={props.value}
+                readOnly={!props.editMode}
+                onChange={(event) => props.onChange(event)}
+                onBlur={event => props.id === 'password' ? undefined : props.onBlur(event)}
               />
             </Form.Group>
           </Col>
           <Col xs={12} md={6} >
-            <div className='btnGroup'>
-              {!editMode &&
-                <Button
-                  type='button'
-                  name='editBtn'
-                  variant='primary'
-                  onClick={() => setEditMode(true)} >
-                  Edit
-                </Button>
-              }
-
-              {editMode &&
-                <Button
-                  type='submit'
-                  name='saveBtn'
-                  variant='success'
-                  onClick={props.onSubmit} >
-                  Save
-                </Button>
-              }
-
-              {editMode &&
-                <Button
-                  type='button'
-                  name='cancelBtn'
-                  variant='secondary'
-                  onClick={() => setEditMode(false)} >
-                  Cancel
-                </Button>
-              }
-            </div>
+            {!newPasswordComponent &&
+              <div className='btnGroup'>
+                {!props.editMode &&
+                  <Button
+                    type='button'
+                    name='editBtn'
+                    variant='primary'
+                    onClick={() => props.onEdit(props.id)} >
+                    Edit
+                  </Button>
+                }
+                {props.editMode &&
+                  <Button
+                    type='submit'
+                    name='saveBtn'
+                    variant='success'
+                    onClick={event => props.onSubmit(event, props.id)} >
+                    Save
+                  </Button>
+                }
+                {props.editMode &&
+                  <Button
+                    type='button'
+                    name='cancelBtn'
+                    variant='secondary'
+                    onClick={() => props.onCancel(props.id)} >
+                    Cancel
+                  </Button>
+                }
+              </div>
+            }
           </Col>
         </Row>
 

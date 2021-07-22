@@ -12,17 +12,20 @@ const initialState = {
   username: {
     value: '',
     validateOnChange: false,
-    error: ''
+    error: '',
+    editMode: false
   },
   password: {
     value: 'asdf',
     validateOnChange: false,
-    error: ''
+    error: '',
+    editMode: false
   },
   newPassword: {
     value: '',
     validateOnChange: false,
-    error: ''
+    error: '',
+    editMode: false
   }
 }
 class AccountSettings extends Component {
@@ -87,7 +90,7 @@ class AccountSettings extends Component {
     }
   }
 
-  handleSubmit = (event) => {
+  handleSubmit = (event, id) => {
     event.preventDefault();
 
     const { username, password, newPassword } = this.state;
@@ -135,24 +138,22 @@ class AccountSettings extends Component {
     }
   }
 
-  handleEdit = () => {
+  handleEdit = (id) => {
     this.setState(state => ({
-      password: {
-        ...state.password,
-        value: ''
-      },
-      editMode: !this.state.editMode
+      [id]: {
+        ...state[id],
+        editMode: !state[id].editMode
+      }
     }))
   }
 
-  handleCancel = () => {
-    this.setState(state => ({
-      ...initialState,
-      username: {
-        ...state.username,
-        value: this.props.username
+  handleCancel = (id) => {
+    this.setState({
+      [id]: {
+        ...initialState[id],
+        value: id === 'username' ? this.props.username : initialState[id].value
       }
-    }))
+    })
   }
 
   render() {
@@ -173,32 +174,38 @@ class AccountSettings extends Component {
             id='username'
             type='text'
             label='Username'
-            defaultValue={this.props.username}
+            value={this.state.username.value}
+            editMode={this.state.username.editMode}
+            error={this.state.username.error}
             onChange={event => this.handleChange(validateFields.validateUsername, event)}
             onBlur={event => this.handleBlur(validateFields.validateUsername, event)}
-            error={this.state.username.error}
-          />
+            onSubmit={(event, id) => this.handleSubmit(event, id)}
+            onEdit={(event, id) => this.handleEdit(event, id)}
+            onCancel={(event, id) => this.handleCancel(event, id)} />
 
           <AccountSettingsItem
             id='password'
             type='password'
-            label={this.state.editMode ? 'Enter Current Password' : 'Password'}
-            defaultValue={this.state.password.value}
+            label={this.state.password.editMode ? 'Confirm Current Password' : 'Password'}
+            value={this.state.password.value}
+            editMode={this.state.password.editMode}
+            error={this.state.password.error}
             onChange={event => this.handleChange(null, event)}
-          />
+            onSubmit={(event, id) => this.handleSubmit(event, id)}
+            onEdit={(event, id) => this.handleEdit(event, id)}
+            onCancel={(event, id) => this.handleCancel(event, id)} />
 
-          {this.state.editMode === true &&
+          {this.state.password.editMode &&
             <AccountSettingsItem
               id='newPassword'
               type='password'
               label='Enter New Password'
-              defaultValue={this.state.newPassword.value}
-              onChange={event => this.handleChange(validateFields.validatePassword, event)}
-              onBlur={event => this.handleBlur(validateFields.validatePassword, event)}
-              onSubmit={this.handleSubmit}
-            />
+              value={this.state.newPassword.value}
+              editMode={this.state.password.editMode}
+              error={this.state.newPassword.error}
+              onChange={event => this.handleChange(null, event)}
+              onBlur={event => this.handleBlur(validateFields.validatePassword, event)} />
           }
-
         </Form>
       </div>
     )

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form } from 'react-bootstrap';
 import { validateFields } from '../../validation';
 import { updateUser } from '../actions/userActions';
 
@@ -23,8 +23,7 @@ const initialState = {
     value: '',
     validateOnChange: false,
     error: ''
-  },
-  editMode: false
+  }
 }
 class AccountSettings extends Component {
   constructor(...args) {
@@ -157,40 +156,36 @@ class AccountSettings extends Component {
   }
 
   render() {
-    const readOnly = !this.state.editMode;
     return (
       <div className='AccountSettings'>
         <Form>
-          <div className='text-primary'>
-            <h4>Account Settings</h4>
-          </div>
+          <Container>
+            <Row>
+              <Col>
+                <div className='heading text-primary'>
+                  <h4>Account Settings</h4>
+                </div>
+              </Col>
+            </Row>
+          </Container>
 
           <AccountSettingsItem
             id='username'
             type='text'
             label='Username'
-            defaultValue={this.state.username.value}
-            readOnly={readOnly}
+            defaultValue={this.props.username}
             onChange={event => this.handleChange(validateFields.validateUsername, event)}
             onBlur={event => this.handleBlur(validateFields.validateUsername, event)}
+            error={this.state.username.error}
           />
-
-          <div className='text-danger'>
-            <small>{this.state.username.error}</small>
-          </div>
 
           <AccountSettingsItem
             id='password'
             type='password'
             label={this.state.editMode ? 'Enter Current Password' : 'Password'}
             defaultValue={this.state.password.value}
-            readOnly={readOnly}
             onChange={event => this.handleChange(null, event)}
           />
-
-          <div className='text-danger'>
-            <small>{this.state.password.error}</small>
-          </div>
 
           {this.state.editMode === true &&
             <AccountSettingsItem
@@ -198,47 +193,12 @@ class AccountSettings extends Component {
               type='password'
               label='Enter New Password'
               defaultValue={this.state.newPassword.value}
-              readOnly={readOnly}
               onChange={event => this.handleChange(validateFields.validatePassword, event)}
               onBlur={event => this.handleBlur(validateFields.validatePassword, event)}
+              onSubmit={this.handleSubmit}
             />
           }
 
-          {this.state.editMode === true &&
-            <div className='text-danger'>
-              <small>{this.state.newPassword.error}</small>
-            </div>
-          }
-
-          {this.state.editMode === false &&
-            <Button
-              type='button'
-              name='editBtn'
-              variant='primary'
-              onClick={this.handleEdit} >
-              Edit
-            </Button>
-          }
-
-          {this.state.editMode === true &&
-            <Button
-              type='submit'
-              name='saveBtn'
-              variant='success'
-              onClick={this.handleSubmit} >
-              Save
-            </Button>
-          }
-
-          {this.state.editMode === true &&
-            <Button
-              type='button'
-              name='cancelBtn'
-              variant='secondary'
-              onClick={this.handleCancel} >
-              Cancel
-            </Button>
-          }
         </Form>
       </div>
     )

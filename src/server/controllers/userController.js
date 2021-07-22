@@ -69,16 +69,56 @@ const updateEvent = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const payload = req.body;
-  payload._id = db.mongoose.Types.ObjectId(payload._id);
-  const updatedUser = await User.findOneAndUpdate({'_id' : payload._id}, payload, {new: true});
+  // const payload = req.body;
+  // payload._id = db.mongoose.Types.ObjectId(payload._id);
+  // const updatedUser = await User.findOneAndUpdate({'_id' : payload._id}, payload, {new: true});
 
-  const trimmed = {
-    userId: updatedUser._id,
-    username: updatedUser.username
-  }
+  // const trimmed = {
+  //   userId: updatedUser._id,
+  //   username: updatedUser.username
+  // }
   
-  return res.status(200).send({ data: trimmed, msg: 'Updated user' });
+  // return res.status(200).send({ data: trimmed, msg: 'Updated user' });
+  User.findOne({
+    username: req.body.username
+  })
+    .populate("roles", "-__v")
+    .exec(async (err, user) => {
+      if (err) {
+        res.status(500).send({ error: err });
+        return;
+      }
+
+      if (!user) {
+        return res.status(404).send({ error: { username: "User not found!" } });
+      }
+
+      const passwordIsValid = req.body.redirect ? true : await user.validatePassword(req.body.password);
+
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          accessToken: null,
+          error: { password: "Invalid password!" }
+        });
+      }
+
+      // If password is valid, create JWT token
+      const token = jwt.sign({ id: user.id }, SECRET, {
+        expiresIn: 86400 // 24 hours
+      });
+
+      let authorities = [];
+
+      for (let i = 0; i < user.roles.length; i++) {
+        authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
+      }
+      res.status(200).send({
+        userId: user._id,
+        username: user.username,
+        roles: authorities,
+        accessToken: token
+      });
+    });
 };
 
 const userController = {

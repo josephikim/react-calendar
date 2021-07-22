@@ -11,13 +11,13 @@ const AccountPage = () => {
     <div className='AccountPage'>
       <Container>
         <Row>
-          <Col sm={{ span: 8, offset: 2 }} md={{ span: 6, offset: 3 }}>
+          <Col>
             <AccountSettings />
           </Col>
         </Row>
 
         <Row>
-          <Col sm={{ span: 8, offset: 2 }} md={{ span: 6, offset: 3 }}>
+          <Col>
             <CalendarSettings />
           </Col>
         </Row>

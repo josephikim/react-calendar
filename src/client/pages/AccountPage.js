@@ -6,24 +6,22 @@ import CalendarSettings from '../components/CalendarSettings';
 
 import '../styles/AccountPage.css';
 
-const AccountPage = () => {
-  return (
-    <div className='AccountPage'>
-      <Container>
-        <Row>
-          <Col>
-            <AccountSettings />
-          </Col>
-        </Row>
+const AccountPage = () =>
 
-        <Row>
-          <Col>
-            <CalendarSettings />
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
-};
+  <div className='AccountPage'>
+    <Container>
+      <Row>
+        <Col>
+          <AccountSettings />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <CalendarSettings />
+        </Col>
+      </Row>
+    </Container>
+  </div>
 
 export default AccountPage;

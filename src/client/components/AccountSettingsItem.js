@@ -12,7 +12,7 @@ const AccountSettingsItem = (props) => {
       <Container>
         <Row>
           <Col xs={12} md={6} >
-            <Form.Label for={props.id}>{props.label}</Form.Label>
+            <Form.Label htmlFor={props.id}>{props.label}</Form.Label>
           </Col>
         </Row>
         <Row className='twoColumn'>
@@ -23,7 +23,10 @@ const AccountSettingsItem = (props) => {
                 type={props.type}
                 defaultValue={props.defaultValue}
                 readOnly={!editMode}
-                onChange={(value) => setValue(value)}
+                onChange={(event) => 
+                  setValue(event.target.value)
+                  
+                }
                 onBlur={props.id === 'password' ? undefined : props.onBlur}
               />
             </Form.Group>
@@ -73,10 +76,7 @@ const AccountSettingsItem = (props) => {
 
           </Row>
         }
-
       </Container>
-
-
     </div>
   )
 }

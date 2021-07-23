@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
-import { SECRET } from '../config/authConfig';
+import config from '../config/authConfig';
 
 const User = db.user;
 const Role = db.role;
+const RefreshToken = db.refreshToken;
 
 const register = (req, res) => {
   const user = new User({
@@ -14,7 +15,7 @@ const register = (req, res) => {
   // If no errors, register user
   user.save((err, user) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({ msg: err });
       return;
     }
 
@@ -25,14 +26,14 @@ const register = (req, res) => {
         },
         (err, roles) => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({ msg: err });
             return;
           }
 
           user.roles = roles.map(role => role._id);
           user.save(err => {
             if (err) {
-              res.status(500).send({ error: err });
+              res.status(500).send({ msg: err });
               return;
             }
 
@@ -46,14 +47,14 @@ const register = (req, res) => {
     } else {
       Role.findOne({ name: "user" }, (err, role) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({ msg: err });
           return;
         }
 
         user.roles = [role._id];
         user.save(err => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({ msg: err });
             return;
           }
 
@@ -74,12 +75,12 @@ const login = (req, res) => {
     .populate("roles", "-__v")
     .exec(async (err, user) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({ msg: err });
         return;
       }
 
       if (!user) {
-        return res.status(404).send({ error: { username: "User not found!" } });
+        return res.status(404).send({ msg: "User not found!" });
       }
 
       const passwordIsValid = req.body.redirect ? true : await user.validatePassword(req.body.password);
@@ -87,14 +88,16 @@ const login = (req, res) => {
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          error: { password: "Invalid password!" }
+          msg: "Invalid password!"
         });
       }
 
       // If password is valid, create JWT token
-      const token = jwt.sign({ id: user.id }, SECRET, {
-        expiresIn: 86400 // 24 hours
+      const token = jwt.sign({ id: user.id }, config.SECRET, {
+        expiresIn: config.JWT_EXPIRATION
       });
+
+      let refreshToken = await RefreshToken.createToken(user);
 
       let authorities = [];
 
@@ -102,16 +105,55 @@ const login = (req, res) => {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }
       res.status(200).send({
-        userId: user._id,
+        id: user._id,
         username: user.username,
         roles: authorities,
-        accessToken: token
+        accessToken: token,
+        refreshToken: refreshToken
       });
     });
 };
 
+const refreshToken = async (req, res) => {
+  const { refreshToken: requestToken } = req.body;
+
+  if (requestToken == null) {
+    return res.status(403).json({ msg: "Refresh Token is required!" });
+  }
+
+  try {
+    let refreshToken = await RefreshToken.findOne({ token: requestToken });
+
+    if (!refreshToken) {
+      res.status(403).json({ msg: "Refresh token is not in database!" });
+      return;
+    }
+
+    if (RefreshToken.verifyExpiration(refreshToken)) {
+      RefreshToken.findByIdAndRemove(refreshToken._id, { useFindAndModify: false }).exec();
+      
+      res.status(403).json({
+        msg: "Refresh token was expired. Please make a new signin request",
+      });
+      return;
+    }
+
+    let newAccessToken = jwt.sign({ id: refreshToken.user._id }, config.SECRET, {
+      expiresIn: config.JWT_EXPIRATION,
+    });
+
+    return res.status(200).json({
+      accessToken: newAccessToken,
+      refreshToken: refreshToken.token,
+    });
+  } catch (err) {
+    return res.status(500).send({ msg: err });
+  }
+};
+
 const authController = {
   register,
-  login
+  login,
+  refreshToken
 }
 export default authController;

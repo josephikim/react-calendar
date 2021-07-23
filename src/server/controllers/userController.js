@@ -74,7 +74,7 @@ const updateUsername = async (req, res) => {
   const updatedUser = await User.findOneAndUpdate({ '_id': payload._id }, { 'username': payload.username }, { new: true });
 
   const trimmed = {
-    userId: updatedUser._id,
+    id: updatedUser._id,
     username: updatedUser.username
   }
 
@@ -91,7 +91,7 @@ const updatePassword = async (req, res) => {
   })
     .exec(async (err, user) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({ msg: err });
         return;
       }
 
@@ -99,7 +99,7 @@ const updatePassword = async (req, res) => {
 
       if (!passwordIsValid) {
         return res.status(401).send({
-          error: { password: "Invalid password!" }
+          msg: "Invalid password!"
         });
       }
 
@@ -108,7 +108,7 @@ const updatePassword = async (req, res) => {
 
       user.save(err => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({ msg: err });
           return;
         }
 

@@ -26,13 +26,13 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return catchError(err, res);
     }
-    req.userId = decoded.id;
+    req.id = decoded.id;
     next();
   });
 };
 
 const isAdmin = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
+  User.findById(req.id).exec((err, user) => {
     if (err) {
       res.status(500).send({ msg: err });
       return;
@@ -63,7 +63,7 @@ const isAdmin = (req, res, next) => {
 };
 
 const isModerator = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
+  User.findById(req.id).exec((err, user) => {
     if (err) {
       res.status(500).send({ msg: err });
       return;

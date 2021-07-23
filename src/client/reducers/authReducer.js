@@ -13,7 +13,7 @@ export const authReducer = (state = [], action) => {
     case 'UPDATE_USER_ID':
       return {
         ...state,
-        userId: action.payload
+        id: action.payload
       };
     default:
       return state;

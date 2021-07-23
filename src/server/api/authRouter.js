@@ -26,4 +26,7 @@ authRouter.post(
 // POST request to login user
 authRouter.post('/login', authController.login);
 
+// POST request to refresh token
+authRouter.post('/refreshtoken', authController.refreshToken);
+
 export default authRouter;

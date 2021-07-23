@@ -7,7 +7,7 @@ export const loginUser = (data) => async (dispatch) => {
     return Promise.resolve(res.data).then(res => {
       const token = res.accessToken;
       const username = res.username;
-      const userId = res.userId;
+      const id = res.id;
       
       // Update state
       dispatch({
@@ -22,7 +22,7 @@ export const loginUser = (data) => async (dispatch) => {
 
       dispatch({
         type: 'UPDATE_USER_ID',
-        payload: userId
+        payload: id
       });
     });
   } catch (err) {

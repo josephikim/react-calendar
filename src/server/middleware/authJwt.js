@@ -1,9 +1,19 @@
 import jwt from 'jsonwebtoken';
-import { SECRET } from '../config/authConfig';
+import config from '../config/authConfig';
 import db from '../models';
+
+const { TokenExpiredError } = jwt;
 
 const User = db.user;
 const Role = db.role;
+
+const catchError = (err, res) => {
+  if (err instanceof TokenExpiredError) {
+    return res.status(401).send({ msg: "Unauthorized! Access Token was expired!" });
+  }
+
+  return res.sendStatus(401).send({ msg: "Unauthorized!" });
+}
 
 const verifyToken = (req, res, next) => {
   let token = req.headers['x-access-token'];
@@ -12,9 +22,9 @@ const verifyToken = (req, res, next) => {
     return res.status(403).send({ msg: 'No token provided!' });
   }
 
-  jwt.verify(token, SECRET, (err, decoded) => {
+  jwt.verify(token, config.SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).send({ msg: 'Unauthorized!' });
+      return catchError(err, res);
     }
     req.userId = decoded.id;
     next();

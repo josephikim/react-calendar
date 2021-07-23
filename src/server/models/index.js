@@ -3,6 +3,7 @@ import User from './User';
 import Role from './Role';
 import Event from './Event';
 import Calendar from './Calendar';
+import RefreshToken from './RefreshToken';
 
 mongoose.Promise = global.Promise;
 
@@ -12,6 +13,7 @@ const db = {
   role: Role,
   event: Event,
   calendar: Calendar,
+  refreshToken: RefreshToken,
   ROLES: ['user', 'admin', 'moderator']
 };
 

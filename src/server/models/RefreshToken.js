@@ -4,16 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 const refreshTokenSchema = new mongoose.Schema({
-  token: {
-    type: String
-  },
+  token: String,
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  expiryDate: {
-    type: Date
-  },
+  expiryDate: Date
 });
 
 refreshTokenSchema.statics.createToken = async function (user) {
@@ -28,8 +24,6 @@ refreshTokenSchema.statics.createToken = async function (user) {
     user: user._id,
     expiryDate: expiredAt.getTime(),
   });
-
-  console.log(_object);
 
   let refreshToken = await _object.save();
 

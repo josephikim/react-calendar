@@ -83,7 +83,7 @@ const login = (req, res) => {
         return res.status(404).send({ msg: "User not found!" });
       }
 
-      const passwordIsValid = req.body.redirect ? true : await user.validatePassword(req.body.password);
+      let passwordIsValid = req.body.redirect ? true : await user.validatePassword(req.body.password);
 
       if (!passwordIsValid) {
         return res.status(401).send({
@@ -93,7 +93,7 @@ const login = (req, res) => {
       }
 
       // If password is valid, create JWT token
-      const token = jwt.sign({ id: user.id }, config.SECRET, {
+      let token = jwt.sign({ id: user.id }, config.SECRET, {
         expiresIn: config.JWT_EXPIRATION
       });
 

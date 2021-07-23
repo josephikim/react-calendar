@@ -5,14 +5,21 @@ export const loginUser = (data) => async (dispatch) => {
     const res = await axios.post(`${process.env.API_URL}/auth/login`, data);
     
     return Promise.resolve(res.data).then(res => {
-      const token = res.accessToken;
+      console.log('loginUser res', res)
+      const accessToken = res.accessToken;
+      const refreshToken = res.refreshToken;
       const username = res.username;
       const id = res.id;
       
       // Update state
       dispatch({
         type: 'UPDATE_ACCESS_TOKEN',
-        payload: token
+        payload: accessToken
+      });
+
+      dispatch({
+        type: 'UPDATE_REFRESH_TOKEN',
+        payload: refreshToken
       });
 
       dispatch({

@@ -90,36 +90,31 @@ class AccountSettings extends Component {
     }
   }
 
-  handleSubmit = (event, id) => {
+  handleSubmitUsername = (event) => {
     event.preventDefault();
 
-    const { username, password, newPassword } = this.state;
+    const { username } = this.state;
     const usernameError = validateFields.validateUsername(username.value);
-    const newPasswordError = validateFields.validatePassword(newPassword.value);
 
-    if ([usernameError, newPasswordError].every(e => e === false)) {
+    if (usernameError === false) {
       // no input errors, submit the form
       const data = {
         _id: this.props.userId,
         username: username.value,
-        password: password.value,
-        newPassword: newPassword.value
       }
 
-      this.props.updateUser(data)
+      this.props.updateUsername(data)
         .then(() => {
-          alert('changes saved!')
+          alert('Username updated!')
         })
         .catch(err => {
-          const errorsObj = err.errors ? err.errors : err.error;
-          for (const property in errorsObj) {
-            this.setState(state => ({
-              [property]: {
-                ...state[property],
-                error: errorsObj[property]
-              }
-            }));
-          }
+          const error = err.error;
+          this.setState(state => ({
+            username: {
+              ...state.username,
+              error: error
+            }
+          }));
         });
     } else {
       // update state with input errors
@@ -128,7 +123,41 @@ class AccountSettings extends Component {
           ...state.username,
           validateOnChange: true,
           error: usernameError
-        },
+        }
+      }));
+    }
+  }
+
+  handleSubmitPassword = (event) => {
+    event.preventDefault();
+
+    const { password, newPassword } = this.state;
+    const newPasswordError = validateFields.validatePassword(newPassword.value);
+
+    if (newPasswordError === false) {
+      // no input errors, submit the form
+      const data = {
+        _id: this.props.userId,
+        password: password.value,
+        newPassword: newPassword.value
+      }
+
+      this.props.updatePassword(data)
+        .then(() => {
+          alert('Password updated!')
+        })
+        .catch(err => {
+          const error = err.error;
+          this.setState(state => ({
+            password: {
+              ...state.password,
+              error: error
+            }
+          }));
+        });
+    } else {
+      // update state with input errors
+      this.setState(state => ({
         newPassword: {
           ...state.newPassword,
           validateOnChange: true,
@@ -179,7 +208,7 @@ class AccountSettings extends Component {
             error={this.state.username.error}
             onChange={event => this.handleChange(validateFields.validateUsername, event)}
             onBlur={event => this.handleBlur(validateFields.validateUsername, event)}
-            onSubmit={(event, id) => this.handleSubmit(event, id)}
+            onSubmit={(event) => this.handleSubmitUsername(event)}
             onEdit={(event, id) => this.handleEdit(event, id)}
             onCancel={(event, id) => this.handleCancel(event, id)} />
 
@@ -191,7 +220,7 @@ class AccountSettings extends Component {
             editMode={this.state.password.editMode}
             error={this.state.password.error}
             onChange={event => this.handleChange(null, event)}
-            onSubmit={(event, id) => this.handleSubmit(event, id)}
+            onSubmit={(event) => this.handleSubmitPassword(event)}
             onEdit={(event, id) => this.handleEdit(event, id)}
             onCancel={(event, id) => this.handleCancel(event, id)} />
 

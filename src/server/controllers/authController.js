@@ -38,7 +38,7 @@ const register = (req, res) => {
 
             res.send({
               user: user,
-              message: "User was registered successfully!"
+              msg: "User was registered successfully!"
             });
           });
         }
@@ -59,7 +59,7 @@ const register = (req, res) => {
 
           res.send({
             username: user.username,
-            message: "User was registered successfully!"
+            msg: "User was registered successfully!"
           });
         });
       });

@@ -46,7 +46,7 @@ const AccountSettingsItem = (props) => {
                     type='submit'
                     name='saveBtn'
                     variant='success'
-                    onClick={event => props.onSubmit(event, props.id)} >
+                    onClick={event => props.onSubmit(event)} >
                     Save
                   </Button>
                 }

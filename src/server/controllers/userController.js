@@ -21,7 +21,7 @@ const moderatorAccess = (req, res) => {
 
 const retrieveEvents = async (req, res) => {
   const events = await Event.find({}).sort({ start: -1 });
-  
+
   return res.status(200).send({ data: events });
 };
 
@@ -39,12 +39,12 @@ const createEvent = async (req, res) => {
   }
 
   return res.status(200).send({ data: trimmed });
-};       
+};
 
 const deleteEvent = async (req, res) => {
   const eventId = req.params.id;
 
-  const deletedEvent = await Event.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(eventId)});
+  const deletedEvent = await Event.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(eventId) });
 
   return res.status(200).send({ data: deletedEvent, msg: 'Deleted event' });
 };
@@ -55,7 +55,7 @@ const updateEvent = async (req, res) => {
   payload.start = new Date(payload.start)
   payload.end = new Date(payload.end)
 
-  const updatedEvent = await Event.findOneAndUpdate({'_id' : payload._id}, payload, {new: true});
+  const updatedEvent = await Event.findOneAndUpdate({ '_id': payload._id }, payload, { new: true });
 
   const trimmed = {
     _id: updatedEvent._id,
@@ -64,59 +64,57 @@ const updateEvent = async (req, res) => {
     start: updatedEvent.start,
     end: updatedEvent.end
   }
-  
+
   return res.status(200).send({ data: trimmed, msg: 'Updated event' });
 };
 
-const updateUser = async (req, res) => {
-  // const payload = req.body;
-  // payload._id = db.mongoose.Types.ObjectId(payload._id);
-  // const updatedUser = await User.findOneAndUpdate({'_id' : payload._id}, payload, {new: true});
+const updateUsername = async (req, res) => {
+  const payload = req.body;
+  payload._id = db.mongoose.Types.ObjectId(payload._id);
+  const updatedUser = await User.findOneAndUpdate({ '_id': payload._id }, { 'username': payload.username }, { new: true });
 
-  // const trimmed = {
-  //   userId: updatedUser._id,
-  //   username: updatedUser.username
-  // }
-  
-  // return res.status(200).send({ data: trimmed, msg: 'Updated user' });
+  const trimmed = {
+    userId: updatedUser._id,
+    username: updatedUser.username
+  }
+
+  return res.status(200).send({ data: trimmed, msg: 'Updated username' });
+};
+
+// REMEMBER TO REDIRECT TO LOGIN AFTER PASSWORD UPDATE
+const updatePassword = async (req, res) => {
+  const payload = req.body;
+  payload._id = db.mongoose.Types.ObjectId(payload._id);
+
   User.findOne({
-    username: req.body.username
+    '_id': payload._id
   })
-    .populate("roles", "-__v")
     .exec(async (err, user) => {
       if (err) {
         res.status(500).send({ error: err });
         return;
       }
 
-      if (!user) {
-        return res.status(404).send({ error: { username: "User not found!" } });
-      }
-
-      const passwordIsValid = req.body.redirect ? true : await user.validatePassword(req.body.password);
+      const passwordIsValid = await user.validatePassword(payload.password);
 
       if (!passwordIsValid) {
         return res.status(401).send({
-          accessToken: null,
           error: { password: "Invalid password!" }
         });
       }
 
-      // If password is valid, create JWT token
-      const token = jwt.sign({ id: user.id }, SECRET, {
-        expiresIn: 86400 // 24 hours
-      });
+      // If password is valid, update with new password
+      user.password = payload.password;
 
-      let authorities = [];
+      user.save(err => {
+        if (err) {
+          res.status(500).send({ error: err });
+          return;
+        }
 
-      for (let i = 0; i < user.roles.length; i++) {
-        authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
-      }
-      res.status(200).send({
-        userId: user._id,
-        username: user.username,
-        roles: authorities,
-        accessToken: token
+        res.send({
+          msg: "Password updated successfully!"
+        });
       });
     });
 };
@@ -130,7 +128,8 @@ const userController = {
   createEvent,
   deleteEvent,
   updateEvent,
-  updateUser
+  updateUsername,
+  updatePassword
 }
 
 export default userController;

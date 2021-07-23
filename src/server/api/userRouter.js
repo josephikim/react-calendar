@@ -65,11 +65,18 @@ userRouter.post(
   userController.updateEvent
 );
 
-// POST request to update user settings
+// POST request to update username
 userRouter.post(
-  '/user/:id/update',
+  '/user/:id/username/update',
   [authJwt.verifyToken],
-  userController.updateUser
+  userController.updateUsername
+);
+
+// POST request to update password
+userRouter.post(
+  '/user/:id/password/update',
+  [authJwt.verifyToken],
+  userController.updatePassword
 );
 
 export default userRouter;

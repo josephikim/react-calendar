@@ -136,21 +136,28 @@ export const updateEvent = (event) => async (dispatch) => {
   }
 }
 
-export const updateUser = (user) => async (dispatch) => {
+export const updateUsername = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post(`/user/${user._id}/update`, user)
+    const res = await userApi.post(`/user/${data._id}/username/update`, data)
 
     return Promise.resolve(res.data).then(res => {
-      batch(() => {
-        dispatch({
-          type: 'UPDATE_USERNAME',
-          payload: res.data.username
-        });
-        dispatch({
-          type: 'UPDATE_USER_ID',
-          payload: res.data.userId
-        });
-      })
+      dispatch({
+        type: 'UPDATE_USERNAME',
+        payload: res.data.username
+      });
+    });
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+// NOT AN ACTION
+export const updatePassword = (data) => async (dispatch) => {
+  try {
+    const res = await userApi.post(`/user/${data._id}/password/update`, data)
+
+    return Promise.resolve(res.data).then(res => {
+      alert(res.data.msg);
     });
   } catch (err) {
     return Promise.reject(err);

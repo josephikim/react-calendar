@@ -9,12 +9,12 @@ const verifyToken = (req, res, next) => {
   let token = req.headers['x-access-token'];
 
   if (!token) {
-    return res.status(403).send({ message: 'No token provided!' });
+    return res.status(403).send({ msg: 'No token provided!' });
   }
 
   jwt.verify(token, SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).send({ message: 'Unauthorized!' });
+      return res.status(401).send({ msg: 'Unauthorized!' });
     }
     req.userId = decoded.id;
     next();
@@ -24,7 +24,7 @@ const verifyToken = (req, res, next) => {
 const isAdmin = (req, res, next) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
+      res.status(500).send({ msg: err });
       return;
     }
 
@@ -34,7 +34,7 @@ const isAdmin = (req, res, next) => {
       },
       (err, roles) => {
         if (err) {
-          res.status(500).send({ message: err });
+          res.status(500).send({ msg: err });
           return;
         }
 
@@ -45,7 +45,7 @@ const isAdmin = (req, res, next) => {
           }
         }
 
-        res.status(403).send({ message: 'Require Admin Role!' });
+        res.status(403).send({ msg: 'Require Admin Role!' });
         return;
       }
     );
@@ -55,7 +55,7 @@ const isAdmin = (req, res, next) => {
 const isModerator = (req, res, next) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
+      res.status(500).send({ msg: err });
       return;
     }
 
@@ -65,7 +65,7 @@ const isModerator = (req, res, next) => {
       },
       (err, roles) => {
         if (err) {
-          res.status(500).send({ message: err });
+          res.status(500).send({ msg: err });
           return;
         }
 
@@ -76,7 +76,7 @@ const isModerator = (req, res, next) => {
           }
         }
 
-        res.status(403).send({ message: 'Require Moderator Role!' });
+        res.status(403).send({ msg: 'Require Moderator Role!' });
         return;
       }
     );

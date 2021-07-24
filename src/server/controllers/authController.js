@@ -132,10 +132,7 @@ const refreshToken = async (req, res) => {
     if (RefreshToken.verifyExpiration(refreshToken)) {
       RefreshToken.findByIdAndRemove(refreshToken._id, { useFindAndModify: false }).exec();
       
-      res.status(403).json({
-        msg: "Refresh token was expired. Please make a new signin request",
-      });
-      return;
+      return res.redirect('/login');
     }
 
     let newAccessToken = jwt.sign({ id: refreshToken.user._id }, config.SECRET, {

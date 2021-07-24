@@ -81,7 +81,6 @@ const updateUsername = async (req, res) => {
   return res.status(200).send({ data: trimmed, msg: 'Updated username' });
 };
 
-// REMEMBER TO REDIRECT TO LOGIN AFTER PASSWORD UPDATE
 const updatePassword = async (req, res) => {
   const payload = req.body;
   payload._id = db.mongoose.Types.ObjectId(payload._id);

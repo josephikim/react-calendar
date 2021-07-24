@@ -37,14 +37,15 @@ userApi.interceptors.response.use(
           const rs = await refreshToken();
           const { accessToken } = rs.data;
 
+          userApi.defaults.headers.common["x-access-token"] = accessToken;
+
+          // Update local state
           store.dispatch({
             type: 'UPDATE_ACCESS_TOKEN',
             payload: accessToken
           });
 
-          instance.defaults.headers.common["x-access-token"] = accessToken;
-
-          return instance(originalConfig);
+          return userApi(originalConfig);
         } catch (_error) {
           if (_error.response && _error.response.data) {
             return Promise.reject(_error.response.data);

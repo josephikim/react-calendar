@@ -5,7 +5,6 @@ export const loginUser = (data) => async (dispatch) => {
     const res = await axios.post(`${process.env.API_URL}/auth/login`, data);
     
     return Promise.resolve(res.data).then(res => {
-      console.log('loginUser res', res)
       const accessToken = res.accessToken;
       const refreshToken = res.refreshToken;
       const username = res.username;

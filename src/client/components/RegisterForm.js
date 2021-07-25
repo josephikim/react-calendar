@@ -80,25 +80,7 @@ class RegisterForm extends Component {
         password: password.value
       }
 
-      this.props.registerUser(data)
-        .then(res => {
-          const redirectData = {
-            username: res.username,
-            redirect: true
-          }
-          this.props.loginUser(redirectData);
-        })
-        .catch(err => {
-          const errorsObj = err.errors ? err.errors : err.error;
-          for (const property in errorsObj) {
-            this.setState(state => ({
-              [property]: {
-                ...state[property],
-                error: errorsObj[property]
-              }
-            }));
-          }
-        });
+      this.props.registerUser(data);
     } else {
       // update state with input errors
       this.setState(state => ({

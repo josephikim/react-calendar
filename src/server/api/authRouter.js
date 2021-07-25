@@ -20,7 +20,10 @@ authRouter.post(
     verifyRegistration.checkDuplicateUsername,
     verifyRegistration.checkRolesExisted
   ],
-  authController.register
+  [
+    authController.register,
+    authController.login
+  ]
 );
 
 // POST request to login user

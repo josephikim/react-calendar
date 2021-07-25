@@ -12,7 +12,7 @@ userApi.interceptors.request.use(
   (config) => {
     const token = getLocalAccessToken();
     if (token) {
-      config.headers["x-access-token"] = token;
+      config.headers['x-access-token'] = token;
     }
     return config;
   },
@@ -37,7 +37,7 @@ userApi.interceptors.response.use(
           const rs = await refreshToken();
           const { accessToken } = rs.data;
 
-          userApi.defaults.headers.common["x-access-token"] = accessToken;
+          userApi.defaults.headers.common['x-access-token'] = accessToken;
 
           // Update local state
           store.dispatch({
@@ -75,7 +75,7 @@ const getLocalRefreshToken = () => {
 }
 
 const refreshToken = () => {
-  return userApi.post("/auth/refreshtoken", {
+  return userApi.post('/auth/refreshtoken', {
     refreshToken: getLocalRefreshToken(),
   });
 }

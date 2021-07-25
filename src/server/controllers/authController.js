@@ -6,7 +6,7 @@ const User = db.user;
 const Role = db.role;
 const RefreshToken = db.refreshToken;
 
-const register = (req, res) => {
+const register = (req, res, next) => {
   const user = new User({
     username: req.body.username,
     password: req.body.password
@@ -37,10 +37,7 @@ const register = (req, res) => {
               return;
             }
 
-            res.send({
-              user: user,
-              msg: "User was registered successfully!"
-            });
+            next();
           });
         }
       );
@@ -58,10 +55,7 @@ const register = (req, res) => {
             return;
           }
 
-          res.send({
-            username: user.username,
-            msg: "User was registered successfully!"
-          });
+          next();
         });
       });
     }
@@ -83,7 +77,7 @@ const login = (req, res) => {
         return res.status(404).send({ msg: "User not found!" });
       }
 
-      let passwordIsValid = req.body.redirect ? true : await user.validatePassword(req.body.password);
+      let passwordIsValid = await user.validatePassword(req.body.password);
 
       if (!passwordIsValid) {
         return res.status(401).send({

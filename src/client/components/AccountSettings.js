@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { validateFields } from '../../validation';
-import { updateUser } from '../actions/userActions';
+import { updateUsername } from '../actions/userActions';
 
 import AccountSettingsItem from './AccountSettingsItem';
 
@@ -249,7 +249,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapActionsToProps = {
-  updateUser
+  updateUsername
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(AccountSettings);

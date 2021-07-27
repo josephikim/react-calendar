@@ -3,13 +3,13 @@ import axios from 'axios';
 export const loginUser = (data) => async (dispatch) => {
   try {
     const res = await axios.post(`${process.env.API_URL}/auth/login`, data);
-    
+
     return Promise.resolve(res.data).then(res => {
       const accessToken = res.accessToken;
       const refreshToken = res.refreshToken;
       const username = res.username;
       const id = res.id;
-      
+
       // Update state
       dispatch({
         type: 'UPDATE_ACCESS_TOKEN',
@@ -45,7 +45,7 @@ export const registerUser = (data) => async (dispatch) => {
       const refreshToken = res.refreshToken;
       const username = res.username;
       const id = res.id;
-      
+
       // Update state
       dispatch({
         type: 'UPDATE_ACCESS_TOKEN',

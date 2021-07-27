@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
 import config from '../config/authConfig';
+import { NotFoundError, AuthorizationError } from '../utils/userFacingErrors';
 
 const User = db.user;
 const Role = db.role;
@@ -15,8 +16,7 @@ const register = (req, res, next) => {
   // If no errors, register user
   user.save((err, user) => {
     if (err) {
-      res.status(500).send({ msg: err });
-      return;
+      return next(err);
     }
 
     if (req.body.roles) {
@@ -26,15 +26,13 @@ const register = (req, res, next) => {
         },
         (err, roles) => {
           if (err) {
-            res.status(500).send({ msg: err });
-            return;
+            return next(err);
           }
 
           user.roles = roles.map(role => role._id);
           user.save(err => {
             if (err) {
-              res.status(500).send({ msg: err });
-              return;
+              return next(err);
             }
 
             next();
@@ -44,15 +42,13 @@ const register = (req, res, next) => {
     } else {
       Role.findOne({ name: "user" }, (err, role) => {
         if (err) {
-          res.status(500).send({ msg: err });
-          return;
+          return next(err);
         }
 
         user.roles = [role._id];
         user.save(err => {
           if (err) {
-            res.status(500).send({ msg: err });
-            return;
+            return next(err);
           }
 
           next();
@@ -62,28 +58,24 @@ const register = (req, res, next) => {
   });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   User.findOne({
     username: req.body.username
   })
     .populate("roles", "-__v")
     .exec(async (err, user) => {
       if (err) {
-        res.status(500).send({ msg: err });
-        return;
+        return next(err);
       }
 
       if (!user) {
-        return res.status(404).send({ msg: "User not found!" });
+        return next(new NotFoundError('User not found', { errorCode: 'username'}));
       }
 
       let passwordIsValid = await user.validatePassword(req.body.password);
 
       if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          msg: "Invalid password!"
-        });
+        return next(new AuthorizationError('Invalid password'));
       }
 
       // If password is valid, create JWT token

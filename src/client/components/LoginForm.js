@@ -97,15 +97,13 @@ class LoginForm extends Component {
           if (this._isMounted) this.setState(initialState)
         })
         .catch(err => {
-          const errorsObj = err.errors ? err.errors : err.error;
-          for (const property in errorsObj) {
-            this.setState(state => ({
-              [property]: {
-                ...state[property],
-                error: errorsObj[property]
-              }
-            }));
-          }
+          console.log('err', err)
+          // this.setState(state => ({
+          //   [property]: {
+          //     ...state[property],
+          //     error: errorsObj[property]
+          //   }
+          // }));
         });
     } else {
       // update state with errors

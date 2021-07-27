@@ -6,6 +6,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 
 import db from './db/connection';
 import apiRouter from './api';
+import { UserFacingError } from './utils/baseErrors';
 import config from '../../webpack.dev.config.js';
 
 const BUILD_DIR = __dirname;
@@ -24,7 +25,7 @@ app.use(webpackDevMiddleware(compiler, {
 
 app.use(webpackHotMiddleware(compiler, {
   log: console.log,
-  path: '/__webpack_hmr', 
+  path: '/__webpack_hmr',
   heartbeat: 10 * 1000
 }))
 
@@ -40,6 +41,17 @@ app.use('/api', apiRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(HTML_FILE);
+});
+
+// Global error handler
+app.use(function (err, req, res, next) {
+  if (err instanceof UserFacingError) {
+    res.status(err.statusCode).send(err.errorCode)
+  } else {
+    res.sendStatus(500)
+  }
+
+  // logger.error(err, 'Parameters: ', req.params, 'User data: ', req.user)
 });
 
 app.listen(PORT, () => {

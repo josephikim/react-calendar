@@ -80,7 +80,7 @@ class LoginForm extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    
+
     const { username, password, passwordConfirm } = this.state;
     const usernameError = validateFields.validateUsername(username.value);
     const passwordError = validateFields.validatePassword(password.value);
@@ -97,13 +97,15 @@ class LoginForm extends Component {
           if (this._isMounted) this.setState(initialState)
         })
         .catch(err => {
-          console.log('err', err)
-          // this.setState(state => ({
-          //   [property]: {
-          //     ...state[property],
-          //     error: errorsObj[property]
-          //   }
-          // }));
+          if (err.errorCode) {
+            const property = err.errorCode;
+            this.setState(state => ({
+              [property]: {
+                ...state[property],
+                error: err.message
+              }
+            }));
+          }
         });
     } else {
       // update state with errors
@@ -139,12 +141,12 @@ class LoginForm extends Component {
             <Form.Label>Username</Form.Label>
             <Form.Control
               name='username'
-              placeholder='Enter username' 
+              placeholder='Enter username'
               onChange={event => this.handleChange(validateFields.validateUsername, event)}
               onBlur={event => this.handleBlur(validateFields.validateUsername, event)}
-              />
+            />
           </Form.Group>
-          
+
           <div className='text-danger'>
             <small>{this.state.username.error}</small>
           </div>
@@ -154,10 +156,10 @@ class LoginForm extends Component {
             <Form.Control
               type='password'
               name='password'
-              placeholder='Enter password' 
+              placeholder='Enter password'
               onChange={event => this.handleChange(validateFields.validatePassword, event)}
               onBlur={event => this.handleBlur(validateFields.validatePassword, event)}
-              />
+            />
           </Form.Group>
 
           <div className='text-danger'>
@@ -171,14 +173,14 @@ class LoginForm extends Component {
               name='passwordConfirm'
               placeholder='Confirm password'
               onChange={event => this.handleChange(validateFields.validatePasswordConfirm, event)}
-              />
+            />
           </Form.Group>
 
           <div className='text-danger'>
             <small>{this.state.passwordConfirm.error}</small>
           </div>
 
-          <Button 
+          <Button
             type='submit'
             name='login-form-btn'
             variant='primary'

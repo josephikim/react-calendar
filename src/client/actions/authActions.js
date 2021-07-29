@@ -32,6 +32,12 @@ export const loginUser = (data) => async (dispatch) => {
       });
     });
   } catch (err) {
+    if (err.response.data.accessToken === null) {
+      dispatch({
+        type: 'UPDATE_ACCESS_TOKEN',
+        payload: null
+      });
+    }
     return Promise.reject(err.response.data);
   }
 };

@@ -69,13 +69,23 @@ const login = (req, res, next) => {
       }
 
       if (!user) {
-        return next(new NotFoundError('User not found', { errorCode: 'username'}));
+        return next(
+          new NotFoundError(
+            'User not found',
+            { errorCode: 'username' }
+          )
+        );
       }
 
       let passwordIsValid = await user.validatePassword(req.body.password);
 
       if (!passwordIsValid) {
-        return next(new AuthorizationError('Invalid password'));
+        return next(
+          new AuthorizationError(
+            'Invalid password',
+            { errorCode: 'password', accessToken: null }
+          )
+        );
       }
 
       // If password is valid, create JWT token

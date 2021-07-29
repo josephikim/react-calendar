@@ -2,24 +2,14 @@
 
 class ApplicationError extends Error {
   constructor(message) {
-    super(message);
-    this.name = message;
-  } 
+    super(message)
+    this.name = this.constructor.name;
+  }
 }
 
-class DatabaseError extends ApplicationError {
-  constructor(message) {
-    super(message);
-    this.name = message;
-  } 
-}
+class DatabaseError extends ApplicationError { }
 
-class UserFacingError extends ApplicationError {
-  constructor(message) {
-    super(message);
-    this.name = message;
-  } 
-}
+class UserFacingError extends ApplicationError { }
 
 export {
   ApplicationError,

@@ -46,7 +46,15 @@ app.get('*', (req, res) => {
 // Global error handler
 app.use(function (err, req, res, next) {
   if (err instanceof UserFacingError) {
-    res.status(err.statusCode).send(err.errorCode)
+    let error = {
+      name: err.name,
+      message: err.message
+    }
+    for (const [key, value] of Object.entries(err)) {
+      error[key] = value;
+    }
+
+    res.status(err.statusCode).send(error)
   } else {
     res.sendStatus(500)
   }

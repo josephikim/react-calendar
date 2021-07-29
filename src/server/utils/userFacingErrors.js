@@ -17,12 +17,12 @@ class BadRequestError extends UserFacingError {
 class NotFoundError extends UserFacingError {
   constructor(message, options = {}) {
     super(message);
-
+    
     for (const [key, value] of Object.entries(options)) {
       this[key] = value;
-      this['accessToken'] = null;
     }
   }
+
   get statusCode() {
     return 404
   }

@@ -110,18 +110,18 @@ const login = (req, res, next) => {
     });
 };
 
-const refreshToken = async (req, res) => {
+const refreshToken = async (req, res, next) => {
   const { refreshToken: requestToken } = req.body;
 
   if (requestToken == null) {
-    return res.status(403).json({ msg: "Refresh Token is required!" });
+    return res.status(403).json({ message: "Refresh Token is required!" });
   }
 
   try {
     let refreshToken = await RefreshToken.findOne({ token: requestToken });
 
     if (!refreshToken) {
-      res.status(403).json({ msg: "Refresh token is not in database!" });
+      res.status(403).json({ message: "Refresh token is not in database!" });
       return;
     }
 
@@ -140,7 +140,7 @@ const refreshToken = async (req, res) => {
       refreshToken: refreshToken.token,
     });
   } catch (err) {
-    return res.status(500).send({ msg: err });
+    return next(err);
   }
 };
 

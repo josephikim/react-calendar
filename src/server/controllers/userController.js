@@ -1,4 +1,5 @@
 import db from '../models';
+import { AuthorizationError } from '../utils/userFacingErrors';
 
 const Event = db.event;
 const User = db.user;
@@ -46,7 +47,7 @@ const deleteEvent = async (req, res) => {
 
   const deletedEvent = await Event.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(eventId) });
 
-  return res.status(200).send({ data: deletedEvent, msg: 'Deleted event' });
+  return res.status(200).send({ data: deletedEvent, message: 'Deleted event' });
 };
 
 const updateEvent = async (req, res) => {
@@ -65,7 +66,7 @@ const updateEvent = async (req, res) => {
     end: updatedEvent.end
   }
 
-  return res.status(200).send({ data: trimmed, msg: 'Updated event' });
+  return res.status(200).send({ data: trimmed, message: 'Updated event' });
 };
 
 const updateUsername = async (req, res) => {
@@ -78,10 +79,10 @@ const updateUsername = async (req, res) => {
     username: updatedUser.username
   }
 
-  return res.status(200).send({ data: trimmed, msg: 'Updated username' });
+  return res.status(200).send({ data: trimmed, message: 'Updated username' });
 };
 
-const updatePassword = async (req, res) => {
+const updatePassword = async (req, res, next) => {
   const payload = req.body;
   payload._id = db.mongoose.Types.ObjectId(payload._id);
 
@@ -90,16 +91,18 @@ const updatePassword = async (req, res) => {
   })
     .exec(async (err, user) => {
       if (err) {
-        res.status(500).send({ msg: err });
-        return;
+        return next(err);
       }
 
       const passwordIsValid = await user.validatePassword(payload.password);
 
       if (!passwordIsValid) {
-        return res.status(401).send({
-          msg: "Invalid password!"
-        });
+        return next(
+          new AuthorizationError(
+            'Invalid password',
+            { errorCode: 'password' }
+          )
+        );
       }
 
       // If password is valid, update with new password
@@ -107,12 +110,11 @@ const updatePassword = async (req, res) => {
 
       user.save(err => {
         if (err) {
-          res.status(500).send({ msg: err });
-          return;
+          return next(err);
         }
 
-        res.send({
-          msg: "Password updated successfully!"
+        res.status(200).send({
+          message: "Password updated successfully!"
         });
       });
     });

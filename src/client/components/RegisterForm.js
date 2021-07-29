@@ -80,7 +80,18 @@ class RegisterForm extends Component {
         password: password.value
       }
 
-      this.props.registerUser(data);
+      this.props.registerUser(data)
+        .catch(err => {
+          if (err.errorCode) {
+            const property = err.errorCode;
+            this.setState(state => ({
+              [property]: {
+                ...state[property],
+                error: err.message
+              }
+            }));
+          }
+        });
     } else {
       // update state with input errors
       this.setState(state => ({

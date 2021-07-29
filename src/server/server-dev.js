@@ -54,9 +54,9 @@ app.use(function (err, req, res, next) {
       error[key] = value;
     }
 
-    res.status(err.statusCode).send(error)
+    res.status(err.statusCode).send(error);
   } else {
-    res.sendStatus(500)
+    res.status(500).send({ message: err });
   }
 
   // logger.error(err, 'Parameters: ', req.params, 'User data: ', req.user)

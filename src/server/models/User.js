@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
       ref: 'Role'
     }
   ]
-});
+}, { emitIndexErrors: true });
 
 // schema middleware to apply before saving 
 userSchema.pre('save', async function(next) {
@@ -37,17 +37,18 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// schema middleware to apply before updating 
-userSchema.pre('findOneAndUpdate', async function(next) {
-  try {
-    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
-    this._update.password = await bcrypt.hash(this._update.password, salt);
-
-    return next();
-  } catch (err) {
-    return next(err);
+const handleE11000 = function(error, res, next) {
+  if (error.name === 'MongoError' && error.code === 11000) {
+    next(new Error('There was a duplicate key error.'));
+  } else {
+    next();
   }
-});
+};
+
+userSchema.post('save', handleE11000);
+// userSchema.post('update', handleE11000);
+userSchema.post('findOneAndUpdate', handleE11000);
+// userSchema.post('insertMany', handleE11000);
 
 userSchema.methods.validatePassword = async function validatePassword(data) {
   return bcrypt.compare(data, this.password);

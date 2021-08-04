@@ -103,8 +103,7 @@ class AccountSettings extends Component {
     if (usernameError === false) {
       // no input errors, submit the form
       const data = {
-        // _id: this.props.id,
-        _id: 9999,
+        _id: this.props.id,
         username: username.value,
       }
 

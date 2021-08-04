@@ -16,7 +16,7 @@ const initialState = {
     editMode: false
   },
   password: {
-    value: 'asdf',
+    value: '',
     validateOnChange: false,
     error: '',
     editMode: false
@@ -39,6 +39,10 @@ class AccountSettings extends Component {
       username: {
         ...state.username,
         value: this.props.username
+      },
+      password: {
+        ...state.password,
+        value: '****'
       }
     }))
   }
@@ -168,19 +172,33 @@ class AccountSettings extends Component {
   }
 
   handleEdit = (id) => {
-    this.setState(state => ({
-      [id]: {
-        ...state[id],
-        editMode: !state[id].editMode
+    let newState = {}
+
+    if (id === 'password') {
+      newState[id] = {
+        ...initialState[id],
+        editMode: true
+      },
+      newState['newPassword'] = {
+        ...initialState['newPassword'],
+        editMode: true
       }
-    }))
+    }
+    if (id === 'username') {
+      newState[id] = {
+        ...this.state[id],
+        editMode: true
+      }
+    }
+
+    this.setState(newState)
   }
 
   handleCancel = (id) => {
     this.setState({
       [id]: {
         ...initialState[id],
-        value: id === 'username' ? this.props.username : initialState[id].value
+        value: id === 'username' ? this.props.username : '****'
       }
     })
   }

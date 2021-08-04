@@ -106,7 +106,7 @@ const updatePassword = async (req, res, next) => {
       }
 
       // If password is valid, update with new password
-      user.password = payload.password;
+      user.password = payload.newPassword;
 
       user.save(err => {
         if (err) {

@@ -156,9 +156,7 @@ export const updatePassword = (data) => async (dispatch) => {
   try {
     const res = await userApi.post(`/user/${data._id}/password/update`, data)
 
-    return Promise.resolve(res.data).then(res => {
-      alert(res.data.message);
-    });
+    return Promise.resolve(res.data);
   } catch (err) {
     return Promise.reject(err);
   }

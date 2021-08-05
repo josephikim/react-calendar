@@ -106,7 +106,7 @@ class LoginForm extends Component {
               }
             }));
           } else {
-            alert(`${error.name}: ${err.message}`)
+            alert(`${err.name}: ${err.message}`)
           }
         });
     } else {

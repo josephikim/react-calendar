@@ -152,7 +152,7 @@ export const updateUsername = (data) => async (dispatch) => {
 }
 
 // NOT AN ACTION
-export const updatePassword = (data) => async (dispatch) => {
+export const updatePassword = (data) => async () => {
   try {
     const res = await userApi.post(`/user/${data._id}/password/update`, data)
 

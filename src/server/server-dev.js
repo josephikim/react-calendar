@@ -47,7 +47,6 @@ app.get('*', (req, res) => {
 app.use(function (err, req, res, next) {
   if (err instanceof UserFacingError) {
     let error = {
-      name: err.name,
       message: err.message
     }
     for (const [key, value] of Object.entries(err)) {
@@ -56,7 +55,12 @@ app.use(function (err, req, res, next) {
 
     res.status(err.statusCode).send(error);
   } else {
-    res.status(500).send({ message: err });
+    let error = {
+      name: err.name,
+      message: err.message
+    }
+
+    res.status(500).send(error);
   }
 
   // logger.error(err, 'Parameters: ', req.params, 'User data: ', req.user)

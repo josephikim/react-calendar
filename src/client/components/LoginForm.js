@@ -97,7 +97,7 @@ class LoginForm extends Component {
           if (this._isMounted) this.setState(initialState)
         })
         .catch(err => {
-          if (err.errorCode) {
+          if (err.errorCode && ['username', 'password'].includes(err.errorCode)) {
             const property = err.errorCode;
             this.setState(state => ({
               [property]: {
@@ -105,6 +105,8 @@ class LoginForm extends Component {
                 error: err.message
               }
             }));
+          } else {
+            alert(`${error.name}: ${err.message}`)
           }
         });
     } else {

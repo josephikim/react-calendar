@@ -82,7 +82,7 @@ class RegisterForm extends Component {
 
       this.props.registerUser(data)
         .catch(err => {
-          if (['username', 'password'].includes(err.errorCode)) {
+          if (err.errorCode && ['username', 'password'].includes(err.errorCode)) {
             const property = err.errorCode;
             this.setState(state => ({
               [property]: {

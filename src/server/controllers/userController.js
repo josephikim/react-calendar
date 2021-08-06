@@ -69,7 +69,7 @@ const updateEvent = async (req, res) => {
   return res.status(200).send({ data: trimmed, message: 'Updated event' });
 };
 
-const updateUsername = async (req, res) => {
+const updateUsername = async (req, res, next) => {
   const payload = req.body;
   payload._id = db.mongoose.Types.ObjectId(payload._id);
 

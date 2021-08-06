@@ -118,13 +118,17 @@ class AccountSettings extends Component {
           alert('Username updated!')
         })
         .catch(err => {
-          const error = err.error;
-          this.setState(state => ({
-            username: {
-              ...state.username,
-              error: error
-            }
-          }));
+          const error = err.response.data;
+          if (error.errorCode === 'username') {
+            this.setState(state => ({
+              username: {
+                ...state.username,
+                error: error.message
+              }
+            }));
+          } else {
+            alert (`Error: ${error.message}`)
+          }
         });
     } else {
       // update state with input errors

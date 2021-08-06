@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import { BadRequestError } from '../utils/userFacingErrors';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -24,16 +23,7 @@ const userSchema = new mongoose.Schema({
 }, { emitIndexErrors: true });
 
 // schema middleware to apply before saving 
-userSchema.pre('save', async function(next) {
-  // only update username if it has been modified (or is new)
-  if (!this.isModified('username')) {
-    return next(
-      new BadRequestError(
-        'Cannot use existing username',
-        { errorCode: 'username' }
-      )
-    );
-  }
+userSchema.pre('save', async function (next) {
   // only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) return next();
 

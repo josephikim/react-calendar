@@ -1,5 +1,5 @@
 import express from 'express';
-import { authJwt } from '../middleware';
+import { authJwt, verifyRegistration } from '../middleware';
 import userController from '../controllers/userController';
 
 const userRouter = express.Router();
@@ -68,7 +68,10 @@ userRouter.post(
 // POST request to update username
 userRouter.post(
   '/user/:id/username/update',
-  [authJwt.verifyToken],
+  [
+    authJwt.verifyToken,
+    verifyRegistration.checkDuplicateUsername
+  ],
   userController.updateUsername
 );
 

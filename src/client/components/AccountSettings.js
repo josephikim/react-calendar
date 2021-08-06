@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { validateFields } from '../../validation';
-import { updateUsername } from '../actions/userActions';
+import { updateUsername, updatePassword } from '../actions/userActions';
 
 import AccountSettingsItem from './AccountSettingsItem';
 
@@ -146,7 +146,13 @@ class AccountSettings extends Component {
     event.preventDefault();
 
     const { password, newPassword } = this.state;
-    const newPasswordError = validateFields.validatePassword(newPassword.value);
+    let newPasswordError = false;
+
+    if (password.value === newPassword.value) {
+      newPasswordError = 'New password cannot match current password.';
+    } else {
+      newPasswordError = validateFields.validatePassword(newPassword.value);
+    }
 
     if (newPasswordError === false) {
       // no input errors, submit the form
@@ -158,16 +164,29 @@ class AccountSettings extends Component {
 
       this.props.updatePassword(data)
         .then(() => {
+          this.setState({
+            password: {
+              ...initialState.password,
+              value: '****'
+            },
+            newPassword: {
+              ...initialState.newPassword
+            }
+          })
           alert('Password updated!')
         })
         .catch(err => {
-          const error = err.error;
-          this.setState(state => ({
-            password: {
-              ...state.password,
-              error: error
-            }
-          }));
+          const error = err.response.data;
+          if (error.errorCode === 'password') {
+            this.setState(state => ({
+              password: {
+                ...state.password,
+                error: error.message
+              }
+            }));
+          } else {
+            alert (`Error: ${error.message}`)
+          }
         });
     } else {
       // update state with input errors
@@ -277,7 +296,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapActionsToProps = {
-  updateUsername
+  updateUsername,
+  updatePassword
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(AccountSettings);

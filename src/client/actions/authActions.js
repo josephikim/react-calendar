@@ -38,7 +38,7 @@ export const loginUser = (data) => async (dispatch) => {
         payload: null
       });
     }
-    return Promise.reject(err.response.data);
+    return Promise.reject(err);
   }
 };
 

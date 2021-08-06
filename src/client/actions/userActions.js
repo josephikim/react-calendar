@@ -143,7 +143,7 @@ export const updateUsername = (data) => async (dispatch) => {
     return Promise.resolve(res.data).then(res => {
       dispatch({
         type: 'UPDATE_USERNAME',
-        payload: res.data.username
+        payload: res.username
       });
     });
   } catch (err) {

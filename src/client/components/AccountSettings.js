@@ -109,6 +109,12 @@ class AccountSettings extends Component {
 
       this.props.updateUsername(data)
         .then(() => {
+          this.setState({
+            username: {
+              ...initialState.username,
+              value: this.props.username
+            }
+          })
           alert('Username updated!')
         })
         .catch(err => {

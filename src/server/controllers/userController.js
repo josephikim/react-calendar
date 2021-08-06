@@ -72,14 +72,29 @@ const updateEvent = async (req, res) => {
 const updateUsername = async (req, res) => {
   const payload = req.body;
   payload._id = db.mongoose.Types.ObjectId(payload._id);
-  const updatedUser = await User.findOneAndUpdate({ '_id': payload._id }, { 'username': payload.username }, { new: true });
 
-  const trimmed = {
-    id: updatedUser._id,
-    username: updatedUser.username
-  }
+  User.findOne({
+    '_id': payload._id
+  })
+    .exec(async (err, user) => {
+      if (err) {
+        return next(err);
+      }
 
-  return res.status(200).send({ data: trimmed, message: 'Updated username' });
+      user.username = payload.username;
+
+      user.save(err => {
+        if (err) {
+          return next(err);
+        }
+
+        res.status(200).send({
+          id: user._id,
+          username: user.username,
+          message: 'Username updated successfully!',
+        });
+      });
+    });
 };
 
 const updatePassword = async (req, res, next) => {

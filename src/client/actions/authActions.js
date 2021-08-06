@@ -74,6 +74,6 @@ export const registerUser = (data) => async (dispatch) => {
       });
     });
   } catch (err) {
-    return Promise.reject(err.response.data);
+    return Promise.reject(err);
   }
 };

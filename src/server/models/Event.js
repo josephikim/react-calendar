@@ -18,6 +18,10 @@ const eventSchema = new mongoose.Schema ({
   },
   allDay: {
     type: Boolean,
+  },
+  calendar: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Calendar'
   }
 });
 

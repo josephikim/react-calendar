@@ -4,7 +4,6 @@ import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import '../styles/CalendarSettingsItem.css';
 
 const CalendarSettingsItem = (props) => {
-  const newPasswordComponent = props.id === 'newPassword';
   const error = props.error;
 
   return (

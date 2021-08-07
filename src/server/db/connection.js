@@ -2,6 +2,7 @@ import db from '../models';
 import { MONGO_URL } from '../config/dbConfig';
 
 const Role = db.role;
+const Calendar = db.calendar;
 
 db.mongoose
   .connect(MONGO_URL, {
@@ -11,14 +12,15 @@ db.mongoose
   })
   .then(() => {
     console.log('Successfully connect to MongoDB.');
-    initial();
+    initialRoles();
+    initialCalendars();
   })
   .catch(err => {
     console.error('Connection error', err);
     process.exit();
   });
 
-const initial = () => {
+const initialRoles = () => {
   Role.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
       new Role({
@@ -49,6 +51,24 @@ const initial = () => {
         }
 
         console.log('added "admin" to roles collection');
+      });
+    }
+  })
+};
+
+const initialCalendars = () => {
+  Calendar.estimatedDocumentCount((err, count) => {
+    if (!err && count === 0) {
+      new Calendar({
+        name: 'US Holidays',
+        visibility: true,
+        color: '#1E90FF'
+      }).save(err => {
+        if (err) {
+          console.log('error', err);
+        }
+
+        console.log('added "US Holidays" to calendars collection');
       });
     }
   })

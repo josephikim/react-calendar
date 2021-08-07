@@ -7,6 +7,12 @@ const MONGO_PORT = process.env.MONGO_PORT;
 const MONGO_DB = process.env.MONGO_DB;
 const API_KEY = process.env.CALENDARIFIC_KEY;
 
+const uri = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}`;
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
 // API call for holidays data
 const getHolidays = () => {
   try {
@@ -26,19 +32,23 @@ const getHolidays = () => {
 // make a bunch of calendar events using API data
 const makeEvents = async () => {
   let events = [];
+  const calendar = await client.db('react-calendar').collection('calendars').find({ name: 'US Holidays' }).toArray();
+  const calendarId = calendar[0]._id;
 
   const processedEvents = await getHolidays()
     .then(response => {
       const holidays = response.data.response.holidays;
 
       holidays.forEach(holiday => {
-        const start = new Date(holiday.date.iso)
+        const start = new Date(holiday.date.iso);
+
         const event = {
           title: holiday.name,
           desc: holiday.description,
           start: start,
           end: start,
-          allDay: true
+          allDay: true,
+          calendar: calendarId
         }
         events.push(event);
       })
@@ -48,12 +58,6 @@ const makeEvents = async () => {
 }
 
 const seedDB = async () => {
-  const uri = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}`;
-  const client = new MongoClient(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-
   try {
     await client.connect();
     console.log('Connected correctly to server');

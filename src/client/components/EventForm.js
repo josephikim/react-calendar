@@ -263,7 +263,8 @@ class EventForm extends Component {
         <Form>
           <Row>
             <Col>
-              <label htmlFor='title'>Event Title (required)</label>
+              <label htmlFor='title' className='text-primary'>Event Title (required)</label>
+
               <textarea
                 id='title'
                 name='title'
@@ -275,6 +276,7 @@ class EventForm extends Component {
               >
                 enter title
               </textarea>
+
               <div className='text-danger'>
                 <small>{this.state.title.error}</small>
               </div>
@@ -283,7 +285,8 @@ class EventForm extends Component {
 
           <Row>
             <Col>
-              <label htmlFor='desc'>Event Description</label>
+              <label htmlFor='desc' className='text-primary'>Event Description</label>
+
               <textarea
                 id='desc'
                 name='desc'
@@ -301,7 +304,8 @@ class EventForm extends Component {
             <Col xs={6}>
               <Row>
                 <Col>
-                  <label htmlFor='startDate'>Start Date</label>
+                  <label htmlFor='startDate' className='text-primary'>Start Date</label>
+
                   <DayPickerInput
                     id='startDate'
                     name='startDate'
@@ -317,7 +321,8 @@ class EventForm extends Component {
             <Col xs={6}>
               <Row>
                 <Col>
-                  <label htmlFor='startTime'>Start Time</label>
+                  <label htmlFor='startTime' className='text-primary'>Start Time</label>
+
                   <TimePicker
                     id='startTime'
                     name='startTime'
@@ -338,7 +343,8 @@ class EventForm extends Component {
             <Col xs={6}>
               <Row>
                 <Col>
-                  <label htmlFor='endDate'>End Date</label>
+                  <label htmlFor='endDate' className='text-primary'>End Date</label>
+
                   <DayPickerInput
                     id='endDate'
                     name='endDate'
@@ -354,7 +360,8 @@ class EventForm extends Component {
             <Col xs={6}>
               <Row>
                 <Col>
-                  <label htmlFor='endTime'>End Time</label>
+                  <label htmlFor='endTime' className='text-primary'>End Time</label>
+                  
                   <TimePicker
                     id='endTime'
                     name='endTime'
@@ -371,7 +378,7 @@ class EventForm extends Component {
             </Col>
           </Row>
 
-          <Row>
+          <Row className='two-column'>
             <Col>
               {slotSelected &&
                 <Button
@@ -398,6 +405,9 @@ class EventForm extends Component {
                   Save Changes
                 </Button>
               }
+            </Col>
+
+            <Col>
               {eventSelected &&
                 <Button
                   name='delete-event-btn'

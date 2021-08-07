@@ -140,7 +140,7 @@ class LoginForm extends Component {
           </div>
 
           <Form.Group controlId='username'>
-            <Form.Label>Username</Form.Label>
+            <Form.Label className='text-primary'>Username</Form.Label>
             <Form.Control
               name='username'
               placeholder='Enter username'
@@ -154,7 +154,7 @@ class LoginForm extends Component {
           </div>
 
           <Form.Group controlId='password'>
-            <Form.Label>Password</Form.Label>
+            <Form.Label className='text-primary'>Password</Form.Label>
             <Form.Control
               type='password'
               name='password'
@@ -169,7 +169,7 @@ class LoginForm extends Component {
           </div>
 
           <Form.Group controlId='passwordConfirm'>
-            <Form.Label>Confirm Password</Form.Label>
+            <Form.Label className='text-primary'>Confirm Password</Form.Label>
             <Form.Control
               type='password'
               name='passwordConfirm'

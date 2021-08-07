@@ -7,12 +7,11 @@
 }
 
 .CalendarPage .rbc-toolbar {
-  margin-bottom: 18px;
+  margin-bottom: 1.5rem;
 }
 
 .CalendarPage .rbc-toolbar-label {
-  color: #3174ad;
-  font-size: 18px;
+  font-size: 1.25rem;
   font-weight: bold;
 }
 

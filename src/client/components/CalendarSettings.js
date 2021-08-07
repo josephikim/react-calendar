@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Form } from 'react-bootstrap';
+import { Container, Row, Col, Form } from 'react-bootstrap';
 
 import CalendarSettingsItem from './CalendarSettingsItem';
 
@@ -35,9 +35,16 @@ class CalendarSettings extends Component {
     return (
       <div className='CalendarSettings'>
         <Form>
-          <div className='text-primary'>
-            <h4>Calendar Settings</h4>
-          </div>
+          <Container>
+            <Row>
+              <Col>
+                <div className='heading text-primary'>
+                  <h4>Calendar Settings</h4>
+                </div>
+              </Col>
+            </Row>
+          </Container>
+
           {
             this.state.calendars.map((item) => (
               <CalendarSettingsItem key={item.id} name={item.name} />

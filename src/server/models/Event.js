@@ -15,6 +15,9 @@ const eventSchema = new mongoose.Schema ({
   end: { 
     type: Date, 
     required: [true, 'Enter an end date.'] 
+  },
+  allDay: {
+    type: Boolean,
   }
 });
 

@@ -7,6 +7,8 @@ import TimePicker from 'rc-time-picker';
 import moment from 'moment';
 import _ from 'lodash';
 
+import CalendarSelectMenu from './CalendarSelectMenu';
+
 import { createEvent, updateEvent, deleteEvent } from '../actions/userActions';
 import { validateFields } from '../../validation.js';
 
@@ -361,7 +363,7 @@ class EventForm extends Component {
               <Row>
                 <Col>
                   <label htmlFor='endTime' className='text-primary'>End Time</label>
-                  
+
                   <TimePicker
                     id='endTime'
                     name='endTime'
@@ -419,6 +421,12 @@ class EventForm extends Component {
                   Delete Event
                 </Button>
               }
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <CalendarSelectMenu />
             </Col>
           </Row>
         </Form>

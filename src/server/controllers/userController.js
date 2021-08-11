@@ -135,6 +135,49 @@ const updatePassword = async (req, res, next) => {
     });
 };
 
+const createCalendar = async (req, res) => {
+  const calendar = new Calendar(req.body);
+
+  const createdCalendar = await Calendar.save();
+
+  const trimmed = {
+    _id: createdCalendar._id,
+    name: createdCalendar.name,
+    color: createdCalendar.color,
+    visibility: createdCalendar.visibility,
+    user: createdCalendar.user
+  }
+
+  return res.status(200).send({ data: trimmed });
+};
+
+const updateCalendar = async (req, res) => {
+  const payload = req.body;
+  payload._id = db.mongoose.Types.ObjectId(payload._id);
+  // payload.start = new Date(payload.start)
+  // payload.end = new Date(payload.end)
+
+  const updatedCalendar = await Calendar.findOneAndUpdate({ '_id': payload._id }, payload, { new: true });
+
+  const trimmed = {
+    _id: createdCalendar._id,
+    name: createdCalendar.name,
+    color: createdCalendar.color,
+    visibility: createdCalendar.visibility,
+    user: createdCalendar.user
+  }
+
+  return res.status(200).send({ data: trimmed, message: 'Updated calendar' });
+};
+
+const deleteCalendar = async (req, res) => {
+  const calendarId = req.params.id;
+
+  const deletedCalendar = await Calendar.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(calendarId) });
+
+  return res.status(200).send({ data: deletedCalendar, message: 'Deleted calendar' });
+};
+
 const userController = {
   allAccess,
   userAccess,
@@ -145,7 +188,10 @@ const userController = {
   deleteEvent,
   updateEvent,
   updateUsername,
-  updatePassword
+  updatePassword,
+  createCalendar,
+  updateCalendar,
+  deleteCalendar
 }
 
 export default userController;

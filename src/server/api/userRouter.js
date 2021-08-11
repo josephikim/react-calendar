@@ -51,18 +51,18 @@ userRouter.post(
   userController.createEvent
 );
 
-// DELETE request to delete event
-userRouter.delete(
-  '/event/:id/delete',
-  [authJwt.verifyToken],
-  userController.deleteEvent
-);
-
 // POST request to update event
 userRouter.post(
   '/event/:id/update',
   [authJwt.verifyToken],
   userController.updateEvent
+);
+
+// DELETE request to delete event
+userRouter.delete(
+  '/event/:id/delete',
+  [authJwt.verifyToken],
+  userController.deleteEvent
 );
 
 // POST request to update username
@@ -80,6 +80,27 @@ userRouter.post(
   '/user/:id/password/update',
   [authJwt.verifyToken],
   userController.updatePassword
+);
+
+// POST request to create calendar
+userRouter.post(
+  '/calendar', 
+  [authJwt.verifyToken],
+  userController.createCalendar
+);
+
+// POST request to update calendar
+userRouter.post(
+  '/calendar/:id/update',
+  [authJwt.verifyToken],
+  userController.updateCalendar
+);
+
+// DELETE request to delete calendar
+userRouter.delete(
+  '/calendar/:id/delete',
+  [authJwt.verifyToken],
+  userController.deleteCalendar
 );
 
 export default userRouter;

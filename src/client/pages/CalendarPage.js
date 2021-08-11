@@ -17,6 +17,18 @@ class CalendarPage extends Component {
     super(...args)
   }
 
+  componentWillMount = () => {
+    let initialSelection = {
+      action: 'click',
+      start: new Date(),
+      end: new Date(),
+      slots: [
+        new Date()
+      ]
+    }
+    this.props.onSelectSlot(initialSelection)
+  }
+
   componentDidMount = () => {
     this.props.retrieveEvents();
   }

@@ -40,7 +40,7 @@ const register = (req, res, next) => {
         }
       );
     } else {
-      Role.findOne({ name: "user" }, (err, role) => {
+      Role.findOne({ name: 'user' }, (err, role) => {
         if (err) {
           return next(err);
         }
@@ -62,7 +62,7 @@ const login = (req, res, next) => {
   User.findOne({
     username: req.body.username
   })
-    .populate("roles", "-__v")
+    .populate('roles', '-__v')
     .exec(async (err, user) => {
       if (err) {
         return next(err);
@@ -96,9 +96,8 @@ const login = (req, res, next) => {
       let refreshToken = await RefreshToken.createToken(user);
 
       let authorities = [];
-
       for (let i = 0; i < user.roles.length; i++) {
-        authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
+        authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
       }
       res.status(200).send({
         id: user._id,
@@ -114,14 +113,14 @@ const refreshToken = async (req, res, next) => {
   const { refreshToken: requestToken } = req.body;
 
   if (requestToken == null) {
-    return res.status(403).json({ message: "Refresh Token is required!" });
+    return res.status(403).json({ message: 'Refresh Token is required!' });
   }
 
   try {
     let refreshToken = await RefreshToken.findOne({ token: requestToken });
 
     if (!refreshToken) {
-      res.status(403).json({ message: "Refresh token is not in database!" });
+      res.status(403).json({ message: 'Refresh token is not in database!' });
       return;
     }
 

@@ -12,7 +12,7 @@ const register = (req, res, next) => {
     username: req.body.username,
     password: req.body.password
   });
-  
+
   // If no errors, register user
   user.save((err, user) => {
     if (err) {

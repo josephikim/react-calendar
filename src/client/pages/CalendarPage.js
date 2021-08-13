@@ -17,34 +17,44 @@ class CalendarPage extends Component {
     super(...args)
   }
 
-  componentWillMount = () => {
-    let initialSelection = {
+  componentDidMount = () => {
+    // Set store's selectedSlot to current date
+    const dateStr = new Date().toISOString();
+
+    let initialSlot = {
       action: 'click',
-      start: new Date(),
-      end: new Date(),
+      start: dateStr,
+      end: dateStr,
       slots: [
-        new Date()
+        dateStr
       ]
     }
-    this.props.onSelectSlot(initialSelection)
-  }
 
-  componentDidMount = () => {
+    this.props.onSelectSlot(initialSlot);
     this.props.retrieveEvents();
   }
 
   onSelectSlot = (event) => {
-    if (Object.keys(this.props.selectedSlot).length === 0 || this.props.selectedSlot === undefined) {
-      this.props.onSelectSlot(event);
+    // Convert date objects to ISO strings
+    let payload = event;
+
+    if (Object.keys(this.props.selectedSlot).length === 0 || this.props.selectedSlot === undefined) { // If previous slot is empty
+      payload.start = payload.start.toISOString();
+      payload.end = payload.end.toISOString();
+      this.props.onSelectSlot(payload);
     } else {
-      const selectedSlotStart = new Date(this.props.selectedSlot.start.toDateString());
-      const selectedSlotEnd = new Date(this.props.selectedSlot.end.toDateString());
+      // Check if current slot and previous slot are the same
+      const selectedSlotStartDate = new Date(this.props.selectedSlot.start);
+      const selectedSlotEndDate = new Date(this.props.selectedSlot.end);
+      const selectedSlotUnchanged =
+        payload.start.valueOf() == selectedSlotStartDate.valueOf() &&
+        payload.end.valueOf() == selectedSlotEndDate.valueOf();
 
-      const sameSlotSelected =
-        event.start.valueOf() === selectedSlotStart.valueOf() &&
-        event.end.valueOf() === selectedSlotEnd.valueOf();
+      if (selectedSlotUnchanged) return;
 
-      if (!sameSlotSelected) this.props.onSelectSlot(event);
+      payload.start = payload.start.toISOString();
+      payload.end = payload.end.toISOString();
+      this.props.onSelectSlot(payload);
     }
   }
 

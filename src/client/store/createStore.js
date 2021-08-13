@@ -16,8 +16,8 @@ const initialState = {
   user: {
     events: [],
     selectedSlot: {
-      start: new Date(),
-      end: new Date(),
+      start: new Date().toISOString(),
+      end: new Date().toISOString(),
     },
     selectedEvent: {},
     calendars: {}

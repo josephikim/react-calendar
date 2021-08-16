@@ -20,16 +20,18 @@ export const onSelectEvent = (event => {
 })
 
 export const updateSelectedSlot = (event) => {
+  const stringified = JSON.stringify(event);
   return {
     type: 'UPDATE_SELECTED_SLOT',
-    payload: event
+    payload: stringified
   }
 }
 
 export const updateSelectedEvent = (event) => {
+  const stringified = JSON.stringify(event);
   return {
     type: 'UPDATE_SELECTED_EVENT',
-    payload: event
+    payload: stringified
   }
 }
 

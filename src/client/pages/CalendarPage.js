@@ -18,57 +18,76 @@ class CalendarPage extends Component {
   }
 
   componentDidMount = () => {
-    // Set store's selectedSlot to current date
-    const dateStr = new Date().toISOString();
-
-    let initialSlot = {
-      action: 'click',
-      start: dateStr,
-      end: dateStr,
-      slots: [
-        dateStr
-      ]
-    }
-
-    this.props.onSelectSlot(initialSlot);
+    // Initialize calendar events
     this.props.retrieveEvents();
   }
 
   onSelectSlot = (event) => {
-    // Convert date objects to ISO strings
-    let payload = event;
+    const slotsMatch = this.isSameSlot(this.props.selectedSlot, event)
+    if (slotsMatch) return;
 
-    if (Object.keys(this.props.selectedSlot).length === 0 || this.props.selectedSlot === undefined) { // If previous slot is empty
-      payload.start = payload.start.toISOString();
-      payload.end = payload.end.toISOString();
-      this.props.onSelectSlot(payload);
-    } else {
-      // Check if current slot and previous slot are the same
-      const selectedSlotStartDate = new Date(this.props.selectedSlot.start);
-      const selectedSlotEndDate = new Date(this.props.selectedSlot.end);
-      const selectedSlotUnchanged =
-        payload.start.valueOf() == selectedSlotStartDate.valueOf() &&
-        payload.end.valueOf() == selectedSlotEndDate.valueOf();
+    this.props.onSelectSlot(event);
+  }
 
-      if (selectedSlotUnchanged) return;
+  isSameSlot = (prevSlot, currentSlot) => {
+    const parsed = JSON.parse(prevSlot);
+    const prevSlotEmpty = 
+      Object.keys(parsed).length == 0 || 
+      Object.keys(parsed).length == undefined;
 
-      payload.start = payload.start.toISOString();
-      payload.end = payload.end.toISOString();
-      this.props.onSelectSlot(payload);
+    if (prevSlotEmpty) {
+      return false;
     }
+
+    let prevSlotStartDate = new Date(parsed.start);
+    let prevSlotEndDate = new Date(parsed.end);
+
+    let startDatesMatch = false;
+    let endDatesMatch = false
+
+    if (currentSlot.slots.length == 1) {  // single day selected in Month view, check date only
+      prevSlotStartDate.setHours(0,0,0,0);
+      prevSlotEndDate.setHours(0,0,0,0);
+      currentSlot.start.setHours(0,0,0,0);
+      currentSlot.end.setHours(0,0,0,0);
+    }
+
+    startDatesMatch = prevSlotStartDate.valueOf() == currentSlot.start.valueOf();
+    endDatesMatch = prevSlotEndDate.valueOf() == currentSlot.end.valueOf();
+
+    if (startDatesMatch && endDatesMatch) {
+      return true
+    }
+    return false
   }
 
   onSelectEvent = (event) => {
-    const noneSelected = Object.keys(this.props.selectedEvent).length === 0;
-    if (noneSelected) {
-      this.props.onSelectEvent(event);
-    } else { // check event IDs
-      const sameEventId = event._id === this.props.selectedEvent._id;
-      if (!sameEventId) this.props.onSelectEvent(event);
+    const eventsMatch = this.isSameEvent(this.props.selectedEvent, event)
+    if (eventsMatch) return;
+
+    this.props.onSelectEvent(event);
+  }
+
+  isSameEvent = (prevEvent, currentEvent) => {
+    const parsed = JSON.parse(prevEvent);
+    const prevEventEmpty = 
+      Object.keys(parsed).length == 0 || 
+      Object.keys(parsed).length == undefined;
+
+    if (prevEventEmpty) {
+      return false;
     }
+
+    const eventsMatch = parsed._id === currentEvent._id;
+
+    if (eventsMatch) {
+      return true
+    }
+    return false
   }
 
   render() {
+    const selectedEvent = this.props.selectedEvent;
     return (
       <div className='CalendarPage'>
         <Container>
@@ -83,7 +102,7 @@ class CalendarPage extends Component {
                 defaultDate={new Date()}
                 onSelectEvent={event => this.onSelectEvent(event)}
                 onSelectSlot={event => this.onSelectSlot(event)}
-                selected={this.props.selectedEvent}
+                selected={selectedEvent ? JSON.parse(selectedEvent) : {}}
                 startAccessor={event => event.start}
                 endAccessor={event => event.end}
               />

@@ -26,10 +26,10 @@ const initialState = {
     value: ''
   },
   start: {
-    value: moment(new Date()).hour(0).minute(0).seconds(0).toDate()
+    value:''
   },
   end: {
-    value: moment(new Date()).hour(0).minute(0).seconds(0).add(15, 'm').toDate()
+    value: ''
   },
   formValuesChanged: false,
   submitCalled: false,
@@ -42,47 +42,91 @@ class EventForm extends Component {
     this.state = initialState
   }
 
+  componentDidMount = () => {
+    if (!this.props.selectedSlot) return;
+
+    // Initialize state with selected slot
+    const newState = {
+      start: {
+        value: this.props.selectedSlot.start
+      },
+      end: {
+        value: this.props.selectedSlot.end
+      }
+    }
+
+    this.setState(newState)
+  }
+
   componentDidUpdate = (prevProps) => {
-    const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
-    const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
-    const noneSelected = !slotSelected && !eventSelected;
-    const slotUnchanged = _.isEqual(this.props.selectedSlot, prevProps.selectedSlot)
-    const eventUnchanged = _.isEqual(this.props.selectedEvent, prevProps.selectedEvent)
+    const parsedSlot = JSON.parse(this.props.selectedSlot);
+    const parsedEvent = JSON.parse(this.props.selectedEvent);
+
+    const slotSelected = Object.keys(parsedSlot).length > 0;
+    const eventSelected = Object.keys(parsedEvent).length > 0;
+
+    let slotUnchanged = false;
+    let eventUnchanged = false;
+
+    slotUnchanged = this.props.selectedSlot == prevProps.selectedSlot;
+    eventUnchanged = this.props.selectedEvent == prevProps.selectedEvent;
 
     if (slotUnchanged && eventUnchanged) return;
 
     let newState = {};
 
-    if (noneSelected) newState = initialState;
+    if (!slotSelected && !eventSelected) {
+      newState = initialState;
+    }
 
     if (slotSelected) {
-      newState = {
-        ...initialState,
-        start: {
-          value: this.props.selectedSlot.start
-        },
-        end: {
-          value: moment(this.props.selectedSlot.end).add(15, 'm').toDate()
+      if (eventUnchanged) {  // previous selection was a slot
+        newState = {
+          ...initialState,
+          title: {
+            ...initialState.title,
+            value: this.state.title.value
+          },
+          desc: {
+            value: this.state.desc.value
+          },
+          start: {
+            value: parsedSlot.start
+          },
+          end: {
+            value: parsedSlot.end
+          }
+        }
+      } else {  // previous selection was an event
+        newState = {
+          ...initialState,
+          start: {
+            value: parsedSlot.start
+          },
+          end: {
+            value: parsedSlot.end
+          }
         }
       }
     }
 
     if (eventSelected) {
-      // Update component state with selectedEvent values
+      if (eventUnchanged) return;
+
       newState = {
         ...initialState,
         title: {
           ...initialState.title,
-          value: this.props.selectedEvent.title,
+          value: parsedEvent.title,
         },
         desc: {
-          value: this.props.selectedEvent.desc
+          value: parsedEvent.desc
         },
         start: {
-          value: this.props.selectedEvent.start
+          value: parsedEvent.start
         },
         end: {
-          value: this.props.selectedEvent.end
+          value: parsedEvent.end
         }
       }
     }
@@ -256,8 +300,8 @@ class EventForm extends Component {
   }
 
   render() {
-    const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
-    const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
+    const slotSelected = Object.keys(JSON.parse(this.props.selectedSlot)).length > 0;
+    const eventSelected = Object.keys(JSON.parse(this.props.selectedEvent)).length > 0;
     const formValuesChanged = this.state.formValuesChanged;
 
     return (

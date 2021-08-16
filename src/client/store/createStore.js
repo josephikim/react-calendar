@@ -5,9 +5,16 @@ import { loadState, saveState } from './localStorage';
 import throttle from 'lodash/throttle';
 import appReducer from '../reducers';
 
-const middleware = [
-  thunk,
-];
+let start = new Date();
+let end = new Date();
+start.setHours(start.getHours(),0,0,0);
+end.setHours(start.getHours() + 1,0,0,0);
+
+let initialSlot = {
+  action: 'click',
+  start,
+  end
+}
 
 const initialState = {
   auth: {
@@ -15,17 +22,24 @@ const initialState = {
   },
   user: {
     events: [],
-    selectedSlot: {
-      start: new Date().toISOString(),
-      end: new Date().toISOString(),
-    },
-    selectedEvent: {},
+    selectedSlot: JSON.stringify(initialSlot),
+    selectedEvent: JSON.stringify({}),
     calendars: {}
   }
 }
 
+const middleware = [
+  thunk,
+];
+
 const doCreateStore = () => {
   const persistedState = loadState();
+
+  // Reset selections to reflect current date
+  if (persistedState) {
+    persistedState.user.selectedSlot = JSON.stringify(initialSlot)
+    persistedState.user.selectedEvent = JSON.stringify({})
+  }
 
   const composeEnhancers = composeWithDevTools({});
 

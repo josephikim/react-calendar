@@ -22,7 +22,7 @@ export const onSelectEvent = (event => {
 
 export const updateSelectedSlot = (event) => {
   let payload = event;
-  
+
   // Convert dates to strings
   if (!_.isEmpty(payload)) {
     payload.start = payload.start.toISOString();
@@ -89,6 +89,18 @@ export const deleteEvent = (eventId) => async (dispatch) => {
   try {
     const res = await userApi.delete(`/event/${eventId}/delete`)
 
+    // reset slot to current date
+    let start = new Date();
+    let end = new Date();
+    start.setHours(start.getHours() + 1, 0, 0, 0);
+    end.setHours(end.getHours() + 2, 0, 0, 0);
+
+    const newSlot = {
+      action: 'click',
+      start: start.toISOString(),
+      end: end.toISOString()
+    }
+
     return Promise.resolve(res.data).then(res => {
       batch(() => {
         dispatch({
@@ -98,6 +110,10 @@ export const deleteEvent = (eventId) => async (dispatch) => {
         dispatch({
           type: 'UPDATE_SELECTED_EVENT',
           payload: {}
+        });
+        dispatch({
+          type: 'UPDATE_SELECTED_SLOT',
+          payload: newSlot
         });
       })
     });

@@ -62,19 +62,12 @@ class EventForm extends Component {
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
 
-    let slotUnchanged = false;
-    let eventUnchanged = false;
-
-    slotUnchanged = _.isEqual(this.props.selectedSlot, prevProps.selectedSlot);
-    eventUnchanged = _.isEqual(this.props.selectedEvent, prevProps.selectedEvent);
+    const slotUnchanged = _.isEqual(this.props.selectedSlot, prevProps.selectedSlot);
+    const eventUnchanged = _.isEqual(this.props.selectedEvent, prevProps.selectedEvent);
 
     if (slotUnchanged && eventUnchanged) return;
 
     let newState = {};
-
-    if (!slotSelected && !eventSelected) {
-      newState = initialState;
-    }
 
     if (slotSelected) {
       if (eventUnchanged) {  // previous selection was a slot
@@ -234,7 +227,7 @@ class EventForm extends Component {
     if (titleError === false) {
       try {
         if (this.state.end.value <= this.state.start.value) { // Check for invalid end time
-          alert('End time should be after start time')
+          alert('Input error: End time should be after start time!')
           return
         }
 

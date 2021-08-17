@@ -39,17 +39,9 @@ export const updateSelectedSlot = (event) => {
 }
 
 export const updateSelectedEvent = (event) => {
-  let payload = event;
-  
-   // Convert dates to strings
-  if (!_.isEmpty(payload)) {
-    payload.start = payload.start.toISOString();
-    payload.end = payload.end.toISOString();
-  }
-
   return {
     type: 'UPDATE_SELECTED_EVENT',
-    payload
+    payload: event
   }
 }
 
@@ -58,21 +50,9 @@ export const retrieveEvents = () => async (dispatch) => {
     const res = await userApi.get('/event')
 
     return Promise.resolve(res.data).then(res => {
-      // use Date type on event dates
-      const payload = res.data.map(element => {
-        const event = {
-          _id: element._id,
-          title: element.title,
-          desc: element.desc,
-          start: new Date(element.start),
-          end: new Date(element.end)
-        }
-        return event;
-      })
-
       dispatch({
         type: 'RETRIEVE_EVENTS',
-        payload: payload
+        payload: res.data
       });
     });
   } catch (err) {
@@ -85,10 +65,6 @@ export const createEvent = (data) => async (dispatch) => {
     const res = await userApi.post('/event', data)
 
     return Promise.resolve(res.data).then(res => {
-      // convert dates to type Date
-      res.data.start = new Date(res.data.start);
-      res.data.end = new Date(res.data.end);
-
       batch(() => {
         dispatch({
           type: 'CREATE_EVENT',
@@ -114,11 +90,10 @@ export const deleteEvent = (eventId) => async (dispatch) => {
     const res = await userApi.delete(`/event/${eventId}/delete`)
 
     return Promise.resolve(res.data).then(res => {
-      const deletedId = res.data._id;
       batch(() => {
         dispatch({
           type: 'DELETE_EVENT',
-          payload: deletedId
+          payload: res.data._id
         });
         dispatch({
           type: 'UPDATE_SELECTED_EVENT',
@@ -136,10 +111,6 @@ export const updateEvent = (event) => async (dispatch) => {
     const res = await userApi.post(`/event/${event.id}/update`, event)
 
     return Promise.resolve(res.data).then(res => {
-      // convert dates to type Date
-      res.data.start = new Date(res.data.start);
-      res.data.end = new Date(res.data.end);
-
       batch(() => {
         dispatch({
           type: 'UPDATE_EVENT',

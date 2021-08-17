@@ -40,13 +40,11 @@ const makeEvents = async () => {
       const holidays = response.data.response.holidays;
 
       holidays.forEach(holiday => {
-        const start = new Date(holiday.date.iso);
-
         const event = {
           title: holiday.name,
           desc: holiday.description,
-          start: start,
-          end: start,
+          start: new Date(holiday.date.iso),
+          end: new Date(holiday.date.iso),
           allDay: true,
           calendar: calendarId
         }

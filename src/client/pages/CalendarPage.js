@@ -23,29 +23,28 @@ class CalendarPage extends Component {
   }
 
   onSelectSlot = (event) => {
-    const slotsMatch = this.isSameSlot(this.props.selectedSlot, event)
+    const slotsMatch = this.isSameSlot(this.props.selectedSlot, event);
+    
     if (slotsMatch) return;
 
     this.props.onSelectSlot(event);
   }
 
   isSameSlot = (prevSlot, currentSlot) => {
-    const parsed = JSON.parse(prevSlot);
-    const prevSlotEmpty = 
-      Object.keys(parsed).length == 0 || 
-      Object.keys(parsed).length == undefined;
+    const prevSlotEmpty = Object.keys(prevSlot).length === 0;
 
     if (prevSlotEmpty) {
       return false;
     }
 
-    let prevSlotStartDate = new Date(parsed.start);
-    let prevSlotEndDate = new Date(parsed.end);
+    let prevSlotStartDate = new Date(prevSlot.start);
+    let prevSlotEndDate = new Date(prevSlot.end);
 
     let startDatesMatch = false;
     let endDatesMatch = false
 
-    if (currentSlot.slots.length == 1) {  // single day selected in Month view, check date only
+    // Single day slot selected in Month view. Compares date only.
+    if (currentSlot.slots.length == 1) {  
       prevSlotStartDate.setHours(0,0,0,0);
       prevSlotEndDate.setHours(0,0,0,0);
       currentSlot.start.setHours(0,0,0,0);
@@ -62,23 +61,21 @@ class CalendarPage extends Component {
   }
 
   onSelectEvent = (event) => {
-    const eventsMatch = this.isSameEvent(this.props.selectedEvent, event)
+    const eventsMatch = this.isSameEvent(this.props.selectedEvent, event);
+
     if (eventsMatch) return;
 
     this.props.onSelectEvent(event);
   }
 
   isSameEvent = (prevEvent, currentEvent) => {
-    const parsed = JSON.parse(prevEvent);
-    const prevEventEmpty = 
-      Object.keys(parsed).length == 0 || 
-      Object.keys(parsed).length == undefined;
+    const prevEventEmpty = Object.keys(prevEvent).length === 0;
 
     if (prevEventEmpty) {
       return false;
     }
 
-    const eventsMatch = parsed._id === currentEvent._id;
+    const eventsMatch = prevEvent._id === currentEvent._id;
 
     if (eventsMatch) {
       return true
@@ -87,7 +84,6 @@ class CalendarPage extends Component {
   }
 
   render() {
-    const selectedEvent = this.props.selectedEvent;
     return (
       <div className='CalendarPage'>
         <Container>
@@ -102,7 +98,7 @@ class CalendarPage extends Component {
                 defaultDate={new Date()}
                 onSelectEvent={event => this.onSelectEvent(event)}
                 onSelectSlot={event => this.onSelectSlot(event)}
-                selected={selectedEvent ? JSON.parse(selectedEvent) : {}}
+                selected={this.props.selectedEvent}
                 startAccessor={event => event.start}
                 endAccessor={event => event.end}
               />

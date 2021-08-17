@@ -1,5 +1,6 @@
 import { batch } from 'react-redux';
 import { userApi } from '../utils/axios';
+import _ from 'lodash';
 
 export const onSelectSlot = (event => {
   return (dispatch) => {
@@ -20,18 +21,35 @@ export const onSelectEvent = (event => {
 })
 
 export const updateSelectedSlot = (event) => {
-  const stringified = JSON.stringify(event);
+  let payload = event;
+  
+  // Convert dates to strings
+  if (!_.isEmpty(payload)) {
+    payload.start = payload.start.toISOString();
+    payload.end = payload.end.toISOString();
+    payload.slots = payload.slots.map(slot => {
+      return slot.toISOString();
+    });
+  }
+
   return {
     type: 'UPDATE_SELECTED_SLOT',
-    payload: stringified
+    payload
   }
 }
 
 export const updateSelectedEvent = (event) => {
-  const stringified = JSON.stringify(event);
+  let payload = event;
+  
+   // Convert dates to strings
+  if (!_.isEmpty(payload)) {
+    payload.start = payload.start.toISOString();
+    payload.end = payload.end.toISOString();
+  }
+
   return {
     type: 'UPDATE_SELECTED_EVENT',
-    payload: stringified
+    payload
   }
 }
 
@@ -51,7 +69,7 @@ export const retrieveEvents = () => async (dispatch) => {
         }
         return event;
       })
-      
+
       dispatch({
         type: 'RETRIEVE_EVENTS',
         payload: payload

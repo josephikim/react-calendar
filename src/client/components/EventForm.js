@@ -26,7 +26,7 @@ const initialState = {
     value: ''
   },
   start: {
-    value:''
+    value: ''
   },
   end: {
     value: ''
@@ -54,22 +54,19 @@ class EventForm extends Component {
         value: this.props.selectedSlot.end
       }
     }
-
+    
     this.setState(newState)
   }
 
   componentDidUpdate = (prevProps) => {
-    const parsedSlot = JSON.parse(this.props.selectedSlot);
-    const parsedEvent = JSON.parse(this.props.selectedEvent);
-
-    const slotSelected = Object.keys(parsedSlot).length > 0;
-    const eventSelected = Object.keys(parsedEvent).length > 0;
+    const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
+    const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
 
     let slotUnchanged = false;
     let eventUnchanged = false;
 
-    slotUnchanged = this.props.selectedSlot == prevProps.selectedSlot;
-    eventUnchanged = this.props.selectedEvent == prevProps.selectedEvent;
+    slotUnchanged = _.isEqual(this.props.selectedSlot, prevProps.selectedSlot);
+    eventUnchanged = _.isEqual(this.props.selectedEvent, prevProps.selectedEvent);
 
     if (slotUnchanged && eventUnchanged) return;
 
@@ -91,20 +88,20 @@ class EventForm extends Component {
             value: this.state.desc.value
           },
           start: {
-            value: parsedSlot.start
+            value: this.props.selectedSlot.start
           },
           end: {
-            value: parsedSlot.end
+            value: this.props.selectedSlot.end
           }
         }
       } else {  // previous selection was an event
         newState = {
           ...initialState,
           start: {
-            value: parsedSlot.start
+            value: this.props.selectedSlot.start
           },
           end: {
-            value: parsedSlot.end
+            value: this.props.selectedSlot.end
           }
         }
       }
@@ -117,16 +114,16 @@ class EventForm extends Component {
         ...initialState,
         title: {
           ...initialState.title,
-          value: parsedEvent.title,
+          value: this.props.selectedEvent.title,
         },
         desc: {
-          value: parsedEvent.desc
+          value: this.props.selectedEvent.desc
         },
         start: {
-          value: parsedEvent.start
+          value: this.props.selectedEvent.start
         },
         end: {
-          value: parsedEvent.end
+          value: this.props.selectedEvent.end
         }
       }
     }
@@ -175,52 +172,54 @@ class EventForm extends Component {
     }
   }
 
-  handleDayChange = (value, id) => {
+  handleDayChange = (onDayChangeValue, id) => {
     const target = id.startsWith('start') ? 'start' : 'end';
-    let update = new Date(value);
+    let updateValue = new Date(onDayChangeValue);
     let targetValue = new Date(this.state[target].value)
 
     // Update day, month, year of target value
-    const [month, day, year] = [update.getMonth(), update.getDate(), update.getFullYear()];
-    targetValue.setFullYear(year, month, day)
+    const [year, month, day] = [updateValue.getFullYear(), updateValue.getMonth(), updateValue.getDate()];
+    targetValue.setFullYear(year, month, day);
+
+    const targetValueStr = targetValue.toISOString();
 
     let newState = {
       [target]: {
-        value: targetValue
+        value: targetValueStr
       },
       formValuesChanged: true
     }
 
     // update end date if later start date is selected
-    if (target === 'start' && targetValue > this.state.end.value) {
+    if (target === 'start' && targetValueStr > this.state.end.value) {
       let endDate = new Date(this.state.end.value)
       endDate.setFullYear(year, month, day)
 
       newState.end = {
-        value: endDate
+        value: endDate.toISOString()
       }
     }
 
     // update start date if earlier end date is selected
-    if (target === 'end' && targetValue < this.state.start.value) {
+    if (target === 'end' && targetValueStr < this.state.start.value) {
       let startDate = new Date(this.state.start.value)
       startDate.setFullYear(year, month, day)
 
       newState.start = {
-        value: startDate
+        value: startDate.toISOString()
       }
     }
 
     this.setState(newState);
   }
 
-  handleTimeChange = (value, id) => {
+  handleTimeChange = (onChangeValue, id) => {
     const target = id.startsWith('start') ? 'start' : 'end';
-    const update = value.toDate();
+    const updateStr = onChangeValue._d.toISOString();
 
     let newState = {
       [target]: {
-        value: update
+        value: updateStr
       },
       formValuesChanged: true
     }
@@ -300,10 +299,9 @@ class EventForm extends Component {
   }
 
   render() {
-    const slotSelected = Object.keys(JSON.parse(this.props.selectedSlot)).length > 0;
-    const eventSelected = Object.keys(JSON.parse(this.props.selectedEvent)).length > 0;
+    const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
+    const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
     const formValuesChanged = this.state.formValuesChanged;
-
     return (
       <div className='EventForm'>
         <Form>

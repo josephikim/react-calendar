@@ -7,13 +7,13 @@ import appReducer from '../reducers';
 
 let start = new Date();
 let end = new Date();
-start.setHours(start.getHours(),0,0,0);
-end.setHours(start.getHours() + 1,0,0,0);
+start.setHours(start.getHours() + 1,0,0,0);
+end.setHours(end.getHours() + 2,0,0,0);
 
 let initialSlot = {
   action: 'click',
-  start,
-  end
+  start: start.toISOString(),
+  end: end.toISOString()
 }
 
 const initialState = {
@@ -22,8 +22,8 @@ const initialState = {
   },
   user: {
     events: [],
-    selectedSlot: JSON.stringify(initialSlot),
-    selectedEvent: JSON.stringify({}),
+    selectedSlot: initialSlot,
+    selectedEvent: {},
     calendars: {}
   }
 }
@@ -37,8 +37,8 @@ const doCreateStore = () => {
 
   // Reset selections to reflect current date
   if (persistedState) {
-    persistedState.user.selectedSlot = JSON.stringify(initialSlot)
-    persistedState.user.selectedEvent = JSON.stringify({})
+    persistedState.user.selectedSlot = initialSlot;
+    persistedState.user.selectedEvent = {};
   }
 
   const composeEnhancers = composeWithDevTools({});

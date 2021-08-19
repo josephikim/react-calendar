@@ -39,7 +39,7 @@ userApi.interceptors.response.use(
 
           userApi.defaults.headers.common['x-access-token'] = accessToken;
 
-          // Update local state
+          // authorize user
           store.dispatch({
             type: 'UPDATE_ACCESS_TOKEN',
             payload: accessToken
@@ -56,6 +56,14 @@ userApi.interceptors.response.use(
       }
 
       if (err.response.status === 403 && err.response.data) {
+        localStorage.clear();
+        
+        // unauthorize user
+        store.dispatch({
+          type: 'UPDATE_ACCESS_TOKEN',
+          payload: null
+        });
+
         return Promise.reject(err.response.data);
       }
     }

@@ -113,7 +113,7 @@ const refreshToken = async (req, res, next) => {
   const { refreshToken: requestToken } = req.body;
 
   if (requestToken == null) {
-    return res.redirect('/login');
+    return res.status(403).json({ message: 'Refresh Token is required!' });
   }
 
   try {

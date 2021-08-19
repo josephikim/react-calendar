@@ -33,6 +33,7 @@ export const loginUser = (data) => async (dispatch) => {
     });
   } catch (err) {
     if (err.response.data.accessToken === null) {
+      // unauthorize user
       dispatch({
         type: 'UPDATE_ACCESS_TOKEN',
         payload: null

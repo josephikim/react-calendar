@@ -5,21 +5,25 @@ export const userReducer = (state = [], action) => {
         ...state,
         selectedSlot: action.payload
       };
+
     case 'UPDATE_SELECTED_EVENT':
       return {
         ...state,
         selectedEvent: action.payload
       };
+
     case 'UPDATE_CALENDARS':
       return {
         ...state,
         calendars: action.payload
       };
-    case 'RETRIEVE_EVENTS':
+
+    case 'UPDATE_EVENTS':
       return {
         ...state,
         events: action.payload
       };
+
     case 'CREATE_EVENT':
       return {
         ...state,
@@ -28,6 +32,7 @@ export const userReducer = (state = [], action) => {
           action.payload
         ]
       };
+
     case 'DELETE_EVENT':
       return {
         ...state,
@@ -35,11 +40,13 @@ export const userReducer = (state = [], action) => {
           ...state.events.filter(element => element._id !== action.payload)
         ]
       };
+
     case 'UPDATE_EVENT':
       return {
         ...state,
         events: state.events.map((event) => event._id === action.payload._id ? action.payload : event)
       };
+      
     default:
       return state;
   }

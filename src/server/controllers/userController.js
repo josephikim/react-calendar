@@ -3,6 +3,7 @@ import { AuthorizationError } from '../utils/userFacingErrors';
 
 const Event = db.event;
 const User = db.user;
+const Calendar = db.calendar;
 
 const allAccess = (req, res) => {
   res.status(200).send("Public content")
@@ -20,10 +21,26 @@ const moderatorAccess = (req, res) => {
   res.status(200).send("Moderator content")
 };
 
-const retrieveEvents = async (req, res) => {
-  const events = await Event.find({}).sort({ start: -1 });
+const retrieveData = async (req, res) => {
+  let id = req.query.id;
 
-  return res.status(200).send({ data: events });
+  const calendars = await Calendar.find({ 
+    $or: [
+      { user: id },
+      { user: null },
+      { user: { $exists: false } }
+    ]
+  })
+    
+  const calendarIds = calendars.map(calendar => calendar._id);
+
+  const events = await Event.find({
+    calendar: {
+      $in: calendarIds
+    }
+  }).sort({ start: -1 })
+
+  return res.status(200).send({ data: { calendars, events } });
 };
 
 const createEvent = async (req, res) => {
@@ -183,7 +200,7 @@ const userController = {
   userAccess,
   adminAccess,
   moderatorAccess,
-  retrieveEvents,
+  retrieveData,
   createEvent,
   deleteEvent,
   updateEvent,

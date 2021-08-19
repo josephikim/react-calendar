@@ -39,9 +39,9 @@ userRouter.get(
 
 // GET request for all events
 userRouter.get(
-  '/event',
+  '/data',
   [authJwt.verifyToken],
-  userController.retrieveEvents
+  userController.retrieveData
 );
 
 // POST request to create event

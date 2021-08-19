@@ -15,7 +15,7 @@ const CalendarSelectMenu = () => {
       label: 'Two',
       value: 'two',
     },
-    {
+    { 
       label: 'Three',
       value: 'three',
     },

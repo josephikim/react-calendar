@@ -1,5 +1,7 @@
 import { batch } from 'react-redux';
 import { userApi } from '../utils/axios';
+import store from '../store/createStore';
+
 import _ from 'lodash';
 
 export const onSelectSlot = (event => {
@@ -45,14 +47,22 @@ export const updateSelectedEvent = (event) => {
   }
 }
 
-export const retrieveEvents = () => async (dispatch) => {
+export const retrieveData = () => async (dispatch) => {
   try {
-    const res = await userApi.get('/event')
+    let state = store.getState();
+    const res = await userApi.get('/data', { params: { id: state.auth.id }})
 
     return Promise.resolve(res.data).then(res => {
+      let { calendars, events } = res.data;
+
       dispatch({
-        type: 'RETRIEVE_EVENTS',
-        payload: res.data
+        type: 'UPDATE_CALENDARS',
+        payload: calendars
+      });
+
+      dispatch({
+        type: 'UPDATE_EVENTS',
+        payload: events
       });
     });
   } catch (err) {

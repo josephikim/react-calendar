@@ -113,15 +113,16 @@ const refreshToken = async (req, res, next) => {
   const { refreshToken: requestToken } = req.body;
 
   if (requestToken == null) {
-    return res.status(403).json({ message: 'Refresh Token is required!' });
+    // Refresh token is required
+    return res.redirect('/login');
   }
 
   try {
     let refreshToken = await RefreshToken.findOne({ token: requestToken });
 
     if (!refreshToken) {
-      res.status(403).json({ message: 'Refresh token is not in database!' });
-      return;
+      // Refresh token not found in database
+      return res.redirect('/login');
     }
 
     if (RefreshToken.verifyExpiration(refreshToken)) {

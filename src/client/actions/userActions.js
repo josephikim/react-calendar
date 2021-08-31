@@ -48,8 +48,10 @@ export const updateSelectedEvent = (event) => {
 }
 
 export const retrieveData = () => async (dispatch) => {
+  const state = store.getState();
+  if (!state.auth.id) return;
+    
   try {
-    let state = store.getState();
     const res = await userApi.get('/data', { params: { id: state.auth.id }})
 
     return Promise.resolve(res.data).then(res => {
@@ -167,6 +169,23 @@ export const updateUsername = (data) => async (dispatch) => {
     return Promise.reject(err);
   }
 }
+
+export const createCalendar = (data) => async (dispatch) => {
+  try {
+    const res = await userApi.post('/calendar', data)
+
+    return Promise.resolve(res.data).then(res => {
+      batch(() => {
+        dispatch({
+          type: 'CREATE_CALENDAR',
+          payload: res.data
+        });
+      })
+    });
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
 
 // NOT AN ACTION
 export const updatePassword = (data) => async () => {

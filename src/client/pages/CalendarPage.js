@@ -22,6 +22,13 @@ class CalendarPage extends Component {
     this.props.retrieveData();
   }
 
+  componentDidUpdate = () => {
+    // Check for missing user calendar data in app state
+    if (this.props.calendars.length < 2) {
+      this.props.retrieveData();
+    }
+  }
+
   onSelectSlot = (event) => {
     const slotsMatch = this.isSameSlot(this.props.selectedSlot, event);
     
@@ -115,9 +122,11 @@ class CalendarPage extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    id: state.auth.id,
     events: state.user.events,
     selectedSlot: state.user.selectedSlot,
-    selectedEvent: state.user.selectedEvent
+    selectedEvent: state.user.selectedEvent,
+    calendars: state.user.calendars
   };
 };
 

@@ -22,7 +22,10 @@ const moderatorAccess = (req, res) => {
 };
 
 const retrieveData = async (req, res) => {
-  let id = req.query.id;
+  const id = req.query.id;
+  if (!id) {
+    return res.status(500).send({ message: 'GET request failed. Please check your query and try again.' });
+  }
 
   const calendars = await Calendar.find({ 
     $or: [
@@ -146,7 +149,7 @@ const updatePassword = async (req, res, next) => {
         }
 
         res.status(200).send({
-          message: "Password updated successfully!"
+          message: 'Password updated successfully!'
         });
       });
     });

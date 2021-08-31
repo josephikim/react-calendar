@@ -56,14 +56,6 @@ userApi.interceptors.response.use(
       }
 
       if (err.response.status === 403 && err.response.data) {
-        localStorage.clear();
-        
-        // unauthorize user
-        store.dispatch({
-          type: 'UPDATE_ACCESS_TOKEN',
-          payload: null
-        });
-
         return Promise.reject(err.response.data);
       }
     }

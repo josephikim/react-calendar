@@ -22,8 +22,8 @@ const CalendarSettingsItem = (props) => {
                 name={props.id}
                 type={props.type}
                 value={props.value}
-                readOnly={!props.editMode}
-                onChange={(event) => props.onChange(event)}
+                onChange={event => props.onChange(event)}
+                onBlur={event => props.onBlur(event)}
               />
             </Form.Group>
           </Col>
@@ -47,7 +47,7 @@ const CalendarSettingsItem = (props) => {
                   Save
                 </Button>
               }
-              {props.editMode &&
+              {props.editMode && props.id !== 'add-calendar' &&
                 <Button
                   type='button'
                   name='cancelBtn'

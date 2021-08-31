@@ -34,6 +34,16 @@ class ValidateFields {
     }
     return false;
   }
+
+  validateCalendarName(calendarName) {
+    if (!validator.isAlphanumeric(calendarName)) {
+      return 'Calendar name should only contain letters and numbers';
+    }
+    if (!validator.isLength(calendarName, { min: 4 })) {
+      return 'Calendar name should be at least four characters';
+    }
+    return false;
+  }
 }
 
 const validateFields = new ValidateFields();

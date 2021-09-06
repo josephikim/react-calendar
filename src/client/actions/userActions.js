@@ -175,12 +175,10 @@ export const createCalendar = (data) => async (dispatch) => {
     const res = await userApi.post('/calendar', data)
 
     return Promise.resolve(res.data).then(res => {
-      batch(() => {
-        dispatch({
-          type: 'CREATE_CALENDAR',
-          payload: res.data
-        });
-      })
+      dispatch({
+        type: 'CREATE_CALENDAR',
+        payload: res.data
+      });
     });
   } catch (err) {
     return Promise.reject(err);

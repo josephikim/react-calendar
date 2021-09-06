@@ -18,6 +18,15 @@ export const userReducer = (state = [], action) => {
         calendars: action.payload
       };
 
+    case 'CREATE_CALENDAR':
+      return {
+        ...state,
+        calendars: [
+          ...state.calendars, 
+          action.payload
+        ]
+      };
+
     case 'UPDATE_EVENTS':
       return {
         ...state,

@@ -1,5 +1,6 @@
 import db from '../models';
 import { AuthorizationError } from '../utils/userFacingErrors';
+import { CALENDAR_COLORS } from '../config/appConfigs';
 
 const Event = db.event;
 const User = db.user;
@@ -156,9 +157,26 @@ const updatePassword = async (req, res, next) => {
 };
 
 const createCalendar = async (req, res) => {
-  const calendar = new Calendar(req.body);
+  let id = req.body.user;
+ 
+  const foundCalendars = await Calendar.find({ 
+    $or: [
+      { user: id },
+      { user: null },
+      { user: { $exists: false } }
+    ]
+  })
 
-  const createdCalendar = await Calendar.save();
+  let data = {
+    name: req.body.name,
+    color: `#${CALENDAR_COLORS[foundCalendars.length + 1]}`,
+    visibility: true,
+    user: id
+  }
+
+  const calendar = new Calendar(data);
+
+  const createdCalendar = await calendar.save();
 
   const trimmed = {
     _id: createdCalendar._id,

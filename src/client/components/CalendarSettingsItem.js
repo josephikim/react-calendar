@@ -21,6 +21,7 @@ const CalendarSettingsItem = (props) => {
               <Form.Control
                 name={props.id}
                 type={props.type}
+                placeholder={props.placeholder}
                 value={props.value}
                 onChange={event => props.onChange(event)}
                 onBlur={event => props.onBlur(event)}

@@ -10,7 +10,7 @@ import { _ } from 'core-js';
 
 const initialState = {
   newCalendar: {
-    value: 'Enter calendar name',
+    value: '',
     validateOnChange: false,
     error: ''
   }
@@ -53,7 +53,7 @@ class CalendarSettings extends Component {
 
   handleBlur = (validationFunc, event) => {
     const { target: { name } } = event;
-
+    
     if (this.state[name]['validateOnChange'] === false) {
       this.setState(state => ({
         [name]: {
@@ -69,13 +69,15 @@ class CalendarSettings extends Component {
   handleChange = (validationFunc, event) => {
     const { target: { name, value } } = event;
 
-    this.setState(state => ({
+    let newState = {
       [name]: {
-        ...state[name],
+        ...this.state[name],
         value: value,
-        error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+        error: this.state[name]['validateOnChange'] ? validationFunc(value) : ''
       }
-    }));
+    }
+    
+    this.setState(newState);
   }
 
   handleEdit = (id) => {
@@ -101,6 +103,50 @@ class CalendarSettings extends Component {
 
   handleSubmitAddCalendar = (event) => {
     event.preventDefault();
+
+    const { newCalendar } = this.state;
+
+    const newCalendarError = validateFields.validateCalendarName(newCalendar.value.trim());
+    
+    if (newCalendarError === false) {
+      // no input errors, submit the form
+      const data = {
+        name: newCalendar.value.trim(),
+        user: this.props.id
+      }
+
+      this.props.createCalendar(data)
+        .then(() => {
+          this.setState({
+            newCalendar: {
+              ...initialState.newCalendar
+            }
+          })
+          alert('New calendar created!')
+        })
+        .catch(err => {
+          const error = err.response.data;
+          if (error.errorCode === 'calendar') {
+            this.setState(state => ({
+              newCalendar: {
+                ...state.newCalendar,
+                error: error.message
+              }
+            }));
+          } else {
+            alert (`Error: ${error.message}`)
+          }
+        });
+    } else {
+      // update state with input errors
+      this.setState(state => ({
+        newCalendar: {
+          ...state.newCalendar,
+          validateOnChange: true,
+          error: newCalendarError
+        }
+      }));
+    }
   }
 
   handleSubmitUpdateCalendar = (event) => {
@@ -141,9 +187,10 @@ class CalendarSettings extends Component {
           }
 
           <CalendarSettingsItem 
-            id='add-calendar' 
+            id='newCalendar' 
             type='text'
             label='Add Calendar'
+            placeholder='Enter calendar name'
             value={this.state.newCalendar.value}
             editMode='true'
             error={this.state.newCalendar.error}
@@ -159,6 +206,7 @@ class CalendarSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    id: state.auth.id,
     calendars: state.user.calendars
   };
 }

@@ -23,6 +23,7 @@ const CalendarSettingsItem = (props) => {
                 type={props.type}
                 placeholder={props.placeholder}
                 value={props.value}
+                readOnly={!props.editMode}
                 onChange={event => props.onChange(event)}
                 onBlur={event => props.onBlur(event)}
               />

@@ -27,6 +27,12 @@ export const userReducer = (state = [], action) => {
         ]
       };
 
+    case 'UPDATE_CALENDAR':
+      return {
+        ...state,
+        calendars: state.calendars.map((calendar) => calendar._id === action.payload._id ? action.payload : calendar)
+      };
+
     case 'UPDATE_EVENTS':
       return {
         ...state,

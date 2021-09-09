@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { DuplicateKeyError } from '../utils/databaseErrors';
 
 const calendarSchema = new mongoose.Schema({
   name: {
@@ -19,6 +20,25 @@ const calendarSchema = new mongoose.Schema({
     ref: 'User'
   }
 });
+
+// schema middleware to apply after saving
+const handleE11000 = (error, res, next) => {
+  if (error.name === 'MongoError' && error.code === 11000) {
+    next(
+      new DuplicateKeyError(
+        'There was a conflict with an existing entry. Please try again.',
+        { errorCode: 'calendarName' }
+      )
+    );
+  } else {
+    next();
+  }
+};
+
+calendarSchema.post('findOneAndUpdate', handleE11000);
+
+// schema index
+calendarSchema.index({ user: 1, name: 1}, { unique: true });
 
 let Calendar = mongoose.model('Calendar', calendarSchema);
 

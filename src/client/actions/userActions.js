@@ -185,6 +185,21 @@ export const createCalendar = (data) => async (dispatch) => {
   }
 };
 
+export const updateCalendar = (data) => async (dispatch) => {
+  try {
+    const res = await userApi.post(`/calendar/${data._id}/update`, data)
+
+    return Promise.resolve(res.data).then(res => {
+      dispatch({
+        type: 'UPDATE_CALENDAR',
+        payload: res.data
+      });
+    });
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
 // NOT AN ACTION
 export const updatePassword = (data) => async () => {
   try {

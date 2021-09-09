@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { validateFields } from '../../validation';
-import { createCalendar } from '../actions/userActions';
+import { createCalendar, updateCalendar } from '../actions/userActions';
 
 import CalendarSettingsItem from './CalendarSettingsItem';
 
@@ -138,7 +138,7 @@ class CalendarSettings extends Component {
           }
         });
     } else {
-      // update state with input errors
+      // update state with input error
       this.setState(state => ({
         newCalendar: {
           ...state.newCalendar,
@@ -149,8 +149,45 @@ class CalendarSettings extends Component {
     }
   }
 
-  handleSubmitUpdateCalendar = (event) => {
+  handleSubmitUpdateCalendar = (event, id) => {
     event.preventDefault();
+
+    const calendarState = this.state[id];
+
+    const calendarNameError = validateFields.validateCalendarName(calendarState.value.trim());
+
+    if (calendarNameError === false) {
+      // no input errors, submit the form
+      const data = {
+        _id: id,
+        name: calendarState.value.trim(),
+      }
+
+      this.props.updateCalendar(data)
+        .catch(err => {
+          const error = err.response.data;
+
+          if (error.errorCode === 'calendarName') {
+            this.setState(state => ({
+              [id]: {
+                ...state[id],
+                error: error.message
+              }
+            }));
+          } else {
+            alert (`Error: ${error.message}`)
+          }
+        });
+    } else {
+      // update state with input error
+      this.setState(state => ({
+        [id]: {
+          ...state[id],
+          validateOnChange: true,
+          error: calendarNameError
+        }
+      }));
+    }
   }
 
   render() {
@@ -180,7 +217,7 @@ class CalendarSettings extends Component {
                 error={this.state[item._id].error}
                 onChange={event => this.handleChange(validateFields.validateCalendarName, event)}
                 onBlur={event => this.handleBlur(validateFields.validateCalendarName, event)}
-                onSubmit={(event) => this.handleSubmitUpdateCalendar(event)}
+                onSubmit={(event, id) => this.handleSubmitUpdateCalendar(event, id)}
                 onEdit={(event, id) => this.handleEdit(event, id)}
                 onCancel={(event, id) => this.handleCancel(event, id)} />
             ))
@@ -212,7 +249,8 @@ const mapStateToProps = (state) => {
 }
 
 const mapActionsToProps = {
-  createCalendar
+  createCalendar,
+  updateCalendar
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(CalendarSettings);

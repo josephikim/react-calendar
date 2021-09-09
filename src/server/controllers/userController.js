@@ -189,23 +189,25 @@ const createCalendar = async (req, res) => {
   return res.status(200).send({ data: trimmed });
 };
 
-const updateCalendar = async (req, res) => {
+const updateCalendar = async (req, res, next) => {
   const payload = req.body;
   payload._id = db.mongoose.Types.ObjectId(payload._id);
-  // payload.start = new Date(payload.start)
-  // payload.end = new Date(payload.end)
 
-  const updatedCalendar = await Calendar.findOneAndUpdate({ '_id': payload._id }, payload, { new: true });
+  try {
+    const updatedCalendar = await Calendar.findOneAndUpdate({ '_id': payload._id }, payload, { new: true });
 
-  const trimmed = {
-    _id: createdCalendar._id,
-    name: createdCalendar.name,
-    color: createdCalendar.color,
-    visibility: createdCalendar.visibility,
-    user: createdCalendar.user
+    const trimmed = {
+      _id: updatedCalendar._id,
+      name: updatedCalendar.name,
+      color: updatedCalendar.color,
+      visibility: updatedCalendar.visibility,
+      user: updatedCalendar.user
+    }
+
+    return res.status(200).send({ data: trimmed, message: 'Updated calendar' });
+  } catch (err) {
+    return next(err);
   }
-
-  return res.status(200).send({ data: trimmed, message: 'Updated calendar' });
 };
 
 const deleteCalendar = async (req, res) => {

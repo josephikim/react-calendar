@@ -6,7 +6,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 
 import db from './db/connection';
 import apiRouter from './api';
-import { UserFacingError } from './utils/baseErrors';
+import { UserFacingError, DatabaseError } from './utils/baseErrors';
 import config from '../../webpack.dev.config.js';
 
 const BUILD_DIR = __dirname;
@@ -45,7 +45,7 @@ app.get('*', (req, res) => {
 
 // Global error handler
 app.use(function (err, req, res, next) {
-  if (err instanceof UserFacingError) {
+  if (err instanceof UserFacingError || err instanceof DatabaseError) {
     let error = {
       message: err.message
     }

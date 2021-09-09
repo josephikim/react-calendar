@@ -45,7 +45,7 @@ const CalendarSettingsItem = (props) => {
                   type='submit'
                   name='saveBtn'
                   variant='success'
-                  onClick={event => props.onSubmit(event)} >
+                  onClick={(event, id) => props.onSubmit(event, props.id)} >
                   Save
                 </Button>
               }

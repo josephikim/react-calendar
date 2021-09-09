@@ -131,7 +131,7 @@ class AccountSettings extends Component {
           }
         });
     } else {
-      // update state with input errors
+      // update state with input error
       this.setState(state => ({
         username: {
           ...state.username,
@@ -189,7 +189,7 @@ class AccountSettings extends Component {
           }
         });
     } else {
-      // update state with input errors
+      // update state with input error
       this.setState(state => ({
         newPassword: {
           ...state.newPassword,

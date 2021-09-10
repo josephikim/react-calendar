@@ -415,6 +415,12 @@ class EventForm extends Component {
             </Col>
           </Row>
 
+          <Row>
+            <Col>
+              <CalendarSelectMenu calendars={this.props.calendars} />
+            </Col>
+          </Row>
+
           <Row className='two-column'>
             <Col>
               {slotSelected &&
@@ -458,12 +464,6 @@ class EventForm extends Component {
               }
             </Col>
           </Row>
-
-          <Row>
-            <Col>
-              <CalendarSelectMenu />
-            </Col>
-          </Row>
         </Form>
       </div>
     )
@@ -473,7 +473,8 @@ class EventForm extends Component {
 const mapStateToProps = (state) => {
   return {
     selectedSlot: state.user.selectedSlot,
-    selectedEvent: state.user.selectedEvent
+    selectedEvent: state.user.selectedEvent,
+    calendars: state.user.calendars
   };
 };
 

@@ -1,50 +1,38 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import MultiSelect from 'react-multi-select-component';
 
 import '../libs/react-bootstrap-multiselect/bootstrap-multiselect.css';
 
-const CalendarSelectMenu = () => {
-  const calendars = [
-    {
-      label: 'One',
-      value: 'one',
-      disabled: true
-    },
-    {
-      label: 'Two',
-      value: 'two',
-    },
-    { 
-      label: 'Three',
-      value: 'three',
-    },
-  ]
+const CalendarSelectMenu = (props) => {
+  const multiSelectData = props.calendars.map(calendar => {
+    let obj = {
+      label: calendar.name,
+      value: calendar._id
+    }
+
+    return obj
+  })
 
   const [selected, setSelected] = useState([]);
 
   return (
     <div className='CalendarSelectMenu'>
-      <label htmlFor='title' className='text-primary'>Select Calendars (
+      <label htmlFor='title' className='text-primary'>Select Calendar (
         <small>
-          <a href='/account'>Customize</a>
+          <a href='/account'>Edit</a>
         </small>
         )
       </label>
       
-      {/* <pre>{JSON.stringify(selected)}</pre> */}
       <MultiSelect
-        options={calendars}
+        options={multiSelectData}
         value={selected}
         onChange={setSelected}
-        labelledBy="Select"
-        hasSelectAll
+        labelledBy='Select'
+        hasSelectAll={false}
       />
     </div>
   )
 }
 
-const mapActionsToProps = {
-}
-
-export default connect(null, mapActionsToProps)(CalendarSelectMenu);
+export default CalendarSelectMenu;

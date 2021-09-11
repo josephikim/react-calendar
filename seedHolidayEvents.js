@@ -32,11 +32,10 @@ const getHolidays = () => {
 // make a bunch of calendar events using API data
 const makeEvents = async () => {
   let events = [];
-  let calendarId = '';
 
   const calendar = await client.db('react-calendar').collection('calendars').find({ name: 'US Holidays' }).toArray();
-
-  calendarId = calendar[0]._id;
+  
+  const calendarId = calendar[0]._id;
 
   const processedEvents = await getHolidays()
     .then(response => {

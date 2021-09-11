@@ -73,7 +73,8 @@ userSchema.post('save', async function () {
             name: 'My Calendar',
             visibility: true,
             color: `#${CALENDAR_COLORS[1]}`,
-            user: this._id
+            user: this._id,
+            userDefault: true
           }).save(err => {
             if (err) {
               console.log('error', err);

@@ -18,6 +18,10 @@ const calendarSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
+  },
+  userDefault: {
+    type: Boolean,
+    default: false
   }
 });
 

@@ -1,19 +1,14 @@
-import React, { useState } from 'react';
-import MultiSelect from 'react-multi-select-component';
-
-import '../libs/react-bootstrap-multiselect/bootstrap-multiselect.css';
+import React from 'react';
+import Select from 'react-dropdown-select';
 
 const CalendarSelectMenu = (props) => {
-  const multiSelectData = props.calendars.map(calendar => {
-    let obj = {
-      label: calendar.name,
-      value: calendar._id
-    }
-
-    return obj
+  const calendars = props.calendars.filter(calendar => {
+    return calendar && calendar.user && calendar.visibility === true;
   })
 
-  const [selected, setSelected] = useState([]);
+  const onChange = (values) => {
+    console.log('values', values)
+  }
 
   return (
     <div className='CalendarSelectMenu'>
@@ -23,13 +18,12 @@ const CalendarSelectMenu = (props) => {
         </small>
         )
       </label>
-      
-      <MultiSelect
-        options={multiSelectData}
-        value={selected}
-        onChange={setSelected}
-        labelledBy='Select'
-        hasSelectAll={false}
+
+      <Select
+        options={calendars}
+        labelField='name'
+        valueField='_id'
+        onChange={(values) => onChange(values)}
       />
     </div>
   )

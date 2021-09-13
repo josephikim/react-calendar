@@ -3,8 +3,10 @@ import Select from 'react-dropdown-select';
 
 const CalendarSelectMenu = (props) => {
   const calendars = props.calendars.filter(calendar => {
-    return calendar && calendar.user && calendar.visibility === true;
+    return calendar.visibility === true;
   })
+
+  const defaultCalendar = calendars.filter(calendar => calendar.userDefault === true);
 
   const onChange = (values) => {
     console.log('values', values)
@@ -20,6 +22,7 @@ const CalendarSelectMenu = (props) => {
       </label>
 
       <Select
+        values={defaultCalendar}
         options={calendars}
         labelField='name'
         valueField='_id'

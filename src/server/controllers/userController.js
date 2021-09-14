@@ -28,14 +28,14 @@ const retrieveData = async (req, res) => {
     return res.status(500).send({ message: 'GET request failed. Please check your query and try again.' });
   }
 
-  const calendars = await Calendar.find({ 
+  const calendars = await Calendar.find({
     $or: [
       { user: id },
       { user: null },
       { user: { $exists: false } }
     ]
   })
-    
+
   const calendarIds = calendars.map(calendar => calendar._id);
 
   const events = await Event.find({
@@ -48,19 +48,24 @@ const retrieveData = async (req, res) => {
 };
 
 const createEvent = async (req, res) => {
-  const event = new Event(req.body);
+  try {
+    const event = new Event(req.body);
 
-  const createdEvent = await event.save();
+    const createdEvent = await event.save();
 
-  const trimmed = {
-    _id: createdEvent._id,
-    title: createdEvent.title,
-    desc: createdEvent.desc,
-    start: createdEvent.start,
-    end: createdEvent.end
+    const trimmed = {
+      _id: createdEvent._id,
+      title: createdEvent.title,
+      desc: createdEvent.desc,
+      start: createdEvent.start,
+      end: createdEvent.end,
+      calendar: createdEvent.calendar
+    }
+
+    return res.status(200).send({ data: trimmed });
+  } catch (err) {
+    return next(err);
   }
-
-  return res.status(200).send({ data: trimmed });
 };
 
 const deleteEvent = async (req, res) => {
@@ -158,8 +163,8 @@ const updatePassword = async (req, res, next) => {
 
 const createCalendar = async (req, res) => {
   let id = req.body.user;
- 
-  const foundCalendars = await Calendar.find({ 
+
+  const foundCalendars = await Calendar.find({
     $or: [
       { user: id },
       { user: null },

@@ -231,8 +231,10 @@ class EventForm extends Component {
     const titleError = validateFields.validateTitle(this.state.title.value);
 
     if (titleError === false) {
+      // if no error, submit form
       try {
-        if (this.state.end.value <= this.state.start.value) { // Check for invalid end time
+        // Check for invalid end time
+        if (this.state.end.value <= this.state.start.value) { 
           alert('Input error: End time should be after start time!')
           return
         }
@@ -241,7 +243,8 @@ class EventForm extends Component {
           title: this.state.title.value,
           desc: this.state.desc.value,
           start: this.state.start.value,
-          end: this.state.end.value
+          end: this.state.end.value,
+          calendar: this.state.calendar.value
         }
 
         this.props.createEvent(data);

@@ -31,6 +31,9 @@ const initialState = {
   end: {
     value: ''
   },
+  calendar: {
+    value: ''
+  },
   formValuesChanged: false,
   submitCalled: false,
   timeFormat: 'h:mm a',
@@ -54,7 +57,7 @@ class EventForm extends Component {
         value: this.props.selectedSlot.end
       }
     }
-    
+
     this.setState(newState)
   }
 
@@ -117,6 +120,9 @@ class EventForm extends Component {
         },
         end: {
           value: this.props.selectedEvent.end
+        },
+        calendar: {
+          value: this.props.selectedEvent.calendar
         }
       }
     }
@@ -291,6 +297,20 @@ class EventForm extends Component {
     }
   }
 
+  handleCalendarChange = (values) => {
+    const calendarId = values[0]._id;
+
+    if (calendarId.length > 0) {
+      this.setState(state => ({
+        calendar: {
+          ...state.calendar,
+          value: calendarId
+        },
+        formValuesChanged: true,
+      }));
+    }
+  }
+
   render() {
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
@@ -417,7 +437,9 @@ class EventForm extends Component {
 
           <Row>
             <Col>
-              <CalendarSelectMenu calendars={this.props.calendars} />
+              <CalendarSelectMenu
+                calendars={this.props.calendars}
+                onChange={(values) => this.handleCalendarChange(values)} />
             </Col>
           </Row>
 

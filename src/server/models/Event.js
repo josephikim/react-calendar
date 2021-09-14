@@ -21,6 +21,7 @@ const eventSchema = new mongoose.Schema ({
   },
   calendar: {
     type: mongoose.Schema.Types.ObjectId,
+    required: [true, 'Enter a calendar ID'],
     ref: 'Calendar'
   }
 });

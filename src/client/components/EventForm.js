@@ -48,6 +48,8 @@ class EventForm extends Component {
   componentDidMount = () => {
     if (!this.props.selectedSlot) return;
 
+    const defaultCalendar = this.props.calendars.filter(calendar => calendar.userDefault === true);
+    
     // Initialize state with selected slot
     const newState = {
       start: {
@@ -55,6 +57,9 @@ class EventForm extends Component {
       },
       end: {
         value: this.props.selectedSlot.end
+      },
+      calendar: {
+        value: defaultCalendar[0]._id
       }
     }
 
@@ -88,6 +93,9 @@ class EventForm extends Component {
           },
           end: {
             value: this.props.selectedSlot.end
+          },
+          calendar: {
+            value: this.state.calendar.value
           }
         }
       } else {  // previous selection was an event
@@ -98,6 +106,9 @@ class EventForm extends Component {
           },
           end: {
             value: this.props.selectedSlot.end
+          },
+          calendar: {
+            value: this.state.calendar.value
           }
         }
       }
@@ -278,7 +289,8 @@ class EventForm extends Component {
         title: this.state.title.value,
         desc: this.state.desc.value,
         start: this.state.start.value,
-        end: this.state.end.value
+        end: this.state.end.value,
+        calendar: this.state.calendar.value
       }
 
       this.props.updateEvent(data);
@@ -441,6 +453,7 @@ class EventForm extends Component {
           <Row>
             <Col>
               <CalendarSelectMenu
+                selectedEventCalendarId={this.props.selectedEvent.calendar}
                 calendars={this.props.calendars}
                 onChange={(values) => this.handleCalendarChange(values)} />
             </Col>

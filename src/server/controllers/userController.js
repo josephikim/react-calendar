@@ -79,8 +79,9 @@ const deleteEvent = async (req, res) => {
 const updateEvent = async (req, res) => {
   const payload = req.body;
   payload._id = db.mongoose.Types.ObjectId(payload._id);
-  payload.start = new Date(payload.start)
-  payload.end = new Date(payload.end)
+  payload.calendar = db.mongoose.Types.ObjectId(payload.calendar);
+  payload.start = new Date(payload.start);
+  payload.end = new Date(payload.end);
 
   const updatedEvent = await Event.findOneAndUpdate({ '_id': payload._id }, payload, { new: true });
 
@@ -89,7 +90,8 @@ const updateEvent = async (req, res) => {
     title: updatedEvent.title,
     desc: updatedEvent.desc,
     start: updatedEvent.start,
-    end: updatedEvent.end
+    end: updatedEvent.end,
+    calendar: updatedEvent.calendar
   }
 
   return res.status(200).send({ data: trimmed, message: 'Updated event' });

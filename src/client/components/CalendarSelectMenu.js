@@ -9,8 +9,11 @@ const CalendarSelectMenu = (props) => {
     }
     return calendar;
   });
-
+  
+  const selectedCalendar = calendars.filter(calendar => calendar._id === props.selectedEventCalendarId);
   const defaultCalendar = calendars.filter(calendar => calendar.userDefault === true);
+
+  const selection = props.selectedEventCalendarId ? selectedCalendar : defaultCalendar;
 
   return (
     <div className='CalendarSelectMenu'>
@@ -22,7 +25,7 @@ const CalendarSelectMenu = (props) => {
       </label>
 
       <Select
-        values={defaultCalendar}
+        values={selection}
         options={calendars}
         labelField='name'
         valueField='_id'

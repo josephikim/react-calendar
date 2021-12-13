@@ -14,7 +14,7 @@ const HomePage = () =>
 
         <Col md={6}>
           <div id='about'>
-            <p><strong>React Calendar</strong> is an easy-to-use online calendar app powered by <a href='https://reactjs.org/' target='_blank'>React</a>.</p>
+            <p><strong>React Calendar</strong> is an easy-to-use online calendar app powered by <a href='https://reactjs.org/' target='_blank' rel='noreferrer' >React</a>.</p>
             <p>Register your username to get started!</p>
             <img id='calendar-img' src={icon}></img>
           </div>

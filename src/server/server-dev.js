@@ -44,7 +44,7 @@ app.get('*', (req, res) => {
 });
 
 // Global error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
   if (err instanceof UserFacingError || err instanceof DatabaseError) {
     let error = {
       message: err.message
@@ -62,8 +62,6 @@ app.use(function (err, req, res, next) {
 
     res.status(500).send(error);
   }
-
-  // logger.error(err, 'Parameters: ', req.params, 'User data: ', req.user)
 });
 
 app.listen(PORT, () => {

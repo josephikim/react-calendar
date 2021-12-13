@@ -47,7 +47,7 @@ const retrieveData = async (req, res) => {
   return res.status(200).send({ data: { calendars, events } });
 };
 
-const createEvent = async (req, res) => {
+const createEvent = async (req, res, next) => {
   try {
     const event = new Event(req.body);
 

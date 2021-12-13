@@ -17,6 +17,7 @@ let initialSlot = {
 }
 
 const initialState = {
+  app: "react-calendar",
   auth: {
     accessToken: ''
   },
@@ -33,10 +34,12 @@ const middleware = [
 ];
 
 const doCreateStore = () => {
-  const persistedState = loadState();
+  let persistedState = loadState();
 
-  // Reset selections to reflect current date
-  if (persistedState) {
+  const validPersistedState = persistedState.app === 'react-calendar';
+
+  // Reset selections to current date
+  if (validPersistedState) {
     persistedState.user.selectedSlot = initialSlot;
     persistedState.user.selectedEvent = {};
   }
@@ -45,7 +48,7 @@ const doCreateStore = () => {
 
   const store = createStore(
     appReducer, 
-    persistedState ? persistedState : initialState, 
+    validPersistedState ? persistedState : initialState, 
     composeEnhancers(
       applyMiddleware(...middleware)
     )

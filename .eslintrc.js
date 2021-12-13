@@ -11,6 +11,7 @@ module.exports = {
   },
   "parser": "babel-eslint",
   "rules": {
+    "no-unused-vars": "warn",
     "no-debugger": "warn",
     "react/prop-types": "off"
   }

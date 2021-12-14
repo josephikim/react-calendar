@@ -44,7 +44,7 @@ app.get('*', (req, res) => {
 });
 
 // Global error handler
-app.use(function (err, req, res) {
+app.use(function (err, res) {
   if (err instanceof UserFacingError || err instanceof DatabaseError) {
     let error = {
       message: err.message

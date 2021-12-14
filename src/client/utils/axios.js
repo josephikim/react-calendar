@@ -82,7 +82,7 @@ const getLocalRefreshToken = () => {
 }
 
 const refreshToken = () => {
-  return userApi.post('/auth/refreshtoken', {
+  return authApi.post('/refreshtoken', {
     refreshToken: getLocalRefreshToken(),
   });
 }

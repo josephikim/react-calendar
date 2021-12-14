@@ -49,6 +49,8 @@ export const updateSelectedEvent = (event) => {
 
 export const retrieveUserData = () => async (dispatch) => {
   const state = store.getState();
+  
+  if (!state.auth.id) return;
 
   try {
     const res = await userApi.get("/data", { params: { id: state.auth.id } });

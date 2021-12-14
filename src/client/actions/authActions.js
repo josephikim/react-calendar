@@ -1,10 +1,10 @@
-import axios from 'axios';
+import { authApi } from "../utils/axios";
 
 export const loginUser = (data) => async (dispatch) => {
   try {
-    const res = await axios.post(`${process.env.API_URL}/auth/login`, data);
+    const res = await authApi.post("/login", data);
 
-    return Promise.resolve(res.data).then(res => {
+    return Promise.resolve(res.data).then((res) => {
       const accessToken = res.accessToken;
       const refreshToken = res.refreshToken;
       const username = res.username;
@@ -12,31 +12,28 @@ export const loginUser = (data) => async (dispatch) => {
 
       // Update state
       dispatch({
-        type: 'UPDATE_ACCESS_TOKEN',
-        payload: accessToken
+        type: "UPDATE_ACCESS_TOKEN",
+        payload: accessToken,
       });
-
       dispatch({
-        type: 'UPDATE_REFRESH_TOKEN',
-        payload: refreshToken
+        type: "UPDATE_REFRESH_TOKEN",
+        payload: refreshToken,
       });
-
       dispatch({
-        type: 'UPDATE_USERNAME',
-        payload: username
+        type: "UPDATE_USERNAME",
+        payload: username,
       });
-
       dispatch({
-        type: 'UPDATE_USER_ID',
-        payload: id
+        type: "UPDATE_USER_ID",
+        payload: id,
       });
     });
   } catch (err) {
     if (err.response.data.accessToken === null) {
       // unauthorize user
       dispatch({
-        type: 'UPDATE_ACCESS_TOKEN',
-        payload: null
+        type: "UPDATE_ACCESS_TOKEN",
+        payload: null,
       });
     }
     return Promise.reject(err);
@@ -45,9 +42,9 @@ export const loginUser = (data) => async (dispatch) => {
 
 export const registerUser = (data) => async (dispatch) => {
   try {
-    const res = await axios.post(`${process.env.API_URL}/auth/register`, data);
+    const res = await authApi.post("/register", data);
 
-    return Promise.resolve(res.data).then(res => {
+    return Promise.resolve(res.data).then((res) => {
       const accessToken = res.accessToken;
       const refreshToken = res.refreshToken;
       const username = res.username;
@@ -55,23 +52,23 @@ export const registerUser = (data) => async (dispatch) => {
 
       // Update state
       dispatch({
-        type: 'UPDATE_ACCESS_TOKEN',
-        payload: accessToken
+        type: "UPDATE_ACCESS_TOKEN",
+        payload: accessToken,
       });
 
       dispatch({
-        type: 'UPDATE_REFRESH_TOKEN',
-        payload: refreshToken
+        type: "UPDATE_REFRESH_TOKEN",
+        payload: refreshToken,
       });
 
       dispatch({
-        type: 'UPDATE_USERNAME',
-        payload: username
+        type: "UPDATE_USERNAME",
+        payload: username,
       });
 
       dispatch({
-        type: 'UPDATE_USER_ID',
-        payload: id
+        type: "UPDATE_USER_ID",
+        payload: id,
       });
     });
   } catch (err) {

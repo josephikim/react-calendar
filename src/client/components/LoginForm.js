@@ -24,19 +24,9 @@ const initialState = {
   }
 }
 class LoginForm extends Component {
-  _isMounted = false;
-
   constructor(...args) {
     super(...args)
     this.state = initialState
-  }
-
-  componentDidMount = () => {
-    this._isMounted = true;
-  }
-
-  componentWillUnmount = () => {
-    this._isMounted = false;
   }
 
   handleBlur = (validationFunc, event) => {
@@ -92,12 +82,11 @@ class LoginForm extends Component {
         username: username.value,
         password: password.value
       }
-      this.props.loginUser(data)
-        .then(() => {
-          if (this._isMounted) this.setState(initialState)
-        })
-        .catch(err => {
-          const error = err.response.data;
+
+      try {
+        this.props.loginUser(data)
+      } catch(err) {
+        const error = err.response.data;
           if (error.errorCode && ['username', 'password'].includes(error.errorCode)) {
             this.setState(state => ({
               [error.errorCode]: {
@@ -108,7 +97,7 @@ class LoginForm extends Component {
           } else {
             alert(`${error.name}: ${error.message}`)
           }
-        });
+      }
     } else {
       // update state with errors
       this.setState(state => ({

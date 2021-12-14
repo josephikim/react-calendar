@@ -47,8 +47,6 @@ class EventForm extends Component {
 
   componentDidMount = () => {
     if (!this.props.selectedSlot) return;
-
-    const defaultCalendar = this.props.calendars.filter(calendar => calendar.userDefault === true);
     
     // Initialize state with selected slot
     const newState = {
@@ -57,9 +55,6 @@ class EventForm extends Component {
       },
       end: {
         value: this.props.selectedSlot.end
-      },
-      calendar: {
-        value: defaultCalendar[0]._id
       }
     }
 

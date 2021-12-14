@@ -1,8 +1,15 @@
 import axios from 'axios';
 import store from '../store/createStore';
 
+const authApi = axios.create({
+  baseURL: `${process.env.API_URL}` + '/auth',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
 const userApi = axios.create({
-  baseURL: `${process.env.API_URL}`,
+  baseURL: `${process.env.API_URL}` + '/user',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -80,4 +87,4 @@ const refreshToken = () => {
   });
 }
 
-export { userApi };
+export { authApi, userApi };

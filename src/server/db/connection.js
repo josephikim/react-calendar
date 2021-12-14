@@ -64,7 +64,8 @@ const initialCalendars = () => {
         name: 'US Holidays',
         visibility: true,
         color: `#${CALENDAR_COLORS[0]}`,
-        user: null
+        user: null,
+        systemCalendar: true
       }).save(err => {
         if (err) {
           console.log('error', err);

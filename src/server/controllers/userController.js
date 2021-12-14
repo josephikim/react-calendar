@@ -22,7 +22,7 @@ const moderatorAccess = (req, res) => {
   res.status(200).send("Moderator content")
 };
 
-const retrieveData = async (req, res) => {
+const retrieveUserData = async (req, res) => {
   const id = req.query.id;
   if (!id) {
     return res.status(500).send({ message: 'GET request failed. Please check your query and try again.' });
@@ -31,8 +31,7 @@ const retrieveData = async (req, res) => {
   const calendars = await Calendar.find({
     $or: [
       { user: id },
-      { user: null },
-      { user: { $exists: false } }
+      { systemCalendar: true }
     ]
   })
 
@@ -178,7 +177,8 @@ const createCalendar = async (req, res) => {
     name: req.body.name,
     color: `#${CALENDAR_COLORS[foundCalendars.length + 1]}`,
     visibility: true,
-    user: id
+    user: id,
+    systemCalendar: false
   }
 
   const calendar = new Calendar(data);
@@ -230,7 +230,7 @@ const userController = {
   userAccess,
   adminAccess,
   moderatorAccess,
-  retrieveData,
+  retrieveUserData,
   createEvent,
   deleteEvent,
   updateEvent,

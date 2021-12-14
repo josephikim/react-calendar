@@ -10,45 +10,39 @@ let end = new Date();
 start.setHours(start.getHours() + 1,0,0,0);
 end.setHours(end.getHours() + 2,0,0,0);
 
-let initialSlot = {
+const initialSlot = {
   action: 'click',
   start: start.toISOString(),
   end: end.toISOString()
-}
-
-const initialState = {
-  app: "react-calendar",
-  auth: {
-    accessToken: ''
-  },
-  user: {
-    events: [],
-    selectedSlot: initialSlot,
-    selectedEvent: {},
-    calendars: {}
-  }
 }
 
 const middleware = [
   thunk,
 ];
 
-const doCreateStore = () => {
-  let persistedState = loadState();
-
-  const validPersistedState = persistedState.app === 'react-calendar';
-
-  // Reset selections to current date
-  if (validPersistedState) {
-    persistedState.user.selectedSlot = initialSlot;
-    persistedState.user.selectedEvent = {};
+const initialState = {
+  auth: {
+    accessToken: '',
+    refreshToken: '',
+    id: '',
+    username: ''
+  },
+  user: {
+    events: [],
+    selectedSlot: initialSlot,
+    selectedEvent: {},
+    calendars: []
   }
+}
+
+const doCreateStore = () => {
+  const persistedState = loadState();
 
   const composeEnhancers = composeWithDevTools({});
 
   const store = createStore(
     appReducer, 
-    validPersistedState ? persistedState : initialState, 
+    persistedState ? persistedState : initialState, 
     composeEnhancers(
       applyMiddleware(...middleware)
     )

@@ -2,18 +2,15 @@ import React from 'react';
 import Select from 'react-dropdown-select';
 
 const CalendarSelectMenu = (props) => {
-  // Flag calendars to be disabled in dropdown UI, ie system calendars
+  // Disable display of system calendars
   const calendars = props.calendars.map(calendar => {
-    if (calendar.user === null) {
+    if (calendar.systemCalendar === true) {
       calendar.disabled = true;
     }
     return calendar;
   });
   
   const selectedCalendar = calendars.filter(calendar => calendar._id === props.selectedEventCalendarId);
-  const defaultCalendar = calendars.filter(calendar => calendar.userDefault === true);
-
-  const selection = props.selectedEventCalendarId ? selectedCalendar : defaultCalendar;
 
   return (
     <div className='CalendarSelectMenu'>
@@ -25,7 +22,7 @@ const CalendarSelectMenu = (props) => {
       </label>
 
       <Select
-        values={selection}
+        values={selectedCalendar}
         options={calendars}
         labelField='name'
         valueField='_id'

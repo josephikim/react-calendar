@@ -135,7 +135,7 @@ const refreshToken = async (req, res, next) => {
       expiresIn: config.JWT_EXPIRATION,
     });
 
-    return res.status(200).json({
+    return res.status(200).send({
       accessToken: newAccessToken,
       refreshToken: refreshToken.token,
     });

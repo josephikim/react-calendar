@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import { validateFields } from '../../validation.js';
-import { registerUser, loginUser } from '../actions/authActions';
+import { registerUser } from '../actions/authActions';
 
 import '../styles/RegisterForm.css';
 
@@ -185,8 +185,7 @@ class RegisterForm extends Component {
 }
 
 const mapActionsToProps = {
-  registerUser,
-  loginUser
+  registerUser
 }
 
 export default connect(null, mapActionsToProps)(RegisterForm);

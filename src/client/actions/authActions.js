@@ -29,14 +29,14 @@ export const loginUser = (data) => async (dispatch) => {
       });
     });
   } catch (err) {
-    if (err.response.data.accessToken === null) {
+    if (err.response.data.name === "AuthorizationError") {
       // unauthorize user
       dispatch({
         type: "UPDATE_ACCESS_TOKEN",
         payload: null,
       });
     }
-    return Promise.reject(err);
+    return Promise.reject(err.response.data);
   }
 };
 

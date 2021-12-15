@@ -168,8 +168,7 @@ const createCalendar = async (req, res) => {
   const foundCalendars = await Calendar.find({
     $or: [
       { user: id },
-      { user: null },
-      { user: { $exists: false } }
+      { systemCalendar: true }
     ]
   })
 

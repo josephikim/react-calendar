@@ -60,6 +60,8 @@ userSchema.post('findOneAndUpdate', handleE11000);
 // Middleware to create user calendar on initial user creation
 userSchema.post('save', async function () {
   if (this._id && this.wasNew) {
+    const systemCalendars = await Calendar.find({ systemCalendar: true }).exec();
+
     Calendar.find(
       { 
         user: this._id 
@@ -70,16 +72,17 @@ userSchema.post('save', async function () {
         }
         if (calendar.length < 1) {
           return new Calendar({
-            name: 'My Calendar',
+            name: this.username,
             visibility: true,
-            color: `#${CALENDAR_COLORS[1]}`,
-            user: this._id
+            color: `#${CALENDAR_COLORS[systemCalendars.length + 1]}`,
+            user: this._id,
+            systemCalendar: false
           }).save(err => {
             if (err) {
               console.log('error', err);
             }
   
-            console.log('added "My Calendar" to calendars collection');
+            console.log('added new user calendar to calendars collection');
           });
         }
       }

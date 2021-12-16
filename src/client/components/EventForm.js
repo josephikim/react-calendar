@@ -308,6 +308,7 @@ class EventForm extends Component {
   }
 
   handleCalendarChange = (values) => {
+    console.log('values', values)
     const calendarId = values[0]._id;
 
     if (calendarId.length > 0) {
@@ -324,7 +325,11 @@ class EventForm extends Component {
   render() {
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
+    const selectedCalendar = eventSelected ? 
+      this.props.calendars.filter(calendar => calendar._id === this.props.selectedEvent.calendar) :
+      this.props.calendars.filter(calendar => calendar.userDefault === true)
     const formValuesChanged = this.state.formValuesChanged;
+
     return (
       <div className='EventForm'>
         <Form>
@@ -448,7 +453,7 @@ class EventForm extends Component {
           <Row>
             <Col>
               <CalendarSelectMenu
-                selectedEventCalendarId={this.props.selectedEvent.calendar}
+                selected={selectedCalendar}
                 calendars={this.props.calendars}
                 onChange={(values) => this.handleCalendarChange(values)} />
             </Col>

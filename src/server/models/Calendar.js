@@ -19,8 +19,14 @@ const calendarSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  userDefault: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
   systemCalendar: {
     type: Boolean,
+    required: true,
     default: false
   }
 });

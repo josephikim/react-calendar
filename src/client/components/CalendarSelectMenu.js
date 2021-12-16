@@ -22,6 +22,7 @@ const CalendarSelectMenu = (props) => {
       </label>
 
       <Select
+        placeholder='Select calendar...'
         values={selectedCalendar}
         options={calendars}
         labelField='name'

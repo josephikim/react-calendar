@@ -76,6 +76,7 @@ userSchema.post('save', async function () {
             visibility: true,
             color: `#${CALENDAR_COLORS[systemCalendars.length + 1]}`,
             user: this._id,
+            userDefault: true,
             systemCalendar: false
           }).save(err => {
             if (err) {

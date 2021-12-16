@@ -59,54 +59,59 @@ const register = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
-  User.findOne({
-    username: req.body.username
-  })
-    .populate('roles', '-__v')
-    .exec(async (err, user) => {
-      if (err) {
-        return next(err);
-      }
-
-      if (!user) {
-        return next(
-          new NotFoundError(
-            'User not found',
-            { errorCode: 'username' }
-          )
-        );
-      }
-
-      let passwordIsValid = await user.validatePassword(req.body.password);
-
-      if (!passwordIsValid) {
-        return next(
-          new AuthorizationError(
-            'Invalid password',
-            { errorCode: 'password', accessToken: null }
-          )
-        );
-      }
-
-      // If password is valid, create JWT token
-      let token = jwt.sign({ id: user.id }, config.SECRET, {
-        expiresIn: config.JWT_EXPIRATION
+  try {
+    User.findOne({
+      username: req.body.username
+    })
+      .populate('roles', '-__v')
+      .exec(async (err, user) => {
+        if (err) {
+          return next(err);
+        }
+  
+        if (!user) {
+          return next(
+            new NotFoundError(
+              'User not found',
+              { errorCode: 'username' }
+            )
+          );
+        }
+  
+        let passwordIsValid = await user.validatePassword(req.body.password);
+  
+        if (!passwordIsValid) {
+          return next(
+            new AuthorizationError(
+              'Invalid password',
+              { errorCode: 'password', accessToken: null }
+            )
+          );
+        }
+  
+        // If password is valid, create JWT token
+        let token = jwt.sign({ id: user.id }, config.SECRET, {
+          expiresIn: config.JWT_EXPIRATION
+        });
+  
+        let refreshToken = await RefreshToken.createToken(user);
+  
+        let authorities = [];
+        for (let i = 0; i < user.roles.length; i++) {
+          authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
+        }
+  
+        res.status(200).send({
+          id: user._id,
+          username: user.username,
+          roles: authorities,
+          accessToken: token,
+          refreshToken: refreshToken
+        });
       });
-
-      let refreshToken = await RefreshToken.createToken(user);
-
-      let authorities = [];
-      for (let i = 0; i < user.roles.length; i++) {
-        authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
-      }
-      res.status(200).send({
-        id: user._id,
-        username: user.username,
-        roles: authorities,
-        accessToken: token,
-        refreshToken: refreshToken
-      });
-    });
+  } catch (err) {
+    return next(err);
+  }
 };
 
 const refreshToken = async (req, res, next) => {

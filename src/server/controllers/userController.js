@@ -22,7 +22,7 @@ const moderatorAccess = (req, res) => {
   res.status(200).send("Moderator content")
 };
 
-const retrieveUserData = async (req, res, next) => {
+const retrieveEvents = async (req, res, next) => {
   const id = req.query.id;
 
   if (!id) {
@@ -45,7 +45,7 @@ const retrieveUserData = async (req, res, next) => {
       }
     }).sort({ start: -1 })
   
-    return res.status(200).send({ data: { calendars, events } });
+    return res.status(200).send({ data: events });
   } catch (err) {
     return next(err);
   }
@@ -259,7 +259,7 @@ const userController = {
   userAccess,
   adminAccess,
   moderatorAccess,
-  retrieveUserData,
+  retrieveEvents,
   createEvent,
   deleteEvent,
   updateEvent,

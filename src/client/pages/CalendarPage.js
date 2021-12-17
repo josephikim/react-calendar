@@ -8,7 +8,7 @@ import EventForm from "../components/EventForm";
 import {
   onSelectSlot,
   onSelectEvent,
-  retrieveUserData,
+  retrieveEvents,
 } from "../actions/userActions";
 
 import "../styles/CalendarPage.css";
@@ -22,7 +22,7 @@ class CalendarPage extends Component {
   }
 
   componentDidMount = () => {
-    this.props.retrieveUserData();
+    this.props.retrieveEvents();
   };
 
   onSelectSlot = (event) => {
@@ -133,7 +133,7 @@ const mapStateToProps = (state) => {
 const mapActionsToProps = {
   onSelectSlot,
   onSelectEvent,
-  retrieveUserData,
+  retrieveEvents,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(CalendarPage);

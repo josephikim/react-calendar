@@ -12,12 +12,6 @@ export const userReducer = (state = [], action) => {
         selectedEvent: action.payload
       };
 
-    case 'UPDATE_CALENDARS':
-      return {
-        ...state,
-        calendars: action.payload
-      };
-
     case 'CREATE_CALENDAR':
       return {
         ...state,

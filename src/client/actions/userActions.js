@@ -47,25 +47,18 @@ export const updateSelectedEvent = (event) => {
   };
 };
 
-export const retrieveUserData = () => async (dispatch) => {
+export const retrieveEvents = () => async (dispatch) => {
   const state = store.getState();
   
   if (!state.auth.id) return;
 
   try {
-    const res = await userApi.get("/data", { params: { id: state.auth.id } });
+    const res = await userApi.get("/event", { params: { id: state.auth.id } });
 
     return Promise.resolve(res.data).then((res) => {
-      const { calendars, events } = res.data;
-
-      dispatch({
-        type: "UPDATE_CALENDARS",
-        payload: calendars,
-      });
-
       dispatch({
         type: "UPDATE_EVENTS",
-        payload: events,
+        payload: res.data,
       });
     });
   } catch (err) {

@@ -49,6 +49,7 @@ export const registerUser = (data) => async (dispatch) => {
       const refreshToken = res.refreshToken;
       const username = res.username;
       const id = res.id;
+      const defaultCalendar = res.defaultCalendar[0];
 
       // Update state
       dispatch({
@@ -69,6 +70,11 @@ export const registerUser = (data) => async (dispatch) => {
       dispatch({
         type: "UPDATE_USER_ID",
         payload: id,
+      });
+
+      dispatch({
+        type: "CREATE_CALENDAR",
+        payload: defaultCalendar,
       });
     });
   } catch (err) {

@@ -9,47 +9,7 @@ export const loginUser = (data) => async (dispatch) => {
       const refreshToken = res.refreshToken;
       const username = res.username;
       const id = res.id;
-
-      // Update state
-      dispatch({
-        type: "UPDATE_ACCESS_TOKEN",
-        payload: accessToken,
-      });
-      dispatch({
-        type: "UPDATE_REFRESH_TOKEN",
-        payload: refreshToken,
-      });
-      dispatch({
-        type: "UPDATE_USERNAME",
-        payload: username,
-      });
-      dispatch({
-        type: "UPDATE_USER_ID",
-        payload: id,
-      });
-    });
-  } catch (err) {
-    if (err.response.data.name === "AuthorizationError") {
-      // unauthorize user
-      dispatch({
-        type: "UPDATE_ACCESS_TOKEN",
-        payload: null,
-      });
-    }
-    return Promise.reject(err.response.data);
-  }
-};
-
-export const registerUser = (data) => async (dispatch) => {
-  try {
-    const res = await authApi.post("/register", data);
-
-    return Promise.resolve(res.data).then((res) => {
-      const accessToken = res.accessToken;
-      const refreshToken = res.refreshToken;
-      const username = res.username;
-      const id = res.id;
-      const defaultCalendar = res.defaultCalendar[0];
+      const calendars = res.calendars;
 
       // Update state
       dispatch({
@@ -74,7 +34,56 @@ export const registerUser = (data) => async (dispatch) => {
 
       dispatch({
         type: "CREATE_CALENDAR",
-        payload: defaultCalendar,
+        payload: calendars,
+      });
+    });
+  } catch (err) {
+    if (err.response.data.name === "AuthorizationError") {
+      // unauthorize user
+      dispatch({
+        type: "UPDATE_ACCESS_TOKEN",
+        payload: null,
+      });
+    }
+    return Promise.reject(err.response.data);
+  }
+};
+
+export const registerUser = (data) => async (dispatch) => {
+  try {
+    const res = await authApi.post("/register", data);
+
+    return Promise.resolve(res.data).then((res) => {
+      const accessToken = res.accessToken;
+      const refreshToken = res.refreshToken;
+      const username = res.username;
+      const id = res.id;
+      const calendars = res.calendars;
+
+      // Update state
+      dispatch({
+        type: "UPDATE_ACCESS_TOKEN",
+        payload: accessToken,
+      });
+
+      dispatch({
+        type: "UPDATE_REFRESH_TOKEN",
+        payload: refreshToken,
+      });
+
+      dispatch({
+        type: "UPDATE_USERNAME",
+        payload: username,
+      });
+
+      dispatch({
+        type: "UPDATE_USER_ID",
+        payload: id,
+      });
+
+      dispatch({
+        type: "CREATE_CALENDAR",
+        payload: calendars,
       });
     });
   } catch (err) {

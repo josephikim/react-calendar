@@ -17,7 +17,7 @@ export const userReducer = (state = [], action) => {
         ...state,
         calendars: [
           ...state.calendars, 
-          action.payload
+          ...action.payload
         ]
       };
 

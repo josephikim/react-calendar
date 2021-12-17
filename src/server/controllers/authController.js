@@ -36,10 +36,7 @@ const register = (req, res, next) => {
               return next(err);
             }
 
-            Calendar.find({ user: user._id }).then((calendar) => {
-              res.locals.calendar = calendar;
-              next();
-            });
+            next();
           });
         }
       );
@@ -55,10 +52,7 @@ const register = (req, res, next) => {
             return next(err);
           }
 
-          Calendar.find({ user: user._id }).then((calendar) => {
-            res.locals.calendar = calendar;
-            next();
-          });
+          next();
         });
       });
     }
@@ -94,7 +88,7 @@ const login = (req, res, next) => {
         }
 
         // If password is valid, create JWT token
-        let token = jwt.sign({ id: user.id }, config.SECRET, {
+        let token = jwt.sign({ id: user._id }, config.SECRET, {
           expiresIn: config.JWT_EXPIRATION,
         });
 
@@ -105,13 +99,20 @@ const login = (req, res, next) => {
           authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
         }
 
+        let calendars = await Calendar.find({
+          $or: [
+            { user: user._id },
+            { systemCalendar: true }
+          ]
+        });
+
         res.status(200).send({
           id: user._id,
           username: user.username,
           roles: authorities,
           accessToken: token,
           refreshToken: refreshToken,
-          defaultCalendar: res.locals.calendar
+          calendars: calendars
         });
       });
   } catch (err) {

@@ -1,111 +1,119 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Row, Col, Button, Form } from 'react-bootstrap';
-import DayPickerInput from 'react-day-picker/DayPickerInput';
-import { formatDate, parseDate } from 'react-day-picker/moment';
-import TimePicker from 'rc-time-picker';
-import moment from 'moment';
-import _ from 'lodash';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Row, Col, Button, Form } from "react-bootstrap";
+import DayPickerInput from "react-day-picker/DayPickerInput";
+import { formatDate, parseDate } from "react-day-picker/moment";
+import TimePicker from "rc-time-picker";
+import moment from "moment";
+import _ from "lodash";
 
-import CalendarSelectMenu from './CalendarSelectMenu';
+import CalendarSelectMenu from "./CalendarSelectMenu";
 
-import { createEvent, updateEvent, deleteEvent } from '../actions/userActions';
-import { validateFields } from '../../validation.js';
+import { createEvent, updateEvent, deleteEvent } from "../actions/userActions";
+import { validateFields } from "../../validation.js";
 
-import '../styles/EventForm.css';
-import 'react-day-picker/lib/style.css';
-import 'rc-time-picker/assets/index.css';
+import "../styles/EventForm.css";
+import "react-day-picker/lib/style.css";
+import "rc-time-picker/assets/index.css";
 
 const initialState = {
   title: {
-    value: '',
+    value: "",
     validateOnChange: false,
-    error: ''
+    error: "",
   },
   desc: {
-    value: ''
+    value: "",
   },
   start: {
-    value: ''
+    value: "",
   },
   end: {
-    value: ''
+    value: "",
   },
   calendar: {
-    value: ''
+    value: "",
   },
   formValuesChanged: false,
   submitCalled: false,
-  timeFormat: 'h:mm a',
-  error: ''
-}
+  timeFormat: "h:mm a",
+  error: "",
+};
 class EventForm extends Component {
   constructor(...args) {
-    super(...args)
-    this.state = initialState
+    super(...args);
+    this.state = initialState;
   }
 
   componentDidMount = () => {
     if (!this.props.selectedSlot) return;
-    
+
     // Initialize state with selected slot
     const newState = {
       start: {
-        value: this.props.selectedSlot.start
+        value: this.props.selectedSlot.start,
       },
       end: {
-        value: this.props.selectedSlot.end
-      }
-    }
+        value: this.props.selectedSlot.end,
+      },
+    };
 
-    this.setState(newState)
-  }
+    this.setState(newState);
+  };
 
   componentDidUpdate = (prevProps) => {
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
 
-    const slotUnchanged = _.isEqual(this.props.selectedSlot, prevProps.selectedSlot);
-    const eventUnchanged = _.isEqual(this.props.selectedEvent, prevProps.selectedEvent);
+    const slotUnchanged = _.isEqual(
+      this.props.selectedSlot,
+      prevProps.selectedSlot
+    );
+    const eventUnchanged = _.isEqual(
+      this.props.selectedEvent,
+      prevProps.selectedEvent
+    );
 
     if (slotUnchanged && eventUnchanged) return;
 
     let newState = {};
 
     if (slotSelected) {
-      if (eventUnchanged) {  // previous selection was a slot
+      if (eventUnchanged) {
+        // previous selection was a slot
         newState = {
           ...initialState,
           title: {
             ...initialState.title,
-            value: this.state.title.value
+            value: this.state.title.value,
           },
           desc: {
-            value: this.state.desc.value
+            value: this.state.desc.value,
           },
           start: {
-            value: this.props.selectedSlot.start
+            value: this.props.selectedSlot.start,
           },
           end: {
-            value: this.props.selectedSlot.end
+            value: this.props.selectedSlot.end,
           },
           calendar: {
-            value: this.state.calendar.value
-          }
-        }
-      } else {  // previous selection was an event
+            value: this.state.calendar.value,
+          },
+        };
+      } else {
+        // previous selection was an event
         newState = {
           ...initialState,
           start: {
-            value: this.props.selectedSlot.start
+            value: this.props.selectedSlot.start,
           },
           end: {
-            value: this.props.selectedSlot.end
+            value: this.props.selectedSlot.end,
           },
           calendar: {
-            value: this.state.calendar.value
-          }
-        }
+            value: this.state.calendar.value,
+          },
+        };
       }
     }
 
@@ -119,118 +127,128 @@ class EventForm extends Component {
           value: this.props.selectedEvent.title,
         },
         desc: {
-          value: this.props.selectedEvent.desc
+          value: this.props.selectedEvent.desc,
         },
         start: {
-          value: this.props.selectedEvent.start
+          value: this.props.selectedEvent.start,
         },
         end: {
-          value: this.props.selectedEvent.end
+          value: this.props.selectedEvent.end,
         },
         calendar: {
-          value: this.props.selectedEvent.calendar
-        }
-      }
+          value: this.props.selectedEvent.calendar,
+        },
+      };
     }
 
     this.setState(newState);
-  }
+  };
 
   handleBlur = (validationFunc, event) => {
-    const { target: { name } } = event;
+    const {
+      target: { name },
+    } = event;
 
     if (
-      this.state[name]['validateOnChange'] === false &&
+      this.state[name]["validateOnChange"] === false &&
       this.state.submitCalled === false
     ) {
-      this.setState(state => ({
+      this.setState((state) => ({
         [name]: {
           ...state[name],
           validateOnChange: true,
-          error: validationFunc(state[name].value)
-        }
+          error: validationFunc(state[name].value),
+        },
       }));
     }
     return;
-  }
+  };
 
   handleChange = (validationFunc, event) => {
-    const { target: { name, value } } = event;
+    const {
+      target: { name, value },
+    } = event;
 
-    if (validationFunc === null) { // handle fields without validation
-      this.setState(state => ({
-        [name]: {
-          ...state[name],
-          value: value
-        },
-        formValuesChanged: true,
-      }));
-    } else {  // handle fields with validation
-      this.setState(state => ({
+    if (validationFunc === null) {
+      // handle fields without validation
+      this.setState((state) => ({
         [name]: {
           ...state[name],
           value: value,
-          error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+        },
+        formValuesChanged: true,
+      }));
+    } else {
+      // handle fields with validation
+      this.setState((state) => ({
+        [name]: {
+          ...state[name],
+          value: value,
+          error: state[name]["validateOnChange"] ? validationFunc(value) : "",
         },
         formValuesChanged: true,
       }));
     }
-  }
+  };
 
   handleDayChange = (onDayChangeValue, id) => {
-    const target = id.startsWith('start') ? 'start' : 'end';
+    const target = id.startsWith("start") ? "start" : "end";
     let updateValue = new Date(onDayChangeValue);
-    let targetValue = new Date(this.state[target].value)
+    let targetValue = new Date(this.state[target].value);
 
     // Update day, month, year of target value
-    const [year, month, day] = [updateValue.getFullYear(), updateValue.getMonth(), updateValue.getDate()];
+    const [year, month, day] = [
+      updateValue.getFullYear(),
+      updateValue.getMonth(),
+      updateValue.getDate(),
+    ];
     targetValue.setFullYear(year, month, day);
 
     const targetValueStr = targetValue.toISOString();
 
     let newState = {
       [target]: {
-        value: targetValueStr
+        value: targetValueStr,
       },
-      formValuesChanged: true
-    }
+      formValuesChanged: true,
+    };
 
     // update end date if later start date is selected
-    if (target === 'start' && targetValueStr > this.state.end.value) {
-      let endDate = new Date(this.state.end.value)
-      endDate.setFullYear(year, month, day)
+    if (target === "start" && targetValueStr > this.state.end.value) {
+      let endDate = new Date(this.state.end.value);
+      endDate.setFullYear(year, month, day);
 
       newState.end = {
-        value: endDate.toISOString()
-      }
+        value: endDate.toISOString(),
+      };
     }
 
     // update start date if earlier end date is selected
-    if (target === 'end' && targetValueStr < this.state.start.value) {
-      let startDate = new Date(this.state.start.value)
-      startDate.setFullYear(year, month, day)
+    if (target === "end" && targetValueStr < this.state.start.value) {
+      let startDate = new Date(this.state.start.value);
+      startDate.setFullYear(year, month, day);
 
       newState.start = {
-        value: startDate.toISOString()
-      }
+        value: startDate.toISOString(),
+      };
     }
 
     this.setState(newState);
-  }
+  };
 
   handleTimeChange = (onChangeValue, id) => {
-    const target = id.startsWith('start') ? 'start' : 'end';
+    const target = id.startsWith("start") ? "start" : "end";
     const updateStr = onChangeValue._d.toISOString();
 
     let newState = {
       [target]: {
-        value: updateStr
+        value: updateStr,
       },
-      formValuesChanged: true
-    }
+      formValuesChanged: true,
+    };
 
     this.setState(newState);
-  }
+  };
 
   handleSubmit = (event) => {
     event.preventDefault();
@@ -240,9 +258,9 @@ class EventForm extends Component {
       // if no error, submit form
       try {
         // Check for invalid end time
-        if (this.state.end.value <= this.state.start.value) { 
-          alert('Input error: End time should be after start time!')
-          return
+        if (this.state.end.value <= this.state.start.value) {
+          alert("Input error: End time should be after start time!");
+          return;
         }
 
         const data = {
@@ -250,32 +268,33 @@ class EventForm extends Component {
           desc: this.state.desc.value,
           start: this.state.start.value,
           end: this.state.end.value,
-          calendar: this.state.calendar.value
-        }
+          calendar: this.state.calendar.value,
+        };
 
         this.props.createEvent(data);
       } catch (err) {
         this.setState({ error: err.response.data });
       }
     } else {
-      this.setState(state => ({
+      this.setState((state) => ({
         title: {
           ...state.title,
           validateOnChange: true,
-          error: titleError
+          error: titleError,
         },
-        submitCalled: false
+        submitCalled: false,
       }));
     }
-  }
+  };
 
   handleSave = (event) => {
     event.preventDefault();
     if (this.state.title.error) return;
 
-    if (this.state.end.value <= this.state.start.value) { // Check for invalid end time
-      alert('End time should be after start time')
-      return
+    if (this.state.end.value <= this.state.start.value) {
+      // Check for invalid end time
+      alert("End time should be after start time");
+      return;
     }
 
     try {
@@ -285,14 +304,14 @@ class EventForm extends Component {
         desc: this.state.desc.value,
         start: this.state.start.value,
         end: this.state.end.value,
-        calendar: this.state.calendar.value
-      }
+        calendar: this.state.calendar.value,
+      };
 
       this.props.updateEvent(data);
     } catch (err) {
       this.setState({ error: err.response.data });
     }
-  }
+  };
 
   handleDelete = (event) => {
     event.preventDefault();
@@ -305,51 +324,60 @@ class EventForm extends Component {
     } catch (err) {
       this.setState({ error: err.response.data });
     }
-  }
+  };
 
   handleCalendarChange = (values) => {
-    console.log('values', values)
     const calendarId = values[0]._id;
 
     if (calendarId.length > 0) {
-      this.setState(state => ({
+      this.setState((state) => ({
         calendar: {
           ...state.calendar,
-          value: calendarId
+          value: calendarId,
         },
         formValuesChanged: true,
       }));
     }
-  }
+  };
 
   render() {
     const slotSelected = Object.keys(this.props.selectedSlot).length > 0;
     const eventSelected = Object.keys(this.props.selectedEvent).length > 0;
-    const selectedCalendar = eventSelected ? 
-      this.props.calendars.filter(calendar => calendar._id === this.props.selectedEvent.calendar) :
-      this.props.calendars.filter(calendar => calendar.userDefault === true)
+    const selectedCalendar = eventSelected
+      ? this.props.calendars.filter(
+          (calendar) => calendar._id === this.props.selectedEvent.calendar
+        )
+      : this.props.calendars.filter(
+          (calendar) => calendar.userDefault === true
+        );
     const formValuesChanged = this.state.formValuesChanged;
 
     return (
-      <div className='EventForm'>
+      <div className="EventForm">
         <Form>
           <Row>
             <Col>
-              <label htmlFor='title' className='text-primary'>Event Title (required)</label>
+              <label htmlFor="title" className="text-primary">
+                Event Title (required)
+              </label>
 
               <textarea
-                id='title'
-                name='title'
-                className='input'
-                rows='1'
-                onChange={event => this.handleChange(validateFields.validateTitle, event)}
-                onBlur={event => this.handleBlur(validateFields.validateTitle, event)}
+                id="title"
+                name="title"
+                className="input"
+                rows="1"
+                onChange={(event) =>
+                  this.handleChange(validateFields.validateTitle, event)
+                }
+                onBlur={(event) =>
+                  this.handleBlur(validateFields.validateTitle, event)
+                }
                 value={this.state.title.value}
               >
                 enter title
               </textarea>
 
-              <div className='text-danger'>
+              <div className="text-danger">
                 <small>{this.state.title.error}</small>
               </div>
             </Col>
@@ -357,14 +385,16 @@ class EventForm extends Component {
 
           <Row>
             <Col>
-              <label htmlFor='desc' className='text-primary'>Event Description</label>
+              <label htmlFor="desc" className="text-primary">
+                Event Description
+              </label>
 
               <textarea
-                id='desc'
-                name='desc'
-                className='input'
-                rows='3'
-                onChange={event => this.handleChange(null, event)}
+                id="desc"
+                name="desc"
+                className="input"
+                rows="3"
+                onChange={(event) => this.handleChange(null, event)}
                 value={this.state.desc.value}
               >
                 enter description
@@ -372,19 +402,23 @@ class EventForm extends Component {
             </Col>
           </Row>
 
-          <Row className='two-column'>
+          <Row className="two-column">
             <Col xs={6}>
               <Row>
                 <Col>
-                  <label htmlFor='startDate' className='text-primary'>Start Date</label>
+                  <label htmlFor="startDate" className="text-primary">
+                    Start Date
+                  </label>
 
                   <DayPickerInput
-                    id='startDate'
-                    name='startDate'
+                    id="startDate"
+                    name="startDate"
                     formatDate={formatDate}
                     parseDate={parseDate}
                     value={`${formatDate(this.state.start.value)}`}
-                    onDayChange={(value) => this.handleDayChange(value, 'startDate')}
+                    onDayChange={(value) =>
+                      this.handleDayChange(value, "startDate")
+                    }
                   />
                 </Col>
               </Row>
@@ -393,14 +427,18 @@ class EventForm extends Component {
             <Col xs={6}>
               <Row>
                 <Col>
-                  <label htmlFor='startTime' className='text-primary'>Start Time</label>
+                  <label htmlFor="startTime" className="text-primary">
+                    Start Time
+                  </label>
 
                   <TimePicker
-                    id='startTime'
-                    name='startTime'
+                    id="startTime"
+                    name="startTime"
                     showSecond={false}
                     value={moment(this.state.start.value)}
-                    onChange={(value, id = 'startTime') => this.handleTimeChange(value, id)}
+                    onChange={(value, id = "startTime") =>
+                      this.handleTimeChange(value, id)
+                    }
                     format={this.state.timeFormat}
                     minuteStep={15}
                     use12Hours
@@ -411,19 +449,23 @@ class EventForm extends Component {
             </Col>
           </Row>
 
-          <Row className='two-column'>
+          <Row className="two-column">
             <Col xs={6}>
               <Row>
                 <Col>
-                  <label htmlFor='endDate' className='text-primary'>End Date</label>
+                  <label htmlFor="endDate" className="text-primary">
+                    End Date
+                  </label>
 
                   <DayPickerInput
-                    id='endDate'
-                    name='endDate'
+                    id="endDate"
+                    name="endDate"
                     formatDate={formatDate}
                     parseDate={parseDate}
                     value={`${formatDate(this.state.end.value)}`}
-                    onDayChange={(value) => this.handleDayChange(value, 'endDate')}
+                    onDayChange={(value) =>
+                      this.handleDayChange(value, "endDate")
+                    }
                   />
                 </Col>
               </Row>
@@ -432,14 +474,18 @@ class EventForm extends Component {
             <Col xs={6}>
               <Row>
                 <Col>
-                  <label htmlFor='endTime' className='text-primary'>End Time</label>
+                  <label htmlFor="endTime" className="text-primary">
+                    End Time
+                  </label>
 
                   <TimePicker
-                    id='endTime'
-                    name='endTime'
+                    id="endTime"
+                    name="endTime"
                     showSecond={false}
                     value={moment(this.state.end.value)}
-                    onChange={(value, id = 'endTime') => this.handleTimeChange(value, id)}
+                    onChange={(value, id = "endTime") =>
+                      this.handleTimeChange(value, id)
+                    }
                     format={this.state.timeFormat}
                     minuteStep={15}
                     use12Hours
@@ -455,56 +501,57 @@ class EventForm extends Component {
               <CalendarSelectMenu
                 selected={selectedCalendar}
                 calendars={this.props.calendars}
-                onChange={(values) => this.handleCalendarChange(values)} />
+                onChange={(values) => this.handleCalendarChange(values)}
+              />
             </Col>
           </Row>
 
-          <Row className='two-column'>
+          <Row className="two-column">
             <Col>
-              {slotSelected &&
+              {slotSelected && (
                 <Button
-                  type='submit'
-                  name='add-event-btn'
-                  id='add-event-btn'
-                  className='btn'
-                  variant='primary'
+                  type="submit"
+                  name="add-event-btn"
+                  id="add-event-btn"
+                  className="btn"
+                  variant="primary"
                   onMouseDown={() => this.setState({ submitCalled: true })}
                   onClick={this.handleSubmit}
                 >
                   Add Event
                 </Button>
-              }
-              {eventSelected &&
+              )}
+              {eventSelected && (
                 <Button
-                  name='save-changes-btn'
-                  id='save-changes-btn'
-                  className='btn'
-                  variant='success'
+                  name="save-changes-btn"
+                  id="save-changes-btn"
+                  className="btn"
+                  variant="success"
                   disabled={!formValuesChanged}
                   onClick={this.handleSave}
                 >
                   Save Changes
                 </Button>
-              }
+              )}
             </Col>
 
             <Col>
-              {eventSelected &&
+              {eventSelected && (
                 <Button
-                  name='delete-event-btn'
-                  id='delete-event-btn'
-                  className='btn'
-                  variant='danger'
+                  name="delete-event-btn"
+                  id="delete-event-btn"
+                  className="btn"
+                  variant="danger"
                   onClick={this.handleDelete}
                 >
                   Delete Event
                 </Button>
-              }
+              )}
             </Col>
           </Row>
         </Form>
       </div>
-    )
+    );
   }
 }
 
@@ -512,14 +559,14 @@ const mapStateToProps = (state) => {
   return {
     selectedSlot: state.user.selectedSlot,
     selectedEvent: state.user.selectedEvent,
-    calendars: state.user.calendars
+    calendars: state.user.calendars,
   };
 };
 
 const mapActionsToProps = {
   createEvent,
   updateEvent,
-  deleteEvent
-}
+  deleteEvent,
+};
 
 export default connect(mapStateToProps, mapActionsToProps)(EventForm);

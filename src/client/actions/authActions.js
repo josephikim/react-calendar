@@ -1,5 +1,14 @@
 import { authApi } from "../utils/axios";
 
+export const logoutUser = () => (dispatch) => {
+  localStorage.clear();
+
+  // Update state
+  dispatch({
+    type: "LOGOUT_USER",
+  });
+};
+
 export const loginUser = (data) => async (dispatch) => {
   try {
     const res = await authApi.post("/login", data);

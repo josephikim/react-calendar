@@ -1,22 +1,37 @@
-import React from 'react';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import React from "react";
+import { Navbar, Nav, Container } from "react-bootstrap";
+import { logoutUser } from "../actions/authActions";
+import { connect, useDispatch } from "react-redux";
 
-const Header = () =>
+const Header = ({ authenticated }) => {
+  const dispatch = useDispatch();
 
-  <div className='Header fixed-header'>
-    <Navbar collapseOnSelect expands='sm' bg='primary' variant='dark'>
-      <Container>
-        <Navbar.Brand href='/'>React Calendar</Navbar.Brand>
-        <Navbar.Toggle aria-controls='responsive-navbar-nav' />
-        <Navbar.Collapse id='responsive-navbar-nav' className='justify-content-end' >
-          <Nav>
-            <Nav.Link href='/'>Home</Nav.Link>
-            <Nav.Link href='/login'>Login</Nav.Link>
-            <Nav.Link href='/account'>Account</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar >
-  </div>
+  return (
+    <div className="Header fixed-header">
+      <Navbar collapseOnSelect expands="sm" bg="primary" variant="dark">
+        <Container>
+          <Navbar.Brand href="/">React Calendar</Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse
+            id="responsive-navbar-nav"
+            className="justify-content-end"
+          >
+            <Nav>
+              <Nav.Link href="/">Home</Nav.Link>
+              {authenticated ? (
+                <Nav.Link onClick={() => dispatch(logoutUser())}>
+                  Logout
+                </Nav.Link>
+              ) : (
+                <Nav.Link href="/login">Login</Nav.Link>
+              )}
+              <Nav.Link href="/account">Account</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+    </div>
+  );
+};
 
-export default Header;
+export default connect(null, null)(Header);

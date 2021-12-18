@@ -42,7 +42,7 @@ export const loginUser = (data) => async (dispatch) => {
       });
 
       dispatch({
-        type: "CREATE_CALENDAR",
+        type: "SET_CALENDARS",
         payload: calendars,
       });
     });
@@ -91,7 +91,7 @@ export const registerUser = (data) => async (dispatch) => {
       });
 
       dispatch({
-        type: "CREATE_CALENDAR",
+        type: "SET_CALENDARS",
         payload: calendars,
       });
     });

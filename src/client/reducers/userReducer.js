@@ -1,61 +1,65 @@
-export const userReducer = (state = [], action) => {  
+export const userReducer = (state = [], action) => {
   switch (action.type) {
-    case 'UPDATE_SELECTED_SLOT':
+    case "UPDATE_SELECTED_SLOT":
       return {
         ...state,
-        selectedSlot: action.payload
+        selectedSlot: action.payload,
       };
 
-    case 'UPDATE_SELECTED_EVENT':
+    case "UPDATE_SELECTED_EVENT":
       return {
         ...state,
-        selectedEvent: action.payload
+        selectedEvent: action.payload,
       };
 
-    case 'CREATE_CALENDAR':
+    case "SET_CALENDARS":
       return {
         ...state,
-        calendars: [
-          ...state.calendars, 
-          ...action.payload
-        ]
+        calendars: [...action.payload],
       };
 
-    case 'UPDATE_CALENDAR':
+    case "CREATE_CALENDAR":
       return {
         ...state,
-        calendars: state.calendars.map((calendar) => calendar._id === action.payload._id ? action.payload : calendar)
+        calendars: [...state.calendars, ...action.payload],
       };
 
-    case 'UPDATE_EVENTS':
+    case "UPDATE_CALENDAR":
       return {
         ...state,
-        events: action.payload
+        calendars: state.calendars.map((calendar) =>
+          calendar._id === action.payload._id ? action.payload : calendar
+        ),
       };
 
-    case 'CREATE_EVENT':
+    case "UPDATE_EVENTS":
+      return {
+        ...state,
+        events: action.payload,
+      };
+
+    case "CREATE_EVENT":
+      return {
+        ...state,
+        events: [...state.events, action.payload],
+      };
+
+    case "DELETE_EVENT":
       return {
         ...state,
         events: [
-          ...state.events, 
-          action.payload
-        ]
+          ...state.events.filter((element) => element._id !== action.payload),
+        ],
       };
 
-    case 'DELETE_EVENT':
+    case "UPDATE_EVENT":
       return {
         ...state,
-        events: [
-          ...state.events.filter(element => element._id !== action.payload)
-        ]
+        events: state.events.map((event) =>
+          event._id === action.payload._id ? action.payload : event
+        ),
       };
 
-    case 'UPDATE_EVENT':
-      return {
-        ...state,
-        events: state.events.map((event) => event._id === action.payload._id ? action.payload : event)
-      };
-      
     default:
       return state;
   }

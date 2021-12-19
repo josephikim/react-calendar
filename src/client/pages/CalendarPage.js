@@ -101,11 +101,10 @@ class CalendarPage extends Component {
                   localizer={localizer}
                   events={this.props.events}
                   defaultView="month"
-                  scrollToTime={new Date(1970, 1, 1, 6)}
                   defaultDate={new Date()}
+                  scrollToTime={new Date(1970, 1, 1, 6)}
                   onSelectEvent={(event) => this.onSelectEvent(event)}
                   onSelectSlot={(event) => this.onSelectSlot(event)}
-                  selected={this.props.selectedEvent}
                   startAccessor={(event) => event.start}
                   endAccessor={(event) => event.end}
                 />

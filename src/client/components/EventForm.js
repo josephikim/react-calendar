@@ -46,9 +46,7 @@ class EventForm extends Component {
   }
 
   componentDidMount = () => {
-    if (!this.props.selectedSlot) return;
-
-    // Initialize state with selected slot
+    // Set state with initial slot
     const newState = {
       start: {
         value: this.props.selectedSlot.start,

@@ -56,7 +56,7 @@ const createEvent = async (req, res, next) => {
     const event = new Event(req.body);
 
     const createdEvent = await event.save();
-
+    console.log('createdEvent', createdEvent)
     const trimmed = {
       _id: createdEvent._id,
       title: createdEvent.title,
@@ -93,6 +93,7 @@ const updateEvent = async (req, res, next) => {
 
   try {
     const updatedEvent = await Event.findOneAndUpdate({ '_id': payload._id }, payload, { new: true });
+    console.log('updatedEvent', updatedEvent)
 
     const trimmed = {
       _id: updatedEvent._id,
@@ -206,7 +207,8 @@ const createCalendar = async (req, res, next) => {
     const calendar = new Calendar(data);
   
     const createdCalendar = await calendar.save();
-  
+    console.log('createdCalendar', createdCalendar)
+
     const trimmed = {
       _id: createdCalendar._id,
       name: createdCalendar.name,
@@ -227,6 +229,7 @@ const updateCalendar = async (req, res, next) => {
 
   try {
     const updatedCalendar = await Calendar.findOneAndUpdate({ '_id': payload._id }, payload, { new: true });
+    console.log('updatedCalendar', updatedCalendar)
 
     const trimmed = {
       _id: updatedCalendar._id,

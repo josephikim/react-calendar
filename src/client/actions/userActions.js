@@ -49,7 +49,7 @@ export const updateSelectedEvent = (event) => {
 
 export const retrieveEvents = () => async (dispatch) => {
   const state = store.getState();
-  
+
   if (!state.auth.id) return;
 
   try {
@@ -151,7 +151,10 @@ export const updateEvent = (event) => async (dispatch) => {
 
 export const updateUsername = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post(`/user/${data._id}/username/update`, data);
+    const res = await userApi.post(
+      `/account/${data._id}/username/update`,
+      data
+    );
 
     return Promise.resolve(res.data).then((res) => {
       dispatch({
@@ -197,7 +200,10 @@ export const updateCalendar = (data) => async (dispatch) => {
 // NOT AN ACTION
 export const updatePassword = (data) => async () => {
   try {
-    const res = await userApi.post(`/user/${data._id}/password/update`, data);
+    const res = await userApi.post(
+      `/account/${data._id}/password/update`,
+      data
+    );
 
     return Promise.resolve(res.data);
   } catch (err) {

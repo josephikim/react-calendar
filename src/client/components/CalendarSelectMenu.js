@@ -2,7 +2,7 @@ import React from "react";
 import Select from "react-dropdown-select";
 
 const CalendarSelectMenu = (props) => {
-  // Disable display of system calendars
+  // Disable system calendars
   const calendars = props.calendars.map((calendar) => {
     if (calendar.systemCalendar === true) {
       calendar.disabled = true;
@@ -22,6 +22,7 @@ const CalendarSelectMenu = (props) => {
 
       <Select
         placeholder="Select calendar..."
+        disabled={props.disabled}
         values={props.selected}
         options={calendars}
         labelField="name"

@@ -350,6 +350,7 @@ class EventForm extends Component {
       : this.props.calendars.filter(
           (calendar) => calendar.userDefault === true
         );
+    const systemEventSelected = selectedCalendar[0].systemCalendar;
     const formValuesChanged = this.state.formValuesChanged;
 
     return (
@@ -365,6 +366,7 @@ class EventForm extends Component {
                 id="title"
                 name="title"
                 className="input"
+                disabled={systemEventSelected}
                 rows="1"
                 onChange={(event) =>
                   this.handleChange(validateFields.validateTitle, event)
@@ -393,6 +395,7 @@ class EventForm extends Component {
                 id="desc"
                 name="desc"
                 className="input"
+                disabled={systemEventSelected}
                 rows="3"
                 onChange={(event) => this.handleChange(null, event)}
                 value={this.state.desc.value}
@@ -413,6 +416,7 @@ class EventForm extends Component {
                   <DayPickerInput
                     id="startDate"
                     name="startDate"
+                    inputProps={systemEventSelected ? { disabled: true} : {}}
                     formatDate={formatDate}
                     parseDate={parseDate}
                     value={`${formatDate(this.state.start.value)}`}
@@ -434,6 +438,7 @@ class EventForm extends Component {
                   <TimePicker
                     id="startTime"
                     name="startTime"
+                    disabled={systemEventSelected}
                     showSecond={false}
                     value={moment(this.state.start.value)}
                     onChange={(value, id = "startTime") =>
@@ -460,6 +465,7 @@ class EventForm extends Component {
                   <DayPickerInput
                     id="endDate"
                     name="endDate"
+                    inputProps={systemEventSelected ? { disabled: true} : {}}
                     formatDate={formatDate}
                     parseDate={parseDate}
                     value={`${formatDate(this.state.end.value)}`}
@@ -481,6 +487,7 @@ class EventForm extends Component {
                   <TimePicker
                     id="endTime"
                     name="endTime"
+                    disabled={systemEventSelected}
                     showSecond={false}
                     value={moment(this.state.end.value)}
                     onChange={(value, id = "endTime") =>
@@ -500,6 +507,7 @@ class EventForm extends Component {
             <Col>
               <CalendarSelectMenu
                 selected={selectedCalendar}
+                disabled={systemEventSelected}
                 calendars={this.props.calendars}
                 onChange={(values) => this.handleCalendarChange(values)}
               />
@@ -515,6 +523,7 @@ class EventForm extends Component {
                   id="add-event-btn"
                   className="btn"
                   variant="primary"
+                  disabled={systemEventSelected}
                   onMouseDown={() => this.setState({ submitCalled: true })}
                   onClick={this.handleSubmit}
                 >
@@ -527,7 +536,7 @@ class EventForm extends Component {
                   id="save-changes-btn"
                   className="btn"
                   variant="success"
-                  disabled={!formValuesChanged}
+                  disabled={!formValuesChanged || systemEventSelected}
                   onClick={this.handleSave}
                 >
                   Save Changes
@@ -542,6 +551,7 @@ class EventForm extends Component {
                   id="delete-event-btn"
                   className="btn"
                   variant="danger"
+                  disabled={systemEventSelected}
                   onClick={this.handleDelete}
                 >
                   Delete Event

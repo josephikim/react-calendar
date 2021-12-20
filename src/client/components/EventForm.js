@@ -100,8 +100,6 @@ class EventForm extends Component {
           selectedCalendarId: this.state.defaultCalendarId,
           formValuesChanged: false,
           submitCalled: false,
-          timeFormat: "h:mm a",
-          error: "",
         };
       }
     }
@@ -126,6 +124,8 @@ class EventForm extends Component {
           value: this.props.selectedEvent.end,
         },
         selectedCalendarId: this.props.selectedEvent.calendarId,
+        formValuesChanged: false,
+        submitCalled: false,
       };
     }
 
@@ -302,8 +302,9 @@ class EventForm extends Component {
 
   handleCalendarChange = (values) => {
     const calendarId = values[0]._id;
-
-    if (calendarId.length > 0) {
+    const isFormValueChanged = calendarId !== this.state.selectedCalendarId;
+    
+    if (isFormValueChanged && calendarId.length > 0) {
       this.setState({
         selectedCalendarId: calendarId,
         formValuesChanged: true,

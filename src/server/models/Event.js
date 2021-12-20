@@ -19,7 +19,7 @@ const eventSchema = new mongoose.Schema ({
   allDay: {
     type: Boolean,
   },
-  calendar: {
+  calendarId: {
     type: mongoose.Schema.Types.ObjectId,
     required: [true, 'Enter a calendar ID'],
     ref: 'Calendar'

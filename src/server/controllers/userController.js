@@ -38,13 +38,13 @@ const retrieveEvents = async (req, res, next) => {
     })
   
     const calendarIds = calendars.map(calendar => calendar._id);
-  
+
     const events = await Event.find({
-      calendar: {
+      calendarId: {
         $in: calendarIds
       }
     }).sort({ start: -1 })
-  
+    
     return res.status(200).send({ data: events });
   } catch (err) {
     return next(err);
@@ -63,7 +63,7 @@ const createEvent = async (req, res, next) => {
       desc: createdEvent.desc,
       start: createdEvent.start,
       end: createdEvent.end,
-      calendar: createdEvent.calendar
+      calendarId: createdEvent.calendarId
     }
 
     return res.status(200).send({ data: trimmed });
@@ -87,7 +87,7 @@ const deleteEvent = async (req, res,next) => {
 const updateEvent = async (req, res, next) => {
   const payload = req.body;
   payload._id = db.mongoose.Types.ObjectId(payload._id);
-  payload.calendar = db.mongoose.Types.ObjectId(payload.calendar);
+  payload.calendarId = db.mongoose.Types.ObjectId(payload.calendarId);
   payload.start = new Date(payload.start);
   payload.end = new Date(payload.end);
 
@@ -101,7 +101,7 @@ const updateEvent = async (req, res, next) => {
       desc: updatedEvent.desc,
       start: updatedEvent.start,
       end: updatedEvent.end,
-      calendar: updatedEvent.calendar
+      calendarId: updatedEvent.calendarId
     }
   
     return res.status(200).send({ data: trimmed, message: 'Updated event' });

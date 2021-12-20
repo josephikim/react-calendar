@@ -110,7 +110,11 @@ class CalendarPage extends Component {
                 />
               </Col>
               <Col xs={12} md={4} lg={4}>
-                <EventForm />
+                <EventForm 
+                  selectedSlot={this.props.selectedSlot}
+                  selectedEvent={this.props.selectedEvent}
+                  calendars={this.props.calendars}
+                  />
               </Col>
             </Row>
           </Container>

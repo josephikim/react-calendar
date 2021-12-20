@@ -48,7 +48,7 @@ const makeEvents = async () => {
           start: new Date(holiday.date.iso),
           end: new Date(holiday.date.iso),
           allDay: true,
-          calendar: calendarId
+          calendarId: calendarId
         }
         events.push(event);
       })

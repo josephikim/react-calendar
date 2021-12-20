@@ -245,26 +245,33 @@ class EventForm extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+
+    const clickedId = event.target.id;
     const titleError = validateFields.validateTitle(this.state.title.value);
 
     if (titleError === false) {
       // if no error, submit form
       try {
-        // Check for invalid end time
+        // Check for valid end time
         if (this.state.end.value <= this.state.start.value) {
           alert("Input error: End time should be after start time!");
           return;
         }
 
-        const data = {
+        let data = {
           title: this.state.title.value,
           desc: this.state.desc.value,
           start: this.state.start.value,
           end: this.state.end.value,
           calendarId: this.state.selectedCalendarId,
         };
+        
+        if (clickedId === 'add-event-btn') this.props.createEvent(data); // Dispatch createEvent action
 
-        this.props.createEvent(data);
+        if (clickedId === 'update-event-btn') { // Dispatch updateEvent action
+          data._id = this.props.selectedEvent._id;
+          this.props.updateEvent(data);
+        }
       } catch (err) {
         this.setState({ error: err.response.data });
       }
@@ -277,32 +284,6 @@ class EventForm extends Component {
         },
         submitCalled: false,
       }));
-    }
-  };
-
-  handleSave = (event) => {
-    event.preventDefault();
-    if (this.state.title.error) return;
-
-    if (this.state.end.value <= this.state.start.value) {
-      // Check for invalid end time
-      alert("End time should be after start time");
-      return;
-    }
-
-    try {
-      const data = {
-        _id: this.props.selectedEvent._id,
-        title: this.state.title.value,
-        desc: this.state.desc.value,
-        start: this.state.start.value,
-        end: this.state.end.value,
-        calendarId: this.state.selectedCalendarId,
-      };
-
-      this.props.updateEvent(data);
-    } catch (err) {
-      this.setState({ error: err.response.data });
     }
   };
 
@@ -509,19 +490,20 @@ class EventForm extends Component {
                   variant="primary"
                   disabled={isSystemEventSelected}
                   onMouseDown={() => this.setState({ submitCalled: true })}
-                  onClick={this.handleSubmit}
+                  onClick={e => this.handleSubmit(e, this.id)}
                 >
                   Add Event
                 </Button>
               )}
               {isEventSelected && (
                 <Button
-                  name="save-changes-btn"
-                  id="save-changes-btn"
+                  type="submit"
+                  name="update-event-btn"
+                  id="update-event-btn"
                   className="btn"
                   variant="success"
                   disabled={!formValuesChanged || isSystemEventSelected}
-                  onClick={this.handleSave}
+                  onClick={e => this.handleSubmit(e, this.id)}
                 >
                   Save Changes
                 </Button>

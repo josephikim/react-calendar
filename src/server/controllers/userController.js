@@ -23,20 +23,20 @@ const moderatorAccess = (req, res) => {
 };
 
 const retrieveEvents = async (req, res, next) => {
-  const id = req.query.id;
+  const userId = req.query.userId;
 
-  if (!id) {
+  if (!userId) {
     return res.status(500).send({ message: 'GET request failed. Please check your query and try again.' });
   }
   
   try {
     const calendars = await Calendar.find({
       $or: [
-        { user: id },
+        { user: userId },
         { systemCalendar: true }
       ]
     })
-  
+    
     const calendarIds = calendars.map(calendar => calendar._id);
 
     const events = await Event.find({
@@ -56,7 +56,7 @@ const createEvent = async (req, res, next) => {
     const event = new Event(req.body);
 
     const createdEvent = await event.save();
-    console.log('createdEvent', createdEvent)
+
     const trimmed = {
       _id: createdEvent._id,
       title: createdEvent.title,
@@ -93,7 +93,6 @@ const updateEvent = async (req, res, next) => {
 
   try {
     const updatedEvent = await Event.findOneAndUpdate({ '_id': payload._id }, payload, { new: true });
-    console.log('updatedEvent', updatedEvent)
 
     const trimmed = {
       _id: updatedEvent._id,
@@ -207,7 +206,6 @@ const createCalendar = async (req, res, next) => {
     const calendar = new Calendar(data);
   
     const createdCalendar = await calendar.save();
-    console.log('createdCalendar', createdCalendar)
 
     const trimmed = {
       _id: createdCalendar._id,
@@ -229,8 +227,7 @@ const updateCalendar = async (req, res, next) => {
 
   try {
     const updatedCalendar = await Calendar.findOneAndUpdate({ '_id': payload._id }, payload, { new: true });
-    console.log('updatedCalendar', updatedCalendar)
-
+    
     const trimmed = {
       _id: updatedCalendar._id,
       name: updatedCalendar.name,

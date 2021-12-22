@@ -82,7 +82,6 @@ class RegisterForm extends Component {
 
       this.props.registerUser(data)
         .catch(err => {
-          console.log('registerUser err', err)
           const error = err.response.data;
           if (error.errorCode && ['username', 'password'].includes(error.errorCode)) {
             this.setState(state => ({

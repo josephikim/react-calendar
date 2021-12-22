@@ -3,7 +3,8 @@ import Select from "react-dropdown-select";
 
 const CalendarSelectMenu = (props) => {
   // Disable system calendars
-  const calendars = props.calendars.map((calendar) => {
+  const calendars = JSON.parse(JSON.stringify(props.calendars));
+  const calendarOptions = calendars.map((calendar) => {
     if (calendar.systemCalendar === true) {
       calendar.disabled = true;
     }
@@ -24,7 +25,7 @@ const CalendarSelectMenu = (props) => {
         placeholder="Select calendar..."
         disabled={props.disabled}
         values={props.selected}
-        options={calendars}
+        options={calendarOptions}
         labelField="name"
         valueField="_id"
         onChange={(values) => props.onChange(values)}

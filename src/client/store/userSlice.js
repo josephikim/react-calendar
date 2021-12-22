@@ -121,8 +121,8 @@ export const retrieveCalendarEvents = (userId) => async (dispatch) => {
   if (!userId) return;
 
   try {
-    const res = await userApi.get("/event", { params: { id: userId } });
-
+    const res = await userApi.get("/event", { params: { userId: userId } });
+   
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarEventsUpdated(res.data));
     });

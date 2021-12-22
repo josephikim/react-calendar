@@ -29,10 +29,10 @@ const initialState = {
   user: {
     userId: null,
     username: null,
-    events: [],
     selectedSlot: initialSlot,
     selectedEvent: {},
     calendars: [],
+    calendarEvents: []
   },
 };
 

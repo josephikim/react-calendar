@@ -35,7 +35,7 @@ export const logoutUser = () => (dispatch) => {
 export const loginUser = (data) => async (dispatch) => {
   try {
     const res = await authApi.post("/login", data);
-
+    
     return Promise.resolve(res.data).then((res) => {
       const accessToken = res.accessToken;
       const refreshToken = res.refreshToken;

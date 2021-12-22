@@ -8,8 +8,8 @@ import EventForm from "../components/EventForm";
 import {
   onSelectSlot,
   onSelectEvent,
-  retrieveEvents,
-} from "../actions/userActions";
+  retrieveCalendarEvents,
+} from "../store/userSlice";
 
 import "../styles/CalendarPage.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -19,10 +19,17 @@ const localizer = momentLocalizer(moment);
 class CalendarPage extends Component {
   constructor(...args) {
     super(...args);
+
+    const initialState = {
+      events: [],
+      calendars: []
+    };
+
+    this.state = initialState;
   }
 
   componentDidMount = () => {
-    this.props.retrieveEvents();
+    this.props.retrieveCalendarEvents();
   };
 
   onSelectSlot = (event) => {
@@ -87,40 +94,77 @@ class CalendarPage extends Component {
     return false;
   };
 
+  eventStyleGetter = (event) => {
+    // returns HEX code
+    const getCalendarColor = () => {
+      const calendar = this.props.calendars.filter(
+        (calendar) => calendar._id === event.calendarId
+      );
+      return calendar[0].color;
+    };
+
+    const style = {
+      backgroundColor: getCalendarColor(),
+    };
+
+    return {
+      style: style,
+    };
+  };
+
   render() {
-    const eventsLoaded = this.props.events.length > 0;
-    const calendarsLoaded = this.props.calendars.length > 0;
-    return (
-      <div className="CalendarPage">
-        {eventsLoaded && calendarsLoaded && (
-          <Container>
-            <Row>
-              <Col xs={12} md={8} lg={8}>
-                <Calendar
-                  selectable
-                  localizer={localizer}
-                  events={this.props.events}
-                  defaultView="month"
-                  defaultDate={new Date()}
-                  scrollToTime={new Date(1970, 1, 1, 6)}
-                  onSelectEvent={(event) => this.onSelectEvent(event)}
-                  onSelectSlot={(event) => this.onSelectSlot(event)}
-                  startAccessor={(event) => event.start}
-                  endAccessor={(event) => event.end}
-                />
-              </Col>
-              <Col xs={12} md={4} lg={4}>
-                <EventForm 
-                  selectedSlot={this.props.selectedSlot}
-                  selectedEvent={this.props.selectedEvent}
-                  calendars={this.props.calendars}
+    const calendarsLoaded = this.state.calendars.length > 0;
+    const eventsLoaded = this.state.events.length > 0;
+    if (calendarsLoaded) {
+      if (eventsLoaded) {
+        return (
+          <div className="CalendarPage">
+            <Container>
+              <Row>
+                <Col xs={12} md={8} lg={8}>
+                  <Calendar
+                    selectable
+                    localizer={localizer}
+                    events={this.props.events}
+                    defaultView="month"
+                    defaultDate={new Date()}
+                    scrollToTime={new Date(1970, 1, 1, 6)}
+                    onSelectEvent={(event) => this.onSelectEvent(event)}
+                    onSelectSlot={(event) => this.onSelectSlot(event)}
+                    startAccessor={(event) => event.start}
+                    endAccessor={(event) => event.end}
+                    eventPropGetter={(event) => this.eventStyleGetter(event)}
                   />
-              </Col>
-            </Row>
+                </Col>
+                <Col xs={12} md={4} lg={4}>
+                  <EventForm
+                    selectedSlot={this.props.selectedSlot}
+                    selectedEvent={this.props.selectedEvent}
+                    calendars={this.props.calendars}
+                  />
+                </Col>
+              </Row>
+            </Container>
+          </div>
+        );
+      } else {
+        return (
+          <>
+            <Container>
+              <h4>No events found!</h4>
+            </Container>
+          </>
+        );
+      }
+    } else {
+      return (
+        <>
+          <Container>
+            <h4>Loading...</h4>
           </Container>
-        )}
-      </div>
-    );
+        </>
+      );
+    }
   }
 }
 
@@ -136,7 +180,7 @@ const mapStateToProps = (state) => {
 const mapActionsToProps = {
   onSelectSlot,
   onSelectEvent,
-  retrieveEvents,
+  retrieveCalendarEvents,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(CalendarPage);

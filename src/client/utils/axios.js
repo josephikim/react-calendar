@@ -1,5 +1,8 @@
 import axios from 'axios';
 import store from '../store/createStore';
+import {
+  accessTokenUpdated
+} from '../store/authSlice';
 
 const authApi = axios.create({
   baseURL: `${process.env.API_URL}` + '/auth',
@@ -47,10 +50,7 @@ userApi.interceptors.response.use(
           userApi.defaults.headers.common['x-access-token'] = accessToken;
 
           // authorize user
-          store.dispatch({
-            type: 'UPDATE_ACCESS_TOKEN',
-            payload: accessToken
-          });
+          store.dispatch(accessTokenUpdated(accessToken));
 
           return userApi(originalConfig);
         } catch (_error) {

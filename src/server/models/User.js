@@ -70,22 +70,26 @@ userSchema.post('save', async function () {
         if (err) {
           return err;
         }
-        if (calendar.length < 1) {
-          return new Calendar({
-            name: this.username,
-            visibility: true,
-            color: `#${CALENDAR_COLORS[systemCalendars.length + 1]}`,
-            user: this._id,
-            userDefault: true,
-            systemCalendar: false
-          }).save(err => {
-            if (err) {
-              console.log('error', err);
-            }
-  
-            console.log('added new user calendar to calendars collection');
-          });
+
+        if (calendar.length > 0) {
+          return
         }
+
+        // Create default user calendar
+        return new Calendar({
+          name: this.username,
+          visibility: true,
+          color: `#${CALENDAR_COLORS[systemCalendars.length]}`,
+          user: this._id,
+          userDefault: true,
+          systemCalendar: false
+        }).save(err => {
+          if (err) {
+            return(err);
+          }
+
+          console.log('added new user calendar to calendars collection');
+        });
       }
     );
   }

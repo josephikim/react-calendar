@@ -9,7 +9,7 @@ import _ from "lodash";
 
 import CalendarSelectMenu from "./CalendarSelectMenu";
 
-import { createEvent, updateEvent, deleteEvent } from "../actions/userActions";
+import { createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from "../store/userSlice";
 import { validateFields } from "../../validation.js";
 
 import "../styles/EventForm.css";
@@ -266,11 +266,11 @@ class EventForm extends Component {
           calendarId: this.state.selectedCalendarId,
         };
         
-        if (clickedId === 'add-event-btn') this.props.createEvent(data); // Dispatch createEvent action
+        if (clickedId === 'add-event-btn') this.props.createCalendarEvent(data); // Dispatch createCalendarEvent action
 
-        if (clickedId === 'update-event-btn') { // Dispatch updateEvent action
+        if (clickedId === 'update-event-btn') { // Dispatch updateCalendarEvent action
           data._id = this.props.selectedEvent._id;
-          this.props.updateEvent(data);
+          this.props.updateCalendarEvent(data);
         }
       } catch (err) {
         this.setState({ error: err.response.data });
@@ -294,7 +294,7 @@ class EventForm extends Component {
     const eventId = this.props.selectedEvent._id;
 
     try {
-      this.props.deleteEvent(eventId);
+      this.props.deleteCalendarEvent(eventId);
     } catch (err) {
       this.setState({ error: err.response.data });
     }
@@ -533,9 +533,9 @@ class EventForm extends Component {
 }
 
 const mapActionsToProps = {
-  createEvent,
-  updateEvent,
-  deleteEvent,
+  createCalendarEvent,
+  updateCalendarEvent,
+  deleteCalendarEvent,
 };
 
 export default connect(null, mapActionsToProps)(EventForm);

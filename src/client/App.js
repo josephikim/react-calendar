@@ -21,7 +21,7 @@ class App extends Component {
   }
 
   render() {
-    const isAuthenticated = !!this.props.accessToken && !!this.props.userId;
+    const isAuthenticated = !!this.props.accessToken;
     
     return (
       <div className="App">
@@ -51,8 +51,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    accessToken: state.auth.accessToken,
-    userId: state.auth.id,
+    accessToken: state.auth.accessToken
   };
 };
 

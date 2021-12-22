@@ -1,14 +1,12 @@
 const CALENDAR_COLORS = [
   "1E90FF",
   "E74C3C",
-  "ECF0F1",
-  "3498DB",
-  "2980B9",
+  "7E7E7E",
+  "1367CB",
   "FF8D1E",
-  "BEDB39",
+  "9BB527",
   "512DA8",
-  "F0C755",
-  "252525"
+  "D7AC35",
 ]
 
 export {

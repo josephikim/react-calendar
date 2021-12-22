@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import { validateFields } from '../../validation.js';
-import { registerUser } from '../actions/authActions';
+import { registerUser } from '../store/authSlice';
 
 import '../styles/RegisterForm.css';
 
@@ -82,6 +82,7 @@ class RegisterForm extends Component {
 
       this.props.registerUser(data)
         .catch(err => {
+          console.log('registerUser err', err)
           const error = err.response.data;
           if (error.errorCode && ['username', 'password'].includes(error.errorCode)) {
             this.setState(state => ({

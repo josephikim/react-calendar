@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { validateFields } from '../../validation';
-import { updateUsername, updatePassword } from '../actions/userActions';
+import { updateUsername, updatePassword } from '../store/userSlice';
 
 import AccountSettingsItem from './AccountSettingsItem';
 
@@ -103,7 +103,7 @@ class AccountSettings extends Component {
     if (usernameError === false) {
       // no input errors, submit the form
       const data = {
-        _id: this.props.id,
+        _id: this.props.userId,
         username: username.value,
       }
 
@@ -157,7 +157,7 @@ class AccountSettings extends Component {
     if (newPasswordError === false) {
       // no input errors, submit the form
       const data = {
-        _id: this.props.id,
+        _id: this.props.userId,
         password: password.value,
         newPassword: newPassword.value
       }
@@ -290,8 +290,8 @@ class AccountSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    username: state.auth.username,
-    id: state.auth.id
+    username: state.user.username,
+    userId: state.user.userId
   };
 };
 

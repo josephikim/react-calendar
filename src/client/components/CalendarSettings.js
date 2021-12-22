@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { validateFields } from '../../validation';
-import { createCalendar, updateCalendar } from '../actions/userActions';
+import { createCalendar, updateCalendar } from '../store/userSlice';
 
 import CalendarSettingsItem from './CalendarSettingsItem';
 
@@ -112,7 +112,7 @@ class CalendarSettings extends Component {
       // no input errors, submit the form
       const data = {
         name: newCalendar.value.trim(),
-        user: this.props.id
+        userId: this.props.userId
       }
 
       this.props.createCalendar(data)
@@ -243,7 +243,7 @@ class CalendarSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    id: state.auth.id,
+    userId: state.user.userId,
     calendars: state.user.calendars
   };
 }

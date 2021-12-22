@@ -1,9 +1,10 @@
 import thunk from "redux-thunk";
-import { createStore, applyMiddleware } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import { loadState, saveState } from "./localStorage";
 import throttle from "lodash/throttle";
-import appReducer from "../reducers";
+import authReducer from "./authSlice";
+import userReducer from "./userSlice";
 
 const middleware = [thunk];
 
@@ -22,12 +23,12 @@ const initialSlot = {
 // Set initial state
 const initialState = {
   auth: {
-    accessToken: "",
-    refreshToken: "",
-    id: "",
-    username: "",
+    accessToken: null,
+    refreshToken: null
   },
   user: {
+    userId: null,
+    username: null,
     events: [],
     selectedSlot: initialSlot,
     selectedEvent: {},
@@ -36,6 +37,11 @@ const initialState = {
 };
 
 const doCreateStore = () => {
+  const reducer = combineReducers({
+    auth: authReducer,
+    user: userReducer
+  })
+
   const persistedState = loadState();
 
   if (persistedState) {
@@ -46,7 +52,7 @@ const doCreateStore = () => {
   const composeEnhancers = composeWithDevTools({});
 
   const store = createStore(
-    appReducer,
+    reducer,
     persistedState ? persistedState : initialState,
     composeEnhancers(applyMiddleware(...middleware))
   );

@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
-import { logoutUser } from "../actions/authActions";
+import { logoutUser } from "../store/authSlice";
 import { connect, useDispatch } from "react-redux";
 
 const Header = ({ authenticated }) => {

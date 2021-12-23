@@ -1,8 +1,6 @@
 import axios from 'axios';
 import store from '../store/createStore';
-import {
-  accessTokenUpdated
-} from '../store/authSlice';
+import { accessTokenUpdated } from '../store/authSlice';
 
 const authApi = axios.create({
   baseURL: `${process.env.API_URL}` + '/auth',
@@ -74,17 +72,17 @@ userApi.interceptors.response.use(
 const getLocalAccessToken = () => {
   const accessToken = store.getState().auth.accessToken;
   return accessToken;
-}
+};
 
 const getLocalRefreshToken = () => {
   const refreshToken = store.getState().auth.refreshToken;
   return refreshToken;
-}
+};
 
 const refreshToken = () => {
   return authApi.post('/refreshtoken', {
-    refreshToken: getLocalRefreshToken(),
+    refreshToken: getLocalRefreshToken()
   });
-}
+};
 
 export { authApi, userApi };

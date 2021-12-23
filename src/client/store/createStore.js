@@ -1,10 +1,10 @@
-import thunk from "redux-thunk";
-import { createStore, combineReducers, applyMiddleware } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
-import { loadState, saveState } from "./localStorage";
-import throttle from "lodash/throttle";
-import authReducer from "./authSlice";
-import userReducer from "./userSlice";
+import thunk from 'redux-thunk';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
+import { loadState, saveState } from './localStorage';
+import throttle from 'lodash/throttle';
+import authReducer from './authSlice';
+import userReducer from './userSlice';
 
 const middleware = [thunk];
 
@@ -15,9 +15,9 @@ start.setHours(start.getHours() + 1, 0, 0, 0);
 end.setHours(end.getHours() + 2, 0, 0, 0);
 
 const initialSlot = {
-  action: "click",
+  action: 'click',
   start: start.toISOString(),
-  end: end.toISOString(),
+  end: end.toISOString()
 };
 
 // Set initial state
@@ -33,14 +33,14 @@ const initialState = {
     selectedEvent: {},
     calendars: [],
     calendarEvents: []
-  },
+  }
 };
 
 const doCreateStore = () => {
   const reducer = combineReducers({
     auth: authReducer,
     user: userReducer
-  })
+  });
 
   const persistedState = loadState();
 

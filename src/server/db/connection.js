@@ -16,7 +16,7 @@ db.mongoose
     initialRoles();
     initialCalendars();
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('Connection error', err);
     process.exit();
   });
@@ -26,7 +26,7 @@ const initialRoles = () => {
     if (!err && count === 0) {
       new Role({
         name: 'user'
-      }).save(err => {
+      }).save((err) => {
         if (err) {
           console.log('error', err);
         }
@@ -36,7 +36,7 @@ const initialRoles = () => {
 
       new Role({
         name: 'moderator'
-      }).save(err => {
+      }).save((err) => {
         if (err) {
           console.log('error', err);
         }
@@ -46,7 +46,7 @@ const initialRoles = () => {
 
       new Role({
         name: 'admin'
-      }).save(err => {
+      }).save((err) => {
         if (err) {
           console.log('error', err);
         }
@@ -54,7 +54,7 @@ const initialRoles = () => {
         console.log('added "admin" to roles collection');
       });
     }
-  })
+  });
 };
 
 const initialCalendars = () => {
@@ -66,7 +66,7 @@ const initialCalendars = () => {
         color: `#${CALENDAR_COLORS[0]}`,
         user: null,
         systemCalendar: true
-      }).save(err => {
+      }).save((err) => {
         if (err) {
           console.log('error', err);
         }
@@ -74,7 +74,7 @@ const initialCalendars = () => {
         console.log('added "US Holidays" to calendars collection');
       });
     }
-  })
+  });
 };
 
 export default db;

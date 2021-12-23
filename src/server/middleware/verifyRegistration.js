@@ -14,12 +14,7 @@ const checkDuplicateUsername = (req, res, next) => {
     }
 
     if (user) {
-      return next(
-        new BadRequestError(
-          'Username is already in use',
-          { errorCode: 'username' }
-        )
-      );
+      return next(new BadRequestError('Username is already in use', { errorCode: 'username' }));
     }
 
     next();
@@ -30,12 +25,7 @@ const checkRolesExisted = (req, res, next) => {
   if (req.body.roles) {
     for (let i = 0; i < req.body.roles.length; i++) {
       if (!ROLES.includes(req.body.roles[i])) {
-        return next(
-          new BadRequestError(
-            `Role ${req.body.roles[i]} does not exist!`,
-            { errorCode: 'roles' }
-          )
-        );
+        return next(new BadRequestError(`Role ${req.body.roles[i]} does not exist!`, { errorCode: 'roles' }));
       }
     }
   }

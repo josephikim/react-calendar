@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import { createSlice } from "@reduxjs/toolkit";
-import { userApi } from "../utils/axios";
+import { createSlice } from '@reduxjs/toolkit';
+import { userApi } from '../utils/axios';
 
 const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState: [],
   reducers: {
     usernameUpdated(state, action) {
@@ -36,16 +36,14 @@ const userSlice = createSlice({
       state.calendarEvents = [...state.calendarEvents, action.payload];
     },
     calendarEventDeleted(state, action) {
-      state.calendarEvents = state.calendarEvents.filter(
-        (element) => element._id !== action.payload
-      );
+      state.calendarEvents = state.calendarEvents.filter((element) => element._id !== action.payload);
     },
     calendarEventUpdated(state, action) {
       state.calendarEvents = state.calendarEvents.map((event) =>
         event._id === action.payload._id ? action.payload : event
       );
-    },
-  },
+    }
+  }
 });
 
 export const {
@@ -59,7 +57,7 @@ export const {
   calendarEventsUpdated,
   calendarEventAdded,
   calendarEventDeleted,
-  calendarEventUpdated,
+  calendarEventUpdated
 } = userSlice.actions;
 
 export default userSlice.reducer;
@@ -95,7 +93,7 @@ export const updateCalendarEventSelection = (event) => async (dispatch) => {
 
 export const createCalendar = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post("/calendar", data);
+    const res = await userApi.post('/calendar', data);
 
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarAdded(res.data));
@@ -121,8 +119,8 @@ export const retrieveCalendarEvents = (userId) => async (dispatch) => {
   if (!userId) return;
 
   try {
-    const res = await userApi.get("/event", { params: { userId: userId } });
-   
+    const res = await userApi.get('/event', { params: { userId: userId } });
+
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarEventsUpdated(res.data));
     });
@@ -133,7 +131,7 @@ export const retrieveCalendarEvents = (userId) => async (dispatch) => {
 
 export const createCalendarEvent = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post("/event", data);
+    const res = await userApi.post('/event', data);
 
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarEventAdded(res.data));
@@ -160,9 +158,9 @@ export const deleteCalendarEvent = (eventId) => async (dispatch) => {
       end.setHours(end.getHours() + 2, 0, 0, 0);
 
       const currentDateSlot = {
-        action: "click",
+        action: 'click',
         start: start.toISOString(),
-        end: end.toISOString(),
+        end: end.toISOString()
       };
 
       dispatch(calendarSlotSelectionUpdated(currentDateSlot));
@@ -187,10 +185,7 @@ export const updateCalendarEvent = (event) => async (dispatch) => {
 
 export const updateUsername = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post(
-      `/account/${data._id}/username/update`,
-      data
-    );
+    const res = await userApi.post(`/account/${data._id}/username/update`, data);
 
     return Promise.resolve(res.data).then((res) => {
       dispatch(usernameUpdated(res.username));
@@ -203,10 +198,7 @@ export const updateUsername = (data) => async (dispatch) => {
 // NOT AN ACTION
 export const updatePassword = (data) => async () => {
   try {
-    const res = await userApi.post(
-      `/account/${data._id}/password/update`,
-      data
-    );
+    const res = await userApi.post(`/account/${data._id}/password/update`, data);
 
     return Promise.resolve(res.data);
   } catch (err) {

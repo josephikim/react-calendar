@@ -27,10 +27,10 @@ class ValidateFields {
     }
     return false;
   }
-  
+
   validatePasswordConfirm(candidatePassword, password) {
     if (candidatePassword !== password) {
-      return 'Passwords don\'t match';
+      return "Passwords don't match";
     }
     return false;
   }

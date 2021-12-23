@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 
 import App from './App';
 
-import './index.css'
+import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 
 ReactDOM.render(
@@ -21,6 +21,6 @@ ReactDOM.render(
 );
 
 // Needed for Hot Module Replacement
-if(typeof(module.hot) !== 'undefined') {
-  module.hot.accept() // eslint-disable-line no-undef  
+if (typeof module.hot !== 'undefined') {
+  module.hot.accept(); // eslint-disable-line no-undef
 }

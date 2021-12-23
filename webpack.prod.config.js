@@ -6,7 +6,7 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: {
-    main: './src/client/index.js',
+    main: './src/client/index.js'
   },
   output: {
     path: path.join(__dirname, 'build'),
@@ -14,7 +14,7 @@ module.exports = {
   },
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin()],
+    minimizer: [new TerserPlugin()]
   },
   module: {
     rules: [
@@ -25,7 +25,7 @@ module.exports = {
       },
       {
         // Loads the javacript into html template provided.
-        // Entry point is set below in HtmlWebPackPlugin in Plugins 
+        // Entry point is set below in HtmlWebPackPlugin in Plugins
         test: /\.html$/,
         loader: 'html-loader'
       },
@@ -36,8 +36,8 @@ module.exports = {
       {
         // Loads images into CSS and Javascript files
         test: /\.jpg$/,
-        use: [{loader: 'url-loader'}]
-      },
+        use: [{ loader: 'url-loader' }]
+      }
     ]
   },
   plugins: [
@@ -51,7 +51,7 @@ module.exports = {
       excludeChunks: ['server']
     }),
     new Dotenv({
-      path: '.env.production',
+      path: '.env.production'
     })
-  ],
-}
+  ]
+};

@@ -1,19 +1,14 @@
-import React, { Component } from "react";
-import { Container, Row, Col } from "react-bootstrap";
-import { connect } from "react-redux";
-import moment from "moment";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import React, { Component } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
 
-import EventForm from "../components/EventForm";
-import {
-  onSelectSlot,
-  onSelectEvent,
-  retrieveCalendarEvents,
-  calendarSlotSelectionUpdated,
-} from "../store/userSlice";
+import EventForm from '../components/EventForm';
+import { onSelectSlot, onSelectEvent, retrieveCalendarEvents, calendarSlotSelectionUpdated } from '../store/userSlice';
 
-import "../styles/CalendarPage.css";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import '../styles/CalendarPage.css';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
 
@@ -62,8 +57,7 @@ class CalendarPage extends Component {
       currentSlot.end.setHours(0, 0, 0, 0);
     }
 
-    startDatesMatch =
-      prevSlotStartDate.valueOf() == currentSlot.start.valueOf();
+    startDatesMatch = prevSlotStartDate.valueOf() == currentSlot.start.valueOf();
     endDatesMatch = prevSlotEndDate.valueOf() == currentSlot.end.valueOf();
 
     if (startDatesMatch && endDatesMatch) {
@@ -98,18 +92,16 @@ class CalendarPage extends Component {
   eventStyleGetter = (event) => {
     // returns HEX code
     const getCalendarColor = () => {
-      const calendar = this.props.calendars.filter(
-        (calendar) => calendar._id === event.calendarId
-      );
+      const calendar = this.props.calendars.filter((calendar) => calendar._id === event.calendarId);
       return calendar[0].color;
     };
 
     const style = {
-      backgroundColor: getCalendarColor(),
+      backgroundColor: getCalendarColor()
     };
 
     return {
-      style: style,
+      style: style
     };
   };
 
@@ -176,14 +168,14 @@ const mapStateToProps = (state) => {
     calendars: state.user.calendars,
     calendarEvents: state.user.calendarEvents,
     selectedSlot: state.user.selectedSlot,
-    selectedEvent: state.user.selectedEvent,
+    selectedEvent: state.user.selectedEvent
   };
 };
 
 const mapActionsToProps = {
   onSelectSlot,
   onSelectEvent,
-  retrieveCalendarEvents,
+  retrieveCalendarEvents
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(CalendarPage);

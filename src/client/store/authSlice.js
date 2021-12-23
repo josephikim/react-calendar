@@ -1,9 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 import { allCalendarsUpdated, usernameUpdated, userIdUpdated } from './userSlice';
-import { authApi } from "../utils/axios";
+import { authApi } from '../utils/axios';
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState: [],
   reducers: {
     accessTokenUpdated(state, action) {
@@ -14,28 +14,24 @@ const authSlice = createSlice({
     },
     userLoggedOut(state) {
       state.accessToken = null;
-    },
-  },
+    }
+  }
 });
 
-export const {
-  accessTokenUpdated,
-  refreshTokenUpdated,
-  userLoggedOut,
-} = authSlice.actions;
+export const { accessTokenUpdated, refreshTokenUpdated, userLoggedOut } = authSlice.actions;
 
 export default authSlice.reducer;
 
 export const logoutUser = () => (dispatch) => {
   localStorage.clear();
-  
-  dispatch(userLoggedOut)
+
+  dispatch(userLoggedOut);
 };
 
 export const loginUser = (data) => async (dispatch) => {
   try {
-    const res = await authApi.post("/login", data);
-    
+    const res = await authApi.post('/login', data);
+
     return Promise.resolve(res.data).then((res) => {
       const accessToken = res.accessToken;
       const refreshToken = res.refreshToken;
@@ -50,7 +46,7 @@ export const loginUser = (data) => async (dispatch) => {
       dispatch(allCalendarsUpdated(calendars));
     });
   } catch (err) {
-    if (err.response.data.name === "AuthorizationError") {
+    if (err.response.data.name === 'AuthorizationError') {
       // unauthorize user
       dispatch(accessTokenUpdated(null));
     }
@@ -60,7 +56,7 @@ export const loginUser = (data) => async (dispatch) => {
 
 export const registerUser = (data) => async (dispatch) => {
   try {
-    const res = await authApi.post("/register", data);
+    const res = await authApi.post('/register', data);
 
     return Promise.resolve(res.data).then((res) => {
       const accessToken = res.accessToken;

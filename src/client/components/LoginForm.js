@@ -1,27 +1,27 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { Form, Button } from "react-bootstrap";
-import { validateFields } from "../../validation.js";
-import { loginUser } from "../store/authSlice";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Form, Button } from 'react-bootstrap';
+import { validateFields } from '../../validation.js';
+import { loginUser } from '../store/authSlice';
 
-import "../styles/LoginForm.css";
+import '../styles/LoginForm.css';
 
 const initialState = {
   username: {
-    value: "",
+    value: '',
     validateOnChange: false,
-    error: "",
+    error: ''
   },
   password: {
-    value: "",
+    value: '',
     validateOnChange: false,
-    error: "",
+    error: ''
   },
   passwordConfirm: {
-    value: "",
+    value: '',
     validateOnChange: false,
-    error: "",
-  },
+    error: ''
+  }
 };
 class LoginForm extends Component {
   constructor(...args) {
@@ -31,16 +31,16 @@ class LoginForm extends Component {
 
   handleBlur = (validationFunc, event) => {
     const {
-      target: { name },
+      target: { name }
     } = event;
 
-    if (this.state[name]["validateOnChange"] === false) {
+    if (this.state[name]['validateOnChange'] === false) {
       this.setState((state) => ({
         [name]: {
           ...state[name],
           validateOnChange: true,
-          error: validationFunc(state[name].value),
-        },
+          error: validationFunc(state[name].value)
+        }
       }));
     }
     return;
@@ -48,19 +48,17 @@ class LoginForm extends Component {
 
   handleChange = (validationFunc, event) => {
     const {
-      target: { name, value },
+      target: { name, value }
     } = event;
 
-    if (name === "passwordConfirm") {
+    if (name === 'passwordConfirm') {
       // handle passwordConfirm validation
       this.setState((state) => ({
         [name]: {
           ...state[name],
           value: value,
-          error: state[name]["validateOnChange"]
-            ? validationFunc(value, this.state.password.value)
-            : "",
-        },
+          error: state[name]['validateOnChange'] ? validationFunc(value, this.state.password.value) : ''
+        }
       }));
     } else {
       // handle all other validation
@@ -68,8 +66,8 @@ class LoginForm extends Component {
         [name]: {
           ...state[name],
           value: value,
-          error: state[name]["validateOnChange"] ? validationFunc(value) : "",
-        },
+          error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+        }
       }));
     }
   };
@@ -80,34 +78,27 @@ class LoginForm extends Component {
     const { username, password, passwordConfirm } = this.state;
     const usernameError = validateFields.validateUsername(username.value);
     const passwordError = validateFields.validatePassword(password.value);
-    const passwordConfirmError = validateFields.validatePasswordConfirm(
-      passwordConfirm.value,
-      password.value
-    );
+    const passwordConfirmError = validateFields.validatePasswordConfirm(passwordConfirm.value, password.value);
 
-    if (
-      [usernameError, passwordError, passwordConfirmError].every(
-        (e) => e === false
-      )
-    ) {
+    if ([usernameError, passwordError, passwordConfirmError].every((e) => e === false)) {
       // no errors submit the form
       const data = {
         username: username.value,
-        password: password.value,
+        password: password.value
       };
 
       try {
         const login = await this.props.loginUser(data);
       } catch (err) {
-        if (err.errorCode && ["username", "password"].includes(err.errorCode)) {
+        if (err.errorCode && ['username', 'password'].includes(err.errorCode)) {
           this.setState((state) => ({
             [err.errorCode]: {
               ...state[err.errorCode],
-              error: err.message,
-            },
+              error: err.message
+            }
           }));
         } else {
-          alert(`${err.name}: ${err.message}`)
+          alert(`${err.name}: ${err.message}`);
         }
       }
     } else {
@@ -116,18 +107,18 @@ class LoginForm extends Component {
         username: {
           ...state.username,
           validateOnChange: true,
-          error: usernameError,
+          error: usernameError
         },
         password: {
           ...state.password,
           validateOnChange: true,
-          error: passwordError,
+          error: passwordError
         },
         passwordConfirm: {
           ...state.passwordConfirm,
           validateOnChange: true,
-          error: passwordConfirmError,
-        },
+          error: passwordConfirmError
+        }
       }));
     }
   };
@@ -145,12 +136,8 @@ class LoginForm extends Component {
             <Form.Control
               name="username"
               placeholder="Enter username"
-              onChange={(event) =>
-                this.handleChange(validateFields.validateUsername, event)
-              }
-              onBlur={(event) =>
-                this.handleBlur(validateFields.validateUsername, event)
-              }
+              onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
+              onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
             />
           </Form.Group>
 
@@ -164,12 +151,8 @@ class LoginForm extends Component {
               type="password"
               name="password"
               placeholder="Enter password"
-              onChange={(event) =>
-                this.handleChange(validateFields.validatePassword, event)
-              }
-              onBlur={(event) =>
-                this.handleBlur(validateFields.validatePassword, event)
-              }
+              onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
+              onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
             />
           </Form.Group>
 
@@ -183,9 +166,7 @@ class LoginForm extends Component {
               type="password"
               name="passwordConfirm"
               placeholder="Confirm password"
-              onChange={(event) =>
-                this.handleChange(validateFields.validatePasswordConfirm, event)
-              }
+              onChange={(event) => this.handleChange(validateFields.validatePasswordConfirm, event)}
             />
           </Form.Group>
 
@@ -193,12 +174,7 @@ class LoginForm extends Component {
             <small>{this.state.passwordConfirm.error}</small>
           </div>
 
-          <Button
-            type="submit"
-            name="login-form-btn"
-            variant="primary"
-            onClick={this.handleSubmit}
-          >
+          <Button type="submit" name="login-form-btn" variant="primary" onClick={this.handleSubmit}>
             Login
           </Button>
 
@@ -212,7 +188,7 @@ class LoginForm extends Component {
 }
 
 const mapActionsToProps = {
-  loginUser,
+  loginUser
 };
 
 export default connect(null, mapActionsToProps)(LoginForm);

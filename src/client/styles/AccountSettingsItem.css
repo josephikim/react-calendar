@@ -16,11 +16,11 @@
 .AccountSettingsItem .btnGroup .btn {
   min-width: 120px;
   margin-right: 18px;
-} 
+}
 
 .AccountSettingsItem .btnGroup .btn:last-of-type {
   margin-right: 0;
-} 
+}
 
 .AccountSettingsItem label {
   display: block;

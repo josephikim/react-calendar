@@ -17,14 +17,14 @@ class BadRequestError extends UserFacingError {
 class NotFoundError extends UserFacingError {
   constructor(message, options = {}) {
     super(message);
-    
+
     for (const [key, value] of Object.entries(options)) {
       this[key] = value;
     }
   }
 
   get statusCode() {
-    return 404
+    return 404;
   }
 }
 
@@ -42,8 +42,4 @@ class AuthorizationError extends UserFacingError {
   }
 }
 
-export {
-  BadRequestError,
-  NotFoundError,
-  AuthorizationError
-}
+export { BadRequestError, NotFoundError, AuthorizationError };

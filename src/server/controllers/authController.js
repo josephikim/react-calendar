@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
-import db from "../models";
-import config from "../config/authConfig";
-import { NotFoundError, AuthorizationError } from "../utils/userFacingErrors";
+import jwt from 'jsonwebtoken';
+import db from '../models';
+import config from '../config/authConfig';
+import { NotFoundError, AuthorizationError } from '../utils/userFacingErrors';
 
 const User = db.user;
 const Role = db.role;
@@ -11,7 +11,7 @@ const RefreshToken = db.refreshToken;
 const register = (req, res, next) => {
   const user = new User({
     username: req.body.username,
-    password: req.body.password,
+    password: req.body.password
   });
 
   // If no errors, register user
@@ -23,7 +23,7 @@ const register = (req, res, next) => {
     if (req.body.roles) {
       Role.find(
         {
-          name: { $in: req.body.roles },
+          name: { $in: req.body.roles }
         },
         (err, roles) => {
           if (err) {
@@ -41,7 +41,7 @@ const register = (req, res, next) => {
         }
       );
     } else {
-      Role.findOne({ name: "user" }, (err, role) => {
+      Role.findOne({ name: 'user' }, (err, role) => {
         if (err) {
           return next(err);
         }
@@ -62,48 +62,43 @@ const register = (req, res, next) => {
 const login = (req, res, next) => {
   try {
     User.findOne({
-      username: req.body.username,
+      username: req.body.username
     })
-      .populate("roles", "-__v")
+      .populate('roles', '-__v')
       .exec(async (err, user) => {
         if (err) {
           return next(err);
         }
 
         if (!user) {
-          return next(
-            new NotFoundError("User not found", { errorCode: "username" })
-          );
+          return next(new NotFoundError('User not found', { errorCode: 'username' }));
         }
 
         let passwordIsValid = await user.validatePassword(req.body.password);
 
         if (!passwordIsValid) {
           return next(
-            new AuthorizationError("Invalid password", {
-              errorCode: "password",
-              accessToken: null,
+            new AuthorizationError('Invalid password', {
+              errorCode: 'password',
+              accessToken: null
             })
           );
         }
 
         // If password is valid, create JWT token
         let token = jwt.sign({ id: user._id }, config.SECRET, {
-          expiresIn: config.JWT_EXPIRATION,
+          expiresIn: config.JWT_EXPIRATION
         });
 
         let refreshToken = await RefreshToken.createToken(user);
 
         let authorities = [];
         for (let i = 0; i < user.roles.length; i++) {
-          authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
+          authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
         }
 
         let calendars = await Calendar.find({
-          $or: [
-            { user: user._id },
-            { systemCalendar: true }
-          ]
+          $or: [{ user: user._id }, { systemCalendar: true }]
         });
 
         res.status(200).send({
@@ -125,7 +120,7 @@ const refreshToken = async (req, res, next) => {
 
   if (requestToken == null) {
     // Refresh token is required
-    return res.redirect("/login");
+    return res.redirect('/login');
   }
 
   try {
@@ -133,28 +128,24 @@ const refreshToken = async (req, res, next) => {
 
     if (!refreshToken) {
       // Refresh token not found in database
-      return res.redirect("/login");
+      return res.redirect('/login');
     }
 
     if (RefreshToken.verifyExpiration(refreshToken)) {
       RefreshToken.findByIdAndRemove(refreshToken._id, {
-        useFindAndModify: false,
+        useFindAndModify: false
       }).exec();
 
-      return res.redirect("/login");
+      return res.redirect('/login');
     }
 
-    let newAccessToken = jwt.sign(
-      { id: refreshToken.user._id },
-      config.SECRET,
-      {
-        expiresIn: config.JWT_EXPIRATION,
-      }
-    );
+    let newAccessToken = jwt.sign({ id: refreshToken.user._id }, config.SECRET, {
+      expiresIn: config.JWT_EXPIRATION
+    });
 
     return res.status(200).send({
       accessToken: newAccessToken,
-      refreshToken: refreshToken.token,
+      refreshToken: refreshToken.token
     });
   } catch (err) {
     return next(err);
@@ -164,6 +155,6 @@ const refreshToken = async (req, res, next) => {
 const authController = {
   register,
   login,
-  refreshToken,
+  refreshToken
 };
 export default authController;

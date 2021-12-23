@@ -1,5 +1,5 @@
-import React from "react";
-import Select from "react-dropdown-select";
+import React from 'react';
+import Select from 'react-dropdown-select';
 
 const CalendarSelectMenu = (props) => {
   // Disable system calendars

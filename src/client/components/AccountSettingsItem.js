@@ -8,16 +8,16 @@ const AccountSettingsItem = (props) => {
   const error = props.error;
 
   return (
-    <div className='AccountSettingsItem'>
+    <div className="AccountSettingsItem">
       <Container>
         <Row>
-          <Col xs={12} md={6} >
+          <Col xs={12} md={6}>
             <Form.Label htmlFor={props.id}>{props.label}</Form.Label>
           </Col>
         </Row>
 
-        <Row className='twoColumn'>
-          <Col xs={12} md={6} >
+        <Row className="twoColumn">
+          <Col xs={12} md={6}>
             <Form.Group controlId={props.id}>
               <Form.Control
                 name={props.id}
@@ -25,58 +25,45 @@ const AccountSettingsItem = (props) => {
                 value={props.value}
                 readOnly={!props.editMode}
                 onChange={(event) => props.onChange(event)}
-                onBlur={event => props.id === 'password' ? undefined : props.onBlur(event)}
+                onBlur={(event) => (props.id === 'password' ? undefined : props.onBlur(event))}
               />
             </Form.Group>
           </Col>
-          <Col xs={12} md={6} >
-            {!newPasswordComponent &&
-              <div className='btnGroup'>
-                {!props.editMode &&
-                  <Button
-                    type='button'
-                    name='editBtn'
-                    variant='primary'
-                    onClick={() => props.onEdit(props.id)} >
+          <Col xs={12} md={6}>
+            {!newPasswordComponent && (
+              <div className="btnGroup">
+                {!props.editMode && (
+                  <Button type="button" name="editBtn" variant="primary" onClick={() => props.onEdit(props.id)}>
                     Edit
                   </Button>
-                }
-                {props.editMode &&
-                  <Button
-                    type='submit'
-                    name='saveBtn'
-                    variant='success'
-                    onClick={event => props.onSubmit(event)} >
+                )}
+                {props.editMode && (
+                  <Button type="submit" name="saveBtn" variant="success" onClick={(event) => props.onSubmit(event)}>
                     Save
                   </Button>
-                }
-                {props.editMode &&
-                  <Button
-                    type='button'
-                    name='cancelBtn'
-                    variant='secondary'
-                    onClick={() => props.onCancel(props.id)} >
+                )}
+                {props.editMode && (
+                  <Button type="button" name="cancelBtn" variant="secondary" onClick={() => props.onCancel(props.id)}>
                     Cancel
                   </Button>
-                }
+                )}
               </div>
-            }
+            )}
           </Col>
         </Row>
 
-        {error &&
+        {error && (
           <Row>
             <Col>
-              <div className='error text-danger'>
+              <div className="error text-danger">
                 <small>{error}</small>
               </div>
             </Col>
-
           </Row>
-        }
+        )}
       </Container>
     </div>
-  )
-}
+  );
+};
 
 export default AccountSettingsItem;

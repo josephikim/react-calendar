@@ -18,6 +18,4 @@ class DuplicateKeyError extends DatabaseError {
   }
 }
 
-export {
-  DuplicateKeyError
-}
+export { DuplicateKeyError };

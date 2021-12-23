@@ -5,10 +5,7 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: {
-    main: [
-      'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true', 
-      './src/client/index.js'
-    ]
+    main: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true', './src/client/index.js']
   },
   output: {
     path: path.join(__dirname, 'build'),
@@ -38,11 +35,11 @@ module.exports = {
       },
       {
         // Loads the javacript into html template provided.
-        // Entry point is set below in HtmlWebPackPlugin in Plugins 
+        // Entry point is set below in HtmlWebPackPlugin in Plugins
         test: /\.html$/,
         use: [
           {
-            loader: 'html-loader',
+            loader: 'html-loader'
             //options: { minimize: true }
           }
         ]
@@ -54,7 +51,7 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: ['file-loader']
-      },
+      }
     ]
   },
   plugins: [
@@ -66,13 +63,13 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new Dotenv({
-      path: '.env.development',
+      path: '.env.development'
     })
   ],
   resolve: {
     fallback: {
-      'fs': false,
-      'path': false
-    },
+      fs: false,
+      path: false
+    }
   }
-}
+};

@@ -22,18 +22,20 @@ const initialState = {
     validateOnChange: false,
     error: ''
   }
-}
+};
 class RegisterForm extends Component {
   constructor(...args) {
-    super(...args)
-    this.state = initialState
+    super(...args);
+    this.state = initialState;
   }
 
   handleBlur = (validationFunc, event) => {
-    const { target: { name } } = event;
-    
+    const {
+      target: { name }
+    } = event;
+
     if (this.state[name].value && this.state[name]['validateOnChange'] === false) {
-      this.setState(state => ({
+      this.setState((state) => ({
         [name]: {
           ...state[name],
           validateOnChange: true,
@@ -42,20 +44,24 @@ class RegisterForm extends Component {
       }));
     }
     return;
-  }
+  };
 
   handleChange = (validationFunc, event) => {
-    const { target: { name, value } } = event;
+    const {
+      target: { name, value }
+    } = event;
 
-    if (validationFunc === null) { // handle fields without validation
-      this.setState(state => ({
+    if (validationFunc === null) {
+      // handle fields without validation
+      this.setState((state) => ({
         [name]: {
           ...state[name],
           value: value
         }
       }));
-    } else {  // handle fields with validation
-      this.setState(state => ({
+    } else {
+      // handle fields with validation
+      this.setState((state) => ({
         [name]: {
           ...state[name],
           value: value,
@@ -63,7 +69,7 @@ class RegisterForm extends Component {
         }
       }));
     }
-  }
+  };
 
   handleSubmit = (event) => {
     event.preventDefault();
@@ -73,30 +79,29 @@ class RegisterForm extends Component {
     const passwordError = validateFields.validatePassword(password.value);
     const passwordConfirmError = validateFields.validatePasswordConfirm(passwordConfirm.value, password.value);
 
-    if ([usernameError, passwordError, passwordConfirmError].every(e => e === false)) {
+    if ([usernameError, passwordError, passwordConfirmError].every((e) => e === false)) {
       // no input errors, submit the form
       const data = {
         username: username.value,
         password: password.value
-      }
+      };
 
-      this.props.registerUser(data)
-        .catch(err => {
-          const error = err.response.data;
-          if (error.errorCode && ['username', 'password'].includes(error.errorCode)) {
-            this.setState(state => ({
-              [error.errorCode]: {
-                ...state[error.errorCode],
-                error: error.message
-              }
-            }));
-          } else {
-            alert(`${error.name}: ${error.message}`)
-          }
-        });
+      this.props.registerUser(data).catch((err) => {
+        const error = err.response.data;
+        if (error.errorCode && ['username', 'password'].includes(error.errorCode)) {
+          this.setState((state) => ({
+            [error.errorCode]: {
+              ...state[error.errorCode],
+              error: error.message
+            }
+          }));
+        } else {
+          alert(`${error.name}: ${error.message}`);
+        }
+      });
     } else {
       // update state with input errors
-      this.setState(state => ({
+      this.setState((state) => ({
         username: {
           ...state.username,
           validateOnChange: true,
@@ -114,78 +119,74 @@ class RegisterForm extends Component {
         }
       }));
     }
-  }
+  };
 
   render() {
     return (
-      <div className='RegisterForm'>
+      <div className="RegisterForm">
         <Form>
-          <div className='text-primary'>
+          <div className="text-primary">
             <h4>New User Registration</h4>
           </div>
 
-          <Form.Group controlId='username'>
-            <Form.Label className='text-primary'>Username</Form.Label>
+          <Form.Group controlId="username">
+            <Form.Label className="text-primary">Username</Form.Label>
             <Form.Control
-              name='username'
-              placeholder='Enter username'
-              onChange={event => this.handleChange(validateFields.validateUsername, event)}
-              onBlur={event => this.handleBlur(validateFields.validateUsername, event)}
+              name="username"
+              placeholder="Enter username"
+              onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
+              onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
             />
           </Form.Group>
 
-          <div className='text-danger'>
+          <div className="text-danger">
             <small>{this.state.username.error}</small>
           </div>
 
-          <Form.Group controlId='password'>
-            <Form.Label className='text-primary'>Password</Form.Label>
+          <Form.Group controlId="password">
+            <Form.Label className="text-primary">Password</Form.Label>
             <Form.Control
-              type='password'
-              name='password'
-              placeholder='Enter password'
-              onChange={event => this.handleChange(validateFields.validatePassword, event)}
-              onBlur={event => this.handleBlur(validateFields.validatePassword, event)}
+              type="password"
+              name="password"
+              placeholder="Enter password"
+              onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
+              onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
             />
           </Form.Group>
 
-          <div className='text-danger'>
+          <div className="text-danger">
             <small>{this.state.password.error}</small>
           </div>
 
-          <Form.Group controlId='passwordConfirm'>
-            <Form.Label className='text-primary'>Confirm Password</Form.Label>
+          <Form.Group controlId="passwordConfirm">
+            <Form.Label className="text-primary">Confirm Password</Form.Label>
             <Form.Control
-              type='password'
-              name='passwordConfirm'
-              placeholder='Confirm password'
-              onChange={event => this.handleChange(null, event)}
+              type="password"
+              name="passwordConfirm"
+              placeholder="Confirm password"
+              onChange={(event) => this.handleChange(null, event)}
             />
           </Form.Group>
 
-          <div className='text-danger'>
+          <div className="text-danger">
             <small>{this.state.passwordConfirm.error}</small>
           </div>
 
-          <Button
-            type='submit'
-            name='register-form-btn'
-            variant='primary'
-            onClick={this.handleSubmit}>
+          <Button type="submit" name="register-form-btn" variant="primary" onClick={this.handleSubmit}>
             Register
           </Button>
         </Form>
-        
+
         <span>
-          Already registered? Please <a href='/login'>login</a>.
+          Already registered? Please <a href="/login">login</a>.
         </span>
       </div>
-    )
+    );
   }
 }
 
 const mapActionsToProps = {
   registerUser
-}
+};
 
 export default connect(null, mapActionsToProps)(RegisterForm);

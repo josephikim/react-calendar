@@ -6,9 +6,8 @@ import CalendarSettings from '../components/CalendarSettings';
 
 import '../styles/AccountPage.css';
 
-const AccountPage = () =>
-
-  <div className='AccountPage'>
+const AccountPage = () => (
+  <div className="AccountPage">
     <Container>
       <Row>
         <Col>
@@ -23,5 +22,6 @@ const AccountPage = () =>
       </Row>
     </Container>
   </div>
+);
 
 export default AccountPage;

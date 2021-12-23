@@ -5,24 +5,27 @@ import { CALENDAR_COLORS } from '../config/appConfigs';
 
 const SALT_WORK_FACTOR = 10;
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: [true, 'Enter a username.'],
-    unique: [true, 'That username is taken.']
+const userSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: [true, 'Enter a username.'],
+      unique: [true, 'That username is taken.']
+    },
+    password: {
+      type: String,
+      required: [true, 'Enter a password.'],
+      minLength: [4, 'Password should be at least four characters']
+    },
+    roles: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Role'
+      }
+    ]
   },
-  password: {
-    type: String,
-    required: [true, 'Enter a password.'],
-    minLength: [4, 'Password should be at least four characters']
-  },
-  roles: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Role'
-    }
-  ]
-}, { emitIndexErrors: true });
+  { emitIndexErrors: true }
+);
 
 // preserving isNew state for 'post' middleware
 userSchema.pre('save', function (next) {
@@ -30,7 +33,7 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-// schema middleware to apply before saving 
+// schema middleware to apply before saving
 userSchema.pre('save', async function (next) {
   // only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) return next();
@@ -45,7 +48,7 @@ userSchema.pre('save', async function (next) {
   }
 });
 
-// schema middleware to apply after saving 
+// schema middleware to apply after saving
 const handleE11000 = (error, res, next) => {
   if (error.name === 'MongoError' && error.code === 11000) {
     next(new Error('There was a duplicate key error.'));
@@ -63,8 +66,8 @@ userSchema.post('save', async function () {
     const systemCalendars = await Calendar.find({ systemCalendar: true }).exec();
 
     Calendar.find(
-      { 
-        user: this._id 
+      {
+        user: this._id
       },
       (err, calendar) => {
         if (err) {
@@ -72,7 +75,7 @@ userSchema.post('save', async function () {
         }
 
         if (calendar.length > 0) {
-          return
+          return;
         }
 
         // Create default user calendar
@@ -83,9 +86,9 @@ userSchema.post('save', async function () {
           user: this._id,
           userDefault: true,
           systemCalendar: false
-        }).save(err => {
+        }).save((err) => {
           if (err) {
-            return(err);
+            return err;
           }
 
           console.log('added new user calendar to calendars collection');

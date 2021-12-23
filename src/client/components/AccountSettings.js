@@ -27,15 +27,15 @@ const initialState = {
     error: '',
     editMode: false
   }
-}
+};
 class AccountSettings extends Component {
   constructor(...args) {
-    super(...args)
-    this.state = initialState
+    super(...args);
+    this.state = initialState;
   }
 
   componentDidMount = () => {
-    this.setState(state => ({
+    this.setState((state) => ({
       username: {
         ...state.username,
         value: this.props.username
@@ -44,25 +44,27 @@ class AccountSettings extends Component {
         ...state.password,
         value: '****'
       }
-    }))
-  }
+    }));
+  };
 
   componentDidUpdate = (prevProps) => {
     if (this.props.username !== prevProps.username) {
-      this.setState(state => ({
+      this.setState((state) => ({
         username: {
           ...state.username,
           value: this.props.username
         }
-      }))
+      }));
     }
-  }
+  };
 
   handleBlur = (validationFunc, event) => {
-    const { target: { name } } = event;
+    const {
+      target: { name }
+    } = event;
 
     if (this.state[name]['validateOnChange'] === false) {
-      this.setState(state => ({
+      this.setState((state) => ({
         [name]: {
           ...state[name],
           validateOnChange: true,
@@ -71,20 +73,24 @@ class AccountSettings extends Component {
       }));
     }
     return;
-  }
+  };
 
   handleChange = (validationFunc, event) => {
-    const { target: { name, value } } = event;
+    const {
+      target: { name, value }
+    } = event;
 
-    if (validationFunc === null) { // handle fields without validation
-      this.setState(state => ({
+    if (validationFunc === null) {
+      // handle fields without validation
+      this.setState((state) => ({
         [name]: {
           ...state[name],
           value: value
         }
       }));
-    } else {  // handle fields with validation
-      this.setState(state => ({
+    } else {
+      // handle fields with validation
+      this.setState((state) => ({
         [name]: {
           ...state[name],
           value: value,
@@ -92,7 +98,7 @@ class AccountSettings extends Component {
         }
       }));
     }
-  }
+  };
 
   handleSubmitUsername = (event) => {
     event.preventDefault();
@@ -104,35 +110,36 @@ class AccountSettings extends Component {
       // no input errors, submit the form
       const data = {
         _id: this.props.userId,
-        username: username.value,
-      }
+        username: username.value
+      };
 
-      this.props.updateUsername(data)
+      this.props
+        .updateUsername(data)
         .then(() => {
           this.setState({
             username: {
               ...initialState.username,
               value: this.props.username
             }
-          })
-          alert('Username updated!')
+          });
+          alert('Username updated!');
         })
-        .catch(err => {
+        .catch((err) => {
           const error = err.response.data;
           if (error.errorCode === 'username') {
-            this.setState(state => ({
+            this.setState((state) => ({
               username: {
                 ...state.username,
                 error: error.message
               }
             }));
           } else {
-            alert (`Error: ${error.message}`)
+            alert(`Error: ${error.message}`);
           }
         });
     } else {
       // update state with input error
-      this.setState(state => ({
+      this.setState((state) => ({
         username: {
           ...state.username,
           validateOnChange: true,
@@ -140,7 +147,7 @@ class AccountSettings extends Component {
         }
       }));
     }
-  }
+  };
 
   handleSubmitPassword = (event) => {
     event.preventDefault();
@@ -160,9 +167,10 @@ class AccountSettings extends Component {
         _id: this.props.userId,
         password: password.value,
         newPassword: newPassword.value
-      }
+      };
 
-      this.props.updatePassword(data)
+      this.props
+        .updatePassword(data)
         .then(() => {
           this.setState({
             password: {
@@ -172,25 +180,25 @@ class AccountSettings extends Component {
             newPassword: {
               ...initialState.newPassword
             }
-          })
-          alert('Password updated!')
+          });
+          alert('Password updated!');
         })
-        .catch(err => {
+        .catch((err) => {
           const error = err.response.data;
           if (error.errorCode === 'password') {
-            this.setState(state => ({
+            this.setState((state) => ({
               password: {
                 ...state.password,
                 error: error.message
               }
             }));
           } else {
-            alert (`Error: ${error.message}`)
+            alert(`Error: ${error.message}`);
           }
         });
     } else {
       // update state with input error
-      this.setState(state => ({
+      this.setState((state) => ({
         newPassword: {
           ...state.newPassword,
           validateOnChange: true,
@@ -198,30 +206,30 @@ class AccountSettings extends Component {
         }
       }));
     }
-  }
+  };
 
   handleEdit = (id) => {
-    let newState = {}
+    let newState = {};
 
     if (id === 'password') {
-      newState[id] = {
+      (newState[id] = {
         ...initialState[id],
         editMode: true
-      },
-      newState['newPassword'] = {
-        ...initialState['newPassword'],
-        editMode: true
-      }
+      }),
+        (newState['newPassword'] = {
+          ...initialState['newPassword'],
+          editMode: true
+        });
     }
     if (id === 'username') {
       newState[id] = {
         ...this.state[id],
         editMode: true
-      }
+      };
     }
 
-    this.setState(newState)
-  }
+    this.setState(newState);
+  };
 
   handleCancel = (id) => {
     this.setState({
@@ -229,17 +237,17 @@ class AccountSettings extends Component {
         ...initialState[id],
         value: id === 'username' ? this.props.username : '****'
       }
-    })
-  }
+    });
+  };
 
   render() {
     return (
-      <div className='AccountSettings'>
+      <div className="AccountSettings">
         <Form>
           <Container>
             <Row>
               <Col>
-                <div className='heading text-primary'>
+                <div className="heading text-primary">
                   <h4>Account Settings</h4>
                 </div>
               </Col>
@@ -247,44 +255,47 @@ class AccountSettings extends Component {
           </Container>
 
           <AccountSettingsItem
-            id='username'
-            type='text'
-            label='Username'
+            id="username"
+            type="text"
+            label="Username"
             value={this.state.username.value}
             editMode={this.state.username.editMode}
             error={this.state.username.error}
-            onChange={event => this.handleChange(validateFields.validateUsername, event)}
-            onBlur={event => this.handleBlur(validateFields.validateUsername, event)}
+            onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
+            onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
             onSubmit={(event) => this.handleSubmitUsername(event)}
             onEdit={(event, id) => this.handleEdit(event, id)}
-            onCancel={(event, id) => this.handleCancel(event, id)} />
+            onCancel={(event, id) => this.handleCancel(event, id)}
+          />
 
           <AccountSettingsItem
-            id='password'
-            type='password'
+            id="password"
+            type="password"
             label={this.state.password.editMode ? 'Confirm Current Password' : 'Password'}
             value={this.state.password.value}
             editMode={this.state.password.editMode}
             error={this.state.password.error}
-            onChange={event => this.handleChange(null, event)}
+            onChange={(event) => this.handleChange(null, event)}
             onSubmit={(event) => this.handleSubmitPassword(event)}
             onEdit={(event, id) => this.handleEdit(event, id)}
-            onCancel={(event, id) => this.handleCancel(event, id)} />
+            onCancel={(event, id) => this.handleCancel(event, id)}
+          />
 
-          {this.state.password.editMode &&
+          {this.state.password.editMode && (
             <AccountSettingsItem
-              id='newPassword'
-              type='password'
-              label='Enter New Password'
+              id="newPassword"
+              type="password"
+              label="Enter New Password"
               value={this.state.newPassword.value}
               editMode={this.state.password.editMode}
               error={this.state.newPassword.error}
-              onChange={event => this.handleChange(null, event)}
-              onBlur={event => this.handleBlur(validateFields.validatePassword, event)} />
-          }
+              onChange={(event) => this.handleChange(null, event)}
+              onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
+            />
+          )}
         </Form>
       </div>
-    )
+    );
   }
 }
 
@@ -298,6 +309,6 @@ const mapStateToProps = (state) => {
 const mapActionsToProps = {
   updateUsername,
   updatePassword
-}
+};
 
 export default connect(mapStateToProps, mapActionsToProps)(AccountSettings);

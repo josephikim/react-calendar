@@ -35,10 +35,9 @@ const calendarSchema = new mongoose.Schema({
 const handleE11000 = (error, res, next) => {
   if (error.name === 'MongoError' && error.code === 11000) {
     next(
-      new DuplicateKeyError(
-        'There was a conflict with an existing entry. Please try again.',
-        { errorCode: 'calendarName' }
-      )
+      new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
+        errorCode: 'calendarName'
+      })
     );
   } else {
     next();
@@ -48,7 +47,7 @@ const handleE11000 = (error, res, next) => {
 calendarSchema.post('findOneAndUpdate', handleE11000);
 
 // schema index
-calendarSchema.index({ user: 1, name: 1}, { unique: true });
+calendarSchema.index({ user: 1, name: 1 }, { unique: true });
 
 let Calendar = mongoose.model('Calendar', calendarSchema);
 

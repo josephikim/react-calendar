@@ -25,7 +25,7 @@ export default authSlice.reducer;
 export const logoutUser = () => (dispatch) => {
   localStorage.clear();
 
-  dispatch(userLoggedOut);
+  dispatch(userLoggedOut());
 };
 
 export const loginUser = (data) => async (dispatch) => {

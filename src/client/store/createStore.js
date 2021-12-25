@@ -29,8 +29,8 @@ const initialState = {
   user: {
     userId: null,
     username: null,
-    selectedSlot: initialSlot,
-    selectedEvent: {},
+    calendarSlotSelection: initialSlot,
+    calendarEventSelection: {},
     calendars: [],
     calendarEvents: []
   }
@@ -45,8 +45,8 @@ const doCreateStore = () => {
   const persistedState = loadState();
 
   if (persistedState) {
-    persistedState.user.selectedSlot = initialState.user.selectedSlot;
-    persistedState.user.selectedEvent = initialState.user.selectedEvent;
+    persistedState.user.calendarSlotSelection = initialState.user.calendarSlotSelection;
+    persistedState.user.calendarEventSelection = initialState.user.calendarEventSelection;
   }
 
   const composeEnhancers = composeWithDevTools({});

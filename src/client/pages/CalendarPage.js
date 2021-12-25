@@ -29,7 +29,7 @@ class CalendarPage extends Component {
   };
 
   onSelectSlot = (event) => {
-    const slotsMatch = this.isSameSlot(this.props.selectedSlot, event);
+    const slotsMatch = this.isSameSlot(this.props.calendarSlotSelection, event);
 
     if (slotsMatch) return;
 
@@ -67,7 +67,7 @@ class CalendarPage extends Component {
   };
 
   onSelectEvent = (event) => {
-    const eventsMatch = this.isSameEvent(this.props.selectedEvent, event);
+    const eventsMatch = this.isSameEvent(this.props.calendarEventSelection, event);
 
     if (eventsMatch) return;
 
@@ -132,8 +132,8 @@ class CalendarPage extends Component {
                 </Col>
                 <Col xs={12} md={4} lg={4}>
                   <EventForm
-                    selectedSlot={this.props.selectedSlot}
-                    selectedEvent={this.props.selectedEvent}
+                    calendarSlotSelection={this.props.calendarSlotSelection}
+                    calendarEventSelection={this.props.calendarEventSelection}
                     calendars={this.props.calendars}
                   />
                 </Col>
@@ -167,8 +167,8 @@ const mapStateToProps = (state) => {
     userId: state.user.userId,
     calendars: state.user.calendars,
     calendarEvents: state.user.calendarEvents,
-    selectedSlot: state.user.selectedSlot,
-    selectedEvent: state.user.selectedEvent
+    calendarSlotSelection: state.user.calendarSlotSelection,
+    calendarEventSelection: state.user.calendarEventSelection
   };
 };
 

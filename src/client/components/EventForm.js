@@ -33,10 +33,10 @@ class EventForm extends Component {
         value: ''
       },
       start: {
-        value: this.props.selectedSlot.start
+        value: this.props.calendarSlotSelection.start
       },
       end: {
-        value: this.props.selectedSlot.end
+        value: this.props.calendarSlotSelection.end
       },
       defaultCalendarId: defaultCalendar[0]._id,
       selectedCalendarId: defaultCalendar[0]._id,
@@ -50,12 +50,12 @@ class EventForm extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    const isSlotSelected = Object.keys(this.props.selectedSlot).length > 0;
-    const isEventSelected = Object.keys(this.props.selectedEvent).length > 0;
+    const isSlotSelected = Object.keys(this.props.calendarSlotSelection).length > 0;
+    const isEventSelected = Object.keys(this.props.calendarEventSelection).length > 0;
 
-    const isSlotUnchanged = _.isEqual(this.props.selectedSlot, prevProps.selectedSlot);
+    const isSlotUnchanged = _.isEqual(this.props.calendarSlotSelection, prevProps.calendarSlotSelection);
 
-    const isEventUnchanged = _.isEqual(this.props.selectedEvent, prevProps.selectedEvent);
+    const isEventUnchanged = _.isEqual(this.props.calendarEventSelection, prevProps.calendarEventSelection);
 
     if (isSlotUnchanged && isEventUnchanged) return;
 
@@ -68,10 +68,10 @@ class EventForm extends Component {
         // if previous selection was a slot, update state with new dates only
         newState = {
           start: {
-            value: this.props.selectedSlot.start
+            value: this.props.calendarSlotSelection.start
           },
           end: {
-            value: this.props.selectedSlot.end
+            value: this.props.calendarSlotSelection.end
           }
         };
       } else {
@@ -86,10 +86,10 @@ class EventForm extends Component {
             value: ''
           },
           start: {
-            value: this.props.selectedSlot.start
+            value: this.props.calendarSlotSelection.start
           },
           end: {
-            value: this.props.selectedSlot.end
+            value: this.props.calendarSlotSelection.end
           },
           selectedCalendarId: this.state.defaultCalendarId,
           formValuesChanged: false,
@@ -104,20 +104,20 @@ class EventForm extends Component {
       // update state with all fields
       newState = {
         title: {
-          value: this.props.selectedEvent.title,
+          value: this.props.calendarEventSelection.title,
           validateOnChange: false,
           error: ''
         },
         desc: {
-          value: this.props.selectedEvent.desc
+          value: this.props.calendarEventSelection.desc
         },
         start: {
-          value: this.props.selectedEvent.start
+          value: this.props.calendarEventSelection.start
         },
         end: {
-          value: this.props.selectedEvent.end
+          value: this.props.calendarEventSelection.end
         },
-        selectedCalendarId: this.props.selectedEvent.calendarId,
+        selectedCalendarId: this.props.calendarEventSelection.calendarId,
         formValuesChanged: false,
         submitCalled: false
       };
@@ -257,7 +257,7 @@ class EventForm extends Component {
 
         if (clickedId === 'update-event-btn') {
           // Dispatch updateCalendarEvent action
-          data._id = this.props.selectedEvent._id;
+          data._id = this.props.calendarEventSelection._id;
           this.props.updateCalendarEvent(data);
         }
       } catch (err) {
@@ -277,9 +277,9 @@ class EventForm extends Component {
 
   handleDelete = (event) => {
     event.preventDefault();
-    if (!this.props.selectedEvent) return;
+    if (!this.props.calendarEventSelection) return;
 
-    const eventId = this.props.selectedEvent._id;
+    const eventId = this.props.calendarEventSelection._id;
 
     try {
       this.props.deleteCalendarEvent(eventId);
@@ -301,8 +301,8 @@ class EventForm extends Component {
   };
 
   render() {
-    const isSlotSelected = Object.keys(this.props.selectedSlot).length > 0;
-    const isEventSelected = Object.keys(this.props.selectedEvent).length > 0;
+    const isSlotSelected = Object.keys(this.props.calendarSlotSelection).length > 0;
+    const isEventSelected = Object.keys(this.props.calendarEventSelection).length > 0;
     const selectedCalendar = this.props.calendars.filter((calendar) => calendar._id === this.state.selectedCalendarId); // returns array of length one
     const isSystemEventSelected = selectedCalendar[0].systemCalendar ? selectedCalendar[0].systemCalendar : false;
     const formValuesChanged = this.state.formValuesChanged;

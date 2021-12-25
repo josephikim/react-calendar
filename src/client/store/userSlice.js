@@ -62,29 +62,30 @@ export const {
 
 export default userSlice.reducer;
 
-export const onSelectSlot = (slot) => {
-  this.updateCalendarSlotSelection(slot);
-  this.updateCalendarEventSelection({});
+export const onSelectSlot = (slot) => (dispatch) => {
+  console.log('onSelectSlot hit...');
+  return Promise.all([dispatch(updateCalendarSlotSelection(slot)), dispatch(updateCalendarEventSelection({}))]);
 };
 
-export const onSelectEvent = (event) => {
-  this.updateCalendarEventSelection(event);
-  this.updateCalendarSlotSelection({});
+export const onSelectEvent = (event) => (dispatch) => {
+  return Promise.all([dispatch(updateCalendarEventSelection(event)), dispatch(updateCalendarSlotSelection({}))]);
 };
 
 export const updateCalendarSlotSelection = (slot) => async (dispatch) => {
-  let newSlot = slot;
+  let payload = slot;
 
   // Convert dates to strings
-  if (!_.isEmpty(newSlot)) {
-    newSlot.start = newSlot.start.toISOString();
-    newSlot.end = newSlot.end.toISOString();
-    newSlot.slots = newSlot.slots.map((slot) => {
+  if (!_.isEmpty(payload)) {
+    payload.start = payload.start.toISOString();
+    payload.end = payload.end.toISOString();
+    payload.slots = payload.slots.map((slot) => {
       return slot.toISOString();
     });
   }
 
-  dispatch(calendarSlotSelectionUpdated(newSlot));
+  console.log('payload', payload);
+
+  dispatch(calendarSlotSelectionUpdated(payload));
 };
 
 export const updateCalendarEventSelection = (event) => async (dispatch) => {

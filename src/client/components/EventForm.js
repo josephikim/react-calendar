@@ -9,7 +9,12 @@ import _ from 'lodash';
 
 import CalendarSelectMenu from './CalendarSelectMenu';
 
-import { createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from '../store/userSlice';
+import {
+  createCalendarEvent,
+  updateCalendarEvent,
+  deleteCalendarEvent,
+  calendarSelectionWithSlotAndEvent
+} from '../store/userSlice';
 import { validateFields } from '../../validation.js';
 
 import '../styles/EventForm.css';
@@ -33,10 +38,10 @@ class EventForm extends Component {
         value: ''
       },
       start: {
-        value: this.props.calendarSlotSelection.start
+        value: this.props.calendarSelectionWithSlotAndEvent.calendarSlotSelection.start
       },
       end: {
-        value: this.props.calendarSlotSelection.end
+        value: this.props.calendarSelectionWithSlotAndEvent.calendarSlotSelection.end
       },
       defaultCalendarId: defaultCalendar[0]._id,
       selectedCalendarId: defaultCalendar[0]._id,
@@ -50,85 +55,45 @@ class EventForm extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    const isSlotSelected = Object.keys(this.props.calendarSlotSelection).length > 0;
-    const isEventSelected = Object.keys(this.props.calendarEventSelection).length > 0;
+    if (this.props.calendarSelectionWithSlotAndEvent === false) return;
 
-    const isSlotUnchanged = _.isEqual(this.props.calendarSlotSelection, prevProps.calendarSlotSelection);
+    const isCalendarSelectionUpdated = !_.isEqual(
+      prevProps.calendarSelectionWithSlotAndEvent,
+      this.props.calendarSelectionWithSlotAndEvent
+    );
 
-    const isEventUnchanged = _.isEqual(this.props.calendarEventSelection, prevProps.calendarEventSelection);
+    if (!isCalendarSelectionUpdated) return;
 
-    if (isSlotUnchanged && isEventUnchanged) return;
+    const { calendarEventSelection, calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
+    const isCalendarEventSelected = Object.keys(calendarEventSelection).length > 0;
 
-    let newState = {};
+    let newState = {
+      title: {
+        value: isCalendarEventSelected ? calendarEventSelection.title : '',
+        validateOnChange: false,
+        error: ''
+      },
+      desc: {
+        value: isCalendarEventSelected ? calendarEventSelection.desc : ''
+      },
+      start: {
+        value: isCalendarEventSelected ? calendarEventSelection.start : calendarSlotSelection.start
+      },
+      end: {
+        value: isCalendarEventSelected ? calendarEventSelection.end : calendarSlotSelection.end
+      },
+      formValuesChanged: false,
+      submitCalled: false,
+      error: ''
+    };
 
-    if (isSlotSelected) {
-      if (isSlotUnchanged) return;
-
-      if (isEventUnchanged) {
-        // if previous selection was a slot, update state with new dates only
-        newState = {
-          start: {
-            value: this.props.calendarSlotSelection.start
-          },
-          end: {
-            value: this.props.calendarSlotSelection.end
-          }
-        };
-      } else {
-        // if previous selection was an event, update state with all fields
-        newState = {
-          title: {
-            value: '',
-            validateOnChange: false,
-            error: ''
-          },
-          desc: {
-            value: ''
-          },
-          start: {
-            value: this.props.calendarSlotSelection.start
-          },
-          end: {
-            value: this.props.calendarSlotSelection.end
-          },
-          selectedCalendarId: this.state.defaultCalendarId,
-          formValuesChanged: false,
-          submitCalled: false
-        };
-      }
+    if (isCalendarEventSelected) {
+      newState.selectedCalendarId = calendarEventSelection.calendarId;
+    } else {
+      newState.selectedCalendarId = this.state.defaultCalendarId;
     }
 
-    if (isEventSelected) {
-      if (isEventUnchanged) return;
-
-      // update state with all fields
-      newState = {
-        title: {
-          value: this.props.calendarEventSelection.title,
-          validateOnChange: false,
-          error: ''
-        },
-        desc: {
-          value: this.props.calendarEventSelection.desc
-        },
-        start: {
-          value: this.props.calendarEventSelection.start
-        },
-        end: {
-          value: this.props.calendarEventSelection.end
-        },
-        selectedCalendarId: this.props.calendarEventSelection.calendarId,
-        formValuesChanged: false,
-        submitCalled: false
-      };
-    }
-
-    this.setState((prevState) => {
-      return {
-        ...prevState,
-        ...newState
-      };
-    });
+    this.setState(newState);
   };
 
   handleBlur = (validationFunc, event) => {
@@ -277,9 +242,9 @@ class EventForm extends Component {
 
   handleDelete = (event) => {
     event.preventDefault();
-    if (!this.props.calendarEventSelection) return;
+    if (!this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection) return;
 
-    const eventId = this.props.calendarEventSelection._id;
+    const eventId = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection._id;
 
     try {
       this.props.deleteCalendarEvent(eventId);
@@ -301,212 +266,226 @@ class EventForm extends Component {
   };
 
   render() {
-    const isSlotSelected = Object.keys(this.props.calendarSlotSelection).length > 0;
-    const isEventSelected = Object.keys(this.props.calendarEventSelection).length > 0;
-    const selectedCalendar = this.props.calendars.filter((calendar) => calendar._id === this.state.selectedCalendarId); // returns array of length one
-    const isSystemEventSelected = selectedCalendar[0].systemCalendar ? selectedCalendar[0].systemCalendar : false;
-    const formValuesChanged = this.state.formValuesChanged;
+    const isCalendarSelectionUpdated = !!this.props.calendarSelectionWithSlotAndEvent;
 
-    return (
-      <div className="EventForm">
-        <Form>
-          <Row>
-            <Col>
-              <label htmlFor="title" className="text-primary">
-                Event Title (required)
-              </label>
+    if (isCalendarSelectionUpdated) {
+      const { calendarEventSelection } = this.props.calendarSelectionWithSlotAndEvent;
+      const isCalendarEventSelected = Object.keys(calendarEventSelection).length > 0;
+      const selectedCalendar = this.props.calendars.filter(
+        (calendar) => calendar._id === this.state.selectedCalendarId
+      ); // returns array of length one
+      const isSystemEventSelected = selectedCalendar[0].systemCalendar;
+      const formValuesChanged = this.state.formValuesChanged;
+      return (
+        <div className="EventForm">
+          <Form>
+            <Row>
+              <Col>
+                <label htmlFor="title" className="text-primary">
+                  Event Title (required)
+                </label>
 
-              <textarea
-                id="title"
-                name="title"
-                className="input"
-                disabled={isSystemEventSelected}
-                rows="1"
-                onChange={(event) => this.handleChange(validateFields.validateTitle, event)}
-                onBlur={(event) => this.handleBlur(validateFields.validateTitle, event)}
-                value={this.state.title.value}
-              >
-                enter title
-              </textarea>
-
-              <div className="text-danger">
-                <small>{this.state.title.error}</small>
-              </div>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <label htmlFor="desc" className="text-primary">
-                Event Description
-              </label>
-
-              <textarea
-                id="desc"
-                name="desc"
-                className="input"
-                disabled={isSystemEventSelected}
-                rows="3"
-                onChange={(event) => this.handleChange(null, event)}
-                value={this.state.desc.value}
-              >
-                enter description
-              </textarea>
-            </Col>
-          </Row>
-
-          <Row className="two-column">
-            <Col xs={6}>
-              <Row>
-                <Col>
-                  <label htmlFor="startDate" className="text-primary">
-                    Start Date
-                  </label>
-
-                  <DayPickerInput
-                    id="startDate"
-                    name="startDate"
-                    inputProps={isSystemEventSelected ? { disabled: true } : {}}
-                    formatDate={formatDate}
-                    parseDate={parseDate}
-                    value={`${formatDate(this.state.start.value)}`}
-                    onDayChange={(value) => this.handleDayChange(value, 'startDate')}
-                  />
-                </Col>
-              </Row>
-            </Col>
-
-            <Col xs={6}>
-              <Row>
-                <Col>
-                  <label htmlFor="startTime" className="text-primary">
-                    Start Time
-                  </label>
-
-                  <TimePicker
-                    id="startTime"
-                    name="startTime"
-                    disabled={isSystemEventSelected}
-                    showSecond={false}
-                    value={moment(this.state.start.value)}
-                    onChange={(value, id = 'startTime') => this.handleTimeChange(value, id)}
-                    format={this.state.timeFormat}
-                    minuteStep={15}
-                    use12Hours
-                    inputReadOnly
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-
-          <Row className="two-column">
-            <Col xs={6}>
-              <Row>
-                <Col>
-                  <label htmlFor="endDate" className="text-primary">
-                    End Date
-                  </label>
-
-                  <DayPickerInput
-                    id="endDate"
-                    name="endDate"
-                    inputProps={isSystemEventSelected ? { disabled: true } : {}}
-                    formatDate={formatDate}
-                    parseDate={parseDate}
-                    value={`${formatDate(this.state.end.value)}`}
-                    onDayChange={(value) => this.handleDayChange(value, 'endDate')}
-                  />
-                </Col>
-              </Row>
-            </Col>
-
-            <Col xs={6}>
-              <Row>
-                <Col>
-                  <label htmlFor="endTime" className="text-primary">
-                    End Time
-                  </label>
-
-                  <TimePicker
-                    id="endTime"
-                    name="endTime"
-                    disabled={isSystemEventSelected}
-                    showSecond={false}
-                    value={moment(this.state.end.value)}
-                    onChange={(value, id = 'endTime') => this.handleTimeChange(value, id)}
-                    format={this.state.timeFormat}
-                    minuteStep={15}
-                    use12Hours
-                    inputReadOnly
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <CalendarSelectMenu
-                selected={selectedCalendar}
-                disabled={isSystemEventSelected}
-                calendars={this.props.calendars}
-                onChange={(values) => this.handleCalendarChange(values)}
-              />
-            </Col>
-          </Row>
-
-          <Row className="two-column">
-            <Col>
-              {isSlotSelected && (
-                <Button
-                  type="submit"
-                  name="add-event-btn"
-                  id="add-event-btn"
-                  className="btn"
-                  variant="primary"
+                <textarea
+                  id="title"
+                  name="title"
+                  className="input"
                   disabled={isSystemEventSelected}
-                  onMouseDown={() => this.setState({ submitCalled: true })}
-                  onClick={(e) => this.handleSubmit(e, this.id)}
+                  rows="1"
+                  onChange={(event) => this.handleChange(validateFields.validateTitle, event)}
+                  onBlur={(event) => this.handleBlur(validateFields.validateTitle, event)}
+                  value={this.state.title.value}
                 >
-                  Add Event
-                </Button>
-              )}
-              {isEventSelected && (
-                <Button
-                  type="submit"
-                  name="update-event-btn"
-                  id="update-event-btn"
-                  className="btn"
-                  variant="success"
-                  disabled={!formValuesChanged || isSystemEventSelected}
-                  onClick={(e) => this.handleSubmit(e, this.id)}
-                >
-                  Save Changes
-                </Button>
-              )}
-            </Col>
+                  enter title
+                </textarea>
 
-            <Col>
-              {isEventSelected && (
-                <Button
-                  name="delete-event-btn"
-                  id="delete-event-btn"
-                  className="btn"
-                  variant="danger"
+                <div className="text-danger">
+                  <small>{this.state.title.error}</small>
+                </div>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col>
+                <label htmlFor="desc" className="text-primary">
+                  Event Description
+                </label>
+
+                <textarea
+                  id="desc"
+                  name="desc"
+                  className="input"
                   disabled={isSystemEventSelected}
-                  onClick={this.handleDelete}
+                  rows="3"
+                  onChange={(event) => this.handleChange(null, event)}
+                  value={this.state.desc.value}
                 >
-                  Delete Event
-                </Button>
-              )}
-            </Col>
-          </Row>
-        </Form>
-      </div>
-    );
+                  enter description
+                </textarea>
+              </Col>
+            </Row>
+
+            <Row className="two-column">
+              <Col xs={6}>
+                <Row>
+                  <Col>
+                    <label htmlFor="startDate" className="text-primary">
+                      Start Date
+                    </label>
+
+                    <DayPickerInput
+                      id="startDate"
+                      name="startDate"
+                      inputProps={isSystemEventSelected ? { disabled: true } : {}}
+                      formatDate={formatDate}
+                      parseDate={parseDate}
+                      value={`${formatDate(this.state.start.value)}`}
+                      onDayChange={(value) => this.handleDayChange(value, 'startDate')}
+                    />
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col xs={6}>
+                <Row>
+                  <Col>
+                    <label htmlFor="startTime" className="text-primary">
+                      Start Time
+                    </label>
+
+                    <TimePicker
+                      id="startTime"
+                      name="startTime"
+                      disabled={isSystemEventSelected}
+                      showSecond={false}
+                      value={moment(this.state.start.value)}
+                      onChange={(value, id = 'startTime') => this.handleTimeChange(value, id)}
+                      format={this.state.timeFormat}
+                      minuteStep={15}
+                      use12Hours
+                      inputReadOnly
+                    />
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+
+            <Row className="two-column">
+              <Col xs={6}>
+                <Row>
+                  <Col>
+                    <label htmlFor="endDate" className="text-primary">
+                      End Date
+                    </label>
+
+                    <DayPickerInput
+                      id="endDate"
+                      name="endDate"
+                      inputProps={isSystemEventSelected ? { disabled: true } : {}}
+                      formatDate={formatDate}
+                      parseDate={parseDate}
+                      value={`${formatDate(this.state.end.value)}`}
+                      onDayChange={(value) => this.handleDayChange(value, 'endDate')}
+                    />
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col xs={6}>
+                <Row>
+                  <Col>
+                    <label htmlFor="endTime" className="text-primary">
+                      End Time
+                    </label>
+
+                    <TimePicker
+                      id="endTime"
+                      name="endTime"
+                      disabled={isSystemEventSelected}
+                      showSecond={false}
+                      value={moment(this.state.end.value)}
+                      onChange={(value, id = 'endTime') => this.handleTimeChange(value, id)}
+                      format={this.state.timeFormat}
+                      minuteStep={15}
+                      use12Hours
+                      inputReadOnly
+                    />
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col>
+                <CalendarSelectMenu
+                  selected={selectedCalendar}
+                  disabled={isSystemEventSelected}
+                  calendars={this.props.calendars}
+                  onChange={(values) => this.handleCalendarChange(values)}
+                />
+              </Col>
+            </Row>
+
+            <Row className="two-column">
+              <Col>
+                {!isCalendarEventSelected && (
+                  <Button
+                    type="submit"
+                    name="add-event-btn"
+                    id="add-event-btn"
+                    className="btn"
+                    variant="primary"
+                    disabled={isSystemEventSelected}
+                    onMouseDown={() => this.setState({ submitCalled: true })}
+                    onClick={(e) => this.handleSubmit(e, this.id)}
+                  >
+                    Add Event
+                  </Button>
+                )}
+                {isCalendarEventSelected && (
+                  <Button
+                    type="submit"
+                    name="update-event-btn"
+                    id="update-event-btn"
+                    className="btn"
+                    variant="success"
+                    disabled={!formValuesChanged || isSystemEventSelected}
+                    onClick={(e) => this.handleSubmit(e, this.id)}
+                  >
+                    Save Changes
+                  </Button>
+                )}
+              </Col>
+
+              <Col>
+                {isCalendarEventSelected && (
+                  <Button
+                    name="delete-event-btn"
+                    id="delete-event-btn"
+                    className="btn"
+                    variant="danger"
+                    disabled={isSystemEventSelected}
+                    onClick={this.handleDelete}
+                  >
+                    Delete Event
+                  </Button>
+                )}
+              </Col>
+            </Row>
+          </Form>
+        </div>
+      );
+    } else {
+      return null;
+    }
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    calendars: state.user.calendars,
+    calendarSelectionWithSlotAndEvent: calendarSelectionWithSlotAndEvent(state)
+  };
+};
 
 const mapActionsToProps = {
   createCalendarEvent,
@@ -514,4 +493,4 @@ const mapActionsToProps = {
   deleteCalendarEvent
 };
 
-export default connect(null, mapActionsToProps)(EventForm);
+export default connect(mapStateToProps, mapActionsToProps)(EventForm);

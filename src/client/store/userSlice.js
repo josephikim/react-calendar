@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { userApi } from '../utils/axios';
 
 const userSlice = createSlice({
@@ -62,8 +62,31 @@ export const {
 
 export default userSlice.reducer;
 
+// Memoized selectors
+const calendarSlotSelector = (state) => state.user.calendarSlotSelection;
+const calendarEventSelector = (state) => state.user.calendarEventSelection;
+
+export const calendarSelectionWithSlotAndEvent = createSelector(
+  [calendarSlotSelector, calendarEventSelector],
+  (calendarSlot, calendarEvent) => {
+    const isCalendarSlotSelected = Object.keys(calendarSlot).length > 0;
+    const isCalendarEventSelected = Object.keys(calendarEvent).length > 0;
+
+    const updateCompleteWithNewSlot = isCalendarSlotSelected && !isCalendarEventSelected;
+    const updateCompleteWithNewEvent = isCalendarEventSelected && !isCalendarSlotSelected;
+
+    if (updateCompleteWithNewSlot || updateCompleteWithNewEvent) {
+      let updateObj = {
+        calendarSlotSelection: calendarSlot,
+        calendarEventSelection: calendarEvent
+      };
+      return updateObj;
+    } else return false;
+  }
+);
+
+// Bound action creators
 export const onSelectSlot = (slot) => (dispatch) => {
-  console.log('onSelectSlot hit...');
   return Promise.all([dispatch(updateCalendarSlotSelection(slot)), dispatch(updateCalendarEventSelection({}))]);
 };
 
@@ -82,8 +105,6 @@ export const updateCalendarSlotSelection = (slot) => async (dispatch) => {
       return slot.toISOString();
     });
   }
-
-  console.log('payload', payload);
 
   dispatch(calendarSlotSelectionUpdated(payload));
 };
@@ -206,6 +227,3 @@ export const updatePassword = (data) => async () => {
     return Promise.reject(err);
   }
 };
-
-// Export a reusable selector here
-// export const selectTodos = state => state.todos

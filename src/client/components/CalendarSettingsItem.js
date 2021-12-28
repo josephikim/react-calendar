@@ -31,7 +31,13 @@ const CalendarSettingsItem = (props) => {
         <Col xs={12} md={6}>
           <div className="btnGroup">
             {!props.editMode && (
-              <Button type="button" name="editBtn" variant="primary" onClick={() => props.onEdit(props.id)}>
+              <Button
+                type="button"
+                name="editBtn"
+                variant="primary"
+                disabled={props.disabled}
+                onClick={() => props.onEdit(props.id)}
+              >
                 Edit
               </Button>
             )}

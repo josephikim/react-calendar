@@ -50,9 +50,10 @@ class CalendarSettings extends Component {
     let calendarsState = {};
 
     this.props.calendars.forEach((calendar) => {
-      let calendarId = calendar._id;
-      let newObj = {
+      const calendarId = calendar._id;
+      const newObj = {
         value: calendar.name,
+        systemCalendar: calendar.systemCalendar,
         validateOnChange: false,
         error: '',
         editMode: false
@@ -231,6 +232,7 @@ class CalendarSettings extends Component {
                 value={this.state[item._id].value}
                 editMode={this.state[item._id].editMode}
                 error={this.state[item._id].error}
+                disabled={this.state[item._id].systemCalendar}
                 onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
                 onBlur={(event) => this.handleBlur(validateFields.validateCalendarName, event)}
                 onSubmit={(event, id) => this.handleSubmitUpdateCalendar(event, id)}

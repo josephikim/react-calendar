@@ -29,23 +29,22 @@ const initialState = {
   }
 };
 class AccountSettings extends Component {
-  constructor(...args) {
-    super(...args);
-    this.state = initialState;
-  }
-
-  componentDidMount = () => {
-    this.setState((state) => ({
+  constructor(props) {
+    super(props);
+    this.state = {
       username: {
-        ...state.username,
-        value: this.props.username
+        ...initialState.username,
+        value: props.username
       },
       password: {
-        ...state.password,
+        ...initialState.password,
         value: '****'
+      },
+      newPassword: {
+        ...initialState.newPassword
       }
-    }));
-  };
+    };
+  }
 
   componentDidUpdate = (prevProps) => {
     if (this.props.username !== prevProps.username) {
@@ -241,19 +240,12 @@ class AccountSettings extends Component {
   };
 
   render() {
+    const usernameError = this.state.username.error;
+    const passwordError = this.state.password.error;
+    const newPasswordError = this.state.newPassword.error;
     return (
       <div className="AccountSettings">
         <Form>
-          <Container>
-            <Row>
-              <Col>
-                <div className="heading text-primary">
-                  <h4>Account Settings</h4>
-                </div>
-              </Col>
-            </Row>
-          </Container>
-
           <AccountSettingsItem
             id="username"
             type="text"
@@ -268,6 +260,14 @@ class AccountSettings extends Component {
             onCancel={(event, id) => this.handleCancel(event, id)}
           />
 
+          {usernameError && (
+            <Container>
+              <div className="error text-danger">
+                <small>{usernameError}</small>
+              </div>
+            </Container>
+          )}
+
           <AccountSettingsItem
             id="password"
             type="password"
@@ -281,6 +281,14 @@ class AccountSettings extends Component {
             onCancel={(event, id) => this.handleCancel(event, id)}
           />
 
+          {passwordError && (
+            <Container>
+              <div className="error text-danger">
+                <small>{passwordError}</small>
+              </div>
+            </Container>
+          )}
+
           {this.state.password.editMode && (
             <AccountSettingsItem
               id="newPassword"
@@ -292,6 +300,14 @@ class AccountSettings extends Component {
               onChange={(event) => this.handleChange(null, event)}
               onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
             />
+          )}
+
+          {newPasswordError && (
+            <Container>
+              <div className="error text-danger">
+                <small>{newPasswordError}</small>
+              </div>
+            </Container>
           )}
         </Form>
       </div>

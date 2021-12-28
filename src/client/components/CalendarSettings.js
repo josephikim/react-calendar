@@ -16,26 +16,38 @@ const initialState = {
   }
 };
 class CalendarSettings extends Component {
-  constructor(...args) {
-    super(...args);
-    this.state = initialState;
-  }
+  constructor(props) {
+    super(props);
 
-  componentDidMount = () => {
-    this.updateCalendarsState();
-  };
+    const calendarsState = this.getCalendarsState();
+
+    this.state = {
+      newCalendar: {
+        ...initialState.newCalendar
+      },
+      ...calendarsState
+    };
+  }
 
   componentDidUpdate = (prevProps) => {
     const calendarsChanged = this.props.calendars.length > 0 && !_.isEqual(this.props.calendars, prevProps.calendars);
+
     if (calendarsChanged) {
-      this.updateCalendarsState();
+      const calendarsState = getCalendarsState();
+
+      this.setState({
+        newCalendar: {
+          ...initialState.newCalendar
+        },
+        ...calendarsState
+      });
     }
   };
 
-  updateCalendarsState = () => {
+  getCalendarsState = () => {
     if (!this.props.calendars.length) return;
 
-    let newState = {};
+    let calendarsState = {};
 
     this.props.calendars.forEach((calendar) => {
       let calendarId = calendar._id;
@@ -45,10 +57,10 @@ class CalendarSettings extends Component {
         error: '',
         editMode: false
       };
-      newState[calendarId] = newObj;
+      calendarsState[calendarId] = newObj;
     });
 
-    this.setState(newState);
+    return calendarsState;
   };
 
   handleBlur = (validationFunc, event) => {
@@ -99,9 +111,19 @@ class CalendarSettings extends Component {
   handleCancel = (id) => {
     if (!id) return;
 
-    if (this.props.calendars.length) {
-      this.updateCalendarsState();
-    }
+    // revert component state obj to match app state
+    const calendar = this.props.calendars.filter((calendar) => calendar._id === id); // returns array of length 1
+
+    let newState = {
+      value: calendar[0].name,
+      validateOnChange: false,
+      error: '',
+      editMode: false
+    };
+
+    this.setState({
+      [id]: newState
+    });
   };
 
   handleSubmitAddCalendar = (event) => {
@@ -194,23 +216,14 @@ class CalendarSettings extends Component {
   };
 
   render() {
-    const calendarsLoaded = _.size(this.state) > this.props.calendars.length;
+    const calendarsLoaded = this.props.calendars.length > 0;
+    const newCalendarError = this.state.newCalendar.error;
 
-    return (
-      <div className="CalendarSettings">
-        <Form>
-          <Container>
-            <Row>
-              <Col>
-                <div className="heading text-primary">
-                  <h4>Calendar Settings</h4>
-                </div>
-              </Col>
-            </Row>
-          </Container>
-
-          {calendarsLoaded &&
-            this.props.calendars.map((item) => (
+    if (calendarsLoaded) {
+      return (
+        <div className="CalendarSettings">
+          <Form>
+            {this.props.calendars.map((item) => (
               <CalendarSettingsItem
                 key={item._id}
                 id={item._id}
@@ -226,21 +239,38 @@ class CalendarSettings extends Component {
               />
             ))}
 
-          <CalendarSettingsItem
-            id="newCalendar"
-            type="text"
-            label="Add Calendar"
-            placeholder="Enter calendar name"
-            value={this.state.newCalendar.value}
-            editMode="true"
-            error={this.state.newCalendar.error}
-            onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
-            onBlur={(event) => this.handleBlur(validateFields.validateCalendarName, event)}
-            onSubmit={(event) => this.handleSubmitAddCalendar(event)}
-          />
-        </Form>
-      </div>
-    );
+            <CalendarSettingsItem
+              id="newCalendar"
+              type="text"
+              label="Add Calendar"
+              placeholder="Enter calendar name"
+              editMode="true"
+              value={this.state.newCalendar.value}
+              error={this.state.newCalendar.error}
+              onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
+              onBlur={(event) => this.handleBlur(validateFields.validateCalendarName, event)}
+              onSubmit={(event) => this.handleSubmitAddCalendar(event)}
+            />
+
+            {newCalendarError && (
+              <Container>
+                <div className="error text-danger">
+                  <small>{newCalendarError}</small>
+                </div>
+              </Container>
+            )}
+          </Form>
+        </div>
+      );
+    } else {
+      return (
+        <>
+          <Container>
+            <h4>No Calendars Found!</h4>
+          </Container>
+        </>
+      );
+    }
   }
 }
 

@@ -11,7 +11,22 @@ const AccountPage = () => (
     <Container>
       <Row>
         <Col>
+          <div className="heading text-primary">
+            <h4>Account Settings</h4>
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
           <AccountSettings />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <div className="heading text-primary">
+            <h4>Calendar Settings</h4>
+          </div>
         </Col>
       </Row>
 

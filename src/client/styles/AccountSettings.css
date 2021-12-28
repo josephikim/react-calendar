@@ -1,5 +1,6 @@
 .AccountSettings {
-  margin: 35px auto;
+  margin: 0 auto;
+  margin-bottom: 35px;
 }
 
 .AccountSettings .heading {

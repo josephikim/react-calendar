@@ -25,8 +25,7 @@ class EventForm extends Component {
   constructor(props) {
     super(props);
 
-    // returns array of length one
-    const defaultCalendar = this.props.calendars.filter((calendar) => calendar.userDefault === true);
+    const defaultCalendar = this.props.calendars.filter((calendar) => calendar.userDefault === true); // returns array of length one
 
     const initialState = {
       title: {
@@ -90,7 +89,16 @@ class EventForm extends Component {
     if (isCalendarEventSelected) {
       newState.selectedCalendarId = calendarEventSelection.calendarId;
     } else {
-      newState.selectedCalendarId = this.state.defaultCalendarId;
+      // calendar slot is selected
+      const lastSelectedCalendar = this.props.calendars.filter(
+        (calendar) => calendar._id === this.state.selectedCalendarId
+      ); // returns array of length 1
+      const isLastSelectionASystemCalendar = lastSelectedCalendar[0].systemCalendar === true;
+
+      if (isLastSelectionASystemCalendar) {
+        // previous selection was a system event
+        newState.selectedCalendarId = this.state.defaultCalendarId;
+      }
     }
 
     this.setState(newState);

@@ -85,6 +85,19 @@ export const calendarSelectionWithSlotAndEvent = createSelector(
   }
 );
 
+const calendarEventsSelector = (state) => state.user.calendarEvents;
+
+export const calendarEventsWithDateObjects = createSelector([calendarEventsSelector], (calendarEvents) => {
+  let eventsCloned = JSON.parse(JSON.stringify(calendarEvents));
+
+  eventsCloned.forEach((event) => {
+    event.start = new Date(event.start);
+    event.end = new Date(event.end);
+  });
+
+  return eventsCloned;
+});
+
 // Bound action creators
 export const onSelectSlot = (slot) => (dispatch) => {
   return Promise.all([dispatch(updateCalendarSlotSelection(slot)), dispatch(updateCalendarEventSelection({}))]);

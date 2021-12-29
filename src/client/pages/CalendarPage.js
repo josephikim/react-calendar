@@ -9,7 +9,8 @@ import {
   onSelectSlot,
   onSelectEvent,
   retrieveCalendarEvents,
-  calendarSelectionWithSlotAndEvent
+  calendarSelectionWithSlotAndEvent,
+  calendarEventsWithDateObjects
 } from '../store/userSlice';
 
 import '../styles/CalendarPage.css';
@@ -91,7 +92,7 @@ class CalendarPage extends Component {
 
   render() {
     const calendarsLoaded = this.props.calendars.length > 0;
-    const calendarEventsLoaded = this.props.calendarEvents.length > 0;
+    const calendarEventsLoaded = this.props.calendarEventsWithDateObjects.length > 0;
 
     if (calendarsLoaded) {
       if (calendarEventsLoaded) {
@@ -103,7 +104,7 @@ class CalendarPage extends Component {
                   <Calendar
                     selectable
                     localizer={localizer}
-                    events={this.props.calendarEvents}
+                    events={this.props.calendarEventsWithDateObjects}
                     defaultView="month"
                     defaultDate={new Date()}
                     scrollToTime={new Date(1970, 1, 1, 6)}
@@ -146,7 +147,7 @@ const mapStateToProps = (state) => {
   return {
     userId: state.user.userId,
     calendars: state.user.calendars,
-    calendarEvents: state.user.calendarEvents,
+    calendarEventsWithDateObjects: calendarEventsWithDateObjects(state),
     calendarSelectionWithSlotAndEvent: calendarSelectionWithSlotAndEvent(state)
   };
 };

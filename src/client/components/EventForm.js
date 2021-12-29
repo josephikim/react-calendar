@@ -63,41 +63,71 @@ class EventForm extends Component {
 
     if (!isCalendarSelectionUpdated) return;
 
-    const { calendarEventSelection, calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
-    const isCalendarEventSelected = Object.keys(calendarEventSelection).length > 0;
-
     let newState = {
       title: {
-        value: isCalendarEventSelected ? calendarEventSelection.title : '',
         validateOnChange: false,
         error: ''
-      },
-      desc: {
-        value: isCalendarEventSelected ? calendarEventSelection.desc : ''
-      },
-      start: {
-        value: isCalendarEventSelected ? calendarEventSelection.start : calendarSlotSelection.start
-      },
-      end: {
-        value: isCalendarEventSelected ? calendarEventSelection.end : calendarSlotSelection.end
       },
       formValuesChanged: false,
       submitCalled: false,
       error: ''
     };
 
+    const { calendarEventSelection, calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
+    const isCalendarEventSelected = Object.keys(calendarEventSelection).length > 0;
+
     if (isCalendarEventSelected) {
+      newState.title = {
+        ...newState.title,
+        value: calendarEventSelection.title
+      };
+      newState.desc = {
+        value: calendarEventSelection.desc
+      };
+      newState.start = {
+        value: calendarEventSelection.start
+      };
+      newState.end = {
+        value: calendarEventSelection.end
+      };
       newState.selectedCalendarId = calendarEventSelection.calendarId;
     } else {
       // calendar slot is selected
-      const lastSelectedCalendar = this.props.calendars.filter(
-        (calendar) => calendar._id === this.state.selectedCalendarId
-      ); // returns array of length 1
-      const isLastSelectionASystemCalendar = lastSelectedCalendar[0].systemCalendar === true;
+      newState.start = {
+        value: calendarSlotSelection.start
+      };
+      newState.end = {
+        value: calendarSlotSelection.end
+      };
 
-      if (isLastSelectionASystemCalendar) {
-        // previous selection was a system event
-        newState.selectedCalendarId = this.state.defaultCalendarId;
+      const isPrevSelectionAnEvent = prevProps.calendarSelectionWithSlotAndEvent === false;
+
+      if (isPrevSelectionAnEvent) {
+        newState.title = {
+          ...newState.title,
+          value: ''
+        };
+        newState.desc = {
+          value: ''
+        };
+
+        const prevSelectionEventCalendar = this.props.calendars.filter(
+          (calendar) => calendar._id === this.state.selectedCalendarId
+        ); // returns array of length 1
+        const isPrevSelectionASystemEvent = prevSelectionEventCalendar[0].systemCalendar === true;
+
+        if (isPrevSelectionASystemEvent) {
+          newState.selectedCalendarId = this.state.defaultCalendarId;
+        }
+      } else {
+        // previous selection was a slot
+        newState.title = {
+          ...newState.title,
+          value: this.state.title.value
+        };
+        newState.desc = {
+          value: this.state.desc.value
+        };
       }
     }
 

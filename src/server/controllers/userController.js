@@ -174,18 +174,18 @@ const updatePassword = async (req, res, next) => {
 };
 
 const createCalendar = async (req, res, next) => {
-  let id = req.body.user;
+  let userId = req.body.userId;
 
   try {
     const foundCalendars = await Calendar.find({
-      $or: [{ user: id }, { systemCalendar: true }]
+      $or: [{ user: userId }, { systemCalendar: true }]
     });
 
     let data = {
       name: req.body.name,
-      color: `#${CALENDAR_COLORS[foundCalendars.length + 1]}`,
+      color: `#${CALENDAR_COLORS[foundCalendars.length]}`,
       visibility: true,
-      user: id,
+      user: userId,
       userDefault: false,
       systemCalendar: false
     };
@@ -199,7 +199,9 @@ const createCalendar = async (req, res, next) => {
       name: createdCalendar.name,
       color: createdCalendar.color,
       visibility: createdCalendar.visibility,
-      user: createdCalendar.user
+      user: createdCalendar.user,
+      userDefault: createdCalendar.userDefault,
+      systemCalendar: createdCalendar.systemCalendar
     };
 
     return res.status(200).send({ data: trimmed });
@@ -220,7 +222,9 @@ const updateCalendar = async (req, res, next) => {
       name: updatedCalendar.name,
       color: updatedCalendar.color,
       visibility: updatedCalendar.visibility,
-      user: updatedCalendar.user
+      user: updatedCalendar.user,
+      userDefault: updatedCalendar.userDefault,
+      systemCalendar: updatedCalendar.systemCalendar
     };
 
     return res.status(200).send({ data: trimmed, message: 'Updated calendar' });

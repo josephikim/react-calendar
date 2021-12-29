@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col, Form } from 'react-bootstrap';
+import { Container, Form } from 'react-bootstrap';
 import { validateFields } from '../../validation';
 import { createCalendar, updateCalendar } from '../store/userSlice';
 
@@ -33,7 +33,7 @@ class CalendarSettings extends Component {
     const calendarsChanged = this.props.calendars.length > 0 && !_.isEqual(this.props.calendars, prevProps.calendars);
 
     if (calendarsChanged) {
-      const calendarsState = getCalendarsState();
+      const calendarsState = this.getCalendarsState();
 
       this.setState({
         newCalendar: {
@@ -69,6 +69,8 @@ class CalendarSettings extends Component {
       target: { name }
     } = event;
 
+    if (!this.state[name]) return;
+
     if (this.state[name]['validateOnChange'] === false) {
       this.setState((state) => ({
         [name]: {
@@ -86,6 +88,8 @@ class CalendarSettings extends Component {
       target: { name, value }
     } = event;
 
+    if (!this.state[name]) return;
+
     let newState = {
       [name]: {
         ...this.state[name],
@@ -98,7 +102,7 @@ class CalendarSettings extends Component {
   };
 
   handleEdit = (id) => {
-    if (!id) return;
+    if (!id || !this.state[id]) return;
 
     let newState = {};
 
@@ -152,7 +156,7 @@ class CalendarSettings extends Component {
           alert('New calendar created!');
         })
         .catch((err) => {
-          const error = err.response.data;
+          const error = err.response;
           if (error.errorCode === 'calendar') {
             this.setState((state) => ({
               newCalendar: {
@@ -178,6 +182,8 @@ class CalendarSettings extends Component {
 
   handleSubmitUpdateCalendar = (event, id) => {
     event.preventDefault();
+
+    if (!this.state[id]) return;
 
     const calendarState = this.state[id];
 
@@ -229,10 +235,10 @@ class CalendarSettings extends Component {
                 key={item._id}
                 id={item._id}
                 type="text"
-                value={this.state[item._id].value}
-                editMode={this.state[item._id].editMode}
-                error={this.state[item._id].error}
-                disabled={this.state[item._id].systemCalendar}
+                value={this.state[item._id] ? this.state[item._id].value : ''}
+                error={this.state[item._id] ? this.state[item._id].error : null}
+                editMode={this.state[item._id] ? this.state[item._id].editMode : false}
+                disabled={this.state[item._id] ? this.state[item._id].systemCalendar : true}
                 onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
                 onBlur={(event) => this.handleBlur(validateFields.validateCalendarName, event)}
                 onSubmit={(event, id) => this.handleSubmitUpdateCalendar(event, id)}
@@ -246,21 +252,12 @@ class CalendarSettings extends Component {
               type="text"
               label="Add Calendar"
               placeholder="Enter calendar name"
-              editMode="true"
               value={this.state.newCalendar.value}
               error={this.state.newCalendar.error}
+              editMode={true}
               onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
-              onBlur={(event) => this.handleBlur(validateFields.validateCalendarName, event)}
               onSubmit={(event) => this.handleSubmitAddCalendar(event)}
             />
-
-            {newCalendarError && (
-              <Container>
-                <div className="error text-danger">
-                  <small>{newCalendarError}</small>
-                </div>
-              </Container>
-            )}
           </Form>
         </div>
       );

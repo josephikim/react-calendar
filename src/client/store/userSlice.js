@@ -16,7 +16,7 @@ const userSlice = createSlice({
       state.calendars = [...action.payload];
     },
     calendarAdded(state, action) {
-      state.calendars = [...state.calendars, ...action.payload];
+      state.calendars = [...state.calendars, action.payload];
     },
     calendarUpdated(state, action) {
       state.calendars = state.calendars.map((calendar) =>

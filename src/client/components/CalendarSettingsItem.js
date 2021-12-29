@@ -5,6 +5,8 @@ import '../styles/CalendarSettingsItem.css';
 
 const CalendarSettingsItem = (props) => {
   const error = props.error;
+  const onBlur = props.onBlur;
+  const readOnly = !props.editMode;
 
   return (
     <div className="CalendarSettingsItem">
@@ -22,9 +24,9 @@ const CalendarSettingsItem = (props) => {
               type={props.type}
               placeholder={props.placeholder}
               value={props.value}
-              readOnly={!props.editMode}
+              readOnly={readOnly}
+              onBlur={onBlur}
               onChange={(event) => props.onChange(event)}
-              onBlur={(event) => props.onBlur(event)}
             />
           </Form.Group>
         </Col>
@@ -51,7 +53,7 @@ const CalendarSettingsItem = (props) => {
                 Save
               </Button>
             )}
-            {props.editMode && props.id !== 'add-calendar' && (
+            {props.editMode && props.id !== 'newCalendar' && (
               <Button type="button" name="cancelBtn" variant="secondary" onClick={() => props.onCancel(props.id)}>
                 Cancel
               </Button>

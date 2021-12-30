@@ -260,11 +260,15 @@ class EventForm extends Component {
 
         if (clickedId === 'update-event-btn') {
           // Dispatch updateCalendarEvent action
-          data._id = this.props.calendarEventSelection._id;
+          data._id = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection._id;
           this.props.updateCalendarEvent(data);
         }
       } catch (err) {
-        this.setState({ error: err.response.data });
+        if (err.response) {
+          this.setState({ error: err.response.data });
+        } else {
+          alert(`Error: ${err}`);
+        }
       }
     } else {
       this.setState((state) => ({

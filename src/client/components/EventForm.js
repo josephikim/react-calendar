@@ -411,8 +411,9 @@ class EventForm extends Component {
                       id="startTime"
                       name="startTime"
                       disabled={isSystemEventSelected}
+                      placeholder="n/a"
                       showSecond={false}
-                      value={moment(this.state.start.value)}
+                      value={this.state.allDay ? this.placeholder : moment(this.state.start.value)}
                       onChange={(value, id = 'startTime') => this.handleTimeChange(value, id)}
                       format={this.state.timeFormat}
                       minuteStep={15}
@@ -456,8 +457,9 @@ class EventForm extends Component {
                       id="endTime"
                       name="endTime"
                       disabled={isSystemEventSelected}
+                      placeholder="n/a"
                       showSecond={false}
-                      value={moment(this.state.end.value)}
+                      value={this.state.allDay ? this.placeholder : moment(this.state.end.value)}
                       onChange={(value, id = 'endTime') => this.handleTimeChange(value, id)}
                       format={this.state.timeFormat}
                       minuteStep={15}

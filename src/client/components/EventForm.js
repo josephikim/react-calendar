@@ -42,6 +42,7 @@ class EventForm extends Component {
       end: {
         value: this.props.calendarSelectionWithSlotAndEvent.calendarSlotSelection.end
       },
+      allDay: false,
       defaultCalendarId: defaultCalendar[0]._id,
       selectedCalendarId: defaultCalendar[0]._id,
       formValuesChanged: false,
@@ -90,7 +91,8 @@ class EventForm extends Component {
       newState.end = {
         value: calendarEventSelection.end
       };
-      newState.selectedCalendarId = calendarEventSelection.calendarId;
+      (newState.allDay = calendarEventSelection.allDay),
+        (newState.selectedCalendarId = calendarEventSelection.calendarId);
     } else {
       // calendar slot is selected
       newState.start = {
@@ -99,6 +101,7 @@ class EventForm extends Component {
       newState.end = {
         value: calendarSlotSelection.end
       };
+      newState.allDay = false;
 
       const isPrevSelectionAnEvent = prevProps.calendarSelectionWithSlotAndEvent === false;
 
@@ -307,6 +310,16 @@ class EventForm extends Component {
     }
   };
 
+  handleAllDayChange = (event) => {
+    const isChecked = event.target.checked;
+
+    if (isChecked !== null) {
+      this.setState({
+        allDay: isChecked
+      });
+    }
+  };
+
   render() {
     const isCalendarSelectionUpdated = !!this.props.calendarSelectionWithSlotAndEvent;
 
@@ -453,6 +466,22 @@ class EventForm extends Component {
                     />
                   </Col>
                 </Row>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col>
+                <label htmlFor="all-day" className="text-primary">
+                  All Day Event
+                </label>
+
+                <Form.Check
+                  type="checkbox"
+                  id="all-day"
+                  checked={this.state.allDay}
+                  disabled={isSystemEventSelected}
+                  onChange={(event) => this.handleAllDayChange(event)}
+                />
               </Col>
             </Row>
 

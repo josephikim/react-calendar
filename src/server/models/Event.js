@@ -17,7 +17,9 @@ const eventSchema = new mongoose.Schema({
     required: [true, 'Enter an end date.']
   },
   allDay: {
-    type: Boolean
+    type: Boolean,
+    required: true,
+    default: false
   },
   calendarId: {
     type: mongoose.Schema.Types.ObjectId,

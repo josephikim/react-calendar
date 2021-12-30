@@ -60,6 +60,7 @@ const createEvent = async (req, res, next) => {
       desc: createdEvent.desc,
       start: createdEvent.start,
       end: createdEvent.end,
+      allDay: createdEvent.allDay,
       calendarId: createdEvent.calendarId
     };
 
@@ -97,6 +98,7 @@ const updateEvent = async (req, res, next) => {
       desc: updatedEvent.desc,
       start: updatedEvent.start,
       end: updatedEvent.end,
+      allDay: updatedEvent.allDay,
       calendarId: updatedEvent.calendarId
     };
 

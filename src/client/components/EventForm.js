@@ -246,7 +246,7 @@ class EventForm extends Component {
       // if no error, submit form
       try {
         // Check for valid end time
-        if (this.state.end.value <= this.state.start.value) {
+        if (this.state.allDay === false && this.state.end.value <= this.state.start.value) {
           alert('Input error: End time should be after start time!');
           return;
         }
@@ -254,10 +254,28 @@ class EventForm extends Component {
         let data = {
           title: this.state.title.value,
           desc: this.state.desc.value,
-          start: this.state.start.value,
-          end: this.state.end.value,
+          allDay: this.state.allDay,
           calendarId: this.state.selectedCalendarId
         };
+
+        // add start and end values to payload
+        if (this.state.allDay === true) {
+          let startTimeAsDateObj = new Date(this.state.start.value);
+          let endTimeAsDateObj = new Date(this.state.end.value);
+
+          // Set hours, minutes, and seconds to zero
+          startTimeAsDateObj.setHours(0, 0, 0);
+          endTimeAsDateObj.setHours(0, 0, 0);
+
+          const allDayStartTimeAsISOString = startTimeAsDateObj.toISOString();
+          const allDayEndTimeAsISOString = endTimeAsDateObj.toISOString();
+
+          data.start = allDayStartTimeAsISOString;
+          data.end = allDayEndTimeAsISOString;
+        } else {
+          data.start = this.state.start.value;
+          data.end = this.state.end.value;
+        }
 
         if (clickedId === 'add-event-btn') this.props.createCalendarEvent(data); // Dispatch createCalendarEvent action
 

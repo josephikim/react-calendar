@@ -40,7 +40,9 @@ const retrieveEvents = async (req, res, next) => {
       calendarId: {
         $in: calendarIds
       }
-    }).sort({ start: -1 });
+    })
+      .select('-__v')
+      .sort({ start: -1 });
 
     return res.status(200).send({ data: events });
   } catch (err) {

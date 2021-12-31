@@ -45,7 +45,6 @@ class EventForm extends Component {
       allDay: false,
       defaultCalendarId: defaultCalendar[0]._id,
       selectedCalendarId: defaultCalendar[0]._id,
-      formValuesChanged: false,
       submitCalled: false,
       timeFormat: 'h:mm a',
       error: ''
@@ -69,7 +68,6 @@ class EventForm extends Component {
         validateOnChange: false,
         error: ''
       },
-      formValuesChanged: false,
       submitCalled: false,
       error: ''
     };
@@ -165,8 +163,7 @@ class EventForm extends Component {
         [name]: {
           ...state[name],
           value: value
-        },
-        formValuesChanged: true
+        }
       }));
     } else {
       // handle fields with validation
@@ -175,8 +172,7 @@ class EventForm extends Component {
           ...state[name],
           value: value,
           error: state[name]['validateOnChange'] ? validationFunc(value) : ''
-        },
-        formValuesChanged: true
+        }
       }));
     }
   };
@@ -195,8 +191,7 @@ class EventForm extends Component {
     let newState = {
       [target]: {
         value: targetValueStr
-      },
-      formValuesChanged: true
+      }
     };
 
     // update end date if later start date is selected
@@ -229,8 +224,7 @@ class EventForm extends Component {
     let newState = {
       [target]: {
         value: updateStr
-      },
-      formValuesChanged: true
+      }
     };
 
     this.setState(newState);
@@ -318,12 +312,11 @@ class EventForm extends Component {
 
   handleCalendarChange = (values) => {
     const calendarId = values[0]._id;
-    const isFormValueChanged = calendarId !== this.state.selectedCalendarId;
+    const isCalendarValueChanged = calendarId !== this.state.selectedCalendarId;
 
-    if (isFormValueChanged && calendarId.length > 0) {
+    if (isCalendarValueChanged && calendarId.length > 0) {
       this.setState({
-        selectedCalendarId: calendarId,
-        formValuesChanged: true
+        selectedCalendarId: calendarId
       });
     }
   };
@@ -342,13 +335,13 @@ class EventForm extends Component {
     const isCalendarSelectionUpdated = !!this.props.calendarSelectionWithSlotAndEvent;
 
     if (isCalendarSelectionUpdated) {
-      const { calendarEventSelection } = this.props.calendarSelectionWithSlotAndEvent;
+      const { calendarEventSelection, calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
       const isCalendarEventSelected = Object.keys(calendarEventSelection).length > 0;
+      const isCalendarSlotSelected = Object.keys(calendarSlotSelection).length > 0;
       const selectedCalendar = this.props.calendars.filter(
         (calendar) => calendar._id === this.state.selectedCalendarId
       ); // returns array of length one
       const isSystemEventSelected = selectedCalendar[0].systemCalendar;
-      const formValuesChanged = this.state.formValuesChanged;
       return (
         <div className="EventForm">
           <Form>
@@ -518,7 +511,7 @@ class EventForm extends Component {
 
             <Row className="two-column">
               <Col>
-                {!isCalendarEventSelected && (
+                {isCalendarSlotSelected && (
                   <Button
                     type="submit"
                     name="add-event-btn"
@@ -539,7 +532,7 @@ class EventForm extends Component {
                     id="update-event-btn"
                     className="btn"
                     variant="success"
-                    disabled={!formValuesChanged || isSystemEventSelected}
+                    disabled={isSystemEventSelected}
                     onClick={(e) => this.handleSubmit(e, this.id)}
                   >
                     Save Changes

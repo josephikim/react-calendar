@@ -245,7 +245,7 @@ class EventForm extends Component {
           return;
         }
 
-        let data = {
+        let payload = {
           title: this.state.title.value,
           desc: this.state.desc.value,
           allDay: this.state.allDay,
@@ -264,19 +264,29 @@ class EventForm extends Component {
           const allDayStartTimeAsISOString = startTimeAsDateObj.toISOString();
           const allDayEndTimeAsISOString = endTimeAsDateObj.toISOString();
 
-          data.start = allDayStartTimeAsISOString;
-          data.end = allDayEndTimeAsISOString;
+          payload.start = allDayStartTimeAsISOString;
+          payload.end = allDayEndTimeAsISOString;
         } else {
-          data.start = this.state.start.value;
-          data.end = this.state.end.value;
+          payload.start = this.state.start.value;
+          payload.end = this.state.end.value;
         }
 
-        if (clickedId === 'add-event-btn') this.props.createCalendarEvent(data); // Dispatch createCalendarEvent action
+        if (clickedId === 'add-event-btn') this.props.createCalendarEvent(payload); // Dispatch createCalendarEvent action
 
         if (clickedId === 'update-event-btn') {
-          // Dispatch updateCalendarEvent action
-          data._id = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection._id;
-          this.props.updateCalendarEvent(data);
+          // Check for valid event update
+          const { calendarEventSelection } = this.props.calendarSelectionWithSlotAndEvent;
+
+          const isEventUpdateValid = this.checkEventUpdate(calendarEventSelection, payload);
+
+          if (!isEventUpdateValid) {
+            alert('No changes detected!');
+            return;
+          }
+
+          // If update is valid, dispatch updateCalendarEvent action
+          payload._id = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection._id;
+          this.props.updateCalendarEvent(payload);
         }
       } catch (err) {
         if (err.response) {
@@ -295,6 +305,21 @@ class EventForm extends Component {
         submitCalled: false
       }));
     }
+  };
+
+  checkEventUpdate = (event, eventUpdate) => {
+    const isUpdateValid =
+      event.title !== eventUpdate.title ||
+      event.desc !== eventUpdate.desc ||
+      event.start !== eventUpdate.start ||
+      event.end !== eventUpdate.end ||
+      event.allDay !== eventUpdate.allDay ||
+      event.calendarId !== eventUpdate.calendarId;
+
+    if (isUpdateValid) {
+      return true;
+    }
+    return false;
   };
 
   handleDelete = (event) => {

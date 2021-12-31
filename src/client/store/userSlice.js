@@ -123,6 +123,14 @@ export const updateCalendarSlotSelection = (slot) => async (dispatch) => {
 };
 
 export const updateCalendarEventSelection = (event) => async (dispatch) => {
+  let payload = event;
+
+  // Convert dates to strings
+  if (!_.isEmpty(payload)) {
+    payload.start = payload.start.toISOString();
+    payload.end = payload.end.toISOString();
+  }
+
   dispatch(calendarEventSelectionUpdated(event));
 };
 

@@ -91,11 +91,11 @@ class CalendarPage extends Component {
   };
 
   render() {
-    const calendarsLoaded = this.props.calendars.length > 0;
-    const calendarEventsLoaded = this.props.calendarEventsWithDateObjects.length > 0;
+    const isCalendarsLoaded = this.props.calendars.length > 0;
+    const isCalendarEventsLoaded = this.props.calendarEventsWithDateObjects.length > 0;
 
-    if (calendarsLoaded) {
-      if (calendarEventsLoaded) {
+    if (isCalendarsLoaded) {
+      if (isCalendarEventsLoaded) {
         return (
           <div className="CalendarPage">
             <Container>

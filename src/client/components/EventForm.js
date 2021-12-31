@@ -301,6 +301,10 @@ class EventForm extends Component {
     event.preventDefault();
     if (!this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection) return;
 
+    // Confirm delete via user input
+    const deleteConfirmation = confirm('Are you sure you want to delete this event?');
+    if (deleteConfirmation === false) return;
+
     const eventId = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection._id;
 
     try {

@@ -108,30 +108,30 @@ export const onSelectEvent = (event) => (dispatch) => {
 };
 
 export const updateCalendarSlotSelection = (slot) => async (dispatch) => {
-  let payload = slot;
+  let clonedSlot = _.cloneDeep(slot);
 
   // Convert dates to strings
-  if (!_.isEmpty(payload)) {
-    payload.start = payload.start.toISOString();
-    payload.end = payload.end.toISOString();
-    payload.slots = payload.slots.map((slot) => {
+  if (!_.isEmpty(clonedSlot)) {
+    clonedSlot.start = clonedSlot.start.toISOString();
+    clonedSlot.end = clonedSlot.end.toISOString();
+    clonedSlot.slots = clonedSlot.slots.map((slot) => {
       return slot.toISOString();
     });
   }
 
-  dispatch(calendarSlotSelectionUpdated(payload));
+  dispatch(calendarSlotSelectionUpdated(clonedSlot));
 };
 
 export const updateCalendarEventSelection = (event) => async (dispatch) => {
-  let payload = event;
+  let clonedEvent = _.cloneDeep(event);
 
   // Convert dates to strings
-  if (!_.isEmpty(payload)) {
-    payload.start = payload.start.toISOString();
-    payload.end = payload.end.toISOString();
+  if (!_.isEmpty(clonedEvent)) {
+    clonedEvent.start = clonedEvent.start.toISOString();
+    clonedEvent.end = clonedEvent.end.toISOString();
   }
 
-  dispatch(calendarEventSelectionUpdated(event));
+  dispatch(calendarEventSelectionUpdated(clonedEvent));
 };
 
 export const createCalendar = (data) => async (dispatch) => {

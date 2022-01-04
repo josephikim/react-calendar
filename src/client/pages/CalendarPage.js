@@ -24,7 +24,8 @@ class CalendarPage extends Component {
     super(...args);
 
     this.state = {
-      isUserCalendarLoaded: false
+      isUserCalendarLoaded: false,
+      isInitialSlotLoaded: false
     };
   }
 
@@ -35,8 +36,14 @@ class CalendarPage extends Component {
   componentDidUpdate = () => {
     const isUserCalendarLoaded = this.props.calendars.some((calendar) => calendar.userDefault === true);
 
+    const isInitialSlotLoaded = !!this.props.calendarSelectionWithSlotAndEvent;
+
     if (isUserCalendarLoaded && this.state.isUserCalendarLoaded === false) {
       this.setState({ isUserCalendarLoaded: true });
+    }
+
+    if (isInitialSlotLoaded && this.state.isInitialSlotLoaded === false) {
+      this.setState({ isInitialSlotLoaded: true });
     }
   };
 
@@ -109,7 +116,9 @@ class CalendarPage extends Component {
   };
 
   render() {
-    if (this.state.isUserCalendarLoaded) {
+    const isInitialDataLoaded = this.state.isUserCalendarLoaded && this.state.isInitialSlotLoaded;
+
+    if (isInitialDataLoaded) {
       return (
         <div className="CalendarPage">
           <Container>

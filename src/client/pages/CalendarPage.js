@@ -41,9 +41,12 @@ class CalendarPage extends Component {
   };
 
   eventStyleGetter = (event) => {
+    const calendar = this.props.calendars.filter((calendar) => calendar._id === event.calendarId);
+
+    if (calendar.length < 1) return;
+
     // returns HEX code
     const getCalendarColor = () => {
-      const calendar = this.props.calendars.filter((calendar) => calendar._id === event.calendarId);
       return calendar[0].color;
     };
 

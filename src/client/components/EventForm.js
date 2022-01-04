@@ -25,7 +25,13 @@ class EventForm extends Component {
   constructor(props) {
     super(props);
 
+    let defaultCalendarId = null;
+
     const defaultCalendar = this.props.calendars.filter((calendar) => calendar.userDefault === true); // returns array of length one
+
+    defaultCalendarId = defaultCalendar[0]._id;
+
+    const { calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
 
     const initialState = {
       title: {
@@ -37,14 +43,14 @@ class EventForm extends Component {
         value: ''
       },
       start: {
-        value: this.props.calendarSelectionWithSlotAndEvent.calendarSlotSelection.start
+        value: calendarSlotSelection.start
       },
       end: {
-        value: this.props.calendarSelectionWithSlotAndEvent.calendarSlotSelection.end
+        value: calendarSlotSelection.end
       },
       allDay: false,
-      defaultCalendarId: defaultCalendar[0]._id,
-      selectedCalendarId: defaultCalendar[0]._id,
+      defaultCalendarId: defaultCalendarId,
+      selectedCalendarId: defaultCalendarId,
       submitCalled: false,
       timeFormat: 'h:mm a',
       error: ''
@@ -54,14 +60,18 @@ class EventForm extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.calendarSelectionWithSlotAndEvent === false) return;
+    if (!this.props.calendarSelectionWithSlotAndEvent) {
+      return;
+    }
 
     const isCalendarSelectionUpdated = !_.isEqual(
       prevProps.calendarSelectionWithSlotAndEvent,
       this.props.calendarSelectionWithSlotAndEvent
     );
 
-    if (!isCalendarSelectionUpdated) return;
+    if (!isCalendarSelectionUpdated) {
+      return;
+    }
 
     let newState = {
       title: {
@@ -93,17 +103,32 @@ class EventForm extends Component {
         (newState.selectedCalendarId = calendarEventSelection.calendarId);
     } else {
       // calendar slot is selected
+
+      // Check for allDay slot selection (only applies to 'week' and 'day' views)
+      const isAllDaySlotSelected =
+        (calendarSlotSelection.action === 'click' || calendarSlotSelection.action === 'select') &&
+        Object.prototype.hasOwnProperty.call(calendarSlotSelection, 'box') === false;
+
       newState.start = {
         value: calendarSlotSelection.start
       };
       newState.end = {
         value: calendarSlotSelection.end
       };
-      newState.allDay = false;
+      newState.allDay = isAllDaySlotSelected;
 
-      const isPrevSelectionAnEvent = prevProps.calendarSelectionWithSlotAndEvent === false;
+      const isPrevSelectionASlot = !!prevProps.calendarSelectionWithSlotAndEvent;
 
-      if (isPrevSelectionAnEvent) {
+      if (isPrevSelectionASlot) {
+        newState.title = {
+          ...newState.title,
+          value: this.state.title.value
+        };
+        newState.desc = {
+          value: this.state.desc.value
+        };
+      } else {
+        // previous selection was an event
         newState.title = {
           ...newState.title,
           value: ''
@@ -120,15 +145,6 @@ class EventForm extends Component {
         if (isPrevSelectionASystemEvent) {
           newState.selectedCalendarId = this.state.defaultCalendarId;
         }
-      } else {
-        // previous selection was a slot
-        newState.title = {
-          ...newState.title,
-          value: this.state.title.value
-        };
-        newState.desc = {
-          value: this.state.desc.value
-        };
       }
     }
 
@@ -361,235 +377,228 @@ class EventForm extends Component {
   };
 
   render() {
-    const isCalendarSelectionUpdated = !!this.props.calendarSelectionWithSlotAndEvent;
+    let isCalendarSlotSelected = true;
+    isCalendarSlotSelected = this.props.calendarSelectionWithSlotAndEvent
+      ? Object.keys(this.props.calendarSelectionWithSlotAndEvent.calendarSlotSelection).length > 0
+      : false;
+    const selectedCalendar = this.props.calendars.filter((calendar) => calendar._id === this.state.selectedCalendarId); // returns array of length one
+    const isSystemEventSelected = selectedCalendar[0].systemCalendar;
+    return (
+      <div className="EventForm">
+        <Form>
+          <Row>
+            <Col>
+              <label htmlFor="title" className="text-primary">
+                Event Title (required)
+              </label>
 
-    if (isCalendarSelectionUpdated) {
-      const { calendarEventSelection, calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
-      const isCalendarEventSelected = Object.keys(calendarEventSelection).length > 0;
-      const isCalendarSlotSelected = Object.keys(calendarSlotSelection).length > 0;
-      const selectedCalendar = this.props.calendars.filter(
-        (calendar) => calendar._id === this.state.selectedCalendarId
-      ); // returns array of length one
-      const isSystemEventSelected = selectedCalendar[0].systemCalendar;
-      return (
-        <div className="EventForm">
-          <Form>
-            <Row>
-              <Col>
-                <label htmlFor="title" className="text-primary">
-                  Event Title (required)
-                </label>
+              <textarea
+                id="title"
+                name="title"
+                className="input"
+                disabled={isSystemEventSelected}
+                rows="1"
+                onChange={(event) => this.handleChange(validateFields.validateTitle, event)}
+                onBlur={(event) => this.handleBlur(validateFields.validateTitle, event)}
+                value={this.state.title.value}
+              >
+                enter title
+              </textarea>
 
-                <textarea
-                  id="title"
-                  name="title"
-                  className="input"
+              <div className="text-danger">
+                <small>{this.state.title.error}</small>
+              </div>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <label htmlFor="desc" className="text-primary">
+                Event Description
+              </label>
+
+              <textarea
+                id="desc"
+                name="desc"
+                className="input"
+                disabled={isSystemEventSelected}
+                rows="3"
+                onChange={(event) => this.handleChange(null, event)}
+                value={this.state.desc.value}
+              >
+                enter description
+              </textarea>
+            </Col>
+          </Row>
+
+          <Row className="two-column">
+            <Col xs={6}>
+              <Row>
+                <Col>
+                  <label htmlFor="startDate" className="text-primary">
+                    Start Date
+                  </label>
+
+                  <DayPickerInput
+                    id="startDate"
+                    name="startDate"
+                    inputProps={isSystemEventSelected ? { disabled: true } : {}}
+                    formatDate={formatDate}
+                    parseDate={parseDate}
+                    value={`${formatDate(this.state.start.value)}`}
+                    onDayChange={(value) => this.handleDayChange(value, 'startDate')}
+                  />
+                </Col>
+              </Row>
+            </Col>
+
+            <Col xs={6}>
+              <Row>
+                <Col>
+                  <label htmlFor="startTime" className="text-primary">
+                    Start Time
+                  </label>
+
+                  <TimePicker
+                    id="startTime"
+                    name="startTime"
+                    disabled={isSystemEventSelected}
+                    placeholder="n/a"
+                    showSecond={false}
+                    value={this.state.allDay ? this.placeholder : moment(this.state.start.value)}
+                    onChange={(value, id = 'startTime') => this.handleTimeChange(value, id)}
+                    format={this.state.timeFormat}
+                    minuteStep={15}
+                    use12Hours
+                    inputReadOnly
+                  />
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+
+          <Row className="two-column">
+            <Col xs={6}>
+              <Row>
+                <Col>
+                  <label htmlFor="endDate" className="text-primary">
+                    End Date
+                  </label>
+
+                  <DayPickerInput
+                    id="endDate"
+                    name="endDate"
+                    inputProps={isSystemEventSelected ? { disabled: true } : {}}
+                    formatDate={formatDate}
+                    parseDate={parseDate}
+                    value={`${formatDate(this.state.end.value)}`}
+                    onDayChange={(value) => this.handleDayChange(value, 'endDate')}
+                  />
+                </Col>
+              </Row>
+            </Col>
+
+            <Col xs={6}>
+              <Row>
+                <Col>
+                  <label htmlFor="endTime" className="text-primary">
+                    End Time
+                  </label>
+
+                  <TimePicker
+                    id="endTime"
+                    name="endTime"
+                    disabled={isSystemEventSelected}
+                    placeholder="n/a"
+                    showSecond={false}
+                    value={this.state.allDay ? this.placeholder : moment(this.state.end.value)}
+                    onChange={(value, id = 'endTime') => this.handleTimeChange(value, id)}
+                    format={this.state.timeFormat}
+                    minuteStep={15}
+                    use12Hours
+                    inputReadOnly
+                  />
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <label htmlFor="all-day" className="text-primary">
+                All Day Event
+              </label>
+
+              <Form.Check
+                type="checkbox"
+                id="all-day"
+                checked={this.state.allDay}
+                disabled={isSystemEventSelected}
+                onChange={(event) => this.handleAllDayChange(event)}
+              />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <CalendarSelectMenu
+                selected={selectedCalendar}
+                disabled={isSystemEventSelected}
+                calendars={this.props.calendars}
+                onChange={(values) => this.handleCalendarChange(values)}
+              />
+            </Col>
+          </Row>
+
+          <Row className="two-column">
+            <Col>
+              {isCalendarSlotSelected && (
+                <Button
+                  type="submit"
+                  name="add-event-btn"
+                  id="add-event-btn"
+                  className="btn"
+                  variant="primary"
                   disabled={isSystemEventSelected}
-                  rows="1"
-                  onChange={(event) => this.handleChange(validateFields.validateTitle, event)}
-                  onBlur={(event) => this.handleBlur(validateFields.validateTitle, event)}
-                  value={this.state.title.value}
+                  onMouseDown={() => this.setState({ submitCalled: true })}
+                  onClick={(e) => this.handleSubmit(e, this.id)}
                 >
-                  enter title
-                </textarea>
-
-                <div className="text-danger">
-                  <small>{this.state.title.error}</small>
-                </div>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col>
-                <label htmlFor="desc" className="text-primary">
-                  Event Description
-                </label>
-
-                <textarea
-                  id="desc"
-                  name="desc"
-                  className="input"
+                  Add Event
+                </Button>
+              )}
+              {!isCalendarSlotSelected && (
+                <Button
+                  type="submit"
+                  name="update-event-btn"
+                  id="update-event-btn"
+                  className="btn"
+                  variant="success"
                   disabled={isSystemEventSelected}
-                  rows="3"
-                  onChange={(event) => this.handleChange(null, event)}
-                  value={this.state.desc.value}
+                  onClick={(e) => this.handleSubmit(e, this.id)}
                 >
-                  enter description
-                </textarea>
-              </Col>
-            </Row>
+                  Save Changes
+                </Button>
+              )}
+            </Col>
 
-            <Row className="two-column">
-              <Col xs={6}>
-                <Row>
-                  <Col>
-                    <label htmlFor="startDate" className="text-primary">
-                      Start Date
-                    </label>
-
-                    <DayPickerInput
-                      id="startDate"
-                      name="startDate"
-                      inputProps={isSystemEventSelected ? { disabled: true } : {}}
-                      formatDate={formatDate}
-                      parseDate={parseDate}
-                      value={`${formatDate(this.state.start.value)}`}
-                      onDayChange={(value) => this.handleDayChange(value, 'startDate')}
-                    />
-                  </Col>
-                </Row>
-              </Col>
-
-              <Col xs={6}>
-                <Row>
-                  <Col>
-                    <label htmlFor="startTime" className="text-primary">
-                      Start Time
-                    </label>
-
-                    <TimePicker
-                      id="startTime"
-                      name="startTime"
-                      disabled={isSystemEventSelected}
-                      placeholder="n/a"
-                      showSecond={false}
-                      value={this.state.allDay ? this.placeholder : moment(this.state.start.value)}
-                      onChange={(value, id = 'startTime') => this.handleTimeChange(value, id)}
-                      format={this.state.timeFormat}
-                      minuteStep={15}
-                      use12Hours
-                      inputReadOnly
-                    />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-
-            <Row className="two-column">
-              <Col xs={6}>
-                <Row>
-                  <Col>
-                    <label htmlFor="endDate" className="text-primary">
-                      End Date
-                    </label>
-
-                    <DayPickerInput
-                      id="endDate"
-                      name="endDate"
-                      inputProps={isSystemEventSelected ? { disabled: true } : {}}
-                      formatDate={formatDate}
-                      parseDate={parseDate}
-                      value={`${formatDate(this.state.end.value)}`}
-                      onDayChange={(value) => this.handleDayChange(value, 'endDate')}
-                    />
-                  </Col>
-                </Row>
-              </Col>
-
-              <Col xs={6}>
-                <Row>
-                  <Col>
-                    <label htmlFor="endTime" className="text-primary">
-                      End Time
-                    </label>
-
-                    <TimePicker
-                      id="endTime"
-                      name="endTime"
-                      disabled={isSystemEventSelected}
-                      placeholder="n/a"
-                      showSecond={false}
-                      value={this.state.allDay ? this.placeholder : moment(this.state.end.value)}
-                      onChange={(value, id = 'endTime') => this.handleTimeChange(value, id)}
-                      format={this.state.timeFormat}
-                      minuteStep={15}
-                      use12Hours
-                      inputReadOnly
-                    />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col>
-                <label htmlFor="all-day" className="text-primary">
-                  All Day Event
-                </label>
-
-                <Form.Check
-                  type="checkbox"
-                  id="all-day"
-                  checked={this.state.allDay}
+            <Col>
+              {!isCalendarSlotSelected && (
+                <Button
+                  name="delete-event-btn"
+                  id="delete-event-btn"
+                  className="btn"
+                  variant="danger"
                   disabled={isSystemEventSelected}
-                  onChange={(event) => this.handleAllDayChange(event)}
-                />
-              </Col>
-            </Row>
-
-            <Row>
-              <Col>
-                <CalendarSelectMenu
-                  selected={selectedCalendar}
-                  disabled={isSystemEventSelected}
-                  calendars={this.props.calendars}
-                  onChange={(values) => this.handleCalendarChange(values)}
-                />
-              </Col>
-            </Row>
-
-            <Row className="two-column">
-              <Col>
-                {isCalendarSlotSelected && (
-                  <Button
-                    type="submit"
-                    name="add-event-btn"
-                    id="add-event-btn"
-                    className="btn"
-                    variant="primary"
-                    disabled={isSystemEventSelected}
-                    onMouseDown={() => this.setState({ submitCalled: true })}
-                    onClick={(e) => this.handleSubmit(e, this.id)}
-                  >
-                    Add Event
-                  </Button>
-                )}
-                {isCalendarEventSelected && (
-                  <Button
-                    type="submit"
-                    name="update-event-btn"
-                    id="update-event-btn"
-                    className="btn"
-                    variant="success"
-                    disabled={isSystemEventSelected}
-                    onClick={(e) => this.handleSubmit(e, this.id)}
-                  >
-                    Save Changes
-                  </Button>
-                )}
-              </Col>
-
-              <Col>
-                {isCalendarEventSelected && (
-                  <Button
-                    name="delete-event-btn"
-                    id="delete-event-btn"
-                    className="btn"
-                    variant="danger"
-                    disabled={isSystemEventSelected}
-                    onClick={this.handleDelete}
-                  >
-                    Delete Event
-                  </Button>
-                )}
-              </Col>
-            </Row>
-          </Form>
-        </div>
-      );
-    } else {
-      return null;
-    }
+                  onClick={this.handleDelete}
+                >
+                  Delete Event
+                </Button>
+              )}
+            </Col>
+          </Row>
+        </Form>
+      </div>
+    );
   }
 }
 

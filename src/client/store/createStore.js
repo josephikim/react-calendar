@@ -8,18 +8,6 @@ import userReducer from './userSlice';
 
 const middleware = [thunk];
 
-// Set initial calendar slot
-let start = new Date();
-let end = new Date();
-start.setHours(start.getHours() + 1, 0, 0, 0);
-end.setHours(end.getHours() + 2, 0, 0, 0);
-
-const initialSlot = {
-  action: 'click',
-  start: start.toISOString(),
-  end: end.toISOString()
-};
-
 // Set initial state
 const initialState = {
   auth: {
@@ -29,7 +17,7 @@ const initialState = {
   user: {
     userId: null,
     username: null,
-    calendarSlotSelection: initialSlot,
+    calendarSlotSelection: {},
     calendarEventSelection: {},
     calendars: [],
     calendarEvents: []
@@ -43,11 +31,6 @@ const doCreateStore = () => {
   });
 
   const persistedState = loadState();
-
-  if (persistedState) {
-    persistedState.user.calendarSlotSelection = initialState.user.calendarSlotSelection;
-    persistedState.user.calendarEventSelection = initialState.user.calendarEventSelection;
-  }
 
   const composeEnhancers = composeWithDevTools({});
 

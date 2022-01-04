@@ -3,12 +3,13 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
+import _ from 'lodash';
 
 import EventForm from '../components/EventForm';
 import {
   onSelectSlot,
   onSelectEvent,
-  retrieveCalendarEvents,
+  initializeCalendarData,
   calendarSelectionWithSlotAndEvent,
   calendarEventsWithDateObjects
 } from '../store/userSlice';
@@ -21,10 +22,22 @@ const localizer = momentLocalizer(moment);
 class CalendarPage extends Component {
   constructor(...args) {
     super(...args);
+
+    this.state = {
+      isUserCalendarLoaded: false
+    };
   }
 
   componentDidMount = () => {
-    this.props.retrieveCalendarEvents(this.props.userId);
+    this.props.initializeCalendarData(this.props.userId);
+  };
+
+  componentDidUpdate = () => {
+    const isUserCalendarLoaded = this.props.calendars.some((calendar) => calendar.userDefault === true);
+
+    if (isUserCalendarLoaded && this.state.isUserCalendarLoaded === false) {
+      this.setState({ isUserCalendarLoaded: true });
+    }
   };
 
   eventStyleGetter = (event) => {
@@ -44,8 +57,9 @@ class CalendarPage extends Component {
   };
 
   handleSelectEvent = (event) => {
-    // check if same event selected
+    // check if event matches previous selection
     const { calendarEventSelection } = this.props.calendarSelectionWithSlotAndEvent;
+
     const isSameEventSelected = calendarEventSelection._id === event._id;
 
     if (isSameEventSelected) return;
@@ -54,8 +68,9 @@ class CalendarPage extends Component {
   };
 
   handleSelectSlot = (slot) => {
-    // check if same slot selected
+    // check if slot matches previous selection
     const { calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
+
     const isSameSlotSelected = this.isSameSlot(calendarSlotSelection, slot);
 
     if (isSameSlotSelected) return;
@@ -91,54 +106,35 @@ class CalendarPage extends Component {
   };
 
   render() {
-    const isCalendarsLoaded = this.props.calendars.length > 0;
-    const isCalendarEventsLoaded = this.props.calendarEventsWithDateObjects.length > 0;
-
-    if (isCalendarsLoaded) {
-      if (isCalendarEventsLoaded) {
-        return (
-          <div className="CalendarPage">
-            <Container>
-              <Row>
-                <Col xs={12} md={8} lg={8}>
-                  <Calendar
-                    selectable
-                    localizer={localizer}
-                    events={this.props.calendarEventsWithDateObjects}
-                    defaultView="month"
-                    defaultDate={new Date()}
-                    scrollToTime={new Date(1970, 1, 1, 6)}
-                    onSelectEvent={(event) => this.handleSelectEvent(event)}
-                    onSelectSlot={(slot) => this.handleSelectSlot(slot)}
-                    startAccessor={(event) => event.start}
-                    endAccessor={(event) => event.end}
-                    eventPropGetter={(event) => this.eventStyleGetter(event)}
-                  />
-                </Col>
-                <Col xs={12} md={4} lg={4}>
-                  <EventForm />
-                </Col>
-              </Row>
-            </Container>
-          </div>
-        );
-      } else {
-        return (
-          <>
-            <Container>
-              <h4>No events found!</h4>
-            </Container>
-          </>
-        );
-      }
-    } else {
+    if (this.state.isUserCalendarLoaded) {
       return (
-        <>
+        <div className="CalendarPage">
           <Container>
-            <h4>Loading...</h4>
+            <Row>
+              <Col xs={12} md={8} lg={8}>
+                <Calendar
+                  selectable
+                  localizer={localizer}
+                  events={this.props.calendarEventsWithDateObjects}
+                  defaultView="month"
+                  defaultDate={new Date()}
+                  scrollToTime={new Date(1970, 1, 1, 6)}
+                  onSelectEvent={(event) => this.handleSelectEvent(event)}
+                  onSelectSlot={(slot) => this.handleSelectSlot(slot)}
+                  startAccessor={(event) => event.start}
+                  endAccessor={(event) => event.end}
+                  eventPropGetter={(event) => this.eventStyleGetter(event)}
+                />
+              </Col>
+              <Col xs={12} md={4} lg={4}>
+                <EventForm />
+              </Col>
+            </Row>
           </Container>
-        </>
+        </div>
       );
+    } else {
+      return <div>Loading...</div>;
     }
   }
 }
@@ -147,15 +143,15 @@ const mapStateToProps = (state) => {
   return {
     userId: state.user.userId,
     calendars: state.user.calendars,
-    calendarEventsWithDateObjects: calendarEventsWithDateObjects(state),
-    calendarSelectionWithSlotAndEvent: calendarSelectionWithSlotAndEvent(state)
+    calendarSelectionWithSlotAndEvent: calendarSelectionWithSlotAndEvent(state),
+    calendarEventsWithDateObjects: calendarEventsWithDateObjects(state)
   };
 };
 
 const mapActionsToProps = {
   onSelectSlot,
   onSelectEvent,
-  retrieveCalendarEvents
+  initializeCalendarData
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(CalendarPage);

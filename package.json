@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch:server": "webpack --config webpack.server.config.js --watch",
+    "watch:server": "webpack --mode development --config webpack.server.config.js --watch",
     "start:dev": "node-dev ./build/server.js",
     "dev": "npm run lint && npm run prettier && npm run build:dev && npm-run-all --parallel start:dev watch:server",
     "build:dev": "rm -rf build && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",

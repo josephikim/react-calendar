@@ -62,7 +62,10 @@ export const {
 
 export default userSlice.reducer;
 
+//
 // Memoized selectors
+//
+
 const calendarSlotSelector = (state) => state.user.calendarSlotSelection;
 const calendarEventSelector = (state) => state.user.calendarEventSelection;
 
@@ -81,7 +84,7 @@ export const calendarSelectionWithSlotAndEvent = createSelector(
         calendarEventSelection: calendarEvent
       };
       return updateObj;
-    } else return false;
+    } else return null;
   }
 );
 
@@ -98,7 +101,31 @@ export const calendarEventsWithDateObjects = createSelector([calendarEventsSelec
   return eventsCloned;
 });
 
+//
 // Bound action creators
+//
+
+export const initializeCalendarData = (userId) => (dispatch) => {
+  // Set initial calendar slot
+  let start = new Date();
+  let end = new Date();
+  start.setHours(start.getHours() + 1, 0, 0, 0);
+  end.setHours(end.getHours() + 2, 0, 0, 0);
+
+  const initialSlot = {
+    action: 'click',
+    start,
+    end,
+    slots: [start]
+  };
+
+  return Promise.all([
+    dispatch(retrieveCalendarEvents(userId)),
+    dispatch(updateCalendarEventSelection({})),
+    dispatch(updateCalendarSlotSelection(initialSlot))
+  ]);
+};
+
 export const onSelectSlot = (slot) => (dispatch) => {
   return Promise.all([dispatch(updateCalendarSlotSelection(slot)), dispatch(updateCalendarEventSelection({}))]);
 };

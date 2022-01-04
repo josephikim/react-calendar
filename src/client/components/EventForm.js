@@ -287,7 +287,11 @@ class EventForm extends Component {
           payload.end = this.state.end.value;
         }
 
-        if (clickedId === 'add-event-btn') this.props.createCalendarEvent(payload); // Dispatch createCalendarEvent action
+        if (clickedId === 'add-event-btn') {
+          // Dispatch createCalendarEvent action
+          this.props.createCalendarEvent(payload);
+          alert(`Successfully added new event: "${payload.title}"`);
+        }
 
         if (clickedId === 'update-event-btn') {
           // Check for valid event update
@@ -303,6 +307,7 @@ class EventForm extends Component {
           // If update is valid, dispatch updateCalendarEvent action
           payload._id = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection._id;
           this.props.updateCalendarEvent(payload);
+          alert(`Successfully updated event: "${payload.title}"`);
         }
       } catch (err) {
         if (err.response) {

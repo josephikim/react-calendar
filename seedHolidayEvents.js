@@ -20,7 +20,7 @@ const getHolidays = () => {
       params: {
         api_key: API_KEY,
         country: 'US',
-        year: 2021,
+        year: 2022,
         type: 'national'
       }
     });

@@ -25,10 +25,14 @@ app.use(express.static(BUILD_DIR));
 app.use('/api', apiRouter);
 
 app.get('/', function (req, res) {
+  console.log('server-prop get at "/", req: ', req);
+  console.log('server-prop get at "/", res: ', res);
   res.sendFile(HTML_FILE);
 });
 
 app.listen(PORT, () => {
-  console.log(`App listening to ${PORT}....`);
+  console.log(
+    `Server-prod started, with BUILD_DIR to ${BUILD_DIR}...., HTML_FILE to ${HTML_FILE}...., listening to ${PORT}....`
+  );
   console.log('Press Ctrl+C to quit.');
 });

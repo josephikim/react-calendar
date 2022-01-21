@@ -2,6 +2,7 @@
   "name": "react-calendar",
   "version": "1.0.0",
   "description": "",
+  "homepage": "http://www.josephikim.com/calendarapp",
   "main": "index.js",
   "scripts": {
     "watch:server": "webpack --mode development --config webpack.server.config.js --watch",

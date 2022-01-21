@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 ReactDOM.render(
   <Provider store={store}>
     <React.Fragment>
-      <BrowserRouter>
+      <BrowserRouter basename="/calendarapp">
         <App />
       </BrowserRouter>
     </React.Fragment>

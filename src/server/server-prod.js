@@ -25,8 +25,8 @@ app.use(express.static(BUILD_DIR));
 app.use('/api', apiRouter);
 
 app.get('/', function (req, res) {
-  console.log('server-prop get at "/", req: ', req);
-  console.log('server-prop get at "/", res: ', res);
+  console.log('server-prod get at "/", req: ', req);
+  console.log('server-prod get at "/", res: ', res);
   res.sendFile(HTML_FILE);
 });
 

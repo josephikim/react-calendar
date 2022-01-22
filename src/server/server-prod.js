@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 
 // enable CORS for prod server
-// app.use(cors({ credentials: true, origin: PORT }));
+app.use(cors({ credentials: true, origin: PORT }));
 
 // support data from POST requests
 app.use(express.json());

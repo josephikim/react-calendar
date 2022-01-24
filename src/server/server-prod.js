@@ -24,15 +24,11 @@ app.use(express.static(BUILD_DIR));
 // Use API routes
 app.use('/api', apiRouter);
 
-app.get('/', function (req, res) {
-  console.log('server-prod get at "/", req: ', req);
-  console.log('server-prod get at "/", res: ', res);
+app.get('*', function (req, res) {
   res.sendFile(HTML_FILE);
 });
 
 app.listen(PORT, () => {
-  console.log(
-    `Server-prod started, with BUILD_DIR to ${BUILD_DIR}...., HTML_FILE to ${HTML_FILE}...., listening to ${PORT}....`
-  );
+  console.log(`Server-prod started, listening to ${PORT}....`);
   console.log('Press Ctrl+C to quit.');
 });

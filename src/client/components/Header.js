@@ -12,7 +12,7 @@ const Header = ({ authenticated }) => {
     <div className="Header fixed-header">
       <Navbar collapseOnSelect expands="sm" bg="primary" variant="dark">
         <Container>
-          <Navbar.Brand href="/">React Calendar</Navbar.Brand>
+          <Navbar.Brand>React Calendar</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
             <Nav>
@@ -23,6 +23,10 @@ const Header = ({ authenticated }) => {
                 <Nav.Link to={`${location.pathname}/login`}>Login</Nav.Link>
               )}
               <Nav.Link to={`${location.pathname}/account`}>Account</Nav.Link>
+              <Nav.Link to={`${location.pathname}`}>templiteral</Nav.Link>
+              <Nav.Link to={`${location.pathname}` + '/account'}>templiteralwstr</Nav.Link>
+              <Nav.Link to={location.pathname}>valueonly</Nav.Link>
+              <Nav.Link to={location}>{location}</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

@@ -11,7 +11,7 @@
     "build:dev": "rm -rf build && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
     "build": "rm -rf build && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
     "start": "node ./build/server.js",
-    "pm2": "NODE_ENV=production && pm2 start npm --name 'calendarapp' -- start",
+    "pm2": "NODE_ENV=production pm2 start npm --name 'calendarapp' -- start",
     "lint": "eslint ./src --fix --ext .js,.jsx",
     "prettier": "prettier --write ."
   },

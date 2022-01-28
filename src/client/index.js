@@ -13,6 +13,7 @@ ReactDOM.render(
   <Provider store={store}>
     <React.Fragment>
       <BrowserRouter basename={process.env.PUBLIC_URL}>
+        <div myprop={process.env.PUBLIC_URL}>process.env.PUBLIC_URL: {process.env.PUBLIC_URL}</div>
         <App />
       </BrowserRouter>
     </React.Fragment>

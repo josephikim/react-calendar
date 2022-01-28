@@ -21,7 +21,9 @@ class App extends Component {
   }
 
   render() {
-    const isAuthenticated = !!this.props.accessToken && !!this.props.userId;
+    // const isAuthenticated = !!this.props.accessToken && !!this.props.userId;
+
+    const isAuthenticated = true;
 
     return (
       <div className="App">

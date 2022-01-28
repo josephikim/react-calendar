@@ -14,13 +14,13 @@ const Header = ({ authenticated }) => {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
             <Nav>
-              <Nav.Link to="/">Home</Nav.Link>
+              <Nav.Link href="/">Home</Nav.Link>
               {authenticated ? (
                 <Nav.Link onClick={() => dispatch(logoutUser())}>Logout</Nav.Link>
               ) : (
-                <Nav.Link to="/login">Login</Nav.Link>
+                <Nav.Link href="/login">Login</Nav.Link>
               )}
-              <Nav.Link to="/account">Account</Nav.Link>
+              <Nav.Link href="/account">Account</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

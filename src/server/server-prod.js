@@ -30,5 +30,8 @@ app.get('*', function (req, res) {
 
 app.listen(PORT, () => {
   console.log(`Server-prod started, listening to ${PORT}....`);
+  console.log(`process.env.PUBLIC_URL: ${process.env.PUBLIC_URL}....`);
+  console.log(`typeof process.env.PUBLIC_URL:  ${typeof process.env.PUBLIC_URL}....`);
+
   console.log('Press Ctrl+C to quit.');
 });

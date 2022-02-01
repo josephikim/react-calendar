@@ -25,13 +25,12 @@ app.use(express.static(BUILD_DIR));
 app.use('/api', apiRouter);
 
 app.get('*', function (req, res) {
+  console.log('app.get ("*") req:', req);
+  console.log('app.get ("*") req.body:', req.body);
   res.sendFile(HTML_FILE);
 });
 
 app.listen(PORT, () => {
   console.log(`Server-prod started, listening to ${PORT}....`);
-  console.log(`process.env.PUBLIC_URL: ${process.env.PUBLIC_URL}....`);
-  console.log(`typeof process.env.PUBLIC_URL:  ${typeof process.env.PUBLIC_URL}....`);
-
   console.log('Press Ctrl+C to quit.');
 });

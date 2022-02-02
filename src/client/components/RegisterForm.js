@@ -96,7 +96,7 @@ class RegisterForm extends Component {
             }
           }));
         } else {
-          alert(`${error.name}: ${error.message}`);
+          alert(`${err.name}: ${err.message}`);
         }
       });
     } else {

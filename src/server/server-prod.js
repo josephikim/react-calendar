@@ -25,8 +25,10 @@ app.use(express.static(BUILD_DIR));
 app.use('/api', apiRouter);
 
 app.get('*', function (req, res) {
-  console.log('app.get ("*") req:', req);
-  console.log('app.get ("*") req.body:', req.body);
+  console.log('app.get ("*") req.hostname:', req.hostname);
+  console.log('app.get ("*") req.path:', req.path);
+  console.log('app.get ("*") req.originalUrl:', req.originalUrl);
+  // console.log('app.get ("*") req.body:', req.body);
   res.sendFile(HTML_FILE);
 });
 

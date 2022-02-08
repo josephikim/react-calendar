@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Calendar from './Calendar';
-import { CALENDAR_COLORS } from '../config/appConfigs';
+import { calendarColors } from '../config/appConfigs';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -82,7 +82,7 @@ userSchema.post('save', async function () {
         return new Calendar({
           name: this.username,
           visibility: true,
-          color: `#${CALENDAR_COLORS[systemCalendars.length]}`,
+          color: `#${calendarColors[systemCalendars.length]}`,
           user: this._id,
           userDefault: true,
           systemCalendar: false

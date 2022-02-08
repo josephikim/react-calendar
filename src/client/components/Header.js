@@ -10,7 +10,7 @@ const Header = ({ authenticated }) => {
     <div className="Header fixed-header">
       <Navbar collapseOnSelect expands="sm" bg="primary" variant="dark">
         <Container>
-          <Navbar.Brand href="/">React Calendar</Navbar.Brand>
+          <Navbar.Brand>React Calendar</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
             <Nav>

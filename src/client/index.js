@@ -5,6 +5,7 @@ import store from './store/createStore';
 import { Provider } from 'react-redux';
 
 import App from './App';
+import { baseURL } from '../server/config/appConfigs';
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -12,8 +13,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 ReactDOM.render(
   <Provider store={store}>
     <React.Fragment>
-      <BrowserRouter basename={'/calendarapp'}>
-        <div myprop={process.env.PUBLIC_URL}>process.env.PUBLIC_URL: {process.env.PUBLIC_URL}</div>
+      <BrowserRouter basename={baseURL}>
         <App />
       </BrowserRouter>
     </React.Fragment>

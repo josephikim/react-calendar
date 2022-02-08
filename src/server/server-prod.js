@@ -4,6 +4,7 @@ import cors from 'cors';
 
 import db from './db/connection';
 import apiRouter from './api';
+import { baseURL } from './config/appConfigs';
 
 const BUILD_DIR = __dirname;
 const HTML_FILE = path.join(BUILD_DIR, 'index.html');
@@ -21,16 +22,17 @@ app.use(express.urlencoded({ extended: false }));
 // serve static files
 app.use(express.static(BUILD_DIR));
 
-// Use API routes
-app.use('/api', apiRouter);
+let indexRouter = express.Router();
 
-app.get('*', function (req, res) {
-  console.log('app.get ("*") req.hostname:', req.hostname);
-  console.log('app.get ("*") req.path:', req.path);
-  console.log('app.get ("*") req.originalUrl:', req.originalUrl);
-  // console.log('app.get ("*") req.body:', req.body);
+indexRouter.get('/', function (req, res) {
   res.sendFile(HTML_FILE);
 });
+
+// Use API routes
+indexRouter.use('/api', apiRouter);
+
+// allow hosting express routes on a custom URL i.e. '/calendarapp'
+app.use(baseURL, indexRouter);
 
 app.listen(PORT, () => {
   console.log(`Server-prod started, listening to ${PORT}....`);

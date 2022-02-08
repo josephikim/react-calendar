@@ -71,7 +71,7 @@ class RegisterForm extends Component {
     }
   };
 
-  handleSubmit = (event) => {
+  handleSubmit = async (event) => {
     event.preventDefault();
 
     const { username, password, passwordConfirm } = this.state;
@@ -86,19 +86,19 @@ class RegisterForm extends Component {
         password: password.value
       };
 
-      this.props.registerUser(data).catch((err) => {
-        const error = err.response.data;
-        if (error.errorCode && ['username', 'password'].includes(error.errorCode)) {
+      try {
+        const registration = await this.props.registerUser(data);
+      } catch (err) {
+        alert(`${err.name}: ${err.message} // err.response: ${err.response} // err.errorCode: ${err.errorCode}`);
+        if (err.errorCode && ['username', 'password'].includes(err.errorCode)) {
           this.setState((state) => ({
-            [error.errorCode]: {
-              ...state[error.errorCode],
-              error: error.message
+            [err.errorCode]: {
+              ...state[err.errorCode],
+              error: err.message
             }
           }));
-        } else {
-          alert(`${error.name}: ${error.message}`);
         }
-      });
+      }
     } else {
       // update state with input errors
       this.setState((state) => ({

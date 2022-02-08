@@ -27,9 +27,9 @@ class App extends Component {
       <div className="App">
         <Header authenticated={isAuthenticated} />
         <Switch>
-          <PublicRoute restricted={isAuthenticated ? true : false} component={HomePage} path="/" exact />
+          <PublicRoute restricted={isAuthenticated ? true : false} component={HomePage} path="/register" exact />
           <PublicRoute restricted={isAuthenticated ? true : false} component={LoginPage} path="/login" exact />
-          <PrivateRoute component={CalendarPage} path="/calendar" exact />
+          <PrivateRoute component={CalendarPage} path="/" />
           <PrivateRoute component={AccountPage} path="/account" exact />
           <PublicRoute restricted={false} component={NoMatch} />
         </Switch>

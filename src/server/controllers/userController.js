@@ -1,6 +1,6 @@
 import db from '../models';
 import { AuthorizationError } from '../utils/userFacingErrors';
-import { CALENDAR_COLORS } from '../config/appConfigs';
+import { calendarColors } from '../config/appConfigs';
 
 const Event = db.event;
 const User = db.user;
@@ -187,7 +187,7 @@ const createCalendar = async (req, res, next) => {
 
     let data = {
       name: req.body.name,
-      color: `#${CALENDAR_COLORS[foundCalendars.length]}`,
+      color: `#${calendarColors[foundCalendars.length]}`,
       visibility: true,
       user: userId,
       userDefault: false,

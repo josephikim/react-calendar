@@ -1,0 +1,9 @@
+.HomePage #about {
+  max-width: 85%;
+  margin: 35px auto;
+  font-size: 18px;
+}
+
+.HomePage #calendar-img {
+  max-width: 100%;
+}

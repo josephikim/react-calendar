@@ -1,0 +1,28 @@
+@media screen and (max-width: 768px) {
+  .CalendarSettingsItem .btnGroup {
+    margin-top: 24px;
+  }
+}
+
+.CalendarSettingsItem .twoColumn {
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.CalendarSettingsItem .twoColumn .form-group {
+  margin-bottom: 0;
+}
+
+.CalendarSettingsItem .btnGroup .btn {
+  min-width: 120px;
+  margin-right: 18px;
+}
+
+.CalendarSettingsItem .btnGroup .btn:last-of-type {
+  margin-right: 0;
+}
+
+.CalendarSettingsItem label {
+  display: block;
+  color: dodgerblue;
+}

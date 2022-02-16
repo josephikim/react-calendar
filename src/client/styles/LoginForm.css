@@ -1,0 +1,18 @@
+.LoginForm {
+  width: 350px;
+  margin: 0 auto;
+  padding-top: 35px;
+}
+
+.LoginForm h4 {
+  margin-bottom: 1.5rem;
+}
+
+.LoginForm .btn {
+  min-width: 120px;
+  margin: 1rem 0;
+}
+
+.LoginForm .text-danger {
+  margin-bottom: 0.75rem;
+}

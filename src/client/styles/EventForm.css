@@ -1,0 +1,38 @@
+@media screen and (max-width: 768px) {
+  .EventForm {
+    padding-top: 35px;
+    margin-bottom: 100px;
+  }
+}
+
+.EventForm textarea {
+  width: 100%;
+}
+
+.EventForm .row {
+  margin-bottom: 1rem;
+}
+
+.EventForm .DayPickerInput,
+.EventForm .DayPickerInput input {
+  width: 100%;
+}
+
+.EventForm .rc-time-picker {
+  width: 100%;
+}
+
+.EventForm .rc-time-picker-input {
+  padding: 1px 2px;
+  border: 1px solid rgb(118, 118, 118);
+  border-radius: 1px;
+  font-size: 1rem !important;
+  color: #000000 !important;
+}
+
+.EventForm .btn {
+  display: block;
+  min-width: 100%;
+  padding: 0.375rem 0.5rem;
+  margin: 1rem 0;
+}

@@ -1,0 +1,20 @@
+.CalendarPage > .container {
+  padding-top: 35px;
+}
+
+.CalendarPage .rbc-calendar {
+  min-height: 800px;
+}
+
+.CalendarPage .rbc-toolbar {
+  margin-bottom: 1.5rem;
+}
+
+.CalendarPage .rbc-toolbar-label {
+  font-weight: bold;
+}
+
+.CalendarPage .rbc-btn-group {
+  background: whitesmoke;
+  font-size: 12px;
+}

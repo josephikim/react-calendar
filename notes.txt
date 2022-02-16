@@ -1,0 +1,272 @@
+To Do:
+
+DATE TYPE NOTEs
+1 - ALWAYS SAVE DATES AS DATE OBJECTS IN Mongoose
+2 - ALWAYS SAVE DATES AS STRINGS IN FE (REDUX AND LOCALSTORAGE)
+  1. Redux - store objects of strings and primitives only (NO DATE OBJS)
+3 - CONVERT STRINGS TO DATE OBJ ONLY AS NEEDED (IE IN FRONTEND)
+4 - All times are stored as Date objects in GMT time (UI will show localized time instead ie PDT)
+
+TASKS
+***********************
+
+0. DONE - Loading issue with CalendarPage - component should only load if state.auth is completely filled first
+1. DONE - Create initial user calendar on register
+
+2. DONE - Global error handler is not receiving NotFoundError from authController
+
+0. PUSH - convert all React class components to functional components
+
+0. PUSH - On slot selection change, make new startime/endtime reflect:
+  1. Previous slot's start/end
+  2. current time rounded up to next hour
+  3. end time should reflect 1 hour after new start time
+
+0. DONE - message: "Unauthorized! Access Token was expired!" but CalendarPage is still showing
+   message: '"Refresh Token is required!" but CalendarPage is still showing
+
+  - current situation: refreshToken is null in localstorage
+    - Why is it null?
+      - Not sure but probably auth controller methods messed up
+      
+    - How does it affect API flow? (Example: Load CalendarPage -> send GET to http://localhost:8080/api/event)
+      1. Request interceptor checks for token (getLocalAccessToken)
+      2. accessToken (expired) is found and attached to request header
+      3. request continues to endpoint '/event'
+      4. middleware jwt.verifyToken checks if accessToken is expired
+      5. Since accessToken expired, middleware returns res.status(401).send({ message: "Unauthorized! Access Token was expired!" });
+      6. Since middleware returneed error, controller endpoint is ignored (ie userController.retrieveEvents)
+      7. Flow is passed to axios response interceptor
+        1. If access token was expired, try refreshing the token by POST call to /auth/refreshtoken with payload refreshToken: getLocalRefreshToken()
+        2. getLocalRefreshToken() will return null if refreshToken not found in localStorage
+        3. Since /auth/refreshtoken received null payload, it returns error and passes flow to response interceptor's catch(_error) block
+          - SOLUTION??? add redirect to requestToken===null block
+        4. returns Promise.reject(_error) 
+        5. rejection caugth by userActions.retrieveEvents catch block.
+
+    - HIGHER PROBLEM: On page refresh, user should not be shown CalendarPage if accessToken is expired and refresh token missing.
+      - SOLUTION: expired accessToken will be caught by axios interceptor and trigger an UPDATE_ACCESS_TOKEN action to unauthorize user. Then PrivateRoute will rerender and reroute user to login.
+
+0. DONE - In calendar settings page, username shoud be in non edit mode initially, same as pasword
+
+0. DONE - Add editMode=false to Ca  lendarSettings items
+
+0. DONE - Implement UpdateCalendar controller
+  -add unique index in Calendar model
+  -verify in DB and UI
+
+0. Add CalendarSelectMenu to EventForm. CalendarSelectMenu should:
+- DONE - show all calendars for given user
+- DONE - allow only one selection at a time
+- DONE - add userDefault property to Calendar model
+- DONE - Use userDefault prop to set default value in CalendarSelectMenu
+- DONE - show system calendars as 'disabled'
+
+0. Update actions to include calendar selection from EventForm
+- DONE - createEvent
+- DONE - updateEvent
+
+0. DONE - Initilalize EventForm state with default calendar
+
+0. DONE - When calendar event is clicked, set EventForm calendar field according to props.calendarEventSelection.calendar.
+
+=======================================
+
+0. DONE - Wrap all async awaits in try/catch
+
+0. DONE- On new user creation, calendar page loads but is missing user's default calendar in redux
+
+0. DONE - userActions.retrieveEvents shuld be renamed retrieveEvents, and only receive events, not calendars
+
+0. DONE - loginuser should return calendars (both system and user)
+
+0. DONE - Header should show 'Logout' if user is logged in
+
+0. DONE - FIXED by creating SET_CALENDARS action - EventForm.handleCalendarChange is receiving duplicate props
+
+0. DONE - When calendar event is selected, CalendarSelectMenu should update accordingly
+
+0. DONE - When system Calendar event is selected, EventForm fields should be disabled
+
+0. DONE - EventForm.componentDidMount should not worry about if this.props.calendarEventSelection is true
+  - When login with emtpy localstorage - works fine
+  - When login with localstorage.calendarEventSelection set to initialSlot - works fine
+  - When login with localstorage.calendarEventSelection set to user cal event - CalendarPage loads but redux state.user.calendarEventSelection reflects localstorage, not what's visible in RBC (reset to initialSlot);
+      - RBC will initialize to a slot based on defaultDate (or getNow). No way to initialize to a certain event (ie this.props.calendarEventSelection)
+      - RBC's 'selected' prop does nothing
+  - Do we need createStore.initialSlot? (YES) 
+  - Do we need to store 'user' object in localstorage?
+    Yes, but if CalendarPage loads with 'old' user object, it can mess with checks in functions like onSelectEvent. So event when loading persistedState, we should reset user.calendarEventSelection and user.calendarEventSelection to initialState props
+
+0. DONE - on new user registration, CalendarPage doesn't render and state.events is not updated
+  - NA - useractions.retrieveEvents is using an outdated userId.
+  - FIX - userController.retrieveEvents had the wrong properties attached to Event.find
+
+0. DONE - EventForm props should be coupled to CalendarPage
+
+0. DONE - refactor EventForm button handlers for createEvent and updateEvent
+
+0. DONE - Yes, validation via onChange is necessary for EventForm fields if you want it validated in real time after intial onBlur event
+
+
+0. DONE - EventForm.state.formValuesChanged = true when a new event is clicked after a previous event clicked. should be false
+  - Need to still apply formValuesChanged=true when user selects via CalendarSelectMenu UI instead of clicking a calendar event
+
+0. DONE - When system calendar's event is clicked, CalendarSelectMenu should be set as disabled (the component), 
+
+0. DONE - Convert reducers into slice files with redux/toolkit
+
+0. DONE - Update  lint script, add prettier script, add precommit hook for staging files
+
+0. DONE - logoutuser not logging out
+
+0. DONE - Add HMR to backend in dev mode
+
+0. DONE - Add styles to display events with differnets colors depending on calendar name.
+----------------------------------------------------------------------------
+
+0. DONE - Decouple EventForm from CalendarPage (use memoized selectors instead)
+
+0. DONE - Add check for same event or same slot selected in onSelectSlot and onSelectEvent actions
+
+0. DONE - In AccountSettings, hide edit button for system calendars
+
+0. DONE - In CalendarSettings, when new calendar is created, render method fails because this.props.calendars length differs from representation in component state, and this.state[item_.id] returns undefined
+
+0. DONE - In EventForm.componentDidUpdate, for newState when slot is slected, if previous selection was also a slot, then use this.state.selectedCalendarId
+
+0. DONE - In userSlice.onSelectSlot, perform check for same slot selected. Return null if true;
+
+____________________________________
+
+0. DONE - RBC in Week view throws error
+  - REASON - we've stored dates as strings in Redux (this is good practice bc Dates are inherently mutable and we only want immutable data in Redux)
+  - FIX - Convert ISO strings to Date object in the components where they need to be used as inputs to RBC
+    - CalendarPage
+
+0. DONE - In week view, changing end time and saving changes does not take. 
+  - ERROR - Cannot read properties of undefined (reading 'data')
+    at EventForm.handleSubmit (EventForm.js:267)
+
+0. DONE - Make 'allDay' a required Event model property
+
+0. DONE - Add 'allday' option to EventForm.
+
+0. DONE -  Handle logic for adding or updating event's allDay property
+  - AllDay events should skip valid start time/end time check]
+
+
+0. DONE - Show 'n/a' in TimePicker in Eventform for allDay=true events
+
+0. DONE - On DeleteEvent, add "are you sure?" warning message
+
+0. DONE -  On UpdateEvent, check against selected event for any changes before calling API
+
+----------------------------------------------
+0. DONE - onSelectEvent is propagating event with mutating start and end properties (Date Objects are being mutated into ISO strings)
+  - FIX - use deep cloned payloads in updateCalendarSlotSelection and updateCalendarEventSelection. This prevents mutating props.calendarEventsWithDateObjects directly from CalendarPage.
+
+0. DONE - Calendar events are returning from api with '_v' property and propagating to Redux. Trim this property before being stored in app state.
+
+0. DONE - initialize start/end time in createStore is not necessary. Just initialize with new Date() directly in EventForm constructor
+
+0. DONE - In Week view and Day view, clicking on the allday row at top shoudl automatically set allDay in EventForm
+
+  - Possible differentiators of month view vs week/day view
+    1. For click action, slot.box=array.length4 in monthview, slot.box does not exist in week/day view allDay, slot.box=array.length4 in week/day view reg slot click
+
+      - WARNING - allDay slot can also be selected via slot.action="select" => slot.box and slot.bounds does not exist
+
+    2. For select action (non-allday), slot.box=undefined and slot.bounds=Obj in month/week/day view
+
+=======================================
+
+0. DONE - change prod server to match dev server app.get('*', ... instead of app.get('/', ...
+
+=======================================
+DEBUGGING WEBUZO DEPLOY
+=======================================
+
+0. DONE - Error on POST /calendarapp/api/auth/register
+
+  - Test endpoint using Postman:
+    - Got 'Public Content' response by hitting http://josephikim.com:3000/api/user/test/all (or http://68.66.233.181:3000/api/user/test/all)
+    - WRONG - Fix: add alias directive to nginx /calendar/api location block
+    - DONE - REMOVE nginx /calendar/api block altogehter (API does not need calendar block to work)
+    - Add proxy to package.json? - NO
+  -FIX: append baseURL to indexRouter in express server (configurable in config file) -ie dont rely on nginx or package.json to do some magic
+
+0. DONE - BrowserRouter not working on non-calendar pages
+  - Receiving 404 not found page for urls like /account
+  - simplified Nginx config
+  - FIX: PUblicRoute was rerouting to /calendar instead of /
+
+0. DONE - Change UI links to include 'BaseURL' ie josephikim.com/calendarapp
+
+          <Nav.Link to={`${match.url}/`}>Home</Nav.Link>
+              {authenticated ? (
+                <Nav.Link onClick={() => dispatch(logoutUser())}>Logout</Nav.Link>
+              ) : (
+                <Nav.Link to={`${match.url}/login`}>Login</Nav.Link>
+              )}
+              <Nav.Link to={`${match.url}/account`}>Account</Nav.Link>
+
+  - FIX: render Nav.Link as react-router-dom Link elements
+
+
+0. Prod - IN account page, changing username should auomatically change default calendar name (ie same as username).
+0. Prod - IN account page, default calendar name should not be editable.
+
+
+
+
+
+0. Dev tools (react devtools ) should not be foudn in prod build
+
+
+0. Reduce webpack output size for prod (check redux dev tools)
+
+
+0. In components with mapped props, remove any unused mappings
+  -use selectors to minize rerenders if possible
+
+0. Ideally, only your reducer functions and selectors should know the exact state structure, so if you change where some state lives, you would only need to update those two pieces of logic.
+  - refactor any individual instances of selector functions that need to know specific state shape
+
+
+
+0. on selectSlot, EventForm inputs shoould show relevant default text (ie, 'enter title')
+
+
+0. -NOTE - Initial user calendar creation should be handled by User model's post save middleware 
+
+2. CalendarSelectMenu.componentDidMount, query DB for user's calendars (system and user-specific) and load into redux and/or localstorage.
+--How to update on componentDidUpdate?
+-- IN PROGRESS - retrieveEvents sends parameterized api request, server responds with query using user's ID passed via api call and returns data
+
+2. Populate CalendarSettings accordingly
+
+
+0. /Users/josephikim/Documents/github/react-calendar/src/client/pages/CalendarPage.js
+  20:3  error  componentWillMount is deprecated since React 16.9.0, use UNSAFE_componentWillMount instead, see https://reactjs.org/docs/react-component.html#unsafe_componentwillmount. Use https://github.com/reactjs/react-codemod#rename-unsafe-lifecycles to automatically update your components  react/no-
+
+0.  Routes for claendar update and delete should be protected so only specific user that is token verified can make those changes
+
+
+0. Check that RBC onSelectSlot works correctly for ranges selectd in agenda view, etc . (check this.onSelectSlot)
+
+0. Display events toggleable by calendar (checkboxes) in CalendarPage.
+-Setup Mongoose query for retreving events by calendar, and show all sytstem calendars by default
+
+1. Setup email notification system
+
+2. Add logging (ie after global error handler)
+
+4. Check for unused mappings in all components via mapStateToProps
+
+5. Add handler for using 'enter' key on HTML forms ie EventForm componnent  https://levelup.gitconnected.com/handling-errors-in-mongoose-express-for-display-in-react-d966287f573b
+
+6. Add error handler for Calendar component (ie handle error coming from action calls like EventForm component)
+
+7. Verify error hadling on frontend for Mongoose model User (similarly to EventForm)
+

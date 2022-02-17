@@ -29,8 +29,8 @@ class App extends Component {
         <Switch>
           <PublicRoute restricted={isAuthenticated ? true : false} component={HomePage} path="/register" exact />
           <PublicRoute restricted={isAuthenticated ? true : false} component={LoginPage} path="/login" exact />
-          <PrivateRoute component={CalendarPage} path="/" />
           <PrivateRoute component={AccountPage} path="/account" exact />
+          <PrivateRoute component={CalendarPage} path="/" exact />
           <PublicRoute restricted={false} component={NoMatch} />
         </Switch>
         <Footer />

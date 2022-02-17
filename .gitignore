@@ -1,6 +1,8 @@
 node_modules
 build
 npm-debug.log
-.env.*
+.env.production
+.env.development
 .DS_Store
-*.txt
+notes
+.txt

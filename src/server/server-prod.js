@@ -35,6 +35,6 @@ indexRouter.use('/api', apiRouter);
 app.use(baseURL, indexRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server-prod started, listening to ${PORT}....`);
+  console.log(`App started, listening to ${PORT}....`);
   console.log('Press Ctrl+C to quit.');
 });

@@ -4,3 +4,5 @@ npm-debug.log
 .env.production
 .env.development
 .DS_Store
+notes
+.txt

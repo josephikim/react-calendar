@@ -1,6 +1,10 @@
 import db from '../models';
 import { MONGO_URL } from '../config/dbConfig';
+<<<<<<< HEAD
 import { CALENDAR_COLORS } from '../config/appConfigs';
+=======
+import { calendarColors } from '../config/appConfigs';
+>>>>>>> d675336202f6d4b64051c629579baa28974ff450
 
 const Role = db.role;
 const Calendar = db.calendar;
@@ -63,7 +67,11 @@ const initialCalendars = () => {
       new Calendar({
         name: 'US Holidays',
         visibility: true,
+<<<<<<< HEAD
         color: `#${CALENDAR_COLORS[0]}`,
+=======
+        color: `#${calendarColors[0]}`,
+>>>>>>> d675336202f6d4b64051c629579baa28974ff450
         user: null,
         systemCalendar: true
       }).save((err) => {

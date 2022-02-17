@@ -68,7 +68,7 @@ app.use(function (err, req, res, next) {
 });
 
 app.listen(PORT, () => {
-  console.log(`App listening to ${PORT}....`);
+  console.log(`App started, listening to ${PORT}....`);
   console.log('Press Ctrl+C to quit.');
 });
 

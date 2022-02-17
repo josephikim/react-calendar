@@ -1,4 +1,4 @@
-const dotenv = require('dotenv').config({ path: '.env.development' });
+const dotenv = require('dotenv').config({ path: '.env.production' });
 const MongoClient = require('mongodb').MongoClient;
 const axios = require('axios');
 

@@ -90,6 +90,7 @@ class LoginForm extends Component {
       try {
         const login = await this.props.loginUser(data);
       } catch (err) {
+        alert(`${err.name}: ${err.message} // err.response: ${err.response} // err.errorCode: ${err.errorCode}`);
         if (err.errorCode && ['username', 'password'].includes(err.errorCode)) {
           this.setState((state) => ({
             [err.errorCode]: {
@@ -97,8 +98,6 @@ class LoginForm extends Component {
               error: err.message
             }
           }));
-        } else {
-          alert(`${err.name}: ${err.message}`);
         }
       }
     } else {

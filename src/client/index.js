@@ -5,15 +5,23 @@ import store from './store/createStore';
 import { Provider } from 'react-redux';
 
 import App from './App';
-import { baseURL } from '../server/config/appConfigs';
+import config from '../server/config/appConfig';
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 
+let basename = undefined;
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (isProduction) {
+  basename = config.baseURL;
+}
+
 ReactDOM.render(
   <Provider store={store}>
     <React.Fragment>
-      <BrowserRouter basename={baseURL}>
+      <BrowserRouter basename={basename}>
         <App />
       </BrowserRouter>
     </React.Fragment>

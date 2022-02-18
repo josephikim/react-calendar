@@ -4,7 +4,7 @@ import cors from 'cors';
 
 import db from './db/connection';
 import apiRouter from './api';
-import { baseURL } from './config/appConfigs';
+import { baseURL } from './config/appConfig';
 
 const BUILD_DIR = __dirname;
 const HTML_FILE = path.join(BUILD_DIR, 'index.html');

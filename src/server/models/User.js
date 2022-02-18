@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Calendar from './Calendar';
-import { calendarColors } from '../config/appConfigs';
+import { calendarColors } from '../config/appConfig';
 
 const SALT_WORK_FACTOR = 10;
 

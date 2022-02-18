@@ -427,7 +427,7 @@ class EventForm extends Component {
                 name="desc"
                 className="input"
                 disabled={isSystemEventSelected}
-                rows="3"
+                rows="2"
                 onChange={(event) => this.handleChange(null, event)}
                 value={this.state.desc.value}
               >

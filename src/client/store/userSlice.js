@@ -42,6 +42,9 @@ const userSlice = createSlice({
       state.calendarEvents = state.calendarEvents.map((event) =>
         event._id === action.payload._id ? action.payload : event
       );
+    },
+    calendarViewUpdated(state, action) {
+      state.calendarViewSelection = action.payload;
     }
   }
 });
@@ -57,7 +60,8 @@ export const {
   calendarEventsUpdated,
   calendarEventAdded,
   calendarEventDeleted,
-  calendarEventUpdated
+  calendarEventUpdated,
+  calendarViewUpdated
 } = userSlice.actions;
 
 export default userSlice.reducer;
@@ -132,6 +136,10 @@ export const onSelectSlot = (slot) => (dispatch) => {
 
 export const onSelectEvent = (event) => (dispatch) => {
   return Promise.all([dispatch(updateCalendarEventSelection(event)), dispatch(updateCalendarSlotSelection({}))]);
+};
+
+export const onSelectView = (view) => (dispatch) => {
+  dispatch(calendarViewUpdated(view));
 };
 
 export const updateCalendarSlotSelection = (slot) => async (dispatch) => {

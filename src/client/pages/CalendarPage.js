@@ -9,6 +9,7 @@ import EventForm from '../components/EventForm';
 import {
   onSelectSlot,
   onSelectEvent,
+  onSelectView,
   initializeCalendarData,
   calendarSelectionWithSlotAndEvent,
   calendarEventsWithDateObjects
@@ -115,6 +116,10 @@ class CalendarPage extends Component {
     return false;
   };
 
+  handleView = (view) => {
+    this.props.onSelectView(view);
+  };
+
   render() {
     const isInitialDataLoaded = this.state.isUserCalendarLoaded && this.state.isInitialSlotLoaded;
 
@@ -129,6 +134,7 @@ class CalendarPage extends Component {
                   localizer={localizer}
                   events={this.props.calendarEventsWithDateObjects}
                   defaultView="month"
+                  onView={(view) => this.handleView(view)}
                   defaultDate={new Date()}
                   scrollToTime={new Date(1970, 1, 1, 6)}
                   onSelectEvent={(event) => this.handleSelectEvent(event)}
@@ -163,6 +169,7 @@ const mapStateToProps = (state) => {
 const mapActionsToProps = {
   onSelectSlot,
   onSelectEvent,
+  onSelectView,
   initializeCalendarData
 };
 

@@ -5,6 +5,7 @@ import { loadState, saveState } from './localStorage';
 import throttle from 'lodash/throttle';
 import authReducer from './authSlice';
 import userReducer from './userSlice';
+import { defaultView } from '../../server/config/appConfig';
 
 const middleware = [thunk];
 
@@ -20,7 +21,8 @@ const initialState = {
     calendarSlotSelection: {},
     calendarEventSelection: {},
     calendars: [],
-    calendarEvents: []
+    calendarEvents: [],
+    calendarViewSelection: defaultView
   }
 };
 

@@ -19,9 +19,7 @@ const Header = ({ authenticated }) => {
                 Home
               </Nav.Link>
               {authenticated ? (
-                <Nav.Link as={Link} onClick={() => dispatch(logoutUser())}>
-                  Logout
-                </Nav.Link>
+                <Nav.Link onClick={() => dispatch(logoutUser())}>Logout</Nav.Link>
               ) : (
                 <Nav.Link as={Link} to="/login">
                   Login

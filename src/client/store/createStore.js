@@ -32,7 +32,11 @@ const doCreateStore = () => {
     user: userReducer
   });
 
-  const persistedState = loadState();
+  let persistedState = loadState();
+
+  if (persistedState.user.calendarViewSelection !== 'month') {
+    persistedState.user.calendarViewSelection = 'month';
+  }
 
   const composeEnhancers = composeWithDevTools({});
 

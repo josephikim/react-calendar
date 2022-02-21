@@ -64,6 +64,7 @@ class EventForm extends Component {
       return;
     }
 
+    // Check if redux state contains updated calendar selection based on memoized selector
     const isCalendarSelectionUpdated = !_.isEqual(
       prevProps.calendarSelectionWithSlotAndEvent,
       this.props.calendarSelectionWithSlotAndEvent
@@ -73,6 +74,7 @@ class EventForm extends Component {
       return;
     }
 
+    // Prepare component state update
     let newState = {
       title: {
         validateOnChange: false,
@@ -82,8 +84,10 @@ class EventForm extends Component {
       error: ''
     };
 
+    // Check if user selection is a slot or event
     const { calendarEventSelection, calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
     const isCalendarEventSelected = Object.keys(calendarEventSelection).length > 0;
+    const isCalendarSlotSelected = Object.keys(calendarSlotSelection).length > 0;
 
     if (isCalendarEventSelected) {
       newState.title = {
@@ -99,24 +103,10 @@ class EventForm extends Component {
       newState.end = {
         value: calendarEventSelection.end
       };
-      (newState.allDay = calendarEventSelection.allDay),
-        (newState.selectedCalendarId = calendarEventSelection.calendarId);
-    } else {
-      // calendar slot is selected
-
-      // Check for allDay slot selection (only applies to 'week' and 'day' views)
-      const isAllDaySlotSelected =
-        (calendarSlotSelection.action === 'click' || calendarSlotSelection.action === 'select') &&
-        Object.prototype.hasOwnProperty.call(calendarSlotSelection, 'box') === false;
-
-      newState.start = {
-        value: calendarSlotSelection.start
-      };
-      newState.end = {
-        value: calendarSlotSelection.end
-      };
-      newState.allDay = isAllDaySlotSelected;
-
+      newState.allDay = calendarEventSelection.allDay;
+      newState.selectedCalendarId = calendarEventSelection.calendarId;
+    } else if (isCalendarSlotSelected) {
+      // Set title and desc depending on previous selection
       const isPrevSelectionASlot = !!prevProps.calendarSelectionWithSlotAndEvent;
 
       if (isPrevSelectionASlot) {
@@ -136,15 +126,68 @@ class EventForm extends Component {
         newState.desc = {
           value: ''
         };
+      }
 
-        const prevSelectionEventCalendar = this.props.calendars.filter(
-          (calendar) => calendar._id === this.state.selectedCalendarId
-        ); // returns array of length 1
-        const isPrevSelectionASystemEvent = prevSelectionEventCalendar[0].systemCalendar === true;
+      // Set start date, end date, and allDay flag depending on calendar view
+      const calendarView = this.props.calendarView;
 
-        if (isPrevSelectionASystemEvent) {
-          newState.selectedCalendarId = this.state.defaultCalendarId;
+      if (calendarView === 'month') {
+        // single day slot
+        if (calendarSlotSelection.action === 'click') {
+          let startDate = new Date(calendarSlotSelection.start);
+          startDate.setHours(startDate.getHours() + 12);
+          const startDateISO = startDate.toISOString();
+
+          let endDate = new Date(calendarSlotSelection.end);
+          endDate.setHours(endDate.getHours() - 11);
+          const endDateISO = endDate.toISOString();
+
+          newState.start = {
+            value: startDateISO
+          };
+          newState.end = {
+            value: endDateISO
+          };
+          newState.allDay = false;
         }
+        // multi day slot
+        if (calendarSlotSelection.action === 'select') {
+          newState.start = {
+            value: calendarSlotSelection.start
+          };
+          newState.end = {
+            value: calendarSlotSelection.end
+          };
+          newState.allDay = true;
+        }
+      }
+
+      if (calendarView === 'week' || calendarView === 'day') {
+        newState.start = {
+          value: calendarSlotSelection.start
+        };
+        newState.end = {
+          value: calendarSlotSelection.end
+        };
+        // calendar slot (single or multi)
+        if (Object.prototype.hasOwnProperty.call(calendarSlotSelection, 'box')) {
+          newState.allDay = false;
+        } else {
+          // all day slot
+          newState.allDay = true;
+        }
+      }
+
+      // Set calendar ID depending on if previous selection was a system event
+      const prevSelectionEventCalendar = this.props.calendars.filter(
+        // returns array of length 1
+        (calendar) => calendar._id === this.state.selectedCalendarId
+      );
+
+      const isPrevSelectionASystemEvent = prevSelectionEventCalendar[0].systemCalendar === true;
+
+      if (isPrevSelectionASystemEvent) {
+        newState.selectedCalendarId = this.state.defaultCalendarId;
       }
     }
 
@@ -610,6 +653,7 @@ class EventForm extends Component {
 const mapStateToProps = (state) => {
   return {
     calendars: state.user.calendars,
+    calendarView: state.user.calendarViewSelection,
     calendarSelectionWithSlotAndEvent: calendarSelectionWithSlotAndEvent(state)
   };
 };

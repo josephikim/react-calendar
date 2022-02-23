@@ -25,7 +25,7 @@ const CalendarToggleMenu = () => {
       </Row>
 
       {calendars.map((calendar) => (
-        <Row key={calendar.id}>
+        <Row key={calendar._id}>
           <Col xs={12} md={2}>
             <Checkbox
               id={`${calendar._id}`}

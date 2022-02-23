@@ -5,7 +5,7 @@ import store from './store/createStore';
 import { Provider } from 'react-redux';
 
 import App from './App';
-import config from '../server/config/appConfig';
+import { baseURL } from '../server/config/appConfig';
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -15,7 +15,7 @@ let basename = undefined;
 const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction) {
-  basename = config.baseURL;
+  basename = baseURL;
 }
 
 ReactDOM.render(

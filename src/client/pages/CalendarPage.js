@@ -5,6 +5,7 @@ import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import _ from 'lodash';
 
+import CalendarToggleMenu from '../components/CalendarToggleMenu';
 import EventForm from '../components/EventForm';
 import {
   onSelectSlot,
@@ -128,7 +129,10 @@ class CalendarPage extends Component {
         <div className="CalendarPage">
           <Container>
             <Row>
-              <Col xs={12} md={8} lg={8}>
+              <Col xs={12} md={2}>
+                <CalendarToggleMenu />
+              </Col>
+              <Col xs={12} md={7}>
                 <Calendar
                   selectable
                   localizer={localizer}
@@ -144,7 +148,7 @@ class CalendarPage extends Component {
                   eventPropGetter={(event) => this.eventStyleGetter(event)}
                 />
               </Col>
-              <Col xs={12} md={4} lg={4}>
+              <Col xs={12} md={3}>
                 <EventForm />
               </Col>
             </Row>

@@ -67,7 +67,8 @@ userSchema.post('save', async function () {
 
     Calendar.find(
       {
-        user: this._id
+        user: this._id,
+        userDefault: true
       },
       (err, calendar) => {
         if (err) {

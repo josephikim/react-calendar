@@ -109,7 +109,8 @@ const login = (req, res, next) => {
             systemCalendar: calendar.systemCalendar,
             name: calendar.name,
             color: calendar.color,
-            user: calendar.user
+            user: calendar.user,
+            visibility: true
           };
         });
 

@@ -220,7 +220,8 @@ const createCalendar = async (req, res, next) => {
       color: createdCalendar.color,
       user: createdCalendar.user,
       userDefault: createdCalendar.userDefault,
-      systemCalendar: createdCalendar.systemCalendar
+      systemCalendar: createdCalendar.systemCalendar,
+      visibility: true
     };
 
     return res.status(200).send({ data: trimmedCalendar });

@@ -2,11 +2,11 @@ import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import Checkbox from './Checkbox';
-// import { connect, useDispatch } from 'react-redux';
-// import { calendarVisibilityUpdated } from '../store/userSlice';
+import { connect, useDispatch } from 'react-redux';
+import { calendarUpdated } from '../store/userSlice';
 
 const CalendarToggleMenu = () => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const calendars = useSelector((state) => state.user.calendars);
 
@@ -14,7 +14,11 @@ const CalendarToggleMenu = () => {
     const isChecked = event.target.checked;
     const calendarId = event.target.id;
 
-    // dispatch(calendarVisibilityUpdated(calendarId));
+    const payload = {
+      id: calendarId,
+      visibility: isChecked
+    };
+    dispatch(calendarUpdated(payload));
   };
 
   return (
@@ -43,5 +47,4 @@ const CalendarToggleMenu = () => {
   );
 };
 
-export default CalendarToggleMenu;
-// export default connect(null, null)(CalendarToggleMenu);
+export default connect(null, null)(CalendarToggleMenu);

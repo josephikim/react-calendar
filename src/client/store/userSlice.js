@@ -20,7 +20,7 @@ const userSlice = createSlice({
     },
     calendarUpdated(state, action) {
       state.calendars = state.calendars.map((calendar) =>
-        calendar.id === action.payload.id ? action.payload : calendar
+        calendar.id === action.payload.id ? { ...calendar, ...action.payload } : calendar
       );
     },
     calendarSlotSelectionUpdated(state, action) {

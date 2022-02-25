@@ -27,7 +27,7 @@ const CalendarSelectMenu = (props) => {
         values={props.selected}
         options={calendarOptions}
         labelField="name"
-        valueField="_id"
+        valueField="id"
         onChange={(values) => props.onChange(values)}
       />
     </div>

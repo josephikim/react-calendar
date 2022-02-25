@@ -50,7 +50,7 @@ class CalendarPage extends Component {
   };
 
   eventStyleGetter = (event) => {
-    const calendar = this.props.calendars.filter((calendar) => calendar._id === event.calendarId);
+    const calendar = this.props.calendars.filter((calendar) => calendar.id === event.calendarId);
 
     if (calendar.length < 1) return;
 
@@ -69,23 +69,21 @@ class CalendarPage extends Component {
   };
 
   handleSelectEvent = (event) => {
-    // check if event matches previous selection
     const { calendarEventSelection } = this.props.calendarSelectionWithSlotAndEvent;
 
-    const isSameEventSelected = calendarEventSelection._id === event._id;
-
-    if (isSameEventSelected) return;
+    // check if event matches previous selection
+    if (Object.keys(calendarEventSelection).length > 0 && event.id === calendarEventSelection.id) return;
 
     this.props.onSelectEvent(event);
   };
 
   handleSelectSlot = (slot) => {
-    // check if slot matches previous selection
     const { calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
 
+    // check if slot matches previous selection
     const isSameSlotSelected = this.isSameSlot(calendarSlotSelection, slot);
 
-    if (isSameSlotSelected) return;
+    if (Object.keys(calendarSlotSelection).length > 0 && isSameSlotSelected) return;
 
     this.props.onSelectSlot(slot);
   };
@@ -100,7 +98,7 @@ class CalendarPage extends Component {
     let isSameSlotStart = false;
     let isSameSlotEnd = false;
 
-    // If month view - single day slot selected, compare dates only
+    // For month view with single-day slot selected, compare dates only
     if (currentSlot.slots.length === 1) {
       prevSlotStartDate.setHours(0, 0, 0, 0);
       prevSlotEndDate.setHours(0, 0, 0, 0);

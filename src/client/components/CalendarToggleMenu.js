@@ -13,7 +13,6 @@ const CalendarToggleMenu = () => {
   const handleChange = (event) => {
     const isChecked = event.target.checked;
     const calendarId = event.target.id;
-    debugger;
 
     // dispatch(calendarVisibilityUpdated(calendarId));
   };
@@ -25,16 +24,16 @@ const CalendarToggleMenu = () => {
       </Row>
 
       {calendars.map((calendar) => (
-        <Row key={calendar._id}>
+        <Row key={calendar.id}>
           <Col xs={12} md={2}>
             <Checkbox
-              id={`${calendar._id}`}
+              id={`${calendar.id}`}
               checked={calendar.visibility}
               handleChange={(event) => handleChange(event)}
             />
           </Col>
           <Col xs={12} md={10}>
-            <label htmlFor={`${calendar._id}`} className="text-primary">
+            <label htmlFor={`${calendar.id}`} className="text-primary">
               {calendar.name}
             </label>
           </Col>

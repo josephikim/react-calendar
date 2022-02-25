@@ -50,7 +50,7 @@ class CalendarSettings extends Component {
     let calendarsState = {};
 
     this.props.calendars.forEach((calendar) => {
-      const calendarId = calendar._id;
+      const calendarId = calendar.id;
       const newObj = {
         value: calendar.name,
         systemCalendar: calendar.systemCalendar,
@@ -117,7 +117,7 @@ class CalendarSettings extends Component {
     if (!id) return;
 
     // revert component state obj to match app state
-    const calendar = this.props.calendars.filter((calendar) => calendar._id === id); // returns array of length 1
+    const calendar = this.props.calendars.filter((calendar) => calendar.id === id); // returns array of length 1
 
     let newState = {
       value: calendar[0].name,
@@ -192,7 +192,7 @@ class CalendarSettings extends Component {
     if (calendarNameError === false) {
       // no input errors, submit the form
       const data = {
-        _id: id,
+        calendarId: id,
         name: calendarState.value.trim()
       };
 
@@ -230,15 +230,15 @@ class CalendarSettings extends Component {
       return (
         <div className="CalendarSettings">
           <Form>
-            {this.props.calendars.map((item) => (
+            {this.props.calendars.map((calendar) => (
               <CalendarSettingsItem
-                key={item._id}
-                id={item._id}
+                key={calendar.id}
+                id={calendar.id}
                 type="text"
-                value={this.state[item._id] ? this.state[item._id].value : ''}
-                error={this.state[item._id] ? this.state[item._id].error : null}
-                editMode={this.state[item._id] ? this.state[item._id].editMode : false}
-                disabled={this.state[item._id] ? this.state[item._id].systemCalendar : true}
+                value={this.state[calendar.id] ? this.state[calendar.id].value : ''}
+                error={this.state[calendar.id] ? this.state[calendar.id].error : null}
+                editMode={this.state[calendar.id] ? this.state[calendar.id].editMode : false}
+                disabled={this.state[calendar.id] ? this.state[calendar.id].systemCalendar : true}
                 onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
                 onBlur={(event) => this.handleBlur(validateFields.validateCalendarName, event)}
                 onSubmit={(event, id) => this.handleSubmitUpdateCalendar(event, id)}

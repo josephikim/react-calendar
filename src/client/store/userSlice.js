@@ -20,7 +20,7 @@ const userSlice = createSlice({
     },
     calendarUpdated(state, action) {
       state.calendars = state.calendars.map((calendar) =>
-        calendar._id === action.payload._id ? action.payload : calendar
+        calendar.id === action.payload.id ? action.payload : calendar
       );
     },
     calendarSlotSelectionUpdated(state, action) {
@@ -36,11 +36,11 @@ const userSlice = createSlice({
       state.calendarEvents = [...state.calendarEvents, action.payload];
     },
     calendarEventDeleted(state, action) {
-      state.calendarEvents = state.calendarEvents.filter((element) => element._id !== action.payload);
+      state.calendarEvents = state.calendarEvents.filter((event) => event.id !== action.payload);
     },
     calendarEventUpdated(state, action) {
       state.calendarEvents = state.calendarEvents.map((event) =>
-        event._id === action.payload._id ? action.payload : event
+        event.id === action.payload.id ? action.payload : event
       );
     },
     calendarViewUpdated(state, action) {
@@ -183,7 +183,7 @@ export const createCalendar = (data) => async (dispatch) => {
 
 export const updateCalendar = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post(`/calendar/${data._id}/update`, data);
+    const res = await userApi.post(`/calendar/update`, data);
 
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarUpdated(res.data));
@@ -226,7 +226,7 @@ export const deleteCalendarEvent = (eventId) => async (dispatch) => {
     const res = await userApi.delete(`/event/${eventId}/delete`);
 
     return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarEventDeleted(res.data._id));
+      dispatch(calendarEventDeleted(res.data.id));
       dispatch(calendarEventSelectionUpdated({}));
 
       // reset slot selection to current date
@@ -250,7 +250,7 @@ export const deleteCalendarEvent = (eventId) => async (dispatch) => {
 
 export const updateCalendarEvent = (event) => async (dispatch) => {
   try {
-    const res = await userApi.post(`/event/${event.id}/update`, event);
+    const res = await userApi.post(`/event/update`, event);
 
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarEventUpdated(res.data));
@@ -263,7 +263,7 @@ export const updateCalendarEvent = (event) => async (dispatch) => {
 
 export const updateUsername = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post(`/account/${data._id}/username/update`, data);
+    const res = await userApi.post(`/account/username/update`, data);
 
     return Promise.resolve(res.data).then((res) => {
       dispatch(usernameUpdated(res.username));
@@ -276,7 +276,7 @@ export const updateUsername = (data) => async (dispatch) => {
 // NOT AN ACTION
 export const updatePassword = (data) => async () => {
   try {
-    const res = await userApi.post(`/account/${data._id}/password/update`, data);
+    const res = await userApi.post(`/account/password/update`, data);
 
     return Promise.resolve(res.data);
   } catch (err) {

@@ -101,13 +101,25 @@ const login = (req, res, next) => {
           $or: [{ user: user._id }, { systemCalendar: true }]
         });
 
+        // Modify property names for FE app state
+        const trimmedCalendars = calendars.map((calendar) => {
+          return {
+            id: calendar._id,
+            userDefault: calendar.userDefault,
+            systemCalendar: calendar.systemCalendar,
+            name: calendar.name,
+            color: calendar.color,
+            user: calendar.user
+          };
+        });
+
         res.status(200).send({
           id: user._id,
           username: user.username,
           roles: authorities,
           accessToken: token,
           refreshToken: refreshToken,
-          calendars: calendars
+          calendars: trimmedCalendars
         });
       });
   } catch (err) {

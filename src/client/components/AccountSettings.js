@@ -116,7 +116,7 @@ class AccountSettings extends Component {
     if (usernameError === false) {
       // no input errors, submit the form
       const data = {
-        _id: this.props.userId,
+        userId: this.props.userId,
         username: username.value
       };
 
@@ -171,7 +171,7 @@ class AccountSettings extends Component {
     if (newPasswordError === false) {
       // no input errors, submit the form
       const data = {
-        _id: this.props.userId,
+        userId: this.props.userId,
         password: password.value,
         newPassword: newPassword.value
       };

@@ -26,26 +26,26 @@ userRouter.get('/event', [authJwt.verifyToken], userController.retrieveEvents);
 userRouter.post('/event', [authJwt.verifyToken], userController.createEvent);
 
 // POST request to update event
-userRouter.post('/event/:id/update', [authJwt.verifyToken], userController.updateEvent);
+userRouter.post('/event/update', [authJwt.verifyToken], userController.updateEvent);
 
 // DELETE request to delete event
 userRouter.delete('/event/:id/delete', [authJwt.verifyToken], userController.deleteEvent);
 
 // POST request to update username
 userRouter.post(
-  '/account/:id/username/update',
+  '/account/username/update',
   [authJwt.verifyToken, verifyRegistration.checkDuplicateUsername],
   userController.updateUsername
 );
 
 // POST request to update password
-userRouter.post('/account/:id/password/update', [authJwt.verifyToken], userController.updatePassword);
+userRouter.post('/account/password/update', [authJwt.verifyToken], userController.updatePassword);
 
 // POST request to create calendar
 userRouter.post('/calendar', [authJwt.verifyToken], userController.createCalendar);
 
 // POST request to update calendar
-userRouter.post('/calendar/:id/update', [authJwt.verifyToken], userController.updateCalendar);
+userRouter.post('/calendar/update', [authJwt.verifyToken], userController.updateCalendar);
 
 // DELETE request to delete calendar
 userRouter.delete('/calendar/:id/delete', [authJwt.verifyToken], userController.deleteCalendar);

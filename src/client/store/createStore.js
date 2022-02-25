@@ -34,7 +34,8 @@ const doCreateStore = () => {
 
   let persistedState = loadState();
 
-  if (persistedState.user.calendarViewSelection !== 'month') {
+  // Reset calendar view to 'month'
+  if (persistedState !== undefined && persistedState.user.calendarViewSelection !== 'month') {
     persistedState.user.calendarViewSelection = 'month';
   }
 

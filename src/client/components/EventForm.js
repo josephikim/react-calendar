@@ -29,7 +29,7 @@ class EventForm extends Component {
 
     const defaultCalendar = this.props.calendars.filter((calendar) => calendar.userDefault === true); // returns array of length one
 
-    defaultCalendarId = defaultCalendar[0]._id;
+    defaultCalendarId = defaultCalendar[0].id;
 
     const { calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
 
@@ -180,8 +180,7 @@ class EventForm extends Component {
 
       // Set calendar ID depending on if previous selection was a system event
       const prevSelectionEventCalendar = this.props.calendars.filter(
-        // returns array of length 1
-        (calendar) => calendar._id === this.state.selectedCalendarId
+        (calendar) => calendar.id === this.state.selectedCalendarId // returns array of length 1
       );
 
       const isPrevSelectionASystemEvent = prevSelectionEventCalendar[0].systemCalendar === true;
@@ -304,14 +303,14 @@ class EventForm extends Component {
           return;
         }
 
-        let payload = {
+        let event = {
           title: this.state.title.value,
           desc: this.state.desc.value,
           allDay: this.state.allDay,
           calendarId: this.state.selectedCalendarId
         };
 
-        // add start and end values to payload
+        // add start and end values to event
         if (this.state.allDay === true) {
           let startTimeAsDateObj = new Date(this.state.start.value);
           let endTimeAsDateObj = new Date(this.state.end.value);
@@ -323,24 +322,24 @@ class EventForm extends Component {
           const allDayStartTimeAsISOString = startTimeAsDateObj.toISOString();
           const allDayEndTimeAsISOString = endTimeAsDateObj.toISOString();
 
-          payload.start = allDayStartTimeAsISOString;
-          payload.end = allDayEndTimeAsISOString;
+          event.start = allDayStartTimeAsISOString;
+          event.end = allDayEndTimeAsISOString;
         } else {
-          payload.start = this.state.start.value;
-          payload.end = this.state.end.value;
+          event.start = this.state.start.value;
+          event.end = this.state.end.value;
         }
 
         if (clickedId === 'add-event-btn') {
           // Dispatch createCalendarEvent action
-          this.props.createCalendarEvent(payload);
-          alert(`Successfully added new event: "${payload.title}"`);
+          this.props.createCalendarEvent(event);
+          alert(`Successfully added new event: "${event.title}"`);
         }
 
         if (clickedId === 'update-event-btn') {
           // Check for valid event update
           const { calendarEventSelection } = this.props.calendarSelectionWithSlotAndEvent;
 
-          const isEventUpdateValid = this.checkEventUpdate(calendarEventSelection, payload);
+          const isEventUpdateValid = this.checkEventUpdate(calendarEventSelection, event);
 
           if (!isEventUpdateValid) {
             alert('No changes detected!');
@@ -348,9 +347,9 @@ class EventForm extends Component {
           }
 
           // If update is valid, dispatch updateCalendarEvent action
-          payload._id = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection._id;
-          this.props.updateCalendarEvent(payload);
-          alert(`Successfully updated event: "${payload.title}"`);
+          event.id = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection.id;
+          this.props.updateCalendarEvent(event);
+          alert(`Successfully updated event: "${event.title}"`);
         }
       } catch (err) {
         if (err.response) {
@@ -394,7 +393,7 @@ class EventForm extends Component {
     const deleteConfirmation = confirm('Are you sure you want to delete this event?');
     if (deleteConfirmation === false) return;
 
-    const eventId = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection._id;
+    const eventId = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection.id;
 
     try {
       this.props.deleteCalendarEvent(eventId);
@@ -404,7 +403,7 @@ class EventForm extends Component {
   };
 
   handleCalendarChange = (values) => {
-    const calendarId = values[0]._id;
+    const calendarId = values[0].id;
     const isCalendarValueChanged = calendarId !== this.state.selectedCalendarId;
 
     if (isCalendarValueChanged && calendarId.length > 0) {
@@ -429,7 +428,7 @@ class EventForm extends Component {
     isCalendarSlotSelected = this.props.calendarSelectionWithSlotAndEvent
       ? Object.keys(this.props.calendarSelectionWithSlotAndEvent.calendarSlotSelection).length > 0
       : false;
-    const selectedCalendar = this.props.calendars.filter((calendar) => calendar._id === this.state.selectedCalendarId); // returns array of length one
+    const selectedCalendar = this.props.calendars.filter((calendar) => calendar.id === this.state.selectedCalendarId); // returns array of length one
     const isSystemEventSelected = selectedCalendar[0].systemCalendar;
     return (
       <div className="EventForm">

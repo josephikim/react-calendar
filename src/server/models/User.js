@@ -81,7 +81,6 @@ userSchema.post('save', async function () {
         // Create default user calendar
         return new Calendar({
           name: this.username,
-          visibility: true,
           color: `#${calendarColors[systemCalendars.length]}`,
           user: this._id,
           userDefault: true,

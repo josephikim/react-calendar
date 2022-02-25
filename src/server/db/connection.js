@@ -62,7 +62,6 @@ const initialCalendars = () => {
     if (!err && count === 0) {
       new Calendar({
         name: 'US Holidays',
-        visibility: true,
         color: `#${calendarColors[0]}`,
         user: null,
         systemCalendar: true

@@ -1,9 +1,8 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { Row, Col, Button } from 'react-bootstrap';
 import Checkbox from './Checkbox';
-import { connect, useDispatch } from 'react-redux';
-import { calendarUpdated } from '../store/userSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { calendarUpdated, allCalendarsUpdated } from '../store/userSlice';
 
 const CalendarToggleMenu = () => {
   const dispatch = useDispatch();
@@ -19,6 +18,17 @@ const CalendarToggleMenu = () => {
       visibility: isChecked
     };
     dispatch(calendarUpdated(payload));
+  };
+
+  const handleSubmit = (event) => {
+    const mappedObjectsArray = calendars.map((calendar) => {
+      return {
+        ...calendar,
+        visibility: true
+      };
+    });
+
+    dispatch(allCalendarsUpdated(mappedObjectsArray));
   };
 
   return (
@@ -43,8 +53,14 @@ const CalendarToggleMenu = () => {
           </Col>
         </Row>
       ))}
+
+      <Row>
+        <Button type="button" id="select-all-btn" className="btn" variant="primary" onClick={(e) => handleSubmit(e)}>
+          Select All
+        </Button>
+      </Row>
     </div>
   );
 };
 
-export default connect(null, null)(CalendarToggleMenu);
+export default CalendarToggleMenu;

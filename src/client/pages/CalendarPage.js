@@ -121,6 +121,12 @@ class CalendarPage extends Component {
 
   render() {
     const isInitialDataLoaded = this.state.isUserCalendarLoaded && this.state.isInitialSlotLoaded;
+    const visibleCalendars = this.props.calendars
+      .filter((calendar) => calendar.visibility === true)
+      .map((calendar) => calendar.id); // returns array of calendar IDs
+    const visibleEvents = this.props.calendarEventsWithDateObjects.filter((event) =>
+      visibleCalendars.includes(event.calendarId)
+    );
 
     if (isInitialDataLoaded) {
       return (
@@ -134,7 +140,7 @@ class CalendarPage extends Component {
                 <Calendar
                   selectable
                   localizer={localizer}
-                  events={this.props.calendarEventsWithDateObjects}
+                  events={visibleEvents}
                   defaultView="month"
                   onView={(view) => this.handleView(view)}
                   defaultDate={new Date()}

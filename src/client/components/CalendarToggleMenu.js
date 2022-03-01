@@ -4,6 +4,8 @@ import Checkbox from './Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
 import { calendarUpdated, allCalendarsUpdated } from '../store/userSlice';
 
+import '../styles/CalendarToggleMenu.css';
+
 const CalendarToggleMenu = () => {
   const dispatch = useDispatch();
 
@@ -33,32 +35,26 @@ const CalendarToggleMenu = () => {
 
   return (
     <div className="CalendarToggleMenu">
-      <Row>
-        <label className="text-primary">My Calendars</label>
-      </Row>
+      <label className="text-primary">My Calendars</label>
 
       {calendars.map((calendar) => (
-        <Row key={calendar.id}>
-          <Col xs={12} md={2}>
+        <Row id="calendar-toggle-entry" key={calendar.id}>
+          <Col>
             <Checkbox
               id={`${calendar.id}`}
               checked={calendar.visibility}
               handleChange={(event) => handleChange(event)}
             />
-          </Col>
-          <Col xs={12} md={10}>
-            <label htmlFor={`${calendar.id}`} className="text-primary">
+            <label htmlFor={`${calendar.id}`} style={{ backgroundColor: calendar.color }}>
               {calendar.name}
             </label>
           </Col>
         </Row>
       ))}
 
-      <Row>
-        <Button type="button" id="select-all-btn" className="btn" variant="primary" onClick={(e) => handleSubmit(e)}>
-          Select All
-        </Button>
-      </Row>
+      <Button type="button" id="select-all-btn" variant="link" onClick={(e) => handleSubmit(e)}>
+        Select All
+      </Button>
     </div>
   );
 };

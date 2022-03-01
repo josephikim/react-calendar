@@ -1,0 +1,14 @@
+#calendar-toggle-entry label {
+  width: 75%;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  color: white;
+  padding: 3px 5px;
+  margin: 6px;
+}
+
+#select-all-btn {
+  margin-top: 12px;
+  padding: 0px;
+}

@@ -135,11 +135,12 @@ class EventForm extends Component {
         // single day slot
         if (calendarSlotSelection.action === 'click') {
           let startDate = new Date(calendarSlotSelection.start);
-          startDate.setHours(startDate.getHours() + 12);
+          startDate.setHours(12);
           const startDateISO = startDate.toISOString();
 
           let endDate = new Date(calendarSlotSelection.end);
-          endDate.setHours(endDate.getHours() - 11);
+          endDate.setDate(endDate.getDate() - 1);
+          endDate.setHours(13);
           const endDateISO = endDate.toISOString();
 
           newState.start = {
@@ -310,7 +311,7 @@ class EventForm extends Component {
           calendarId: this.state.selectedCalendarId
         };
 
-        // add start and end values to event
+        // add start and end values to event object
         if (this.state.allDay === true) {
           let startTimeAsDateObj = new Date(this.state.start.value);
           let endTimeAsDateObj = new Date(this.state.end.value);

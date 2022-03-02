@@ -226,22 +226,22 @@ export const deleteCalendarEvent = (eventId) => async (dispatch) => {
     const res = await userApi.delete(`/event/${eventId}/delete`);
 
     return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarEventDeleted(res.data.id));
-      dispatch(calendarEventSelectionUpdated({}));
-
-      // reset slot selection to current date
+      // set slot selection to current date
       let start = new Date();
       let end = new Date();
       start.setHours(start.getHours() + 1, 0, 0, 0);
       end.setHours(end.getHours() + 2, 0, 0, 0);
 
-      const currentDateSlot = {
+      const slot = {
         action: 'click',
-        start: start.toISOString(),
-        end: end.toISOString()
+        start,
+        end,
+        slots: [start]
       };
 
-      dispatch(calendarSlotSelectionUpdated(currentDateSlot));
+      dispatch(calendarEventDeleted(res.data.id));
+      dispatch(updateCalendarEventSelection({}));
+      dispatch(updateCalendarSlotSelection(slot));
     });
   } catch (err) {
     return Promise.reject(err);

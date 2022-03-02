@@ -187,29 +187,41 @@ class CalendarSettings extends Component {
 
     const calendarState = this.state[id];
 
+    // Check for unchanged input
+    const calendarName = this.props.calendars
+      .filter((calendar) => calendar.id === id)
+      .map((calendar) => calendar.name)[0];
+
+    if (calendarState.value === calendarName) {
+      alert('No changes detected!');
+      return;
+    }
+
+    // Validate input
     const calendarNameError = validateFields.validateCalendarName(calendarState.value.trim());
 
     if (calendarNameError === false) {
       // no input errors, submit the form
-      const data = {
-        calendarId: id,
-        name: calendarState.value.trim()
-      };
+      try {
+        const data = {
+          calendarId: id,
+          name: calendarState.value.trim()
+        };
 
-      this.props.updateCalendar(data).catch((err) => {
-        const error = err.response.data;
-
-        if (error.errorCode === 'calendarName') {
+        this.props.updateCalendar(data);
+        alert(`Successfully updated calendar: "${data.name}"`);
+      } catch (err) {
+        if (err.response && err.response.errorCode === 'calendarName') {
           this.setState((state) => ({
             [id]: {
               ...state[id],
-              error: error.message
+              error: err.message
             }
           }));
         } else {
-          alert(`Error: ${error.message}`);
+          alert(`Error: ${err.message}`);
         }
-      });
+      }
     } else {
       // update state with input error
       this.setState((state) => ({

@@ -1,6 +1,11 @@
-input {
-  width: 30px;
-  height: 30px;
-  position: relative;
+.Checkbox {
+  display: inline-block;
   vertical-align: middle;
+}
+
+.Checkbox input {
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  margin-right: 10px;
 }

@@ -1,14 +1,12 @@
-#calendar-toggle-entry label {
-  width: 75%;
-  position: relative;
-  display: inline-block;
+.CalendarToggleMenu #calendar-toggle label {
+  width: 50%;
   vertical-align: middle;
   color: white;
-  padding: 3px 5px;
+  padding: 3px 8px;
   margin: 6px;
 }
 
-#select-all-btn {
+.CalendarToggleMenu #select-all-btn {
   margin-top: 12px;
   padding: 0px;
 }

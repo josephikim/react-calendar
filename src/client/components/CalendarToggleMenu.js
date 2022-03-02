@@ -38,7 +38,7 @@ const CalendarToggleMenu = () => {
       <label className="text-primary">My Calendars</label>
 
       {calendars.map((calendar) => (
-        <Row id="calendar-toggle-entry" key={calendar.id}>
+        <Row id="calendar-toggle" key={calendar.id}>
           <Col>
             <Checkbox
               id={`${calendar.id}`}

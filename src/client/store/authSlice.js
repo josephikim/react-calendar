@@ -45,31 +45,10 @@ export const loginUser = (data) => async (dispatch) => {
       const userId = res.id;
       const accessToken = res.accessToken;
       const refreshToken = res.refreshToken;
-      const username = res.username;
-      const calendars = res.calendars;
-      const events = res.calendarEvents;
 
-      // Set initial calendar slot
-      let start = new Date();
-      let end = new Date();
-      start.setHours(start.getHours() + 1, 0, 0, 0);
-      end.setHours(end.getHours() + 2, 0, 0, 0);
-
-      const initialSlot = {
-        action: 'click',
-        start,
-        end,
-        slots: [start]
-      };
-
+      dispatch(userIdUpdated(userId));
       dispatch(accessTokenUpdated(accessToken));
       dispatch(refreshTokenUpdated(refreshToken));
-      dispatch(userIdUpdated(userId));
-      dispatch(usernameUpdated(username));
-      dispatch(allCalendarsUpdated(calendars));
-      dispatch(calendarEventsUpdated(events));
-      dispatch(updateCalendarEventSelection({}));
-      dispatch(updateCalendarSlotSelection(initialSlot));
     });
   } catch (err) {
     if (err.response.data.name === 'AuthorizationError') {

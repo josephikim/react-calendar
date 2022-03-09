@@ -88,7 +88,7 @@ class LoginForm extends Component {
       };
 
       try {
-        const login = await this.props.loginUser(data);
+        await this.props.loginUser(data);
       } catch (err) {
         alert(`${err.name}: ${err.message} // err.response: ${err.response} // err.errorCode: ${err.errorCode}`);
         if (err.errorCode && ['username', 'password'].includes(err.errorCode)) {
@@ -124,64 +124,62 @@ class LoginForm extends Component {
 
   render() {
     return (
-      <div className="LoginForm">
-        <Form>
-          <div className="text-primary">
-            <h4>User Login</h4>
-          </div>
+      <Form className="LoginForm">
+        <div className="text-primary">
+          <h4>User Login</h4>
+        </div>
 
-          <Form.Group controlId="username">
-            <Form.Label className="text-primary">Username</Form.Label>
-            <Form.Control
-              name="username"
-              placeholder="Enter username"
-              onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
-              onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
-            />
-          </Form.Group>
+        <Form.Group controlId="username">
+          <Form.Label className="text-primary">Username</Form.Label>
+          <Form.Control
+            name="username"
+            placeholder="Enter username"
+            onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
+            onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
+          />
+        </Form.Group>
 
-          <div className="text-danger">
-            <small>{this.state.username.error}</small>
-          </div>
+        <div className="text-danger">
+          <small>{this.state.username.error}</small>
+        </div>
 
-          <Form.Group controlId="password">
-            <Form.Label className="text-primary">Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              placeholder="Enter password"
-              onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
-              onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
-            />
-          </Form.Group>
+        <Form.Group controlId="password">
+          <Form.Label className="text-primary">Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="password"
+            placeholder="Enter password"
+            onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
+            onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
+          />
+        </Form.Group>
 
-          <div className="text-danger">
-            <small>{this.state.password.error}</small>
-          </div>
+        <div className="text-danger">
+          <small>{this.state.password.error}</small>
+        </div>
 
-          <Form.Group controlId="passwordConfirm">
-            <Form.Label className="text-primary">Confirm Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="passwordConfirm"
-              placeholder="Confirm password"
-              onChange={(event) => this.handleChange(validateFields.validatePasswordConfirm, event)}
-            />
-          </Form.Group>
+        <Form.Group controlId="passwordConfirm">
+          <Form.Label className="text-primary">Confirm Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="passwordConfirm"
+            placeholder="Confirm password"
+            onChange={(event) => this.handleChange(validateFields.validatePasswordConfirm, event)}
+          />
+        </Form.Group>
 
-          <div className="text-danger">
-            <small>{this.state.passwordConfirm.error}</small>
-          </div>
+        <div className="text-danger">
+          <small>{this.state.passwordConfirm.error}</small>
+        </div>
 
-          <Button type="submit" name="login-form-btn" variant="primary" onClick={this.handleSubmit}>
-            Login
-          </Button>
+        <Button type="submit" name="login-form-btn" variant="primary" onClick={this.handleSubmit}>
+          Login
+        </Button>
 
-          <div className="text-danger">
-            <small>{this.state.error}</small>
-          </div>
-        </Form>
-      </div>
+        <div className="text-danger">
+          <small>{this.state.error}</small>
+        </div>
+      </Form>
     );
   }
 }

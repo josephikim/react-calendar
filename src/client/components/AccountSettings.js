@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col, Form } from 'react-bootstrap';
+import { Container, Form } from 'react-bootstrap';
 import { validateFields } from '../../validation';
 import { updateUsername, updatePassword } from '../store/userSlice';
 
@@ -331,8 +331,8 @@ class AccountSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    username: state.user.username,
-    userId: state.user.userId
+    userId: state.auth.userId,
+    username: state.user.username
   };
 };
 

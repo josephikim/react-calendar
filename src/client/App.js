@@ -42,7 +42,7 @@ class App extends Component {
 const mapStateToProps = (state) => {
   return {
     accessToken: state.auth.accessToken,
-    userId: state.user.userId
+    userId: state.auth.userId
   };
 };
 

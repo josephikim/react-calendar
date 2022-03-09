@@ -19,8 +19,11 @@ userRouter.get('/test/mod', [authJwt.verifyToken, authJwt.isModerator], userCont
 
 userRouter.get('/test/admin', [authJwt.verifyToken, authJwt.isAdmin], userController.adminAccess);
 
+// GET request for all user data
+userRouter.get('/data', [authJwt.verifyToken], userController.getUserData);
+
 // GET request for all events
-userRouter.get('/event', [authJwt.verifyToken], userController.retrieveEvents);
+userRouter.get('/event', [authJwt.verifyToken], userController.getEvents);
 
 // POST request to create event
 userRouter.post('/event', [authJwt.verifyToken], userController.createEvent);

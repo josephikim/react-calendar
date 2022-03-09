@@ -22,7 +22,7 @@ const moderatorAccess = (req, res) => {
   res.status(200).send('Moderator content');
 };
 
-const retrieveEvents = async (req, res, next) => {
+const getUserData = async (req, res, next) => {
   const userId = req.query.userId;
 
   if (!userId) {
@@ -30,13 +30,74 @@ const retrieveEvents = async (req, res, next) => {
   }
 
   try {
-    const calendars = await Calendar.find({
+    let user = await User.findOne({ _id: userId });
+
+    let calendars = await Calendar.find({
       $or: [{ user: userId }, { systemCalendar: true }]
     });
 
     const calendarIds = calendars.map((calendar) => calendar._id);
 
-    const events = await Event.find({
+    let events = await Event.find({
+      calendarId: {
+        $in: calendarIds
+      }
+    })
+      .select('-__v')
+      .sort({ start: -1 });
+
+    // Prepare response data
+    const trimmedCalendars = calendars.map((calendar) => {
+      return {
+        id: calendar._id,
+        name: calendar.name,
+        color: calendar.color,
+        user: calendar.user,
+        userDefault: calendar.userDefault,
+        systemCalendar: calendar.systemCalendar,
+        visibility: true
+      };
+    });
+
+    const trimmedEvents = events.map((event) => {
+      return {
+        id: event._id,
+        title: event.title,
+        desc: event.desc,
+        start: event.start,
+        end: event.end,
+        allDay: event.allDay,
+        calendarId: event.calendarId
+      };
+    });
+
+    const userData = {
+      username: user.username,
+      calendars: trimmedCalendars,
+      calendarEvents: trimmedEvents
+    };
+
+    return res.status(200).send(userData);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const getEvents = async (req, res, next) => {
+  const userId = req.query.userId;
+
+  if (!userId) {
+    return res.status(500).send({ message: 'GET request failed. Please check your query and try again.' });
+  }
+
+  try {
+    let calendars = await Calendar.find({
+      $or: [{ user: userId }, { systemCalendar: true }]
+    });
+
+    const calendarIds = calendars.map((calendar) => calendar._id);
+
+    let events = await Event.find({
       calendarId: {
         $in: calendarIds
       }
@@ -66,7 +127,7 @@ const createEvent = async (req, res, next) => {
   try {
     const event = new Event(req.body);
 
-    const createdEvent = await event.save();
+    let createdEvent = await event.save();
 
     const trimmedEvent = {
       id: createdEvent._id,
@@ -88,7 +149,7 @@ const deleteEvent = async (req, res, next) => {
   const eventId = req.params.id;
 
   try {
-    const deletedEvent = await Event.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(eventId) });
+    let deletedEvent = await Event.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(eventId) });
 
     const trimmedEvent = {
       id: deletedEvent._id
@@ -108,7 +169,7 @@ const updateEvent = async (req, res, next) => {
   payload.end = new Date(payload.end);
 
   try {
-    const updatedEvent = await Event.findOneAndUpdate({ _id: payload.id }, payload, { new: true });
+    let updatedEvent = await Event.findOneAndUpdate({ _id: payload.id }, payload, { new: true });
 
     const trimmedEvent = {
       id: updatedEvent._id,
@@ -169,7 +230,7 @@ const updatePassword = async (req, res, next) => {
         return next(err);
       }
 
-      const passwordIsValid = await user.validatePassword(payload.password);
+      let passwordIsValid = await user.validatePassword(payload.password);
 
       if (!passwordIsValid) {
         return next(new AuthorizationError('Invalid password', { errorCode: 'password' }));
@@ -198,7 +259,7 @@ const createCalendar = async (req, res, next) => {
   const name = req.body.name;
 
   try {
-    const foundCalendars = await Calendar.find({
+    let foundCalendars = await Calendar.find({
       $or: [{ user: userId }, { systemCalendar: true }]
     });
 
@@ -212,7 +273,7 @@ const createCalendar = async (req, res, next) => {
 
     const calendar = new Calendar(data);
 
-    const createdCalendar = await calendar.save();
+    let createdCalendar = await calendar.save();
 
     const trimmedCalendar = {
       id: createdCalendar._id,
@@ -235,7 +296,7 @@ const updateCalendar = async (req, res, next) => {
   payload.calendarId = db.mongoose.Types.ObjectId(payload.calendarId);
 
   try {
-    const updatedCalendar = await Calendar.findOneAndUpdate({ _id: payload.calendarId }, payload, { new: true });
+    let updatedCalendar = await Calendar.findOneAndUpdate({ _id: payload.calendarId }, payload, { new: true });
 
     const trimmedCalendar = {
       id: updatedCalendar._id,
@@ -256,7 +317,7 @@ const deleteCalendar = async (req, res, next) => {
   const calendarId = req.params.id;
 
   try {
-    const deletedCalendar = await Calendar.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(calendarId) });
+    let deletedCalendar = await Calendar.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(calendarId) });
 
     return res.status(200).send({ data: deletedCalendar, message: 'Deleted calendar' });
   } catch (err) {
@@ -269,7 +330,8 @@ const userController = {
   userAccess,
   adminAccess,
   moderatorAccess,
-  retrieveEvents,
+  getUserData,
+  getEvents,
   createEvent,
   deleteEvent,
   updateEvent,

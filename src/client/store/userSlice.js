@@ -9,9 +9,6 @@ const userSlice = createSlice({
     usernameUpdated(state, action) {
       state.username = action.payload;
     },
-    userIdUpdated(state, action) {
-      state.userId = action.payload;
-    },
     allCalendarsUpdated(state, action) {
       state.calendars = [...action.payload];
     },
@@ -51,7 +48,6 @@ const userSlice = createSlice({
 
 export const {
   usernameUpdated,
-  userIdUpdated,
   allCalendarsUpdated,
   calendarAdded,
   calendarUpdated,
@@ -95,39 +91,32 @@ export const calendarSelectionWithSlotAndEvent = createSelector(
 const calendarEventsSelector = (state) => state.user.calendarEvents;
 
 export const calendarEventsWithDateObjects = createSelector([calendarEventsSelector], (calendarEvents) => {
-  let eventsCloned = JSON.parse(JSON.stringify(calendarEvents));
+  let clonedEvents = JSON.parse(JSON.stringify(calendarEvents));
 
-  eventsCloned.forEach((event) => {
+  clonedEvents.forEach((event) => {
     event.start = new Date(event.start);
     event.end = new Date(event.end);
   });
 
-  return eventsCloned;
+  return clonedEvents;
 });
 
 //
 // Bound action creators
 //
 
-export const initializeCalendarData = (userId) => (dispatch) => {
-  // Set initial calendar slot
-  let start = new Date();
-  let end = new Date();
-  start.setHours(start.getHours() + 1, 0, 0, 0);
-  end.setHours(end.getHours() + 2, 0, 0, 0);
+export const retrieveUserData = (userId) => async (dispatch) => {
+  try {
+    const res = await userApi.get('/data', { params: { userId } });
 
-  const initialSlot = {
-    action: 'click',
-    start,
-    end,
-    slots: [start]
-  };
-
-  return Promise.all([
-    dispatch(retrieveCalendarEvents(userId)),
-    dispatch(updateCalendarEventSelection({})),
-    dispatch(updateCalendarSlotSelection(initialSlot))
-  ]);
+    return Promise.resolve(res.data).then((res) => {
+      dispatch(usernameUpdated(res.username));
+      dispatch(allCalendarsUpdated(res.calendars));
+      dispatch(calendarEventsUpdated(res.calendarEvents));
+    });
+  } catch (err) {
+    return Promise.reject(err);
+  }
 };
 
 export const onSelectSlot = (slot) => (dispatch) => {
@@ -187,20 +176,6 @@ export const updateCalendar = (data) => async (dispatch) => {
 
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarUpdated(res.data));
-    });
-  } catch (err) {
-    return Promise.reject(err);
-  }
-};
-
-export const retrieveCalendarEvents = (userId) => async (dispatch) => {
-  if (!userId) return;
-
-  try {
-    const res = await userApi.get('/event', { params: { userId: userId } });
-
-    return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarEventsUpdated(res.data));
     });
   } catch (err) {
     return Promise.reject(err);

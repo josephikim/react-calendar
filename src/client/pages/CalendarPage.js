@@ -3,7 +3,6 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import _ from 'lodash';
 
 import CalendarToggleMenu from '../components/CalendarToggleMenu';
 import EventForm from '../components/EventForm';
@@ -11,7 +10,7 @@ import {
   onSelectSlot,
   onSelectEvent,
   onSelectView,
-  initializeCalendarData,
+  retrieveUserData,
   calendarSelectionWithSlotAndEvent,
   calendarEventsWithDateObjects
 } from '../store/userSlice';
@@ -26,26 +25,30 @@ class CalendarPage extends Component {
     super(...args);
 
     this.state = {
-      isUserCalendarLoaded: false,
-      isInitialSlotLoaded: false
+      isUserDataLoaded: false
     };
   }
 
   componentDidMount = () => {
-    this.props.initializeCalendarData(this.props.userId);
+    if (
+      !this.props.username ||
+      this.props.calendars.length === 0 ||
+      this.props.calendarEventsWithDateObjects.length === 0
+    ) {
+      this.props.retrieveUserData(this.props.userId);
+    } else {
+      this.setState({ isUserDataLoaded: true });
+    }
   };
 
   componentDidUpdate = () => {
-    const isUserCalendarLoaded = this.props.calendars.some((calendar) => calendar.userDefault === true);
+    const isUserDataLoaded =
+      this.props.username.length > 0 &&
+      this.props.calendars.some((calendar) => calendar.userDefault === true) &&
+      this.props.calendarEventsWithDateObjects.length > 0;
 
-    const isInitialSlotLoaded = !!this.props.calendarSelectionWithSlotAndEvent;
-
-    if (isUserCalendarLoaded && this.state.isUserCalendarLoaded === false) {
-      this.setState({ isUserCalendarLoaded: true });
-    }
-
-    if (isInitialSlotLoaded && this.state.isInitialSlotLoaded === false) {
-      this.setState({ isInitialSlotLoaded: true });
+    if (isUserDataLoaded && !this.state.isUserDataLoaded) {
+      this.setState({ isUserDataLoaded: true });
     }
   };
 
@@ -120,15 +123,22 @@ class CalendarPage extends Component {
   };
 
   render() {
-    const isInitialDataLoaded = this.state.isUserCalendarLoaded && this.state.isInitialSlotLoaded;
-    const visibleCalendars = this.props.calendars
-      .filter((calendar) => calendar.visibility === true)
-      .map((calendar) => calendar.id); // returns array of calendar IDs
-    const visibleEvents = this.props.calendarEventsWithDateObjects.filter((event) =>
-      visibleCalendars.includes(event.calendarId)
-    );
+    let visibleCalendars = [];
+    let visibleEvents = [];
+    const isUserDataLoaded = this.state.isUserDataLoaded;
 
-    if (isInitialDataLoaded) {
+    if (isUserDataLoaded) {
+      // returns array of calendar IDs
+      visibleCalendars = this.props.calendars
+        .filter((calendar) => calendar.visibility === true)
+        .map((calendar) => calendar.id);
+
+      visibleEvents = this.props.calendarEventsWithDateObjects.filter((event) =>
+        visibleCalendars.includes(event.calendarId)
+      );
+    }
+
+    if (isUserDataLoaded) {
       return (
         <div className="CalendarPage">
           <Container>
@@ -160,14 +170,15 @@ class CalendarPage extends Component {
         </div>
       );
     } else {
-      return <div>Loading...</div>;
+      return <div>Loading page...</div>;
     }
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    userId: state.user.userId,
+    userId: state.auth.userId,
+    username: state.user.username,
     calendars: state.user.calendars,
     calendarSelectionWithSlotAndEvent: calendarSelectionWithSlotAndEvent(state),
     calendarEventsWithDateObjects: calendarEventsWithDateObjects(state)
@@ -178,7 +189,7 @@ const mapActionsToProps = {
   onSelectSlot,
   onSelectEvent,
   onSelectView,
-  initializeCalendarData
+  retrieveUserData
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(CalendarPage);

@@ -22,7 +22,7 @@ const CalendarToggleMenu = () => {
     dispatch(calendarUpdated(payload));
   };
 
-  const handleSubmit = (event) => {
+  const handleSelectAll = () => {
     const mappedObjectsArray = calendars.map((calendar) => {
       return {
         ...calendar,
@@ -52,7 +52,7 @@ const CalendarToggleMenu = () => {
         </Row>
       ))}
 
-      <Button type="button" id="select-all-btn" variant="link" onClick={(e) => handleSubmit(e)}>
+      <Button type="button" id="select-all-btn" variant="link" onClick={() => handleSelectAll()}>
         Select All
       </Button>
     </div>

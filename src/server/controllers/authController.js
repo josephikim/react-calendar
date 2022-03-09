@@ -98,57 +98,13 @@ const login = (req, res, next) => {
           authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
         }
 
-        // Retrieve calendars
-        let calendars = await Calendar.find({
-          $or: [{ user: user._id }, { systemCalendar: true }]
-        });
-
-        // Retrieve events
-        const calendarIds = calendars.map((calendar) => calendar._id);
-
-        let events = await Event.find({
-          calendarId: {
-            $in: calendarIds
-          }
-        })
-          .select('-__v')
-          .sort({ start: -1 });
-
-        // Prepare data for frontend state
-        const trimmedCalendars = calendars.map((calendar) => {
-          return {
-            id: calendar._id,
-            userDefault: calendar.userDefault,
-            systemCalendar: calendar.systemCalendar,
-            name: calendar.name,
-            color: calendar.color,
-            user: calendar.user,
-            visibility: true
-          };
-        });
-
-        const trimmedEvents = events.map((event) => {
-          return {
-            id: event._id,
-            title: event.title,
-            desc: event.desc,
-            start: event.start,
-            end: event.end,
-            allDay: event.allDay,
-            calendarId: event.calendarId
-          };
-        });
-
-        const userData = {
+        const authData = {
           id: user._id,
           accessToken: token,
-          refreshToken: refreshToken,
-          username: user.username,
-          calendars: trimmedCalendars,
-          calendarEvents: trimmedEvents
+          refreshToken: refreshToken
         };
 
-        res.status(200).send(userData);
+        res.status(200).send(authData);
       });
   } catch (err) {
     return next(err);

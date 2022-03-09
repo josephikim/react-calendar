@@ -30,14 +30,8 @@ class CalendarPage extends Component {
   }
 
   componentDidMount = () => {
-    if (
-      !this.props.username ||
-      this.props.calendars.length === 0 ||
-      this.props.calendarEventsWithDateObjects.length === 0
-    ) {
+    if (this.props.userId.length > 0) {
       this.props.retrieveUserData(this.props.userId);
-    } else {
-      this.setState({ isUserDataLoaded: true });
     }
   };
 

@@ -1,12 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {
-  allCalendarsUpdated,
-  usernameUpdated,
-  calendarEventsUpdated,
-  updateCalendarEventSelection,
-  updateCalendarSlotSelection
-} from './userSlice';
 import { authApi } from '../utils/axios';
+import { usernameUpdated, allCalendarsUpdated, calendarEventsUpdated } from './userSlice';
 
 const authSlice = createSlice({
   name: 'auth',
@@ -23,6 +17,8 @@ const authSlice = createSlice({
     },
     userLoggedOut(state) {
       state.accessToken = null;
+      state.refreshToken = null;
+      state.userId = null;
     }
   }
 });
@@ -33,7 +29,9 @@ export default authSlice.reducer;
 
 export const logoutUser = () => (dispatch) => {
   localStorage.clear();
-
+  dispatch(usernameUpdated(null));
+  dispatch(allCalendarsUpdated([]));
+  dispatch(calendarEventsUpdated([]));
   dispatch(userLoggedOut());
 };
 

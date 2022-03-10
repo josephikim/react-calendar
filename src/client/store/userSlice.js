@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { userApi } from '../utils/axios';
+import { defaultView } from '../../server/config/appConfig';
 
 const userSlice = createSlice({
   name: 'user',
@@ -114,6 +115,31 @@ export const retrieveUserData = (userId) => async (dispatch) => {
       dispatch(allCalendarsUpdated(res.calendars));
       dispatch(calendarEventsUpdated(res.calendarEvents));
     });
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+
+export const initializeCalendarView = () => async (dispatch) => {
+  try {
+    // Initial calendar slot
+    let start = new Date();
+    let end = new Date();
+    start.setHours(start.getHours() + 1, 0, 0, 0);
+    end.setHours(end.getHours() + 2, 0, 0, 0);
+
+    const initialSlot = {
+      action: 'click',
+      start,
+      end,
+      slots: [start]
+    };
+
+    return Promise.all([
+      dispatch(updateCalendarSlotSelection(initialSlot)),
+      dispatch(updateCalendarEventSelection({})),
+      dispatch(onSelectView(defaultView))
+    ]);
   } catch (err) {
     return Promise.reject(err);
   }

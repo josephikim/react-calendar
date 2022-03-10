@@ -12,7 +12,8 @@ import {
   onSelectView,
   retrieveUserData,
   calendarSelectionWithSlotAndEvent,
-  calendarEventsWithDateObjects
+  calendarEventsWithDateObjects,
+  initializeCalendarView
 } from '../store/userSlice';
 
 import '../styles/CalendarPage.css';
@@ -31,13 +32,13 @@ class CalendarPage extends Component {
 
   componentDidMount = () => {
     if (this.props.userId.length > 0) {
-      this.props.retrieveUserData(this.props.userId);
+      Promise.all([this.props.retrieveUserData(this.props.userId), this.props.initializeCalendarView()]);
     }
   };
 
   componentDidUpdate = () => {
     const isUserDataLoaded =
-      this.props.username.length > 0 &&
+      !!this.props.username &&
       this.props.calendars.some((calendar) => calendar.userDefault === true) &&
       this.props.calendarEventsWithDateObjects.length > 0;
 
@@ -183,7 +184,8 @@ const mapActionsToProps = {
   onSelectSlot,
   onSelectEvent,
   onSelectView,
-  retrieveUserData
+  retrieveUserData,
+  initializeCalendarView
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(CalendarPage);

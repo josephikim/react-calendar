@@ -5,22 +5,8 @@ import { loadState, saveState } from './localStorage';
 import throttle from 'lodash/throttle';
 import authReducer from './authSlice';
 import userReducer from './userSlice';
-import { defaultView } from '../../server/config/appConfig';
 
 const middleware = [thunk];
-
-// Initial calendar slot
-let start = new Date();
-let end = new Date();
-start.setHours(start.getHours() + 1, 0, 0, 0);
-end.setHours(end.getHours() + 2, 0, 0, 0);
-
-const initialSlot = {
-  action: 'click',
-  start,
-  end,
-  slots: [start]
-};
 
 const initialState = {
   auth: {
@@ -30,11 +16,11 @@ const initialState = {
   },
   user: {
     username: null,
-    calendarSlotSelection: initialSlot,
+    calendarSlotSelection: {},
     calendarEventSelection: {},
     calendars: [],
     calendarEvents: [],
-    calendarViewSelection: defaultView
+    calendarViewSelection: null
   }
 };
 

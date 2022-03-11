@@ -92,11 +92,11 @@ class RegisterForm extends Component {
         const error = err.response.data;
         alert(`${error.name}: ${error.message}`);
 
-        if (err.errorCode && ['username', 'password'].includes(err.errorCode)) {
+        if (error.errorCode && ['username', 'password'].includes(error.errorCode)) {
           this.setState((state) => ({
-            [err.errorCode]: {
-              ...state[err.errorCode],
-              error: err.message
+            [error.errorCode]: {
+              ...state[error.errorCode],
+              error: error.message
             }
           }));
         }

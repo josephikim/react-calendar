@@ -30,9 +30,13 @@ class CalendarSettings extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    const calendarsChanged = this.props.calendars.length > 0 && !_.isEqual(this.props.calendars, prevProps.calendars);
+    if (this.props.calendars.length < 1) return;
 
-    if (calendarsChanged) {
+    const isCalendarsUpdated = !_.isEqual(this.props.calendars, prevProps.calendars);
+
+    // Reset newCalendar state when any existing calendar is updated
+    if (isCalendarsUpdated) {
+      debugger;
       const calendarsState = this.getCalendarsState();
 
       this.setState({
@@ -106,17 +110,18 @@ class CalendarSettings extends Component {
 
     let newState = {};
 
-    (newState[id] = {
+    newState[id] = {
       ...this.state[id],
       editMode: true
-    }),
-      this.setState(newState);
+    };
+
+    this.setState(newState);
   };
 
   handleCancel = (id) => {
     if (!id) return;
 
-    // revert component state obj to match app state
+    // Reset component state to match app state
     const calendar = this.props.calendars.filter((calendar) => calendar.id === id); // returns array of length 1
 
     let newState = {
@@ -156,7 +161,8 @@ class CalendarSettings extends Component {
           alert('New calendar created!');
         })
         .catch((err) => {
-          const error = err.response;
+          const error = err.response.data;
+          alert(`Error creating calendar: ${error.message}`);
           if (error.errorCode === 'calendar') {
             this.setState((state) => ({
               newCalendar: {
@@ -164,8 +170,6 @@ class CalendarSettings extends Component {
                 error: error.message
               }
             }));
-          } else {
-            alert(`Error: ${error.message}`);
           }
         });
     } else {
@@ -211,15 +215,15 @@ class CalendarSettings extends Component {
         this.props.updateCalendar(data);
         alert(`Successfully updated calendar: "${data.name}"`);
       } catch (err) {
-        if (err.response && err.response.errorCode === 'calendarName') {
+        const error = err.response.data;
+        alert(`Error updating calendar: ${error.message}`);
+        if (error.errorCode === 'calendarName') {
           this.setState((state) => ({
             [id]: {
               ...state[id],
-              error: err.message
+              error: error.message
             }
           }));
-        } else {
-          alert(`Error: ${err.message}`);
         }
       }
     } else {

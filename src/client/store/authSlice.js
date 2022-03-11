@@ -2,9 +2,15 @@ import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from '../utils/axios';
 import { usernameUpdated, allCalendarsUpdated, calendarEventsUpdated } from './userSlice';
 
+const initialState = {
+  accessToken: null,
+  refreshToken: null,
+  userId: null
+};
+
 const authSlice = createSlice({
   name: 'auth',
-  initialState: [],
+  initialState,
   reducers: {
     accessTokenUpdated(state, action) {
       state.accessToken = action.payload;
@@ -16,9 +22,7 @@ const authSlice = createSlice({
       state.userId = action.payload;
     },
     userLoggedOut(state) {
-      state.accessToken = null;
-      state.refreshToken = null;
-      state.userId = null;
+      state = initialState;
     }
   }
 });
@@ -28,10 +32,6 @@ export const { accessTokenUpdated, refreshTokenUpdated, userIdUpdated, userLogge
 export default authSlice.reducer;
 
 export const logoutUser = () => (dispatch) => {
-  localStorage.clear();
-  dispatch(usernameUpdated(null));
-  dispatch(allCalendarsUpdated([]));
-  dispatch(calendarEventsUpdated([]));
   dispatch(userLoggedOut());
 };
 
@@ -53,7 +53,7 @@ export const loginUser = (data) => async (dispatch) => {
       // unauthorize user
       dispatch(accessTokenUpdated(null));
     }
-    return Promise.reject(err.response.data);
+    return Promise.reject(err);
   }
 };
 
@@ -62,13 +62,13 @@ export const registerUser = (data) => async (dispatch) => {
     const res = await authApi.post('/register', data);
 
     return Promise.resolve(res.data).then((res) => {
+      const userId = res.id;
       const accessToken = res.accessToken;
       const refreshToken = res.refreshToken;
-      const userId = res.id;
 
+      dispatch(userIdUpdated(userId));
       dispatch(accessTokenUpdated(accessToken));
       dispatch(refreshTokenUpdated(refreshToken));
-      dispatch(userIdUpdated(userId));
     });
   } catch (err) {
     return Promise.reject(err);

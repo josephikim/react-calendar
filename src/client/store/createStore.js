@@ -8,48 +8,37 @@ import userReducer from './userSlice';
 
 const middleware = [thunk];
 
-const initialState = {
-  auth: {
-    accessToken: null,
-    refreshToken: null,
-    userId: null
-  },
-  user: {
-    username: null,
-    calendarSlotSelection: {},
-    calendarEventSelection: {},
-    calendars: [],
-    calendarEvents: [],
-    calendarViewSelection: null
-  }
-};
-
 // NOTE: Only auth data is persisted via localstorage. User data (eg calendars and events) will be retrieved if needed after store is created
 const doCreateStore = () => {
-  const reducer = combineReducers({
+  const allReducers = combineReducers({
     auth: authReducer,
     user: userReducer
   });
 
+  const rootReducer = (state, action) => {
+    if (action.type === 'auth/userLoggedOut') {
+      state = undefined;
+    }
+
+    return allReducers(state, action);
+  };
+
   const composeEnhancers = composeWithDevTools({});
 
-  const persistedState = loadState();
+  let persistedState = loadState();
 
-  let state = { ...initialState };
-
-  if (persistedState !== undefined && persistedState.accessToken) {
-    state.auth = { ...persistedState };
-  }
-
-  const store = createStore(reducer, state, composeEnhancers(applyMiddleware(...middleware)));
+  const store = createStore(
+    rootReducer,
+    persistedState ? persistedState : undefined,
+    composeEnhancers(applyMiddleware(...middleware))
+  );
 
   store.subscribe(
     throttle(() => {
-      const authState = store.getState().auth;
-
-      saveState(authState);
+      saveState(store.getState());
     }, 1000)
   );
+
   return store;
 };
 

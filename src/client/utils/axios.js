@@ -24,8 +24,8 @@ userApi.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
+  (err) => {
+    return Promise.reject(err);
   }
 );
 
@@ -60,8 +60,8 @@ userApi.interceptors.response.use(
         }
       }
 
-      if (err.response.status === 403 && err.response.data) {
-        return Promise.reject(err.response.data);
+      if (err.response.status === 403) {
+        return Promise.reject(err);
       }
     }
 

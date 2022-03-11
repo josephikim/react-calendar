@@ -18,51 +18,36 @@ const initialState = {
   password: {
     value: '',
     validateOnChange: false,
-    error: '',
     editMode: false
   },
   newPassword: {
     value: '',
     validateOnChange: false,
-    error: '',
-    editMode: false
+    error: ''
   }
 };
 class AccountSettings extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      username: {
-        ...initialState.username,
-        value: props.username
-      },
-      password: {
-        ...initialState.password,
-        value: '****'
-      },
-      newPassword: {
-        ...initialState.newPassword
-      },
-      isUsernameLoaded: !!props.username,
-      isUserIdLoaded: !!props.userId
-    };
+    this.state = initialState;
   }
 
-  componentDidUpdate = () => {
-    if (!this.state.isUsernameLoaded && this.props.username) {
-      this.setState((state) => ({
-        username: {
-          ...state.username,
-          value: this.props.username
-        },
-        isUsernameLoaded: true
-      }));
-    }
+  componentDidMount = () => {
+    if (!this.props.username) return;
 
-    if (!this.state.isUserIdLoaded && this.props.userId) {
-      this.setState({ isUserIdLoaded: true });
-    }
+    let newState = {
+      username: {
+        ...this.state.username,
+        value: this.props.username
+      },
+      password: {
+        ...this.state.password,
+        value: '****'
+      }
+    };
+
+    this.setState(newState);
   };
 
   handleBlur = (validationFunc, event) => {
@@ -133,6 +118,7 @@ class AccountSettings extends Component {
         })
         .catch((err) => {
           const error = err.response.data;
+          alert(`Error updating username: ${error.message}`);
           if (error.errorCode === 'username') {
             this.setState((state) => ({
               username: {
@@ -140,8 +126,6 @@ class AccountSettings extends Component {
                 error: error.message
               }
             }));
-          } else {
-            alert(`Error: ${error.message}`);
           }
         });
     } else {
@@ -192,15 +176,14 @@ class AccountSettings extends Component {
         })
         .catch((err) => {
           const error = err.response.data;
+          alert(`Error updating password: ${error.message}`);
           if (error.errorCode === 'password') {
             this.setState((state) => ({
-              password: {
-                ...state.password,
+              newPassword: {
+                ...state.newPassword,
                 error: error.message
               }
             }));
-          } else {
-            alert(`Error: ${error.message}`);
           }
         });
     } else {
@@ -219,18 +202,14 @@ class AccountSettings extends Component {
     let newState = {};
 
     if (id === 'password') {
-      (newState[id] = {
-        ...initialState[id],
+      newState['password'] = {
+        ...initialState['password'],
         editMode: true
-      }),
-        (newState['newPassword'] = {
-          ...initialState['newPassword'],
-          editMode: true
-        });
+      };
     }
     if (id === 'username') {
-      newState[id] = {
-        ...this.state[id],
+      newState['username'] = {
+        ...this.state['username'],
         editMode: true
       };
     }
@@ -239,100 +218,102 @@ class AccountSettings extends Component {
   };
 
   handleCancel = (id) => {
-    this.setState({
-      [id]: {
+    let newState = {};
+
+    if (id === 'username') {
+      newState[id] = {
         ...initialState[id],
-        value: id === 'username' ? this.props.username : '****'
-      }
-    });
+        value: this.props.username,
+        error: ''
+      };
+    }
+
+    if (id === 'password') {
+      newState[id] = {
+        ...initialState[id],
+        value: '****',
+        error: ''
+      };
+
+      newState['newPassword'] = {
+        ...initialState['newPassword']
+      };
+    }
+    this.setState(newState);
   };
 
   render() {
-    const isAccountDataLoaded = this.state.isUserIdLoaded && this.state.isUsernameLoaded;
+    const usernameError = this.state.username.error;
+    const newPasswordError = this.state.newPassword.error;
 
-    if (isAccountDataLoaded) {
-      const usernameError = this.state.username.error;
-      const passwordError = this.state.password.error;
-      const newPasswordError = this.state.newPassword.error;
-      return (
-        <div className="AccountSettings">
-          <Form>
+    return (
+      <div className="AccountSettings">
+        <Form>
+          <AccountSettingsItem
+            id="username"
+            type="text"
+            label="Username"
+            value={this.state.username.value}
+            editMode={this.state.username.editMode}
+            error={this.state.username.error}
+            onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
+            onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
+            onSubmit={(event) => this.handleSubmitUsername(event)}
+            onEdit={(event, id) => this.handleEdit(event, id)}
+            onCancel={(event, id) => this.handleCancel(event, id)}
+          />
+
+          {usernameError && (
+            <Container>
+              <div className="error text-danger">
+                <small>{usernameError}</small>
+              </div>
+            </Container>
+          )}
+
+          <AccountSettingsItem
+            id="password"
+            type="password"
+            label={this.state.password.editMode ? 'Confirm Current Password' : 'Password'}
+            value={this.state.password.value}
+            editMode={this.state.password.editMode}
+            onChange={(event) => this.handleChange(null, event)}
+            onSubmit={(event) => this.handleSubmitPassword(event)}
+            onEdit={(event, id) => this.handleEdit(event, id)}
+            onCancel={(event, id) => this.handleCancel(event, id)}
+          />
+
+          {this.state.password.editMode && (
             <AccountSettingsItem
-              id="username"
-              type="text"
-              label="Username"
-              value={this.state.username.value}
-              editMode={this.state.username.editMode}
-              error={this.state.username.error}
-              onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
-              onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
-              onSubmit={(event) => this.handleSubmitUsername(event)}
-              onEdit={(event, id) => this.handleEdit(event, id)}
-              onCancel={(event, id) => this.handleCancel(event, id)}
-            />
-
-            {usernameError && (
-              <Container>
-                <div className="error text-danger">
-                  <small>{usernameError}</small>
-                </div>
-              </Container>
-            )}
-
-            <AccountSettingsItem
-              id="password"
+              id="newPassword"
               type="password"
-              label={this.state.password.editMode ? 'Confirm Current Password' : 'Password'}
-              value={this.state.password.value}
+              label="Enter New Password"
+              value={this.state.newPassword.value}
               editMode={this.state.password.editMode}
-              error={this.state.password.error}
+              error={this.state.newPassword.error}
               onChange={(event) => this.handleChange(null, event)}
-              onSubmit={(event) => this.handleSubmitPassword(event)}
-              onEdit={(event, id) => this.handleEdit(event, id)}
-              onCancel={(event, id) => this.handleCancel(event, id)}
+              onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
             />
+          )}
 
-            {passwordError && (
-              <Container>
-                <div className="error text-danger">
-                  <small>{passwordError}</small>
-                </div>
-              </Container>
-            )}
-
-            {this.state.password.editMode && (
-              <AccountSettingsItem
-                id="newPassword"
-                type="password"
-                label="Enter New Password"
-                value={this.state.newPassword.value}
-                editMode={this.state.password.editMode}
-                error={this.state.newPassword.error}
-                onChange={(event) => this.handleChange(null, event)}
-                onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
-              />
-            )}
-
-            {newPasswordError && (
-              <Container>
-                <div className="error text-danger">
-                  <small>{newPasswordError}</small>
-                </div>
-              </Container>
-            )}
-          </Form>
-        </div>
-      );
-    } else {
-      return <div>Loading account data...</div>;
-    }
+          {newPasswordError && (
+            <Container>
+              <div className="error text-danger">
+                <small>{newPasswordError}</small>
+              </div>
+            </Container>
+          )}
+        </Form>
+      </div>
+    );
   }
 }
 
 const mapStateToProps = (state) => {
   return {
     userId: state.auth.userId,
-    username: state.user.username
+    username: state.user.username,
+    events: state.user.calendarEvents
   };
 };
 

@@ -353,11 +353,9 @@ class EventForm extends Component {
           alert(`Successfully updated event: "${event.title}"`);
         }
       } catch (err) {
-        if (err.response) {
-          this.setState({ error: err.response.data });
-        } else {
-          alert(`Error: ${err}`);
-        }
+        const error = err.response.data;
+        alert(`Error updating calendar: ${error}`);
+        this.setState({ error: error.message });
       }
     } else {
       this.setState((state) => ({
@@ -399,7 +397,9 @@ class EventForm extends Component {
     try {
       this.props.deleteCalendarEvent(eventId);
     } catch (err) {
-      this.setState({ error: err.response.data });
+      const error = err.response.data;
+      alert(`Error deleting calendar: ${error}`);
+      this.setState({ error: error.message });
     }
   };
 

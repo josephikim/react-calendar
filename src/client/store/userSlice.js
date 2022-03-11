@@ -3,9 +3,18 @@ import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { userApi } from '../utils/axios';
 import { defaultView } from '../../server/config/appConfig';
 
+const initialState = {
+  username: null,
+  calendars: [],
+  calendarSlotSelection: {},
+  calendarEventSelection: {},
+  calendarEvents: [],
+  calendarViewSelection: null
+};
+
 const userSlice = createSlice({
   name: 'user',
-  initialState: [],
+  initialState,
   reducers: {
     usernameUpdated(state, action) {
       state.username = action.payload;

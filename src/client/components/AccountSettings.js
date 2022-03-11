@@ -117,7 +117,7 @@ class AccountSettings extends Component {
           alert('Username updated!');
         })
         .catch((err) => {
-          const error = err.response.data;
+          const error = err.response ? err.response.data : err;
           alert(`Error updating username: ${error.message}`);
           if (error.errorCode === 'username') {
             this.setState((state) => ({
@@ -175,7 +175,7 @@ class AccountSettings extends Component {
           alert('Password updated!');
         })
         .catch((err) => {
-          const error = err.response.data;
+          const error = err.response ? err.response.data : err;
           alert(`Error updating password: ${error.message}`);
           if (error.errorCode === 'password') {
             this.setState((state) => ({

@@ -353,7 +353,7 @@ class EventForm extends Component {
           alert(`Successfully updated event: "${event.title}"`);
         }
       } catch (err) {
-        const error = err.response.data;
+        const error = err.response ? err.response.data : err;
         alert(`Error updating calendar: ${error}`);
         this.setState({ error: error.message });
       }
@@ -397,7 +397,7 @@ class EventForm extends Component {
     try {
       this.props.deleteCalendarEvent(eventId);
     } catch (err) {
-      const error = err.response.data;
+      const error = err.response ? err.response.data : err;
       alert(`Error deleting calendar: ${error}`);
       this.setState({ error: error.message });
     }

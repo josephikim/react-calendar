@@ -49,7 +49,7 @@ export const loginUser = (data) => async (dispatch) => {
       dispatch(refreshTokenUpdated(refreshToken));
     });
   } catch (err) {
-    if (err.response.data.name === 'AuthorizationError') {
+    if (err.response && err.response.data.name === 'AuthorizationError') {
       // unauthorize user
       dispatch(accessTokenUpdated(null));
     }

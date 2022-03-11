@@ -161,7 +161,7 @@ class CalendarSettings extends Component {
           alert('New calendar created!');
         })
         .catch((err) => {
-          const error = err.response.data;
+          const error = err.response ? err.response.data : err;
           alert(`Error creating calendar: ${error.message}`);
           if (error.errorCode === 'calendar') {
             this.setState((state) => ({
@@ -215,7 +215,7 @@ class CalendarSettings extends Component {
         this.props.updateCalendar(data);
         alert(`Successfully updated calendar: "${data.name}"`);
       } catch (err) {
-        const error = err.response.data;
+        const error = err.response ? err.response.data : err;
         alert(`Error updating calendar: ${error.message}`);
         if (error.errorCode === 'calendarName') {
           this.setState((state) => ({

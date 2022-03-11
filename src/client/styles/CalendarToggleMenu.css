@@ -1,12 +1,15 @@
+.CalendarToggleMenu div[class^='col'] {
+  padding: 4px 8px;
+}
+
 .CalendarToggleMenu #calendar-toggle label {
-  width: 50%;
-  vertical-align: middle;
+  width: 90%;
   color: white;
   padding: 3px 8px;
-  margin: 6px;
+  font-size: 1rem;
 }
 
 .CalendarToggleMenu #select-all-btn {
-  margin-top: 12px;
-  padding: 0px;
+  margin-top: 10px;
+  padding: 4px 8px;
 }

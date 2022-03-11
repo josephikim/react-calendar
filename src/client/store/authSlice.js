@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from '../utils/axios';
-import { usernameUpdated, allCalendarsUpdated, calendarEventsUpdated } from './userSlice';
 
 const initialState = {
   accessToken: null,

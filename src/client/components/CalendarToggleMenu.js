@@ -35,16 +35,23 @@ const CalendarToggleMenu = () => {
 
   return (
     <div className="CalendarToggleMenu">
-      <label className="text-primary">My Calendars</label>
+      <Row>
+        <Col>
+          <label className="text-primary">My Calendars</label>
+        </Col>
+      </Row>
 
       {calendars.map((calendar) => (
         <Row id="calendar-toggle" key={calendar.id}>
-          <Col>
+          <Col xs={2}>
             <Checkbox
               id={`${calendar.id}`}
               checked={calendar.visibility}
               handleChange={(event) => handleChange(event)}
             />
+          </Col>
+
+          <Col xs={10}>
             <label htmlFor={`${calendar.id}`} style={{ backgroundColor: calendar.color }}>
               {calendar.name}
             </label>
@@ -52,9 +59,13 @@ const CalendarToggleMenu = () => {
         </Row>
       ))}
 
-      <Button type="button" id="select-all-btn" variant="link" onClick={() => handleSelectAll()}>
-        Select All
-      </Button>
+      <Row>
+        <Col>
+          <Button type="button" id="select-all-btn" variant="primary" onClick={() => handleSelectAll()}>
+            Select All
+          </Button>
+        </Col>
+      </Row>
     </div>
   );
 };

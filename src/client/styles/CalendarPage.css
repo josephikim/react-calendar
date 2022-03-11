@@ -19,3 +19,7 @@
   background: whitesmoke;
   font-size: 12px;
 }
+
+.CalendarPage label {
+  font-size: 1.2rem;
+}

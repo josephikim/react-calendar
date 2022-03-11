@@ -27,6 +27,9 @@ const Header = ({ authenticated }) => {
                 <Nav.Link as={Link} to="/register">
                   Home
                 </Nav.Link>
+                <Nav.Link as={Link} to="/account">
+                  Account
+                </Nav.Link>
                 {authenticated ? (
                   <Nav.Link onClick={() => dispatch(logoutUser())}>Logout</Nav.Link>
                 ) : (
@@ -34,9 +37,6 @@ const Header = ({ authenticated }) => {
                     Login
                   </Nav.Link>
                 )}
-                <Nav.Link as={Link} to="/account">
-                  Account
-                </Nav.Link>
               </Nav>
             </Navbar.Collapse>
           </Col>

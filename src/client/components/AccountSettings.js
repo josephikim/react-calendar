@@ -34,8 +34,6 @@ class AccountSettings extends Component {
   }
 
   componentDidMount = () => {
-    if (!this.props.username) return;
-
     let newState = {
       username: {
         ...this.state.username,
@@ -312,8 +310,7 @@ class AccountSettings extends Component {
 const mapStateToProps = (state) => {
   return {
     userId: state.auth.userId,
-    username: state.user.username,
-    events: state.user.calendarEvents
+    username: state.user.username
   };
 };
 

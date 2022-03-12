@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button, Badge } from 'react-bootstrap';
 import Checkbox from './Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
 import { calendarUpdated, allCalendarsUpdated } from '../store/userSlice';
@@ -54,6 +54,11 @@ const CalendarToggleMenu = () => {
           <Col xs={10}>
             <label htmlFor={`${calendar.id}`} style={{ backgroundColor: calendar.color }}>
               {calendar.name}
+              {calendar.userDefault && (
+                <Badge pill variant="light">
+                  Default
+                </Badge>
+              )}
             </label>
           </Col>
         </Row>

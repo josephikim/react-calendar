@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Form, Button } from 'react-bootstrap';
+import { Row, Col, Form, Badge, Button } from 'react-bootstrap';
 
 import '../styles/CalendarSettingsItem.css';
 
@@ -11,12 +11,20 @@ const CalendarSettingsItem = (props) => {
   return (
     <div className="CalendarSettingsItem">
       <Row>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={2}></Col>
+        <Col xs={12} md={10}>
           <Form.Label htmlFor={props.id}>{props.label}</Form.Label>
         </Col>
       </Row>
 
-      <Row className="twoColumn">
+      <Row className="threeColumn">
+        <Col xs={12} md={2} className="badges">
+          {props.isDefault && (
+            <Badge pill variant="secondary">
+              Default
+            </Badge>
+          )}
+        </Col>
         <Col xs={12} md={6}>
           <Form.Group controlId={props.id}>
             <Form.Control
@@ -30,7 +38,7 @@ const CalendarSettingsItem = (props) => {
             />
           </Form.Group>
         </Col>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={4}>
           <div className="btnGroup">
             {!props.editMode && (
               <Button

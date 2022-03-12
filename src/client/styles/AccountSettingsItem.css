@@ -1,24 +1,19 @@
-.AccountSettingsItem .twoColumn {
-  align-items: center;
-  margin-bottom: 18px;
+.AccountSettingsItem label {
+  color: dodgerblue;
 }
 
-.AccountSettingsItem .twoColumn .form-group {
+.AccountSettingsItem .threeColumn {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.AccountSettingsItem .threeColumn .form-group {
   margin-bottom: 0;
 }
 
 .AccountSettingsItem .btnGroup .btn {
-  min-width: 120px;
+  width: 85px;
   margin-right: 18px;
-}
-
-.AccountSettingsItem .btnGroup .btn:last-of-type {
-  margin-right: 0;
-}
-
-.AccountSettingsItem label {
-  display: block;
-  color: dodgerblue;
 }
 
 @media screen and (max-width: 768px) {

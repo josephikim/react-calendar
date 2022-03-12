@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import { _ } from 'core-js';
+
+import CalendarSettingsItem from './CalendarSettingsItem';
 import { validateFields } from '../../validation';
 import { createCalendar, updateCalendar } from '../store/userSlice';
 
-import CalendarSettingsItem from './CalendarSettingsItem';
-
-import { _ } from 'core-js';
+import '../styles/CalendarSettings.css';
 
 const initialState = {
   newCalendar: {
@@ -30,13 +31,10 @@ class CalendarSettings extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.calendars.length < 1) return;
-
     const isCalendarsUpdated = !_.isEqual(this.props.calendars, prevProps.calendars);
 
-    // Reset newCalendar state when any existing calendar is updated
+    // Reset newCalendar state when any calendar is added or updated
     if (isCalendarsUpdated) {
-      debugger;
       const calendarsState = this.getCalendarsState();
 
       this.setState({
@@ -49,20 +47,19 @@ class CalendarSettings extends Component {
   };
 
   getCalendarsState = () => {
-    if (!this.props.calendars.length) return;
-
     let calendarsState = {};
 
     this.props.calendars.forEach((calendar) => {
       const calendarId = calendar.id;
-      const newObj = {
+      const calendarState = {
         value: calendar.name,
         systemCalendar: calendar.systemCalendar,
+        userDefault: calendar.userDefault,
         validateOnChange: false,
         error: '',
         editMode: false
       };
-      calendarsState[calendarId] = newObj;
+      calendarsState[calendarId] = calendarState;
     });
 
     return calendarsState;
@@ -239,50 +236,39 @@ class CalendarSettings extends Component {
   };
 
   render() {
-    const calendarsLoaded = this.props.calendars.length > 0;
-
-    if (calendarsLoaded) {
-      return (
-        <Form className="CalendarSettings">
-          {this.props.calendars.map((calendar) => (
-            <CalendarSettingsItem
-              key={calendar.id}
-              id={calendar.id}
-              type="text"
-              value={this.state[calendar.id] ? this.state[calendar.id].value : ''}
-              error={this.state[calendar.id] ? this.state[calendar.id].error : null}
-              editMode={this.state[calendar.id] ? this.state[calendar.id].editMode : false}
-              disabled={this.state[calendar.id] ? this.state[calendar.id].systemCalendar : true}
-              onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
-              onBlur={(event) => this.handleBlur(validateFields.validateCalendarName, event)}
-              onSubmit={(event, id) => this.handleSubmitUpdateCalendar(event, id)}
-              onEdit={(event, id) => this.handleEdit(event, id)}
-              onCancel={(event, id) => this.handleCancel(event, id)}
-            />
-          ))}
-
+    return (
+      <Form className="CalendarSettings">
+        {this.props.calendars.map((calendar) => (
           <CalendarSettingsItem
-            id="newCalendar"
+            key={calendar.id}
+            id={calendar.id}
             type="text"
-            label="Add Calendar"
-            placeholder="Enter calendar name"
-            value={this.state.newCalendar.value}
-            error={this.state.newCalendar.error}
-            editMode={true}
+            value={this.state[calendar.id].value}
+            isDefault={this.state[calendar.id].userDefault}
+            error={this.state[calendar.id] ? this.state[calendar.id].error : null}
+            editMode={this.state[calendar.id] ? this.state[calendar.id].editMode : false}
+            disabled={this.state[calendar.id] ? this.state[calendar.id].systemCalendar : true}
             onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
-            onSubmit={(event) => this.handleSubmitAddCalendar(event)}
+            onBlur={(event) => this.handleBlur(validateFields.validateCalendarName, event)}
+            onSubmit={(event, id) => this.handleSubmitUpdateCalendar(event, id)}
+            onEdit={(event, id) => this.handleEdit(event, id)}
+            onCancel={(event, id) => this.handleCancel(event, id)}
           />
-        </Form>
-      );
-    } else {
-      return (
-        <>
-          <Container>
-            <h4>No Calendars Found!</h4>
-          </Container>
-        </>
-      );
-    }
+        ))}
+
+        <CalendarSettingsItem
+          id="newCalendar"
+          type="text"
+          label="Add Calendar"
+          placeholder="Enter calendar name"
+          value={this.state.newCalendar.value}
+          error={this.state.newCalendar.error}
+          editMode={true}
+          onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
+          onSubmit={(event) => this.handleSubmitAddCalendar(event)}
+        />
+      </Form>
+    );
   }
 }
 

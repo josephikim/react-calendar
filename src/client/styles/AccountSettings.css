@@ -1,8 +1,5 @@
 .AccountSettings {
+  max-width: 800px;
   margin: 0 auto;
-  margin-bottom: 35px;
-}
-
-.AccountSettings .heading {
-  margin-bottom: 24px;
+  margin-bottom: 48px;
 }

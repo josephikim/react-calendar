@@ -184,7 +184,7 @@ class EventForm extends Component {
         (calendar) => calendar.id === this.state.selectedCalendarId // returns array of length 1
       );
 
-      const isPrevSelectionASystemEvent = prevSelectionEventCalendar[0].systemCalendar === true;
+      const isPrevSelectionASystemEvent = prevSelectionEventCalendar[0].systemCalendar;
 
       if (isPrevSelectionASystemEvent) {
         newState.selectedCalendarId = this.state.defaultCalendarId;
@@ -304,14 +304,14 @@ class EventForm extends Component {
           return;
         }
 
-        let event = {
+        let data = {
           title: this.state.title.value,
           desc: this.state.desc.value,
           allDay: this.state.allDay,
           calendarId: this.state.selectedCalendarId
         };
 
-        // add start and end values to event object
+        // add start and end values
         if (this.state.allDay === true) {
           let startTimeAsDateObj = new Date(this.state.start.value);
           let endTimeAsDateObj = new Date(this.state.end.value);
@@ -323,24 +323,24 @@ class EventForm extends Component {
           const allDayStartTimeAsISOString = startTimeAsDateObj.toISOString();
           const allDayEndTimeAsISOString = endTimeAsDateObj.toISOString();
 
-          event.start = allDayStartTimeAsISOString;
-          event.end = allDayEndTimeAsISOString;
+          data.start = allDayStartTimeAsISOString;
+          data.end = allDayEndTimeAsISOString;
         } else {
-          event.start = this.state.start.value;
-          event.end = this.state.end.value;
+          data.start = this.state.start.value;
+          data.end = this.state.end.value;
         }
 
         if (clickedId === 'add-event-btn') {
           // Dispatch createCalendarEvent action
-          this.props.createCalendarEvent(event);
-          alert(`Successfully added new event: "${event.title}"`);
+          this.props.createCalendarEvent(data);
+          alert(`Successfully added new event: "${data.title}"`);
         }
 
         if (clickedId === 'update-event-btn') {
           // Check for valid event update
           const { calendarEventSelection } = this.props.calendarSelectionWithSlotAndEvent;
 
-          const isEventUpdateValid = this.checkEventUpdate(calendarEventSelection, event);
+          const isEventUpdateValid = this.checkEventUpdate(calendarEventSelection, data);
 
           if (!isEventUpdateValid) {
             alert('No changes detected!');
@@ -348,9 +348,9 @@ class EventForm extends Component {
           }
 
           // If update is valid, dispatch updateCalendarEvent action
-          event.id = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection.id;
-          this.props.updateCalendarEvent(event);
-          alert(`Successfully updated event: "${event.title}"`);
+          data.id = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection.id;
+          this.props.updateCalendarEvent(data);
+          alert(`Successfully updated event: "${data.title}"`);
         }
       } catch (err) {
         const error = err.response ? err.response.data : err;
@@ -591,7 +591,6 @@ class EventForm extends Component {
             <CalendarSelectMenu
               selected={selectedCalendar}
               disabled={isSystemEventSelected}
-              calendars={this.props.calendars}
               onChange={(values) => this.handleCalendarChange(values)}
             />
           </Col>

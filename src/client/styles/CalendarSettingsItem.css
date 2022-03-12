@@ -1,24 +1,24 @@
-.CalendarSettingsItem .twoColumn {
-  align-items: center;
-  margin-bottom: 18px;
+.CalendarSettingsItem label {
+  color: dodgerblue;
 }
 
-.CalendarSettingsItem .twoColumn .form-group {
+.CalendarSettingsItem .threeColumn {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.CalendarSettingsItem .threeColumn .form-group {
   margin-bottom: 0;
 }
 
+.CalendarSettingsItem .threeColumn .badges {
+  display: flex;
+  justify-content: right;
+}
+
 .CalendarSettingsItem .btnGroup .btn {
-  min-width: 120px;
+  width: 85px;
   margin-right: 18px;
-}
-
-.CalendarSettingsItem .btnGroup .btn:last-of-type {
-  margin-right: 0;
-}
-
-.CalendarSettingsItem label {
-  display: block;
-  color: dodgerblue;
 }
 
 @media screen and (max-width: 768px) {

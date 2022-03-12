@@ -9,12 +9,14 @@ const AccountSettingsItem = (props) => {
   return (
     <div className="AccountSettingsItem">
       <Row>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={2}></Col>
+        <Col xs={12} md={10}>
           <Form.Label htmlFor={props.id}>{props.label}</Form.Label>
         </Col>
       </Row>
 
-      <Row className="twoColumn">
+      <Row className="threeColumn">
+        <Col xs={12} md={2} className="badges"></Col>
         <Col xs={12} md={6}>
           <Form.Group controlId={props.id}>
             <Form.Control
@@ -27,7 +29,7 @@ const AccountSettingsItem = (props) => {
             />
           </Form.Group>
         </Col>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={4}>
           {!newPasswordComponent && (
             <div className="btnGroup">
               {!props.editMode && (

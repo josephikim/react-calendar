@@ -177,9 +177,9 @@ class RegisterForm extends Component {
           Register
         </Button>
 
-        <span>
+        <div>
           Already registered? Please <a href="/login">login</a>.
-        </span>
+        </div>
       </Form>
     );
   }

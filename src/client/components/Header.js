@@ -15,7 +15,7 @@ const Header = ({ authenticated }) => {
       <Container>
         <Row>
           <Col xs={12} md={3}>
-            <UserIndicator />
+            {authenticated && <UserIndicator />}
           </Col>
           <Col xs={12} md={6}>
             <Navbar.Brand>React Calendar App</Navbar.Brand>

@@ -118,11 +118,12 @@ class CalendarSettings extends Component {
   handleCancel = (id) => {
     if (!id) return;
 
-    // Reset component state to match app state
-    const calendar = this.props.calendars.filter((calendar) => calendar.id === id); // returns array of length 1
+    // Reset component calendar state to match app state
+    const calendar = this.props.calendars.filter((calendar) => calendar.id === id)[0];
 
     let newState = {
-      value: calendar[0].name,
+      ...this.state[id],
+      value: calendar.name,
       validateOnChange: false,
       error: '',
       editMode: false

@@ -67,21 +67,21 @@ class CalendarPage extends Component {
   };
 
   handleSelectEvent = (event) => {
-    const { calendarEventSelection } = this.props.calendarSelectionWithSlotAndEvent;
+    const { calendarEvent } = this.props.calendarSelectionWithSlotAndEvent;
 
     // check if event matches previous selection
-    if (Object.keys(calendarEventSelection).length > 0 && event.id === calendarEventSelection.id) return;
+    if (Object.keys(calendarEvent).length > 0 && event.id === calendarEvent.id) return;
 
     this.props.onSelectEvent(event);
   };
 
   handleSelectSlot = (slot) => {
-    const { calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
+    const { calendarSlot } = this.props.calendarSelectionWithSlotAndEvent;
 
     // check if slot matches previous selection
-    const isSameSlotSelected = this.isSameSlot(calendarSlotSelection, slot);
+    const isSameSlotSelected = this.isSameSlot(calendarSlot, slot);
 
-    if (Object.keys(calendarSlotSelection).length > 0 && isSameSlotSelected) return;
+    if (Object.keys(calendarSlot).length > 0 && isSameSlotSelected) return;
 
     this.props.onSelectSlot(slot);
   };

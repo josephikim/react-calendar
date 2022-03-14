@@ -95,8 +95,8 @@ export const calendarSelectionWithSlotAndEvent = createSelector(
 
     if (updateCompleteWithNewSlot || updateCompleteWithNewEvent) {
       let updateObj = {
-        calendarSlotSelection: calendarSlot,
-        calendarEventSelection: calendarEvent
+        calendarSlot: calendarSlot,
+        calendarEvent: calendarEvent
       };
       return updateObj;
     } else return null;

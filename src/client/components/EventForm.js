@@ -25,35 +25,31 @@ class EventForm extends Component {
   constructor(props) {
     super(props);
 
-    let defaultCalendarId = null;
+    const defaultCalendarId = this.props.calendars.filter((calendar) => calendar.userDefault === true)[0].id;
 
-    const defaultCalendar = this.props.calendars.filter((calendar) => calendar.userDefault === true); // returns array of length one
-
-    defaultCalendarId = defaultCalendar[0].id;
-
-    const { calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
+    const { calendarSlot } = this.props.calendarSelectionWithSlotAndEvent;
 
     const initialState = {
       title: {
         value: '',
         validateOnChange: false,
-        error: ''
+        error: null
       },
       desc: {
         value: ''
       },
       start: {
-        value: calendarSlotSelection.start
+        value: calendarSlot.start
       },
       end: {
-        value: calendarSlotSelection.end
+        value: calendarSlot.end
       },
       allDay: false,
       defaultCalendarId: defaultCalendarId,
       selectedCalendarId: defaultCalendarId,
       submitCalled: false,
       timeFormat: 'h:mm a',
-      error: ''
+      error: null
     };
 
     this.state = initialState;
@@ -64,7 +60,7 @@ class EventForm extends Component {
       return;
     }
 
-    // Check if redux state contains updated calendar selection based on memoized selector
+    // Check if app state updated calendar selection (via memoized selector)
     const isCalendarSelectionUpdated = !_.isEqual(
       prevProps.calendarSelectionWithSlotAndEvent,
       this.props.calendarSelectionWithSlotAndEvent
@@ -78,54 +74,38 @@ class EventForm extends Component {
     let newState = {
       title: {
         validateOnChange: false,
-        error: ''
+        error: null
       },
+      desc: {},
+      start: {},
+      end: {},
       submitCalled: false,
-      error: ''
+      error: null
     };
 
-    // Check if user selection is a slot or event
-    const { calendarEventSelection, calendarSlotSelection } = this.props.calendarSelectionWithSlotAndEvent;
-    const isCalendarEventSelected = Object.keys(calendarEventSelection).length > 0;
-    const isCalendarSlotSelected = Object.keys(calendarSlotSelection).length > 0;
+    // Check if current selection is a slot or event
+    const { calendarEvent, calendarSlot } = this.props.calendarSelectionWithSlotAndEvent;
+    const isEventSelected = Object.keys(calendarEvent).length > 0;
+    const isSlotSelected = Object.keys(calendarSlot).length > 0;
 
-    if (isCalendarEventSelected) {
-      newState.title = {
-        ...newState.title,
-        value: calendarEventSelection.title
-      };
-      newState.desc = {
-        value: calendarEventSelection.desc
-      };
-      newState.start = {
-        value: calendarEventSelection.start
-      };
-      newState.end = {
-        value: calendarEventSelection.end
-      };
-      newState.allDay = calendarEventSelection.allDay;
-      newState.selectedCalendarId = calendarEventSelection.calendarId;
-    } else if (isCalendarSlotSelected) {
+    if (isEventSelected) {
+      newState.title.value = calendarEvent.title;
+      newState.desc.value = calendarEvent.desc;
+      newState.start.value = calendarEvent.start;
+      newState.end.value = calendarEvent.end;
+      newState.allDay = calendarEvent.allDay;
+      newState.selectedCalendarId = calendarEvent.calendarId;
+    } else if (isSlotSelected) {
       // Set title and desc depending on previous selection
       const isPrevSelectionASlot = !!prevProps.calendarSelectionWithSlotAndEvent;
 
       if (isPrevSelectionASlot) {
-        newState.title = {
-          ...newState.title,
-          value: this.state.title.value
-        };
-        newState.desc = {
-          value: this.state.desc.value
-        };
+        newState.title.value = this.state.title.value;
+        newState.desc.value = this.state.desc.value;
       } else {
         // previous selection was an event
-        newState.title = {
-          ...newState.title,
-          value: ''
-        };
-        newState.desc = {
-          value: ''
-        };
+        newState.title.value = '';
+        newState.desc.value = '';
       }
 
       // Set start date, end date, and allDay flag depending on calendar view
@@ -133,45 +113,34 @@ class EventForm extends Component {
 
       if (calendarView === 'month') {
         // single day slot
-        if (calendarSlotSelection.action === 'click') {
-          let startDate = new Date(calendarSlotSelection.start);
+        if (calendarSlot.action === 'click') {
+          let startDate = new Date(calendarSlot.start);
           startDate.setHours(12);
           const startDateISO = startDate.toISOString();
 
-          let endDate = new Date(calendarSlotSelection.end);
+          let endDate = new Date(calendarSlot.end);
           endDate.setDate(endDate.getDate() - 1);
           endDate.setHours(13);
           const endDateISO = endDate.toISOString();
 
-          newState.start = {
-            value: startDateISO
-          };
-          newState.end = {
-            value: endDateISO
-          };
+          newState.start.value = startDateISO;
+          newState.end.value = endDateISO;
           newState.allDay = false;
         }
         // multi day slot
-        if (calendarSlotSelection.action === 'select') {
-          newState.start = {
-            value: calendarSlotSelection.start
-          };
-          newState.end = {
-            value: calendarSlotSelection.end
-          };
+        if (calendarSlot.action === 'select') {
+          newState.start.value = calendarSlot.start;
+          newState.end.value = calendarSlot.end;
           newState.allDay = true;
         }
       }
 
       if (calendarView === 'week' || calendarView === 'day') {
-        newState.start = {
-          value: calendarSlotSelection.start
-        };
-        newState.end = {
-          value: calendarSlotSelection.end
-        };
-        // calendar slot (single or multi)
-        if (Object.prototype.hasOwnProperty.call(calendarSlotSelection, 'box')) {
+        newState.start.value = calendarSlot.start;
+        newState.end.value = calendarSlot.end;
+
+        // single or multi day slot
+        if (Object.prototype.hasOwnProperty.call(calendarSlot, 'box')) {
           newState.allDay = false;
         } else {
           // all day slot
@@ -179,14 +148,10 @@ class EventForm extends Component {
         }
       }
 
-      // Set calendar ID depending on if previous selection was a system event
-      const prevSelectionEventCalendar = this.props.calendars.filter(
-        (calendar) => calendar.id === this.state.selectedCalendarId // returns array of length 1
-      );
+      // Set default calendar ID if previous selection was from system calendar
+      const prevCalendar = this.props.calendars.filter((calendar) => calendar.id === this.state.selectedCalendarId)[0];
 
-      const isPrevSelectionASystemEvent = prevSelectionEventCalendar[0].systemCalendar;
-
-      if (isPrevSelectionASystemEvent) {
+      if (prevCalendar.systemCalendar) {
         newState.selectedCalendarId = this.state.defaultCalendarId;
       }
     }
@@ -230,7 +195,7 @@ class EventForm extends Component {
         [name]: {
           ...state[name],
           value: value,
-          error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+          error: state[name]['validateOnChange'] ? validationFunc(value) : null
         }
       }));
     }
@@ -338,9 +303,9 @@ class EventForm extends Component {
 
         if (clickedId === 'update-event-btn') {
           // Check for valid event update
-          const { calendarEventSelection } = this.props.calendarSelectionWithSlotAndEvent;
+          const { calendarEvent } = this.props.calendarSelectionWithSlotAndEvent;
 
-          const isEventUpdateValid = this.checkEventUpdate(calendarEventSelection, data);
+          const isEventUpdateValid = this.checkEventUpdate(calendarEvent, data);
 
           if (!isEventUpdateValid) {
             alert('No changes detected!');
@@ -348,7 +313,7 @@ class EventForm extends Component {
           }
 
           // If update is valid, dispatch updateCalendarEvent action
-          data.id = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection.id;
+          data.id = this.props.calendarSelectionWithSlotAndEvent.calendarEvent.id;
           this.props.updateCalendarEvent(data);
           alert(`Successfully updated event: "${data.title}"`);
         }
@@ -386,13 +351,13 @@ class EventForm extends Component {
 
   handleDelete = (event) => {
     event.preventDefault();
-    if (!this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection) return;
+    if (!this.props.calendarSelectionWithSlotAndEvent.calendarEvent) return;
 
     // Confirm delete via user input
     const deleteConfirmation = confirm('Are you sure you want to delete this event?');
     if (deleteConfirmation === false) return;
 
-    const eventId = this.props.calendarSelectionWithSlotAndEvent.calendarEventSelection.id;
+    const eventId = this.props.calendarSelectionWithSlotAndEvent.calendarEvent.id;
 
     try {
       this.props.deleteCalendarEvent(eventId);
@@ -425,12 +390,14 @@ class EventForm extends Component {
   };
 
   render() {
-    let isCalendarSlotSelected = true;
-    isCalendarSlotSelected = this.props.calendarSelectionWithSlotAndEvent
-      ? Object.keys(this.props.calendarSelectionWithSlotAndEvent.calendarSlotSelection).length > 0
+    const selectedCalendar = this.props.calendars.filter(
+      (calendar) => calendar.id === this.state.selectedCalendarId
+    )[0];
+    const isSystemEventSelected = selectedCalendar.systemCalendar;
+    const isSlotSelected = this.props.calendarSelectionWithSlotAndEvent
+      ? Object.keys(this.props.calendarSelectionWithSlotAndEvent.calendarSlot).length > 0
       : false;
-    const selectedCalendar = this.props.calendars.filter((calendar) => calendar.id === this.state.selectedCalendarId); // returns array of length one
-    const isSystemEventSelected = selectedCalendar[0].systemCalendar;
+
     return (
       <Form className="EventForm">
         <Row>
@@ -445,9 +412,9 @@ class EventForm extends Component {
               className="input"
               disabled={isSystemEventSelected}
               rows="1"
+              value={this.state.title.value}
               onChange={(event) => this.handleChange(validateFields.validateTitle, event)}
               onBlur={(event) => this.handleBlur(validateFields.validateTitle, event)}
-              value={this.state.title.value}
             >
               enter title
             </textarea>
@@ -470,8 +437,8 @@ class EventForm extends Component {
               className="input"
               disabled={isSystemEventSelected}
               rows="2"
-              onChange={(event) => this.handleChange(null, event)}
               value={this.state.desc.value}
+              onChange={(event) => this.handleChange(null, event)}
             >
               enter description
             </textarea>
@@ -512,12 +479,12 @@ class EventForm extends Component {
                   disabled={isSystemEventSelected}
                   placeholder="n/a"
                   showSecond={false}
-                  value={this.state.allDay ? this.placeholder : moment(this.state.start.value)}
-                  onChange={(value, id = 'startTime') => this.handleTimeChange(value, id)}
                   format={this.state.timeFormat}
                   minuteStep={15}
                   use12Hours
                   inputReadOnly
+                  value={this.state.allDay ? this.placeholder : moment(this.state.start.value)}
+                  onChange={(value, id = 'startTime') => this.handleTimeChange(value, id)}
                 />
               </Col>
             </Row>
@@ -558,12 +525,12 @@ class EventForm extends Component {
                   disabled={isSystemEventSelected}
                   placeholder="n/a"
                   showSecond={false}
-                  value={this.state.allDay ? this.placeholder : moment(this.state.end.value)}
-                  onChange={(value, id = 'endTime') => this.handleTimeChange(value, id)}
                   format={this.state.timeFormat}
                   minuteStep={15}
                   use12Hours
                   inputReadOnly
+                  value={this.state.allDay ? this.placeholder : moment(this.state.end.value)}
+                  onChange={(value, id = 'endTime') => this.handleTimeChange(value, id)}
                 />
               </Col>
             </Row>
@@ -589,7 +556,7 @@ class EventForm extends Component {
         <Row>
           <Col>
             <CalendarSelectMenu
-              selected={selectedCalendar}
+              selected={selectedCalendar ? [selectedCalendar] : []}
               disabled={isSystemEventSelected}
               onChange={(values) => this.handleCalendarChange(values)}
             />
@@ -598,7 +565,7 @@ class EventForm extends Component {
 
         <Row className="two-column">
           <Col>
-            {isCalendarSlotSelected && (
+            {isSlotSelected && (
               <Button
                 type="submit"
                 name="add-event-btn"
@@ -612,7 +579,7 @@ class EventForm extends Component {
                 Add Event
               </Button>
             )}
-            {!isCalendarSlotSelected && (
+            {!isSlotSelected && (
               <Button
                 type="submit"
                 name="update-event-btn"
@@ -628,7 +595,7 @@ class EventForm extends Component {
           </Col>
 
           <Col>
-            {!isCalendarSlotSelected && (
+            {!isSlotSelected && (
               <Button
                 name="delete-event-btn"
                 id="delete-event-btn"

@@ -196,7 +196,7 @@ class AccountSettings extends Component {
     let newState = {};
 
     if (id === 'password') {
-      newState['password'] = {
+      newState.password = {
         value: '',
         validateOnChange: false,
         editMode: true,
@@ -205,8 +205,8 @@ class AccountSettings extends Component {
     }
 
     if (id === 'username') {
-      newState['username'] = {
-        value: '',
+      newState.username = {
+        value: this.state.username.value,
         validateOnChange: false,
         editMode: true,
         error: null
@@ -220,7 +220,7 @@ class AccountSettings extends Component {
     let newState = {};
 
     if (id === 'username') {
-      newState[id] = {
+      newState.username = {
         value: this.props.username,
         validateOnChange: false,
         editMode: false,
@@ -229,14 +229,14 @@ class AccountSettings extends Component {
     }
 
     if (id === 'password') {
-      newState[id] = {
+      newState.password = {
         value: '****',
         validateOnChange: false,
         editMode: false,
         error: null
       };
 
-      newState['newPassword'] = {
+      newState.newPassword = {
         value: undefined,
         validateOnChange: false,
         error: null
@@ -247,10 +247,10 @@ class AccountSettings extends Component {
   };
 
   render() {
-    const usernameError = this.state['username'] ? this.state['username'].error : null;
-    const passwordError = this.state['password'] ? this.state['password'].error : null;
-    const newPasswordError = this.state['newPassword'] ? this.state['newPassword'].error : null;
-    const passwordEditMode = this.state['password'] ? this.state['password'].editMode : false;
+    const usernameError = this.state.username ? this.state.username.error : null;
+    const passwordError = this.state.password ? this.state.password.error : null;
+    const newPasswordError = this.state.newPassword ? this.state.newPassword.error : null;
+    const passwordEditMode = this.state.password ? this.state.password.editMode : false;
 
     return (
       <div className="AccountSettings">
@@ -259,9 +259,9 @@ class AccountSettings extends Component {
             id="username"
             type="text"
             label="Username"
-            value={this.state['username'] ? this.state['username'].value : this.props.username}
+            value={this.state.username ? this.state.username.value : this.props.username}
             error={usernameError}
-            editMode={this.state['username'] ? this.state['username'].editMode : false}
+            editMode={this.state.username ? this.state.username.editMode : false}
             onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
             onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
             onSubmit={(event) => this.handleSubmitUsername(event)}
@@ -273,7 +273,7 @@ class AccountSettings extends Component {
             id="password"
             type="password"
             label={passwordEditMode ? 'Confirm Current Password' : 'Password'}
-            value={this.state['password'] ? this.state['password'].value : '****'}
+            value={this.state.password ? this.state.password.value : '****'}
             error={passwordError}
             editMode={passwordEditMode}
             onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
@@ -287,7 +287,7 @@ class AccountSettings extends Component {
               id="newPassword"
               type="password"
               label="Enter New Password"
-              value={this.state['newPassword'] ? this.state['newPassword'].value : undefined}
+              value={this.state.newPassword ? this.state.newPassword.value : undefined}
               error={newPasswordError}
               editMode={passwordEditMode}
               onChange={(event) => this.handleChange(validateFields.validatePassword, event)}

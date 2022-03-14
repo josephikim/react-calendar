@@ -1,3 +1,7 @@
+.Header {
+  height: 50px;
+}
+
 .Header > .container {
   max-width: 1600px;
 }

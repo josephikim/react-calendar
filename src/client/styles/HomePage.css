@@ -1,6 +1,7 @@
 .HomePage #about {
   max-width: 85%;
-  margin: 35px auto;
+  margin: 0 auto;
+  padding-top: 35px;
   font-size: 18px;
 }
 

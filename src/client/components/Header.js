@@ -2,7 +2,7 @@ import React from 'react';
 import { Navbar, Nav, Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { logoutUser } from '../store/authSlice';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import UserIndicator from './UserIndicator';
 
 import '../styles/Header.css';
@@ -11,7 +11,7 @@ const Header = ({ authenticated }) => {
   const dispatch = useDispatch();
 
   return (
-    <Navbar className="Header fixed-header" collapseOnSelect expands="md" bg="primary" variant="dark">
+    <Navbar className="Header fixed-top" collapseOnSelect expands="md" bg="primary" variant="dark">
       <Container>
         <Row>
           <Col xs={12} md={3}>
@@ -46,4 +46,4 @@ const Header = ({ authenticated }) => {
   );
 };
 
-export default connect(null, null)(Header);
+export default Header;

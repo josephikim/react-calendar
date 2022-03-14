@@ -1,6 +1,10 @@
+.CalendarPage {
+  padding-top: 50px;
+  padding-bottom: 120px;
+}
+
 .CalendarPage > .container {
   max-width: 1600px;
-  padding-top: 35px;
 }
 
 .CalendarPage .rbc-calendar {

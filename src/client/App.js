@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Switch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Container } from 'react-bootstrap';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -20,13 +21,15 @@ const App = () => {
   return (
     <div className="App">
       <Header authenticated={isAuthenticated} />
-      <Switch>
-        <PublicRoute restricted={isAuthenticated ? true : false} component={HomePage} path="/register" exact />
-        <PublicRoute restricted={isAuthenticated ? true : false} component={LoginPage} path="/login" exact />
-        <PrivateRoute component={AccountPage} path="/account" exact />
-        <PrivateRoute component={CalendarPage} path="/" exact />
-        <PublicRoute restricted={false} component={NoMatch} />
-      </Switch>
+      <Container className="appContainer">
+        <Switch>
+          <PublicRoute restricted={isAuthenticated ? true : false} component={HomePage} path="/register" exact />
+          <PublicRoute restricted={isAuthenticated ? true : false} component={LoginPage} path="/login" exact />
+          <PrivateRoute component={AccountPage} path="/account" exact />
+          <PrivateRoute component={CalendarPage} path="/" exact />
+          <PublicRoute restricted={false} component={NoMatch} />
+        </Switch>
+      </Container>
       <Footer />
     </div>
   );

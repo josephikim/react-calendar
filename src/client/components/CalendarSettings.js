@@ -214,26 +214,29 @@ class CalendarSettings extends Component {
 
     if (calendarNameError === false) {
       // no input errors, submit the form
-      try {
-        const data = {
-          calendarId: id,
-          name: calendarState.value.trim()
-        };
 
-        this.props.updateCalendar(data);
-        alert(`Successfully updated calendar: "${data.name}"`);
-      } catch (err) {
-        const error = err.response ? err.response.data : err;
-        alert(`Error updating calendar: ${error.message}`);
-        if (error.errorCode === 'calendarName') {
-          this.setState((state) => ({
-            [id]: {
-              ...state[id],
-              error: error.message
-            }
-          }));
-        }
-      }
+      const data = {
+        calendarId: id,
+        name: calendarState.value.trim()
+      };
+
+      this.props
+        .updateCalendar(data)
+        .then(() => {
+          alert(`Successfully updated calendar: "${data.name}"`);
+        })
+        .catch((err) => {
+          const error = err.response ? err.response.data : err;
+          alert(`Error updating calendar: ${error.message}`);
+          if (error.errorCode === 'calendarName') {
+            this.setState((state) => ({
+              [id]: {
+                ...state[id],
+                error: error.message
+              }
+            }));
+          }
+        });
     } else {
       // update state with input error
       this.setState((state) => ({

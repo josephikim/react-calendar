@@ -51,6 +51,17 @@ const AccountSettingsItem = (props) => {
           )}
         </Col>
       </Row>
+
+      {props.error && (
+        <Row>
+          <Col xs={12} md={2}></Col>
+          <Col xs={12} md={10}>
+            <div className="error text-danger">
+              <small>{props.error}</small>
+            </div>
+          </Col>
+        </Row>
+      )}
     </div>
   );
 };

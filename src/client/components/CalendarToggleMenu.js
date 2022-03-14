@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Button, Badge } from 'react-bootstrap';
 import Checkbox from './Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
-import { calendarUpdated, allCalendarsUpdated } from '../store/userSlice';
+import { calendarUpdated, calendarsUpdated } from '../store/userSlice';
 
 import '../styles/CalendarToggleMenu.css';
 
@@ -30,7 +30,7 @@ const CalendarToggleMenu = () => {
       };
     });
 
-    dispatch(allCalendarsUpdated(mappedObjectsArray));
+    dispatch(calendarsUpdated(mappedObjectsArray));
   };
 
   return (

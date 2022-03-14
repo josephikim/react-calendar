@@ -319,7 +319,7 @@ const deleteCalendar = async (req, res, next) => {
   try {
     let deletedCalendar = await Calendar.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(calendarId) });
 
-    return res.status(200).send({ data: deletedCalendar, message: 'Deleted calendar' });
+    return res.status(200).send({ message: 'Deleted calendar' });
   } catch (err) {
     return next(err);
   }

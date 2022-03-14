@@ -22,9 +22,6 @@ userRouter.get('/test/admin', [authJwt.verifyToken, authJwt.isAdmin], userContro
 // GET request for all user data
 userRouter.get('/data', [authJwt.verifyToken], userController.getUserData);
 
-// GET request for all events
-userRouter.get('/event', [authJwt.verifyToken], userController.getEvents);
-
 // POST request to create event
 userRouter.post('/event', [authJwt.verifyToken], userController.createEvent);
 
@@ -33,6 +30,15 @@ userRouter.post('/event/update', [authJwt.verifyToken], userController.updateEve
 
 // DELETE request to delete event
 userRouter.delete('/event/:id/delete', [authJwt.verifyToken], userController.deleteEvent);
+
+// POST request to create calendar
+userRouter.post('/calendar', [authJwt.verifyToken], userController.createCalendar);
+
+// POST request to update calendar
+userRouter.post('/calendar/update', [authJwt.verifyToken], userController.updateCalendar);
+
+// DELETE request to delete calendar
+userRouter.delete('/calendar/:id/delete', [authJwt.verifyToken], userController.deleteCalendar);
 
 // POST request to update username
 userRouter.post(
@@ -43,14 +49,5 @@ userRouter.post(
 
 // POST request to update password
 userRouter.post('/account/password/update', [authJwt.verifyToken], userController.updatePassword);
-
-// POST request to create calendar
-userRouter.post('/calendar', [authJwt.verifyToken], userController.createCalendar);
-
-// POST request to update calendar
-userRouter.post('/calendar/update', [authJwt.verifyToken], userController.updateCalendar);
-
-// DELETE request to delete calendar
-userRouter.delete('/calendar/:id/delete', [authJwt.verifyToken], userController.deleteCalendar);
 
 export default userRouter;

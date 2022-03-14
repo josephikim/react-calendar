@@ -19,7 +19,7 @@ const CalendarSettingsItem = (props) => {
 
       <Row className="threeColumn">
         <Col xs={12} md={2} className="badges">
-          {props.isDefault && (
+          {props.isDefaultCalendar && (
             <Badge pill variant="secondary">
               Default
             </Badge>
@@ -28,7 +28,6 @@ const CalendarSettingsItem = (props) => {
         <Col xs={12} md={6}>
           <Form.Group controlId={props.id}>
             <Form.Control
-              name={props.id}
               type={props.type}
               placeholder={props.placeholder}
               value={props.value}
@@ -45,10 +44,15 @@ const CalendarSettingsItem = (props) => {
                 type="button"
                 name="editBtn"
                 variant="primary"
-                disabled={props.disabled}
+                disabled={props.isSystemCalendar}
                 onClick={() => props.onEdit(props.id)}
               >
                 Edit
+              </Button>
+            )}
+            {!props.editMode && !props.isDefaultCalendar && !props.isSystemCalendar && props.id !== 'newCalendar' && (
+              <Button type="button" name="deleteBtn" variant="danger" onClick={() => props.onDelete(props.id)}>
+                Delete
               </Button>
             )}
             {props.editMode && (
@@ -72,7 +76,8 @@ const CalendarSettingsItem = (props) => {
 
       {error && (
         <Row>
-          <Col>
+          <Col xs={12} md={2}></Col>
+          <Col xs={12} md={10}>
             <div className="error text-danger">
               <small>{error}</small>
             </div>

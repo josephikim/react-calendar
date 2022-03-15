@@ -14,9 +14,9 @@ import Footer from './components/Footer';
 import NoMatch from './components/NoMatch';
 
 const App = () => {
-  const userId = useSelector((state) => state.auth.userId);
   const accessToken = useSelector((state) => state.auth.accessToken);
-  const isAuthenticated = userId && accessToken;
+  const userId = useSelector((state) => state.auth.userId);
+  const isAuthenticated = accessToken && userId;
 
   return (
     <div className="App">

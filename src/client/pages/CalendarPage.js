@@ -31,14 +31,12 @@ class CalendarPage extends Component {
   }
 
   componentDidMount = () => {
-    if (this.props.userId.length > 0) {
-      Promise.all([this.props.retrieveUserData(this.props.userId), this.props.initializeCalendarView()]);
-    }
+    Promise.all([this.props.retrieveUserData(this.props.userId), this.props.initializeCalendarView()]);
   };
 
   componentDidUpdate = () => {
     const isUserDataLoaded =
-      !!this.props.username &&
+      this.props.username &&
       this.props.calendars.some((calendar) => calendar.userDefault === true) &&
       this.props.calendarEventsWithDateObjects.length > 0;
 
@@ -69,7 +67,7 @@ class CalendarPage extends Component {
   handleSelectEvent = (event) => {
     const { calendarEvent } = this.props.calendarSelectionWithSlotAndEvent;
 
-    // check if event matches previous selection
+    // If event matches previous selection, do nothing
     if (Object.keys(calendarEvent).length > 0 && event.id === calendarEvent.id) return;
 
     this.props.onSelectEvent(event);
@@ -78,7 +76,7 @@ class CalendarPage extends Component {
   handleSelectSlot = (slot) => {
     const { calendarSlot } = this.props.calendarSelectionWithSlotAndEvent;
 
-    // check if slot matches previous selection
+    // If slot matches previous selection, do nothing
     const isSameSlotSelected = this.isSameSlot(calendarSlot, slot);
 
     if (Object.keys(calendarSlot).length > 0 && isSameSlotSelected) return;

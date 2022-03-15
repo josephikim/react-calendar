@@ -10,17 +10,17 @@ const initialState = {
   username: {
     value: '',
     validateOnChange: false,
-    error: ''
+    error: null
   },
   password: {
     value: '',
     validateOnChange: false,
-    error: ''
+    error: null
   },
   passwordConfirm: {
     value: '',
     validateOnChange: false,
-    error: ''
+    error: null
   }
 };
 class LoginForm extends Component {
@@ -57,7 +57,7 @@ class LoginForm extends Component {
         [name]: {
           ...state[name],
           value: value,
-          error: state[name]['validateOnChange'] ? validationFunc(value, this.state.password.value) : ''
+          error: state[name]['validateOnChange'] ? validationFunc(value, this.state.password.value) : null
         }
       }));
     } else {
@@ -66,7 +66,7 @@ class LoginForm extends Component {
         [name]: {
           ...state[name],
           value: value,
-          error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+          error: state[name]['validateOnChange'] ? validationFunc(value) : null
         }
       }));
     }

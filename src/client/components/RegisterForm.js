@@ -10,17 +10,17 @@ const initialState = {
   username: {
     value: '',
     validateOnChange: false,
-    error: ''
+    error: null
   },
   password: {
     value: '',
     validateOnChange: false,
-    error: ''
+    error: null
   },
   passwordConfirm: {
     value: '',
     validateOnChange: false,
-    error: ''
+    error: null
   }
 };
 class RegisterForm extends Component {
@@ -65,7 +65,7 @@ class RegisterForm extends Component {
         [name]: {
           ...state[name],
           value: value,
-          error: state[name]['validateOnChange'] ? validationFunc(value) : ''
+          error: state[name]['validateOnChange'] ? validationFunc(value) : null
         }
       }));
     }

@@ -13,7 +13,7 @@ const initialState = {
   newCalendar: {
     value: '',
     validateOnChange: false,
-    error: ''
+    error: null
   }
 };
 class CalendarSettings extends Component {
@@ -32,7 +32,7 @@ class CalendarSettings extends Component {
 
   componentDidUpdate = (prevProps) => {
     const isCalendarsUpdated = !_.isEqual(this.props.calendars, prevProps.calendars);
-
+    debugger;
     // Reset component state when any calendar is added or updated
     if (isCalendarsUpdated) {
       const calendarsState = this.getCalendarsState();
@@ -54,7 +54,7 @@ class CalendarSettings extends Component {
       const calendarState = {
         value: calendar.name,
         validateOnChange: false,
-        error: '',
+        error: null,
         editMode: false
       };
       calendarsState[id] = calendarState;
@@ -93,10 +93,11 @@ class CalendarSettings extends Component {
       [id]: {
         ...this.state[id],
         value: value,
-        error: this.state[id]['validateOnChange'] ? validationFunc(value) : ''
+        error: this.state[id]['validateOnChange'] ? validationFunc(value) : null
       }
     };
 
+    debugger;
     this.setState(newState);
   };
 
@@ -123,7 +124,7 @@ class CalendarSettings extends Component {
       ...this.state[id],
       value: calendar.name,
       validateOnChange: false,
-      error: '',
+      error: null,
       editMode: false
     };
 

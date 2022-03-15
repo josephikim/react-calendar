@@ -70,7 +70,7 @@ class CalendarSettings extends Component {
 
     if (!this.state[id]) return;
 
-    if (this.state[id]['validateOnChange'] === false) {
+    if (this.state[id].validateOnChange === false) {
       this.setState((state) => ({
         [id]: {
           ...state[id],
@@ -89,11 +89,11 @@ class CalendarSettings extends Component {
 
     if (!this.state[id]) return;
 
-    let newState = {
+    const newState = {
       [id]: {
         ...this.state[id],
         value: value,
-        error: this.state[id]['validateOnChange'] ? validationFunc(value) : null
+        error: this.state[id].validateOnChange ? validationFunc(value) : null
       }
     };
 
@@ -260,7 +260,7 @@ class CalendarSettings extends Component {
               key={calendar.id}
               id={calendar.id}
               type="text"
-              value={this.state[calendar.id] ? this.state[calendar.id].value : calendar.name}
+              value={this.state[calendar.id].value ? this.state[calendar.id].value : calendar.name}
               isSystemCalendar={calendar.systemCalendar}
               isDefaultCalendar={calendar.userDefault}
               error={this.state[calendar.id] ? this.state[calendar.id].error : null}

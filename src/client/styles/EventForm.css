@@ -1,3 +1,7 @@
+.EventForm label {
+  white-space: nowrap;
+}
+
 .EventForm textarea {
   width: 100%;
 }

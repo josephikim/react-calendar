@@ -1,0 +1,15 @@
+.RegisterPage {
+  margin: 70px auto;
+}
+
+.RegisterPage #about {
+  width: 450px;
+  margin: 0 auto;
+  padding-top: 35px;
+}
+
+.RegisterPage img {
+  max-width: 100% !important;
+  height: auto;
+  width: auto;
+}

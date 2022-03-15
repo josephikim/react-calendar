@@ -3,7 +3,7 @@ import { Switch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Container } from 'react-bootstrap';
 
-import HomePage from './pages/HomePage';
+import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import CalendarPage from './pages/CalendarPage';
 import AccountPage from './pages/AccountPage';
@@ -21,9 +21,9 @@ const App = () => {
   return (
     <div className="App">
       <Header authenticated={isAuthenticated} />
-      <Container className="appContainer">
+      <Container>
         <Switch>
-          <PublicRoute restricted={isAuthenticated ? true : false} component={HomePage} path="/register" exact />
+          <PublicRoute restricted={isAuthenticated ? true : false} component={RegisterPage} path="/register" exact />
           <PublicRoute restricted={isAuthenticated ? true : false} component={LoginPage} path="/login" exact />
           <PrivateRoute component={AccountPage} path="/account" exact />
           <PrivateRoute component={CalendarPage} path="/" exact />

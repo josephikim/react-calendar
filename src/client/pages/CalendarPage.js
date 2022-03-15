@@ -136,10 +136,10 @@ class CalendarPage extends Component {
         <div className="CalendarPage">
           <Container>
             <Row>
-              <Col xs={12} md={2}>
+              <Col xs={12} lg={2}>
                 <CalendarToggleMenu />
               </Col>
-              <Col xs={12} md={7}>
+              <Col xs={12} lg={7}>
                 <Calendar
                   selectable
                   localizer={localizer}
@@ -155,7 +155,7 @@ class CalendarPage extends Component {
                   eventPropGetter={(event) => this.eventStyleGetter(event)}
                 />
               </Col>
-              <Col xs={12} md={3}>
+              <Col xs={12} lg={3}>
                 <EventForm />
               </Col>
             </Row>

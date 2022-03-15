@@ -3,6 +3,8 @@ import { Col, Container, Row } from 'react-bootstrap';
 
 import LoginForm from '../components/LoginForm';
 
+import '../styles/LoginPage.css';
+
 const LoginPage = () => (
   <div className="LoginPage">
     <Container>

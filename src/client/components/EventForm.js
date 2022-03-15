@@ -576,7 +576,7 @@ class EventForm extends Component {
                 onMouseDown={() => this.setState({ submitCalled: true })}
                 onClick={(e) => this.handleSubmit(e, this.id)}
               >
-                Add Event
+                Add
               </Button>
             )}
             {!isSlotSelected && (
@@ -589,7 +589,7 @@ class EventForm extends Component {
                 disabled={isSystemEventSelected}
                 onClick={(e) => this.handleSubmit(e, this.id)}
               >
-                Save Changes
+                Save
               </Button>
             )}
           </Col>
@@ -604,7 +604,7 @@ class EventForm extends Component {
                 disabled={isSystemEventSelected}
                 onClick={this.handleDelete}
               >
-                Delete Event
+                Delete
               </Button>
             )}
           </Col>

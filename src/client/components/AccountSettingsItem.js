@@ -17,7 +17,7 @@ const AccountSettingsItem = (props) => {
 
       <Row className="threeColumn">
         <Col xs={12} md={2} className="badges"></Col>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={5}>
           <Form.Group controlId={props.id}>
             <Form.Control
               name={props.id}
@@ -29,7 +29,7 @@ const AccountSettingsItem = (props) => {
             />
           </Form.Group>
         </Col>
-        <Col xs={12} md={4}>
+        <Col xs={12} md={5}>
           {!newPasswordComponent && (
             <div className="btnGroup">
               {!props.editMode && (

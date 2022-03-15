@@ -4,11 +4,12 @@
 }
 
 .CalendarPage > .container {
-  max-width: 1600px;
+  max-width: 1800px;
 }
 
 .CalendarPage .rbc-calendar {
   min-height: 800px;
+  padding-bottom: 50px;
 }
 
 .CalendarPage .rbc-toolbar {

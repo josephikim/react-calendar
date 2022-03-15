@@ -25,7 +25,7 @@ const CalendarSettingsItem = (props) => {
             </Badge>
           )}
         </Col>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={5}>
           <Form.Group controlId={props.id}>
             <Form.Control
               type={props.type}
@@ -37,7 +37,7 @@ const CalendarSettingsItem = (props) => {
             />
           </Form.Group>
         </Col>
-        <Col xs={12} md={4}>
+        <Col xs={12} md={5}>
           <div className="btnGroup">
             {!props.editMode && (
               <Button

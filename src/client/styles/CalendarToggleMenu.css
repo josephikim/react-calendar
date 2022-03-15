@@ -1,5 +1,13 @@
+.CalendarToggleMenu {
+  margin-bottom: 50px;
+}
+
 .CalendarToggleMenu div[class^='col'] {
   padding: 4px 8px;
+}
+
+.CalendarToggleMenu label {
+  white-space: nowrap;
 }
 
 .CalendarToggleMenu #calendar-toggle label {

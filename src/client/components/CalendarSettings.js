@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { _ } from 'core-js';
+import _ from 'lodash';
 
 import CalendarSettingsItem from './CalendarSettingsItem';
 import { validateFields } from '../../validation';
@@ -32,7 +32,7 @@ class CalendarSettings extends Component {
 
   componentDidUpdate = (prevProps) => {
     const isCalendarsUpdated = !_.isEqual(this.props.calendars, prevProps.calendars);
-    debugger;
+
     // Reset component state when any calendar is added or updated
     if (isCalendarsUpdated) {
       const calendarsState = this.getCalendarsState();
@@ -97,7 +97,6 @@ class CalendarSettings extends Component {
       }
     };
 
-    debugger;
     this.setState(newState);
   };
 

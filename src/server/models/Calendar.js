@@ -39,6 +39,7 @@ const handleE11000 = (error, res, next) => {
   }
 };
 
+calendarSchema.post('save', handleE11000);
 calendarSchema.post('findOneAndUpdate', handleE11000);
 
 // schema index

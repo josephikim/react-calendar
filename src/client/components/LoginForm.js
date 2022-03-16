@@ -87,9 +87,7 @@ class LoginForm extends Component {
         password: password.value
       };
 
-      try {
-        await this.props.loginUser(data);
-      } catch (err) {
+      this.props.loginUser(data).catch((err) => {
         const error = err.response ? err.response.data : err;
         alert(`${error.name}: ${error.message}`);
 
@@ -101,7 +99,7 @@ class LoginForm extends Component {
             }
           }));
         }
-      }
+      });
     } else {
       // update state with errors
       this.setState((state) => ({

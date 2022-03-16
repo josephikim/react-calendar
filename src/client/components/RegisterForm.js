@@ -86,9 +86,7 @@ class RegisterForm extends Component {
         password: password.value
       };
 
-      try {
-        await this.props.registerUser(data);
-      } catch (err) {
+      this.props.registerUser(data).catch((err) => {
         const error = err.response ? err.response.data : err;
         alert(`${error.name}: ${error.message}`);
 
@@ -100,7 +98,7 @@ class RegisterForm extends Component {
             }
           }));
         }
-      }
+      });
     } else {
       // update state with input errors
       this.setState((state) => ({

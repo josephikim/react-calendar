@@ -262,65 +262,77 @@ class EventForm extends Component {
 
     if (titleError === false) {
       // if no error, submit form
-      try {
-        // Check for valid end time
-        if (this.state.allDay === false && this.state.end.value <= this.state.start.value) {
-          alert('Input error: End time should be after start time!');
+
+      // Check for valid end time
+      if (this.state.allDay === false && this.state.end.value <= this.state.start.value) {
+        alert('Input error: End time should be after start time!');
+        return;
+      }
+
+      let data = {
+        title: this.state.title.value,
+        desc: this.state.desc.value,
+        allDay: this.state.allDay,
+        calendarId: this.state.selectedCalendarId
+      };
+
+      // add start and end values
+      if (this.state.allDay === true) {
+        let startTimeAsDateObj = new Date(this.state.start.value);
+        let endTimeAsDateObj = new Date(this.state.end.value);
+
+        // Set hours, minutes, and seconds to zero
+        startTimeAsDateObj.setHours(0, 0, 0);
+        endTimeAsDateObj.setHours(0, 0, 0);
+
+        const allDayStartTimeAsISOString = startTimeAsDateObj.toISOString();
+        const allDayEndTimeAsISOString = endTimeAsDateObj.toISOString();
+
+        data.start = allDayStartTimeAsISOString;
+        data.end = allDayEndTimeAsISOString;
+      } else {
+        data.start = this.state.start.value;
+        data.end = this.state.end.value;
+      }
+
+      if (clickedId === 'add-event-btn') {
+        // Dispatch createCalendarEvent action
+        this.props
+          .createCalendarEvent(data)
+          .then(() => {
+            alert(`Successfully added new event: "${data.title}"`);
+          })
+          .catch((err) => {
+            const error = err.response ? err.response.data : err;
+            alert(`Error creating event: ${error}`);
+            this.setState({ error: error.message });
+          });
+      }
+
+      if (clickedId === 'update-event-btn') {
+        data.id = this.props.calendarSelectionWithSlotAndEvent.calendarEvent.id;
+
+        // Check for valid event update
+        const { calendarEvent } = this.props.calendarSelectionWithSlotAndEvent;
+
+        const isEventUpdateValid = this.checkEventUpdate(calendarEvent, data);
+
+        if (!isEventUpdateValid) {
+          alert('No changes detected!');
           return;
         }
 
-        let data = {
-          title: this.state.title.value,
-          desc: this.state.desc.value,
-          allDay: this.state.allDay,
-          calendarId: this.state.selectedCalendarId
-        };
-
-        // add start and end values
-        if (this.state.allDay === true) {
-          let startTimeAsDateObj = new Date(this.state.start.value);
-          let endTimeAsDateObj = new Date(this.state.end.value);
-
-          // Set hours, minutes, and seconds to zero
-          startTimeAsDateObj.setHours(0, 0, 0);
-          endTimeAsDateObj.setHours(0, 0, 0);
-
-          const allDayStartTimeAsISOString = startTimeAsDateObj.toISOString();
-          const allDayEndTimeAsISOString = endTimeAsDateObj.toISOString();
-
-          data.start = allDayStartTimeAsISOString;
-          data.end = allDayEndTimeAsISOString;
-        } else {
-          data.start = this.state.start.value;
-          data.end = this.state.end.value;
-        }
-
-        if (clickedId === 'add-event-btn') {
-          // Dispatch createCalendarEvent action
-          this.props.createCalendarEvent(data);
-          alert(`Successfully added new event: "${data.title}"`);
-        }
-
-        if (clickedId === 'update-event-btn') {
-          // Check for valid event update
-          const { calendarEvent } = this.props.calendarSelectionWithSlotAndEvent;
-
-          const isEventUpdateValid = this.checkEventUpdate(calendarEvent, data);
-
-          if (!isEventUpdateValid) {
-            alert('No changes detected!');
-            return;
-          }
-
-          // If update is valid, dispatch updateCalendarEvent action
-          data.id = this.props.calendarSelectionWithSlotAndEvent.calendarEvent.id;
-          this.props.updateCalendarEvent(data);
-          alert(`Successfully updated event: "${data.title}"`);
-        }
-      } catch (err) {
-        const error = err.response ? err.response.data : err;
-        alert(`Error updating calendar: ${error}`);
-        this.setState({ error: error.message });
+        // If update is valid, dispatch updateCalendarEvent action
+        this.props
+          .updateCalendarEvent(data)
+          .then(() => {
+            alert(`Successfully updated event: "${data.title}"`);
+          })
+          .catch((err) => {
+            const error = err.response ? err.response.data : err;
+            alert(`Error updating event: ${error}`);
+            this.setState({ error: error.message });
+          });
       }
     } else {
       this.setState((state) => ({
@@ -334,14 +346,15 @@ class EventForm extends Component {
     }
   };
 
-  checkEventUpdate = (event, eventUpdate) => {
+  checkEventUpdate = (event, update) => {
     const isUpdateValid =
-      event.title !== eventUpdate.title ||
-      event.desc !== eventUpdate.desc ||
-      event.start !== eventUpdate.start ||
-      event.end !== eventUpdate.end ||
-      event.allDay !== eventUpdate.allDay ||
-      event.calendarId !== eventUpdate.calendarId;
+      event.id == update.id &&
+      (event.title != update.title ||
+        event.desc != update.desc ||
+        event.start != update.start ||
+        event.end != update.end ||
+        event.allDay != update.allDay ||
+        event.calendarId != update.calendarId);
 
     if (isUpdateValid) {
       return true;
@@ -359,13 +372,11 @@ class EventForm extends Component {
 
     const eventId = this.props.calendarSelectionWithSlotAndEvent.calendarEvent.id;
 
-    try {
-      this.props.deleteCalendarEvent(eventId);
-    } catch (err) {
+    this.props.deleteCalendarEvent(eventId).catch((err) => {
       const error = err.response ? err.response.data : err;
       alert(`Error deleting calendar: ${error}`);
       this.setState({ error: error.message });
-    }
+    });
   };
 
   handleCalendarChange = (values) => {

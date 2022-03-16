@@ -251,7 +251,7 @@ class CalendarSettings extends Component {
 
   render() {
     const isCalendarsLoaded = this.props.calendars.length > 0;
-
+    // debugger;
     if (isCalendarsLoaded) {
       return (
         <Form className="CalendarSettings">
@@ -260,7 +260,7 @@ class CalendarSettings extends Component {
               key={calendar.id}
               id={calendar.id}
               type="text"
-              value={this.state[calendar.id].value ? this.state[calendar.id].value : calendar.name}
+              value={this.state[calendar.id] ? this.state[calendar.id].value : calendar.name}
               isSystemCalendar={calendar.systemCalendar}
               isDefaultCalendar={calendar.userDefault}
               error={this.state[calendar.id] ? this.state[calendar.id].error : null}

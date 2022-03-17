@@ -99,7 +99,7 @@ const createEvent = async (req, res, next) => {
       calendarId: createdEvent.calendarId
     };
 
-    return res.status(200).send({ data: trimmedEvent });
+    return res.status(200).send(trimmedEvent);
   } catch (err) {
     return next(err);
   }
@@ -115,7 +115,7 @@ const deleteEvent = async (req, res, next) => {
       id: deletedEvent._id
     };
 
-    return res.status(200).send({ data: trimmedEvent, message: 'Deleted event' });
+    return res.status(200).send(trimmedEvent);
   } catch (err) {
     return next(err);
   }
@@ -141,7 +141,7 @@ const updateEvent = async (req, res, next) => {
       calendarId: updatedEvent.calendarId
     };
 
-    return res.status(200).send({ data: trimmedEvent, message: 'Updated event' });
+    return res.status(200).send(trimmedEvent);
   } catch (err) {
     return next(err);
   }
@@ -243,7 +243,7 @@ const createCalendar = async (req, res, next) => {
       visibility: true
     };
 
-    return res.status(200).send({ data: trimmedCalendar });
+    return res.status(200).send(trimmedCalendar);
   } catch (err) {
     return next(err);
   }
@@ -265,7 +265,7 @@ const updateCalendar = async (req, res, next) => {
       systemCalendar: updatedCalendar.systemCalendar
     };
 
-    return res.status(200).send({ data: trimmedCalendar, message: 'Updated calendar' });
+    return res.status(200).send(trimmedCalendar);
   } catch (err) {
     return next(err);
   }
@@ -277,7 +277,11 @@ const deleteCalendar = async (req, res, next) => {
   try {
     let deletedCalendar = await Calendar.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(calendarId) });
 
-    return res.status(200).send({ message: 'Deleted calendar' });
+    const trimmedCalendar = {
+      id: deletedCalendar._id
+    };
+
+    return res.status(200).send(trimmedCalendar);
   } catch (err) {
     return next(err);
   }

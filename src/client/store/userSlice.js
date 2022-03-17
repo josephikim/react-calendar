@@ -137,8 +137,8 @@ export const createCalendarEvent = (data) => async (dispatch) => {
     const res = await userApi.post('/event', data);
 
     return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarEventAdded(res.data));
-      dispatch(calendarEventSelectionUpdated(res.data));
+      dispatch(calendarEventAdded(res));
+      dispatch(calendarEventSelectionUpdated(res));
       dispatch(calendarSlotSelectionUpdated({}));
     });
   } catch (err) {
@@ -151,8 +151,8 @@ export const updateCalendarEvent = (event) => async (dispatch) => {
     const res = await userApi.post(`/event/update`, event);
 
     return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarEventUpdated(res.data));
-      dispatch(calendarEventSelectionUpdated(res.data));
+      dispatch(calendarEventUpdated(res));
+      dispatch(calendarEventSelectionUpdated(res));
     });
   } catch (err) {
     return Promise.reject(err);
@@ -177,7 +177,7 @@ export const deleteCalendarEvent = (eventId) => async (dispatch) => {
         slots: [start]
       };
 
-      dispatch(calendarEventDeleted(res.data.id));
+      dispatch(calendarEventDeleted(res.id));
       dispatch(updateCalendarEventSelection({}));
       dispatch(updateCalendarSlotSelection(slot));
     });
@@ -191,7 +191,7 @@ export const createCalendar = (data) => async (dispatch) => {
     const res = await userApi.post('/calendar', data);
 
     return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarAdded(res.data));
+      dispatch(calendarAdded(res));
     });
   } catch (err) {
     return Promise.reject(err);
@@ -203,7 +203,7 @@ export const updateCalendar = (data) => async (dispatch) => {
     const res = await userApi.post(`/calendar/update`, data);
 
     return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarUpdated(res.data));
+      dispatch(calendarUpdated(res));
     });
   } catch (err) {
     return Promise.reject(err);
@@ -215,7 +215,7 @@ export const deleteCalendar = (calendarId) => async (dispatch) => {
     const res = await userApi.delete(`/calendar/${calendarId}/delete`);
 
     return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarDeleted(calendarId));
+      dispatch(calendarDeleted(res.id));
     });
   } catch (err) {
     return Promise.reject(err);

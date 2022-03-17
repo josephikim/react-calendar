@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Calendar from './Calendar';
-import { calendarColors } from '../config/appConfig';
+import { userColors } from '../config/appConfig';
 import { DuplicateKeyError } from '../utils/databaseErrors';
 
 const SALT_WORK_FACTOR = 10;
@@ -65,11 +65,9 @@ const handleE11000 = (error, res, next) => {
 userSchema.post('save', handleE11000);
 userSchema.post('findOneAndUpdate', handleE11000);
 
-// Middleware to create user calendar on initial user creation
+// Middleware to create user calendar on user creation
 userSchema.post('save', async function () {
   if (this._id && this.wasNew) {
-    const systemCalendars = await Calendar.find({ systemCalendar: true }).exec();
-
     Calendar.find(
       {
         user: this._id,
@@ -87,7 +85,7 @@ userSchema.post('save', async function () {
         // Create default user calendar
         return new Calendar({
           name: this.username,
-          color: `#${calendarColors[systemCalendars.length]}`,
+          color: `#${userColors[0]}`,
           user: this._id,
           userDefault: true,
           systemCalendar: false

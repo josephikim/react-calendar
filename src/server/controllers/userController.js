@@ -1,6 +1,6 @@
 import db from '../models';
 import { AuthorizationError } from '../utils/userFacingErrors';
-import { calendarColors } from '../config/appConfig';
+import { userColors } from '../config/appConfig';
 
 const Event = db.event;
 const User = db.user;
@@ -259,13 +259,11 @@ const createCalendar = async (req, res, next) => {
   const name = req.body.name;
 
   try {
-    let foundCalendars = await Calendar.find({
-      $or: [{ user: userId }, { systemCalendar: true }]
-    });
+    let userCalendars = await Calendar.find({ user: userId });
 
     let data = {
       name: name,
-      color: `#${calendarColors[foundCalendars.length]}`,
+      color: `#${userColors[userCalendars.length % userColors.length]}`,
       user: userId,
       userDefault: false,
       systemCalendar: false

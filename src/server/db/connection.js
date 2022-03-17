@@ -1,6 +1,6 @@
 import db from '../models';
 import { MONGO_URL } from '../config/dbConfig';
-import { calendarColors } from '../config/appConfig';
+import { systemColors } from '../config/appConfig';
 
 const Role = db.role;
 const Calendar = db.calendar;
@@ -62,7 +62,7 @@ const initialCalendars = () => {
     if (!err && count === 0) {
       new Calendar({
         name: 'US Holidays',
-        color: `#${calendarColors[0]}`,
+        color: `#${systemColors[0]}`,
         user: null,
         systemCalendar: true
       }).save((err) => {

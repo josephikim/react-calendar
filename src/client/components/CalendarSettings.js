@@ -251,7 +251,7 @@ class CalendarSettings extends Component {
 
   render() {
     const isCalendarsLoaded = this.props.calendars.length > 0;
-    // debugger;
+
     if (isCalendarsLoaded) {
       return (
         <Form className="CalendarSettings">

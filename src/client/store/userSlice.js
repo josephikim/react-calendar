@@ -22,6 +22,17 @@ const userSlice = createSlice({
     calendarsUpdated(state, action) {
       state.calendars = [...action.payload];
     },
+    calendarAdded(state, action) {
+      state.calendars = [...state.calendars, action.payload];
+    },
+    calendarUpdated(state, action) {
+      state.calendars = state.calendars.map((calendar) =>
+        calendar.id === action.payload.id ? { ...calendar, ...action.payload } : calendar
+      );
+    },
+    calendarDeleted(state, action) {
+      state.calendars = state.calendars.filter((calendar) => calendar.id !== action.payload);
+    },
     calendarEventsUpdated(state, action) {
       state.calendarEvents = action.payload;
     },
@@ -35,17 +46,6 @@ const userSlice = createSlice({
     },
     calendarEventDeleted(state, action) {
       state.calendarEvents = state.calendarEvents.filter((event) => event.id !== action.payload);
-    },
-    calendarAdded(state, action) {
-      state.calendars = [...state.calendars, action.payload];
-    },
-    calendarUpdated(state, action) {
-      state.calendars = state.calendars.map((calendar) =>
-        calendar.id === action.payload.id ? { ...calendar, ...action.payload } : calendar
-      );
-    },
-    calendarDeleted(state, action) {
-      state.calendars = state.calendars.filter((calendar) => calendar.id !== action.payload);
     },
     calendarSlotSelectionUpdated(state, action) {
       state.calendarSlotSelection = action.payload;

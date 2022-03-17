@@ -10,6 +10,8 @@ const middleware = [thunk];
 
 // NOTE: Only auth data is persisted via localstorage. User data (eg calendars and events) will be retrieved if needed after store is created
 const doCreateStore = () => {
+  const isDevelopment = process.env.NODE_ENV == 'development';
+
   const allReducers = combineReducers({
     auth: authReducer,
     user: userReducer
@@ -23,15 +25,12 @@ const doCreateStore = () => {
     return allReducers(state, action);
   };
 
-  const composeEnhancers = composeWithDevTools({});
+  // Apply Redux devtools only in dev mode
+  const enhancer = isDevelopment ? composeWithDevTools(applyMiddleware(...middleware)) : applyMiddleware(...middleware);
 
   let persistedState = loadState();
 
-  const store = createStore(
-    rootReducer,
-    persistedState ? persistedState : undefined,
-    composeEnhancers(applyMiddleware(...middleware))
-  );
+  const store = createStore(rootReducer, persistedState ? persistedState : undefined, enhancer);
 
   store.subscribe(
     throttle(() => {

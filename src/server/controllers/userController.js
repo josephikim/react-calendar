@@ -83,46 +83,6 @@ const getUserData = async (req, res, next) => {
   }
 };
 
-const getEvents = async (req, res, next) => {
-  const userId = req.query.userId;
-
-  if (!userId) {
-    return res.status(500).send({ message: 'GET request failed. Please check your query and try again.' });
-  }
-
-  try {
-    let calendars = await Calendar.find({
-      $or: [{ user: userId }, { systemCalendar: true }]
-    });
-
-    const calendarIds = calendars.map((calendar) => calendar._id);
-
-    let events = await Event.find({
-      calendarId: {
-        $in: calendarIds
-      }
-    })
-      .select('-__v')
-      .sort({ start: -1 });
-
-    const trimmedEvents = events.map((event) => {
-      return {
-        id: event._id,
-        title: event.title,
-        desc: event.desc,
-        start: event.start,
-        end: event.end,
-        allDay: event.allDay,
-        calendarId: event.calendarId
-      };
-    });
-
-    return res.status(200).send({ data: trimmedEvents });
-  } catch (err) {
-    return next(err);
-  }
-};
-
 const createEvent = async (req, res, next) => {
   try {
     const event = new Event(req.body);
@@ -329,7 +289,6 @@ const userController = {
   adminAccess,
   moderatorAccess,
   getUserData,
-  getEvents,
   createEvent,
   deleteEvent,
   updateEvent,

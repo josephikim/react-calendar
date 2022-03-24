@@ -8,7 +8,6 @@ import userReducer from './userSlice';
 
 const middleware = [thunk];
 
-// NOTE: Only auth data is persisted via localstorage. User data (eg calendars and events) will be retrieved if needed after store is created
 const doCreateStore = () => {
   const isDevelopment = process.env.NODE_ENV == 'development';
 

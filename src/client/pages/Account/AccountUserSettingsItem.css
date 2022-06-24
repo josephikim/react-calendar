@@ -1,0 +1,23 @@
+.AccountUserSettingsItem label {
+  color: dodgerblue;
+}
+
+.AccountUserSettingsItem .threeColumn {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.AccountUserSettingsItem .threeColumn .form-group {
+  margin-bottom: 0;
+}
+
+.AccountUserSettingsItem .btnGroup .btn {
+  width: 85px;
+  margin-right: 18px;
+}
+
+@media screen and (max-width: 768px) {
+  .AccountUserSettingsItem .btnGroup {
+    margin-top: 24px;
+  }
+}

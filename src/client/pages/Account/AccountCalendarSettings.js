@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import _ from 'lodash';
 
-import CalendarSettingsItem from './CalendarSettingsItem';
-import { validateFields } from '../../validation';
-import { createCalendar, updateCalendar, deleteCalendar } from '../store/userSlice';
+import AccountCalendarSettingsItem from './AccountCalendarSettingsItem';
+import { validateFields } from '../../../validation';
+import { createCalendar, updateCalendar, deleteCalendar } from '../../store/userSlice';
 
-import '../styles/CalendarSettings.css';
+import './AccountCalendarSettings.css';
 
 const initialState = {
   newCalendar: {
@@ -16,7 +16,7 @@ const initialState = {
     error: null
   }
 };
-class CalendarSettings extends Component {
+class AccountCalendarSettings extends Component {
   constructor(props) {
     super(props);
 
@@ -254,9 +254,9 @@ class CalendarSettings extends Component {
 
     if (isCalendarsLoaded) {
       return (
-        <Form className="CalendarSettings">
+        <Form className="AccountCalendarSettings">
           {this.props.calendars.map((calendar) => (
-            <CalendarSettingsItem
+            <AccountCalendarSettingsItem
               key={calendar.id}
               id={calendar.id}
               type="text"
@@ -274,7 +274,7 @@ class CalendarSettings extends Component {
             />
           ))}
 
-          <CalendarSettingsItem
+          <AccountCalendarSettingsItem
             id="newCalendar"
             type="text"
             label="Add Calendar"
@@ -306,4 +306,4 @@ const mapActionsToProps = {
   deleteCalendar
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(CalendarSettings);
+export default connect(mapStateToProps, mapActionsToProps)(AccountCalendarSettings);

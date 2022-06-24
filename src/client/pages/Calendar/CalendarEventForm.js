@@ -14,14 +14,14 @@ import {
   updateCalendarEvent,
   deleteCalendarEvent,
   calendarSelectionWithSlotAndEvent
-} from '../store/userSlice';
-import { validateFields } from '../../validation.js';
+} from '../../store/userSlice';
+import { validateFields } from '../../../validation.js';
 
-import '../styles/EventForm.css';
+import './CalendarEventForm.css';
 import 'react-day-picker/lib/style.css';
 import 'rc-time-picker/assets/index.css';
 
-class EventForm extends Component {
+class CalendarEventForm extends Component {
   constructor(props) {
     super(props);
 
@@ -410,7 +410,7 @@ class EventForm extends Component {
       : false;
 
     return (
-      <Form className="EventForm">
+      <Form className="CalendarEventForm">
         <Row>
           <Col>
             <label htmlFor="title" className="text-primary">
@@ -639,4 +639,4 @@ const mapActionsToProps = {
   deleteCalendarEvent
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(EventForm);
+export default connect(mapStateToProps, mapActionsToProps)(CalendarEventForm);

@@ -1,7 +1,5 @@
 .LoginForm {
-  width: 350px;
-  margin: 0 auto;
-  padding-top: 35px;
+  min-width: 250px;
 }
 
 .LoginForm h4 {
@@ -14,5 +12,5 @@
 }
 
 .LoginForm .text-danger {
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }

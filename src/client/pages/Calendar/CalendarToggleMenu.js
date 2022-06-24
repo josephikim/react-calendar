@@ -1,10 +1,10 @@
 import React from 'react';
 import { Row, Col, Button, Badge } from 'react-bootstrap';
-import Checkbox from './Checkbox';
+import Checkbox from '../../components/Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
-import { calendarUpdated, calendarsUpdated } from '../store/userSlice';
+import { calendarUpdated, calendarsUpdated } from '../../store/userSlice';
 
-import '../styles/CalendarToggleMenu.css';
+import './CalendarToggleMenu.css';
 
 const CalendarToggleMenu = () => {
   const dispatch = useDispatch();
@@ -57,6 +57,11 @@ const CalendarToggleMenu = () => {
               {calendar.userDefault && (
                 <Badge pill variant="light">
                   Default
+                </Badge>
+              )}
+              {calendar.systemCalendar && (
+                <Badge pill variant="light">
+                  System
                 </Badge>
               )}
             </label>

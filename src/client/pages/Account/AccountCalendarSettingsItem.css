@@ -1,0 +1,28 @@
+.AccountCalendarSettingsItem label {
+  color: dodgerblue;
+}
+
+.AccountCalendarSettingsItem .threeColumn {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.AccountCalendarSettingsItem .threeColumn .form-group {
+  margin-bottom: 0;
+}
+
+.AccountCalendarSettingsItem .threeColumn .badges {
+  display: flex;
+  justify-content: right;
+}
+
+.AccountCalendarSettingsItem .btnGroup .btn {
+  width: 85px;
+  margin-right: 18px;
+}
+
+@media screen and (max-width: 768px) {
+  .AccountCalendarSettingsItem .btnGroup {
+    margin-top: 24px;
+  }
+}

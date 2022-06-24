@@ -1,7 +1,5 @@
 .RegisterForm {
-  max-width: 350px;
-  margin: 0 auto;
-  padding: 35px 0px;
+  min-width: 200px;
 }
 
 .RegisterForm h4 {

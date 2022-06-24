@@ -1,0 +1,31 @@
+.Register {
+  min-height: 800px;
+  margin-top: 50px;
+}
+
+.Register #about {
+  width: 450px;
+  margin: 0 auto;
+  padding-top: 35px;
+}
+
+.Register .register-img {
+  width: 100%;
+  max-width: 500px;
+  /* box-shadow */
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 0 8px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 0 8px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0 0 8px;
+}
+
+.Register dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.Register .register-img-mockup {
+  width: 1080px;
+}

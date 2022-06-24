@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { validateFields } from '../../validation';
-import { updateUsername, updatePassword } from '../store/userSlice';
+import { validateFields } from '../../../validation';
+import { updateUsername, updatePassword } from '../../store/userSlice';
 
-import AccountSettingsItem from './AccountSettingsItem';
+import AccountUserSettingsItem from './AccountUserSettingsItem';
 
-import '../styles/AccountSettings.css';
-class AccountSettings extends Component {
+import './AccountUserSettings.css';
+
+class AccountUserSettings extends Component {
   constructor(props) {
     super(props);
 
@@ -253,9 +254,9 @@ class AccountSettings extends Component {
     const passwordEditMode = this.state.password ? this.state.password.editMode : false;
 
     return (
-      <div className="AccountSettings">
+      <div className="AccountUserSettings">
         <Form>
-          <AccountSettingsItem
+          <AccountUserSettingsItem
             id="username"
             type="text"
             label="Username"
@@ -269,7 +270,7 @@ class AccountSettings extends Component {
             onCancel={(event, id) => this.handleCancel(event, id)}
           />
 
-          <AccountSettingsItem
+          <AccountUserSettingsItem
             id="password"
             type="password"
             label={passwordEditMode ? 'Confirm Current Password' : 'Password'}
@@ -283,7 +284,7 @@ class AccountSettings extends Component {
           />
 
           {passwordEditMode && (
-            <AccountSettingsItem
+            <AccountUserSettingsItem
               id="newPassword"
               type="password"
               label="Enter New Password"
@@ -312,4 +313,4 @@ const mapActionsToProps = {
   updatePassword
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(AccountSettings);
+export default connect(mapStateToProps, mapActionsToProps)(AccountUserSettings);

@@ -1,25 +1,25 @@
-.EventForm label {
+.CalendarEventForm label {
   white-space: nowrap;
 }
 
-.EventForm textarea {
+.CalendarEventForm textarea {
   width: 100%;
 }
 
-.EventForm .row {
+.CalendarEventForm .row {
   margin-bottom: 1rem;
 }
 
-.EventForm .DayPickerInput,
-.EventForm .DayPickerInput input {
+.CalendarEventForm .DayPickerInput,
+.CalendarEventForm .DayPickerInput input {
   width: 100%;
 }
 
-.EventForm .rc-time-picker {
+.CalendarEventForm .rc-time-picker {
   width: 100%;
 }
 
-.EventForm .rc-time-picker-input {
+.CalendarEventForm .rc-time-picker-input {
   padding: 1px 2px;
   border: 1px solid rgb(118, 118, 118);
   border-radius: 1px;
@@ -27,7 +27,7 @@
   color: #000000 !important;
 }
 
-.EventForm .btn {
+.CalendarEventForm .btn {
   display: block;
   min-width: 100%;
   padding: 0.375rem 0.5rem;
@@ -35,7 +35,7 @@
 }
 
 @media screen and (max-width: 768px) {
-  .EventForm {
+  .CalendarEventForm {
     padding-top: 35px;
     margin-bottom: 100px;
   }

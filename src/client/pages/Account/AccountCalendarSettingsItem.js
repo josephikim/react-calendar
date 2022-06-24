@@ -1,15 +1,15 @@
 import React from 'react';
 import { Row, Col, Form, Badge, Button } from 'react-bootstrap';
 
-import '../styles/CalendarSettingsItem.css';
+import './AccountCalendarSettingsItem.css';
 
-const CalendarSettingsItem = (props) => {
+const AccountCalendarSettingsItem = (props) => {
   const error = props.error;
   const onBlur = props.onBlur;
   const readOnly = !props.editMode;
 
   return (
-    <div className="CalendarSettingsItem">
+    <div className="AccountCalendarSettingsItem">
       <Row>
         <Col xs={12} md={2}></Col>
         <Col xs={12} md={10}>
@@ -22,6 +22,11 @@ const CalendarSettingsItem = (props) => {
           {props.isDefaultCalendar && (
             <Badge pill variant="secondary">
               Default
+            </Badge>
+          )}
+          {props.isSystemCalendar && (
+            <Badge pill variant="secondary">
+              System
             </Badge>
           )}
         </Col>
@@ -88,4 +93,4 @@ const CalendarSettingsItem = (props) => {
   );
 };
 
-export default CalendarSettingsItem;
+export default AccountCalendarSettingsItem;

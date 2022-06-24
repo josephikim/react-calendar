@@ -1,0 +1,10 @@
+.Account {
+  min-height: 800px;
+  margin-top: 50px;
+  margin-bottom: 150px;
+}
+
+.Account .heading {
+  text-align: center;
+  margin-bottom: 28px;
+}

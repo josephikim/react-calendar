@@ -1,13 +1,13 @@
 import React from 'react';
 import { Row, Col, Form, Button } from 'react-bootstrap';
 
-import '../styles/AccountSettingsItem.css';
+import './AccountUserSettingsItem.css';
 
-const AccountSettingsItem = (props) => {
+const AccountUserSettingsItem = (props) => {
   const newPasswordComponent = props.id === 'newPassword';
 
   return (
-    <div className="AccountSettingsItem">
+    <div className="AccountUserSettingsItem">
       <Row>
         <Col xs={12} md={2}></Col>
         <Col xs={12} md={10}>
@@ -66,4 +66,4 @@ const AccountSettingsItem = (props) => {
   );
 };
 
-export default AccountSettingsItem;
+export default AccountUserSettingsItem;

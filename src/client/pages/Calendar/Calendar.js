@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { Calendar as ReactBigCalendar, momentLocalizer } from 'react-big-calendar';
 
-import CalendarToggleMenu from '../components/CalendarToggleMenu';
-import EventForm from '../components/EventForm';
+import CalendarToggleMenu from './CalendarToggleMenu';
+import CalendarEventForm from './CalendarEventForm';
 import {
   onSelectSlot,
   onSelectEvent,
@@ -14,14 +14,15 @@ import {
   calendarSelectionWithSlotAndEvent,
   calendarEventsWithDateObjects,
   initializeCalendarView
-} from '../store/userSlice';
+} from '../../store/userSlice';
 
-import '../styles/CalendarPage.css';
+import './Calendar.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import ContentWrapper from '../../components/ContentWrapper';
 
 const localizer = momentLocalizer(moment);
 
-class CalendarPage extends Component {
+class Calendar extends Component {
   constructor(...args) {
     super(...args);
 
@@ -133,32 +134,34 @@ class CalendarPage extends Component {
 
     if (isUserDataLoaded) {
       return (
-        <div className="CalendarPage">
+        <div className="Calendar">
           <Container>
-            <Row>
-              <Col xs={12} lg={2}>
-                <CalendarToggleMenu />
-              </Col>
-              <Col xs={12} lg={7}>
-                <Calendar
-                  selectable
-                  localizer={localizer}
-                  events={visibleEvents}
-                  defaultView="month"
-                  onView={(view) => this.handleView(view)}
-                  defaultDate={new Date()}
-                  scrollToTime={new Date(1970, 1, 1, 6)}
-                  onSelectEvent={(event) => this.handleSelectEvent(event)}
-                  onSelectSlot={(slot) => this.handleSelectSlot(slot)}
-                  startAccessor={(event) => event.start}
-                  endAccessor={(event) => event.end}
-                  eventPropGetter={(event) => this.eventStyleGetter(event)}
-                />
-              </Col>
-              <Col xs={12} lg={3}>
-                <EventForm />
-              </Col>
-            </Row>
+            <ContentWrapper>
+              <Row>
+                <Col xs={12} lg={2}>
+                  <CalendarToggleMenu />
+                </Col>
+                <Col xs={12} lg={7}>
+                  <ReactBigCalendar
+                    selectable
+                    localizer={localizer}
+                    events={visibleEvents}
+                    defaultView="month"
+                    onView={(view) => this.handleView(view)}
+                    defaultDate={new Date()}
+                    scrollToTime={new Date(1970, 1, 1, 6)}
+                    onSelectEvent={(event) => this.handleSelectEvent(event)}
+                    onSelectSlot={(slot) => this.handleSelectSlot(slot)}
+                    startAccessor={(event) => event.start}
+                    endAccessor={(event) => event.end}
+                    eventPropGetter={(event) => this.eventStyleGetter(event)}
+                  />
+                </Col>
+                <Col xs={12} lg={3}>
+                  <CalendarEventForm />
+                </Col>
+              </Row>
+            </ContentWrapper>
           </Container>
         </div>
       );
@@ -186,4 +189,4 @@ const mapActionsToProps = {
   initializeCalendarView
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(CalendarPage);
+export default connect(mapStateToProps, mapActionsToProps)(Calendar);

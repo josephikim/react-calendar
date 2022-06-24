@@ -3,10 +3,10 @@ import { Switch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Container } from 'react-bootstrap';
 
-import RegisterPage from './pages/RegisterPage';
-import LoginPage from './pages/LoginPage';
-import CalendarPage from './pages/CalendarPage';
-import AccountPage from './pages/AccountPage';
+import Register from './pages/Register/Register';
+import Login from './pages/Login/Login';
+import Calendar from './pages/Calendar/Calendar';
+import Account from './pages/Account/Account';
 import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
 import Header from './components/Header';
@@ -21,15 +21,13 @@ const App = () => {
   return (
     <div className="App">
       <Header authenticated={isAuthenticated} />
-      <Container>
-        <Switch>
-          <PublicRoute restricted={isAuthenticated ? true : false} component={RegisterPage} path="/register" exact />
-          <PublicRoute restricted={isAuthenticated ? true : false} component={LoginPage} path="/login" exact />
-          <PrivateRoute component={AccountPage} path="/account" exact />
-          <PrivateRoute component={CalendarPage} path="/" exact />
-          <PublicRoute restricted={false} component={NoMatch} />
-        </Switch>
-      </Container>
+      <Switch>
+        <PublicRoute restricted={isAuthenticated ? true : false} component={Register} path="/register" exact />
+        <PublicRoute restricted={isAuthenticated ? true : false} component={Login} path="/login" exact />
+        <PrivateRoute component={Account} path="/account" exact />
+        <PrivateRoute component={Calendar} path="/" exact />
+        <PublicRoute restricted={false} component={NoMatch} />
+      </Switch>
       <Footer />
     </div>
   );

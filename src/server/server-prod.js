@@ -4,6 +4,7 @@ import cors from 'cors';
 
 import db from './db/connection';
 import apiRouter from './api';
+import { UserFacingError, DatabaseError } from './utils/baseErrors';
 import { baseURL } from './config/appConfig';
 
 const BUILD_DIR = __dirname;
@@ -33,6 +34,26 @@ indexRouter.use('/api', apiRouter);
 
 // allow hosting express routes on a custom URL i.e. '/calendarapp'
 app.use(baseURL, indexRouter);
+
+// Global error handler
+app.use(function (err, req, res, next) {
+  if (err instanceof UserFacingError || err instanceof DatabaseError) {
+    let error = {
+      message: err.message
+    };
+    for (const [key, value] of Object.entries(err)) {
+      error[key] = value;
+    }
+    res.status(err.statusCode).send(error);
+  } else {
+    let error = {
+      name: err.name,
+      message: err.message
+    };
+
+    res.status(500).send(error);
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`App started, listening to ${PORT}....`);

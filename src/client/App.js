@@ -1,7 +1,6 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Container } from 'react-bootstrap';
 
 import Register from './pages/Register/Register';
 import Login from './pages/Login/Login';

@@ -19,19 +19,18 @@ const authSlice = createSlice({
     },
     userIdUpdated(state, action) {
       state.userId = action.payload;
-    },
-    userLoggedOut(state) {
-      state = initialState;
     }
   }
 });
 
-export const { accessTokenUpdated, refreshTokenUpdated, userIdUpdated, userLoggedOut } = authSlice.actions;
+export const { accessTokenUpdated, refreshTokenUpdated, userIdUpdated } = authSlice.actions;
 
 export default authSlice.reducer;
 
 export const logoutUser = () => (dispatch) => {
-  dispatch(userLoggedOut());
+  dispatch({
+    type: 'auth/userLoggedOut'
+  });
 };
 
 export const loginUser = (data) => async (dispatch) => {

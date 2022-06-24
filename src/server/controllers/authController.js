@@ -5,8 +5,6 @@ import { NotFoundError, AuthorizationError } from '../utils/userFacingErrors';
 
 const User = db.user;
 const Role = db.role;
-const Calendar = db.calendar;
-const Event = db.event;
 const RefreshToken = db.refreshToken;
 
 const register = (req, res, next) => {

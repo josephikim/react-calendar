@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, Nav, Container, Row, Col } from 'react-bootstrap';
+import { Navbar, Nav, Container, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { logoutUser } from '../store/authSlice';
 import { useDispatch } from 'react-redux';

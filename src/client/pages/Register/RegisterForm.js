@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
+
 import { validateFields } from '../../../validation.js';
 import { registerUser } from '../../store/authSlice';
+import { baseURL } from '../../server/config/appConfig';
 
 import './RegisterForm.css';
 
@@ -176,7 +178,7 @@ class RegisterForm extends Component {
         </Button>
 
         <div>
-          Already registered? Please <a href="/login">login</a>.
+          Already registered? Please <a href={`${baseUrl}/login`}>login</a>.
         </div>
       </Form>
     );

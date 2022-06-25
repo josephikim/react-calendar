@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-dropdown-select';
 import { useSelector } from 'react-redux';
+import { baseURL } from '../../../server/config/appConfig';
 
 const CalendarSelectMenu = (props) => {
   const calendars = useSelector((state) => state.user.calendars);
@@ -20,7 +21,7 @@ const CalendarSelectMenu = (props) => {
       <label htmlFor="title" className="text-primary">
         Calendar (
         <small>
-          <a href="/account">Edit</a>
+          <a href={`${baseUrl}/account`}>Edit</a>
         </small>
         )
       </label>

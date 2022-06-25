@@ -182,7 +182,7 @@ class LoginForm extends Component {
 
         <div>
           <span>
-            New user? Please <a href="/register">register</a>.
+            New user? Please <a href={`${baseUrl}/register`}>register</a>.
           </span>
         </div>
       </Form>

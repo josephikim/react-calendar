@@ -447,7 +447,7 @@ class CalendarEventForm extends Component {
               name="desc"
               className="input"
               disabled={isSystemEventSelected}
-              rows="2"
+              rows="6"
               value={this.state.desc.value}
               onChange={(event) => this.handleChange(null, event)}
             >

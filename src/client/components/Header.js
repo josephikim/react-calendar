@@ -21,12 +21,20 @@ const Header = ({ authenticated }) => {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
             <Nav>
-              <Nav.Link as={Link} to="/register">
+              <Nav.Link as={Link} to="/">
                 Home
               </Nav.Link>
+
               <Nav.Link as={Link} to="/account">
                 Account
               </Nav.Link>
+
+              {authenticated ? null : (
+                <Nav.Link as={Link} to="/register">
+                  Register
+                </Nav.Link>
+              )}
+
               {authenticated ? (
                 <Nav.Link onClick={() => dispatch(logoutUser())}>Logout</Nav.Link>
               ) : (

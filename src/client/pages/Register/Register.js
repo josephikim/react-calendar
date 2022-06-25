@@ -23,10 +23,11 @@ const Register = () => {
             <ContentWrapper>
               <div className="register-about">
                 <p>
-                  <strong>React Calendar</strong> is an easy-to-use online calendar app powered by{' '}
-                  <a href="https://reactjs.org/" target="_blank" rel="noreferrer">
-                    React
+                  <strong>React Calendar</strong> is a simple-to-use online calendar built with{' '}
+                  <a href="https://jquense.github.io/react-big-calendar/" target="_blank" rel="noreferrer">
+                    React Big Calendar
                   </a>
+                  . It supports multiple views, custom calendars and data localization.
                 </p>
                 <p>Register your username to get started!</p>
               </div>

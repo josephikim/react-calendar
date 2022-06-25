@@ -179,6 +179,12 @@ class LoginForm extends Component {
         <div className="text-danger">
           <small>{this.state.error}</small>
         </div>
+
+        <div>
+          <span>
+            New user? Please <a href="/register">register</a>.
+          </span>
+        </div>
       </Form>
     );
   }

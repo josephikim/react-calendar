@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+
 import { validateFields } from '../../../validation.js';
 import { loginUser } from '../../store/authSlice';
 
@@ -182,7 +184,7 @@ class LoginForm extends Component {
 
         <div>
           <span>
-            New user? Please <a href={`${baseUrl}/register`}>register</a>.
+            New user? Please <Link to="/register">register</Link>.
           </span>
         </div>
       </Form>

@@ -4,7 +4,7 @@ import { Form } from 'react-bootstrap';
 import _ from 'lodash';
 
 import AccountCalendarSettingsItem from './AccountCalendarSettingsItem';
-import { validateFields } from '../../../validation';
+import { validateFields } from '../../validation';
 import { createCalendar, updateCalendar, deleteCalendar } from '../../store/userSlice';
 
 import './AccountCalendarSettings.css';

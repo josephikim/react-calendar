@@ -1,6 +1,6 @@
 import db from '../models';
-import { MONGO_URL } from '../config/dbConfig';
-import { systemColors } from '../config/appConfig';
+import { MONGO_URL } from '../../config/dbConfig';
+import { systemColors } from '../../config/appConfig';
 
 const Role = db.role;
 const Calendar = db.calendar;

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import config from '../config/authConfig';
+import config from '../../config/authConfig';
 import db from '../models';
 
 const { TokenExpiredError } = jwt;

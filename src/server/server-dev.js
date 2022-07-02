@@ -5,9 +5,9 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 
 import db from './db/connection';
-import apiRouter from './api';
+import apiRouter from './routers';
 import { UserFacingError, DatabaseError } from './utils/baseErrors';
-import config from '../../webpack.dev.config.js';
+import config from '../../webpack.development.js';
 
 const BUILD_DIR = __dirname;
 const HTML_FILE = path.join(BUILD_DIR, 'index.html');

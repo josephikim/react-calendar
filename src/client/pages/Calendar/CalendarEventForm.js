@@ -15,7 +15,7 @@ import {
   deleteCalendarEvent,
   calendarSelectionWithSlotAndEvent
 } from '../../store/userSlice';
-import { validateFields } from '../../../validation.js';
+import { validateFields } from '../../validation.js';
 
 import './CalendarEventForm.css';
 import 'react-day-picker/lib/style.css';

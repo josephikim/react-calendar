@@ -53,7 +53,8 @@ module.exports = {
         use: {
           loader: 'file-loader',
           options: {
-            name: 'assets/[name].[ext]'
+            name: '[name].[ext]',
+            outputPath: 'assets/images'
           }
         }
       }
@@ -61,7 +62,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: 'public/index.html',
+      template: 'src/client/index.html',
       filename: './index.html',
       excludeChunks: ['server']
     }),

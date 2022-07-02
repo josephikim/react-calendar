@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import { validateFields } from '../../../validation.js';
+import { validateFields } from '../../validation.js';
 import { registerUser } from '../../store/authSlice';
 
 import './RegisterForm.css';

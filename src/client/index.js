@@ -5,7 +5,7 @@ import store from './store/createStore';
 import { Provider } from 'react-redux';
 
 import App from './App';
-import { baseURL } from '../server/config/appConfig';
+import { baseURL } from '../config/appConfig';
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
-import config from '../config/authConfig';
+import config from '../../config/authConfig';
 import { NotFoundError, AuthorizationError } from '../utils/userFacingErrors';
 
 const User = db.user;

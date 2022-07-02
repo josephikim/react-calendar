@@ -3,7 +3,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 
 import ContentWrapper from '../../components/ContentWrapper';
 import RegisterForm from './RegisterForm';
-import mockup from '../../../assets/calendar.png';
+import mockup from '../../assets/calendar.png';
 
 import './Register.css';
 

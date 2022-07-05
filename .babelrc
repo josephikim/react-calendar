@@ -1,20 +1,12 @@
 {
-  "sourceType": "unambiguous",
-  "presets": [
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
+  "plugins": [
+    "@babel/proposal-class-properties",
     [
-      "@babel/preset-env",
+      "@babel/plugin-transform-runtime",
       {
-        "useBuiltIns": "usage",
-        "corejs": 3,
-        "targets": {
-          "node": "current",
-          "browsers": "> 0.25%, not dead"
-        }
+        "regenerator": true
       }
-    ],
-    "@babel/preset-react"
-  ],
-  "plugins": ["@babel/plugin-proposal-class-properties"],
-  "sourceMaps": true,
-  "retainLines": true
+    ]
+  ]
 }

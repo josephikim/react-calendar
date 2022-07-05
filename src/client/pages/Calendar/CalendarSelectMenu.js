@@ -1,5 +1,5 @@
 import React from 'react';
-import Select from 'react-dropdown-select';
+import { Select } from 'react-dropdown-select';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 

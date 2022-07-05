@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "homepage": "/calendarapp",
+  "type": "module",
   "scripts": {
-    "watch:server": "webpack --mode development --config webpack.server.js --watch",
-    "start:dev": "node-dev ./build/server.js",
-    "dev": "npm run lint && npm run prettier && npm run build:dev && npm-run-all --parallel start:dev watch:server",
-    "build:dev": "rm -rf build && webpack --mode development --config webpack.server.js && webpack --mode development --config webpack.development.js",
-    "build": "rm -rf build && webpack --mode production --config webpack.server.js && webpack --mode production --config webpack.production.js",
-    "start": "node ./build/server.js",
+    "watch:dev-client": "webpack serve --open --config webpack.development.js --config-name client",
+    "start:dev-server": "node-dev build/server.cjs",
+    "dev": "npm run lint && npm run prettier && npm run build:dev && npm-run-all --parallel start:dev-server watch:dev-client",
+    "build:dev": "rm -rf build && webpack --mode development --config webpack.development.js --config-name server",
+    "build": "npm run lint && npm run prettier && rm -rf build && npm-run-all build:server build:client",
+    "build:server": "webpack --mode=production --config webpack.production.js --config-name server",
+    "build:client": "webpack --mode=production --config webpack.production.js --config-name client",
+    "start": "node ./build/server.cjs",
     "pm2": "NODE_ENV=production pm2 start npm --name 'calendarapp' -- start",
     "lint": "eslint ./src --fix --ext .js,.jsx",
     "prettier": "prettier --write ."
@@ -21,7 +25,6 @@
     }
   },
   "license": "ISC",
-  "homepage": "/calendarapp",
   "devDependencies": {
     "@babel/core": "^7.17.7",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
@@ -34,6 +37,7 @@
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-loader": "^4.0.2",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.23.2",
     "file-loader": "^6.2.0",
     "html-loader": "^2.1.2",
@@ -47,22 +51,21 @@
     "prettier": "^2.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "redux-devtools-extension": "^2.13.9",
     "style-loader": "^2.0.0",
     "webpack": "^5.44.0",
     "webpack-cli": "^4.6.0",
-    "webpack-dev-middleware": "^3.7.3",
-    "webpack-hot-middleware": "^2.25.0",
+    "webpack-dev-server": "^4.9.3",
     "webpack-node-externals": "^2.5.2"
   },
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.18.6",
     "@babel/preset-react": "^7.13.13",
     "@reduxjs/toolkit": "^1.7.1",
     "async": "^3.2.0",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "bootstrap": "^4.6.0",
-    "core-js": "^3.21.1",
+    "core-js": "^2.6.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "faker": "^5.5.3",
@@ -73,8 +76,7 @@
     "rc-time-picker": "^3.7.3",
     "react-big-calendar": "^0.33.2",
     "react-bootstrap": "^1.5.2",
-    "react-dates": "^21.8.0",
-    "react-day-picker": "^7.4.10",
+    "react-day-picker": "^7.4.8",
     "react-dropdown-select": "^4.7.4",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
@@ -82,7 +84,8 @@
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.9",
     "uuid": "^8.3.2",
-    "validator": "^13.6.0"
+    "validator": "^13.6.0",
+    "webpack-merge": "^5.8.0"
   },
   "husky": {
     "hooks": {
@@ -95,5 +98,38 @@
       "prettier --write .",
       "git add"
     ]
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "plugins": [
+      "react",
+      "prettier"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended"
+    ],
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "ignorePatterns": [
+      "node_modules",
+      "build"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "endOfLine": "auto"
+        }
+      ],
+      "react/display-name": 0,
+      "react/prop-types": "off",
+      "no-unused-vars": "warn",
+      "no-console": 1,
+      "no-debugger": 1
+    }
   }
 }

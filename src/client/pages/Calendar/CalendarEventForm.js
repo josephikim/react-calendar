@@ -1,25 +1,26 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Row, Col, Button, Form } from 'react-bootstrap';
-import DayPickerInput from 'react-day-picker/DayPickerInput';
-import { formatDate, parseDate } from 'react-day-picker/moment';
-import TimePicker from 'rc-time-picker';
 import moment from 'moment';
 import _ from 'lodash';
+import TimePicker from 'rc-time-picker';
+import DPI from 'react-day-picker/DayPickerInput';
+import { formatDate, parseDate } from 'react-day-picker/moment';
+import { connect } from 'react-redux';
+import { Row, Col, Button, Form } from 'react-bootstrap';
 
 import CalendarSelectMenu from './CalendarSelectMenu';
-
+import { validateFields } from '../../validation.js';
 import {
   createCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent,
   calendarSelectionWithSlotAndEvent
 } from '../../store/userSlice';
-import { validateFields } from '../../validation.js';
 
 import './CalendarEventForm.css';
 import 'react-day-picker/lib/style.css';
 import 'rc-time-picker/assets/index.css';
+
+const DayPickerInput = DPI.__esModule ? DPI.default : DPI;
 
 class CalendarEventForm extends Component {
   constructor(props) {
@@ -404,7 +405,7 @@ class CalendarEventForm extends Component {
     const selectedCalendar = this.props.calendars.filter(
       (calendar) => calendar.id === this.state.selectedCalendarId
     )[0];
-    const isSystemEventSelected = selectedCalendar.systemCalendar;
+    const isSystemCalendarSelected = !!selectedCalendar.systemCalendar;
     const isSlotSelected = this.props.calendarSelectionWithSlotAndEvent
       ? Object.keys(this.props.calendarSelectionWithSlotAndEvent.calendarSlot).length > 0
       : false;
@@ -421,7 +422,7 @@ class CalendarEventForm extends Component {
               id="title"
               name="title"
               className="input"
-              disabled={isSystemEventSelected}
+              disabled={isSystemCalendarSelected}
               rows="1"
               value={this.state.title.value}
               onChange={(event) => this.handleChange(validateFields.validateTitle, event)}
@@ -446,7 +447,7 @@ class CalendarEventForm extends Component {
               id="desc"
               name="desc"
               className="input"
-              disabled={isSystemEventSelected}
+              disabled={isSystemCalendarSelected}
               rows="6"
               value={this.state.desc.value}
               onChange={(event) => this.handleChange(null, event)}
@@ -467,7 +468,7 @@ class CalendarEventForm extends Component {
                 <DayPickerInput
                   id="startDate"
                   name="startDate"
-                  inputProps={isSystemEventSelected ? { disabled: true } : {}}
+                  inputProps={isSystemCalendarSelected ? { disabled: true } : {}}
                   formatDate={formatDate}
                   parseDate={parseDate}
                   value={`${formatDate(this.state.start.value)}`}
@@ -487,7 +488,7 @@ class CalendarEventForm extends Component {
                 <TimePicker
                   id="startTime"
                   name="startTime"
-                  disabled={isSystemEventSelected}
+                  disabled={isSystemCalendarSelected}
                   placeholder="n/a"
                   showSecond={false}
                   format={this.state.timeFormat}
@@ -513,7 +514,7 @@ class CalendarEventForm extends Component {
                 <DayPickerInput
                   id="endDate"
                   name="endDate"
-                  inputProps={isSystemEventSelected ? { disabled: true } : {}}
+                  inputProps={isSystemCalendarSelected ? { disabled: true } : {}}
                   formatDate={formatDate}
                   parseDate={parseDate}
                   value={`${formatDate(this.state.end.value)}`}
@@ -533,7 +534,7 @@ class CalendarEventForm extends Component {
                 <TimePicker
                   id="endTime"
                   name="endTime"
-                  disabled={isSystemEventSelected}
+                  disabled={isSystemCalendarSelected}
                   placeholder="n/a"
                   showSecond={false}
                   format={this.state.timeFormat}
@@ -558,7 +559,7 @@ class CalendarEventForm extends Component {
               type="checkbox"
               id="all-day"
               checked={this.state.allDay}
-              disabled={isSystemEventSelected}
+              disabled={isSystemCalendarSelected}
               onChange={(event) => this.handleAllDayChange(event)}
             />
           </Col>
@@ -568,7 +569,7 @@ class CalendarEventForm extends Component {
           <Col>
             <CalendarSelectMenu
               selected={selectedCalendar ? [selectedCalendar] : []}
-              disabled={isSystemEventSelected}
+              disabled={isSystemCalendarSelected}
               onChange={(values) => this.handleCalendarChange(values)}
             />
           </Col>
@@ -583,7 +584,7 @@ class CalendarEventForm extends Component {
                 id="add-event-btn"
                 className="btn"
                 variant="primary"
-                disabled={isSystemEventSelected}
+                disabled={isSystemCalendarSelected}
                 onMouseDown={() => this.setState({ submitCalled: true })}
                 onClick={(e) => this.handleSubmit(e, this.id)}
               >
@@ -597,7 +598,7 @@ class CalendarEventForm extends Component {
                 id="update-event-btn"
                 className="btn"
                 variant="success"
-                disabled={isSystemEventSelected}
+                disabled={isSystemCalendarSelected}
                 onClick={(e) => this.handleSubmit(e, this.id)}
               >
                 Save
@@ -612,7 +613,7 @@ class CalendarEventForm extends Component {
                 id="delete-event-btn"
                 className="btn"
                 variant="danger"
-                disabled={isSystemEventSelected}
+                disabled={isSystemCalendarSelected}
                 onClick={this.handleDelete}
               >
                 Delete

@@ -1,38 +1,23 @@
-const path = require('path');
-const HtmlWebPackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+import path from 'path';
+import { merge } from 'webpack-merge';
+import HtmlWebPackPlugin from 'html-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import nodeExternals from 'webpack-node-externals';
+import Dotenv from 'dotenv-webpack';
+import common from './webpack.common.js';
 
-module.exports = {
-  entry: {
-    main: './src/client/index.js'
-  },
+const client = merge(common, {
+  name: 'client',
+  mode: 'production',
+  target: 'web',
+  entry: './src/client/index.js',
   output: {
-    path: path.join(__dirname, 'build'),
-    filename: '[name].js'
-  },
-  optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin()]
+    path: path.resolve('./build'),
+    filename: 'bundle.js',
+    publicPath: './'
   },
   module: {
     rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader'
-      },
-      {
-        // Loads the javacript into html template provided.
-        // Entry point is set below in HtmlWebPackPlugin in Plugins
-        test: /\.html$/,
-        loader: 'html-loader'
-      },
-      {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader']
-      },
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: {
@@ -59,4 +44,26 @@ module.exports = {
       path: '.env.production'
     })
   ]
-};
+});
+
+const server = merge(common, {
+  name: 'server',
+  mode: 'production',
+  target: 'node',
+  entry: './src/server/server-prod.js',
+  output: {
+    path: path.resolve('./build'),
+    publicPath: '/',
+    filename: 'server.cjs'
+  },
+  externals: [nodeExternals()],
+  plugins: [
+    new Dotenv({
+      path: '.env.development'
+    })
+  ]
+});
+
+const config = [client, server];
+
+export default config;

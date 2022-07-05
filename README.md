@@ -4,7 +4,7 @@
 
 ## Description
 
-**React Calendar** is an easy-to-use online calendar build with [React Big Calendar](https://jquense.github.io/react-big-calendar/examples/index.html?path=/story/about-big-calendar--page). I built this demo app as an proof-of-concept to show how to integrate a third party UI library in React and have it interact with user data stored in MongoDB and Redux. The app has some architectural elements in place (e.g. JSON Web Token, Mongoose) to help developers scale it up easily. Feel free to fork or extend the codebase for your own project!
+**React Calendar** is an easy-to-use online calendar build with [React Big Calendar](https://jquense.github.io/react-big-calendar/examples/index.html?path=/story/about-big-calendar--page). I built this demo as an proof-of-concept to show how to integrate a third party UI library in React. It also utilizes data available at the [Calendarific Holidays API](https://calendarific.com/api-documentation). The app has some architectural elements in place (e.g. JSON Web Token, Mongoose) to help developers scale it up easily. Feel free to fork or extend the codebase for your own project!
 
 React Calendar is an example of a "MERN stack" application which consists of the following technologies:
 
@@ -44,12 +44,51 @@ The MERN stack makes it possible to quickly build and easily maintain a full-sta
 - `package-lock.json` - Tracks dependency tree
 - `.babelrc` - Configuration file for Babel.js
 - `.env.example` - Sample file containing environment variables used by dotenv.js
-- `.eslintrc.js` - Configuration file for linting
 - `.gitignore` - Directories to exclude from git tracking
 - `.prettierrc` - Configuration file for Prettier.js
 - `.jest.config.js` - Configuration file for Jest.js
 - `.seedHolidayEvents.js` - Script for seeding holiday event documents in MongoDB
-- `.webpack.server.js` - Webpack configuration file for server settings
+- `.webpack.common.js` - Webpack configuration file for common settings
 - `.webpack.development.js` - Webpack configuration file for development mode settings
 - `.webpack.production.js` - Webpack configuration file for production mode settings
 - `README.md` - This file!
+
+## Initial Setup
+
+React Calendar was built using Node version 16. Please install a long-term support (LTS) version for best compatibility with other libraries.
+
+- Node.js <https://nodejs.org/en/download/>
+
+To verify that you have Node.js installed on your system, type the following command in your command line terminal (Terminal for Mac/Linux, CMD for Windows).
+
+```console
+node -v
+```
+
+### Environment Variables
+
+Before you build or run the app, create two new files called `.env.development` and `.env.production` at the project root. These are configuration files that will be used by dotenv.js to expose environment variables to your app at runtime.
+
+In each file, you need to enter values for the following environment variables (refer to `.env.example` for examples):
+
+`PORT`: Port where the app will run
+
+`MONGO_HOSTNAME`: Name of the Mongo host (e.g. `localhost` in development mode)
+
+`MONGO_PORT`: Mongo port (e.g. `27017`)
+
+`MONGO_DB`: Name of the Mongo database used
+
+`API_URL`: Base URL for API calls to the Node app (e.g. `http://localhost:3001/api` in development mode)
+
+`THECOCKTAILDB_API_URL`: Base URL for The CocktailDB API
+
+`YOUTUBE_API_URL`: Base URL for Youtube Data API
+
+`YOUTUBE_API_KEY`: Key used for Youtube Data API calls. You need to create a free Google Developers account in order to generate this key.
+
+`JWT_SECRET_KEY`: Private key used by JSON Web Token (JWT)
+
+`JWT_EXPIRATION`: JWT token expiration (in seconds)
+
+`JWT_REFRESH_EXPIRATION`: JWT refresh token expiration (in seconds)

@@ -1,16 +1,11 @@
-import thunk from 'redux-thunk';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { loadState, saveState } from './localStorage';
 import throttle from 'lodash/throttle';
+
 import authReducer from './authSlice';
 import userReducer from './userSlice';
 
-const middleware = [thunk];
-
 const doCreateStore = () => {
-  const isDevelopment = process.env.NODE_ENV == 'development';
-
   const allReducers = combineReducers({
     auth: authReducer,
     user: userReducer
@@ -24,12 +19,15 @@ const doCreateStore = () => {
     return allReducers(state, action);
   };
 
-  // Apply Redux devtools only in dev mode
-  const enhancer = isDevelopment ? composeWithDevTools(applyMiddleware(...middleware)) : applyMiddleware(...middleware);
+  const persistedState = loadState();
 
-  let persistedState = loadState();
+  const preloadedState = persistedState ? persistedState : {};
 
-  const store = createStore(rootReducer, persistedState ? persistedState : undefined, enhancer);
+  const store = configureStore({
+    reducer: rootReducer,
+    devTools: process.env.NODE_ENV !== 'production',
+    preloadedState
+  });
 
   store.subscribe(
     throttle(() => {

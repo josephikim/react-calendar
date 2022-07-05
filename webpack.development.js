@@ -1,81 +1,64 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebPackPlugin = require('html-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+// const path = require('path');
+// const webpack = require('webpack');
+// const HtmlWebPackPlugin = require('html-webpack-plugin');
+// const Dotenv = require('dotenv-webpack');
 
-module.exports = {
-  entry: {
-    main: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true', './src/client/index.js']
-  },
-  output: {
-    path: path.join(__dirname, 'build'),
-    publicPath: '/',
-    filename: '[name].js'
-  },
+import webpack from 'webpack';
+import path from 'path';
+import { merge } from 'webpack-merge';
+import Dotenv from 'dotenv-webpack';
+import nodeExternals from 'webpack-node-externals';
+import HtmlWebPackPlugin from 'html-webpack-plugin';
+
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+
+import common from './webpack.common.js';
+
+const client = merge(common, {
+  name: 'client',
   mode: 'development',
   target: 'web',
+  entry: './src/client/index.js',
   devtool: 'source-map',
-  module: {
-    rules: [
-      {
-        enforce: 'pre',
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'eslint-loader',
-        options: {
-          emitWarning: true,
-          failOnError: false,
-          failOnWarning: false
-        }
-      },
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader'
-      },
-      {
-        // Loads the javacript into html template provided.
-        // Entry point is set below in HtmlWebPackPlugin in Plugins
-        test: /\.html$/,
-        use: [
-          {
-            loader: 'html-loader'
-            //options: { minimize: true }
-          }
-        ]
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'assets/images'
-          }
-        }
-      }
-    ]
+  devServer: {
+    port: 8080,
+    historyApiFallback: true,
+    hot: true
   },
   plugins: [
+    new webpack.NoEmitOnErrorsPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css'
+    }),
     new HtmlWebPackPlugin({
       template: 'src/client/index.html',
       filename: './index.html',
       excludeChunks: ['server']
     }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
     new Dotenv({
       path: '.env.development'
     })
-  ],
-  resolve: {
-    fallback: {
-      fs: false,
-      path: false
-    }
-  }
-};
+  ]
+});
+
+const server = merge(common, {
+  name: 'server',
+  mode: 'development',
+  target: 'node',
+  entry: './src/server/server-dev.js',
+  output: {
+    path: path.resolve('./build'),
+    filename: 'server.cjs'
+  },
+  externals: [nodeExternals()],
+  plugins: [
+    new Dotenv({
+      path: '.env.development'
+    })
+  ]
+});
+
+const config = [client, server];
+
+export default config;

@@ -10,7 +10,7 @@
     "start:dev-server": "node-dev build/server.cjs",
     "dev": "npm run lint && npm run prettier && npm run build:dev && npm-run-all --parallel start:dev-server watch:dev-client",
     "build:dev": "rm -rf build && webpack --mode development --config webpack.development.js --config-name server",
-    "build": "npm run lint && npm run prettier && rm -rf build && npm-run-all build:server build:client",
+    "build": "rm -rf build && npm-run-all build:server build:client",
     "build:server": "webpack --mode=production --config webpack.production.js --config-name server",
     "build:client": "webpack --mode=production --config webpack.production.js --config-name client",
     "start": "node ./build/server.cjs",

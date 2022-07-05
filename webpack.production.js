@@ -59,7 +59,7 @@ const server = merge(common, {
   externals: [nodeExternals()],
   plugins: [
     new Dotenv({
-      path: '.env.development'
+      path: '.env.production'
     })
   ]
 });

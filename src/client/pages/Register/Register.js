@@ -12,7 +12,6 @@ const Register = () => {
 
   const handleShowDialog = () => {
     setIsOpen(!isOpen);
-    console.log('clicked');
   };
 
   return (

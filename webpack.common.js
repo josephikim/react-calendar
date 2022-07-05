@@ -28,7 +28,7 @@ const common = {
           loader: 'file-loader',
           options: {
             name: '[name].[ext]',
-            outputPath: 'assets/images'
+            outputPath: 'assets'
           }
         }
       },
@@ -41,8 +41,7 @@ const common = {
     ]
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json'],
-    modules: [path.resolve(__dirname, 'node_modules')]
+    extensions: ['.js', '.jsx', '.json']
   }
 };
 

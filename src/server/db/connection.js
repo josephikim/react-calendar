@@ -12,7 +12,7 @@ db.mongoose
     useFindAndModify: false
   })
   .then(() => {
-    console.log('Successfully connect to MongoDB.');
+    console.log('Successfully connected to MongoDB.');
     initialRoles();
     initialCalendars();
   })

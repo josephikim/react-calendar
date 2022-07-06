@@ -23,7 +23,7 @@ const common = {
         }
       },
       {
-        test: /\.(png|jpg|gif|eot|otf|ttf|woff|woff2)$/,
+        test: /\.(png|svg|jpg|gif|eot|otf|ttf|woff|woff2)$/,
         use: {
           loader: 'file-loader',
           options: {

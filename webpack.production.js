@@ -13,22 +13,7 @@ const client = merge(common, {
   entry: './src/client/index.js',
   output: {
     path: path.resolve('./build'),
-    filename: 'bundle.js',
-    publicPath: './'
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'assets'
-          }
-        }
-      }
-    ]
+    filename: 'bundle.js'
   },
   plugins: [
     new MiniCssExtractPlugin({
@@ -53,7 +38,6 @@ const server = merge(common, {
   entry: './src/server/server-prod.js',
   output: {
     path: path.resolve('./build'),
-    publicPath: '/',
     filename: 'server.cjs'
   },
   externals: [nodeExternals()],

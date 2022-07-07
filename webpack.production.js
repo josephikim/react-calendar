@@ -13,7 +13,8 @@ const client = merge(common, {
   entry: './src/client/index.js',
   output: {
     path: path.resolve('./build'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/calendarapp'
   },
   plugins: [
     new MiniCssExtractPlugin({

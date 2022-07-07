@@ -103,7 +103,7 @@ Next you need to initialize your database with default documents. Luckily this h
 
 - To begin this process, first install React Calendar dependencies using `npm install`. Once that is complete, start the app in development mode with `npm run dev`.
 
-NOTE: Make sure you've created an `.env.development` file at the project root with the required environment variables before running this command! See _Environment Variables_ above.
+NOTE: Make sure you've created a `.env.development` file at the project root with the required environment variables before running this command! See _Environment Variables_ above.
 
 Once the workflow is complete, the following messages will appear in the terminal:
 

@@ -1,8 +1,3 @@
-// const path = require('path');
-// const webpack = require('webpack');
-// const HtmlWebPackPlugin = require('html-webpack-plugin');
-// const Dotenv = require('dotenv-webpack');
-
 import webpack from 'webpack';
 import path from 'path';
 import { merge } from 'webpack-merge';

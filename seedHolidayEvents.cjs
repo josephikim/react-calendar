@@ -33,7 +33,7 @@ const getHolidays = () => {
 const makeEvents = async () => {
   let events = [];
 
-  const calendar = await client.db('react-calendar').collection('calendars').find({ name: 'US Holidays' }).toArray();
+  const calendar = await client.db(MONGO_DB).collection('calendars').find({ name: 'US Holidays' }).toArray();
 
   const calendarId = calendar[0]._id;
 
@@ -60,7 +60,7 @@ const seedDB = async () => {
   try {
     await client.connect();
     console.log('Connected correctly to server');
-    const collection = client.db('react-calendar').collection('events');
+    const collection = client.db(MONGO_DB).collection('events');
 
     // The drop() command destroys all data from a collection.
     // Make sure you run it against proper database and collection.

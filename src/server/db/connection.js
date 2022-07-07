@@ -1,9 +1,12 @@
 import db from '../models';
-import { MONGO_URL } from '../../config/dbConfig';
 import { systemColors } from '../../config/appConfig';
 
 const Role = db.role;
 const Calendar = db.calendar;
+const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME;
+const MONGO_PORT = process.env.MONGO_PORT;
+const MONGO_DB = process.env.MONGO_DB;
+const MONGO_URL = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}`;
 
 db.mongoose
   .connect(MONGO_URL, {
@@ -12,16 +15,16 @@ db.mongoose
     useFindAndModify: false
   })
   .then(() => {
-    console.log('Successfully connected to MongoDB.');
-    initialRoles();
-    initialCalendars();
+    console.log('Successfully connected to MongoDB');
+    initRoles();
+    initCalendars();
   })
   .catch((err) => {
     console.error('Connection error', err);
     process.exit();
   });
 
-const initialRoles = () => {
+const initRoles = () => {
   Role.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
       new Role({
@@ -57,7 +60,7 @@ const initialRoles = () => {
   });
 };
 
-const initialCalendars = () => {
+const initCalendars = () => {
   Calendar.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
       new Calendar({

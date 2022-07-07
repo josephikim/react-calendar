@@ -81,14 +81,90 @@ In each file, you need to enter values for the following environment variables (
 
 `API_URL`: Base URL for API calls to the Node app (e.g. `http://localhost:3001/api` in development mode)
 
-`THECOCKTAILDB_API_URL`: Base URL for The CocktailDB API
-
-`YOUTUBE_API_URL`: Base URL for Youtube Data API
-
-`YOUTUBE_API_KEY`: Key used for Youtube Data API calls. You need to create a free Google Developers account in order to generate this key.
+`CALENDARIFIC_KEY`: Base URL for the Calendarific API. You need to create a free Calendarific account in order to generate this key.
 
 `JWT_SECRET_KEY`: Private key used by JSON Web Token (JWT)
 
 `JWT_EXPIRATION`: JWT token expiration (in seconds)
 
 `JWT_REFRESH_EXPIRATION`: JWT refresh token expiration (in seconds)
+
+### MongoDB
+
+React Calendar is designed to work best with a local installation of MongoDB (v4.4.6), but can be used with MongoDB instances located elsewhere.
+
+First set up your local installation of Mongo using instructions corresponding to your operating system.
+
+- MongoDB <https://www.mongodb.com/try/download>
+
+Once those steps have been completed, and your MongoDB instance is up and running (typically using the terminal command `mongod`), you need to create a new database to store your React Calendar data. This can be done in several ways, but most commonly with the Mongo shell CLI which comes pre-installed with MongoDB. You can start the Mongo shell from your terminal using the `mongo` command. Once you are in the shell, create a new Mongo database (e.g. `reactcalendar_db`).
+
+Next you need to initialize your database with default documents. Luckily this happens automatically on app start via the `connection.js` script, which saves default role and calendar documents in MongodDB.
+
+- To begin this process, first install React Calendar dependencies using `npm install`. Once that is complete, start the app in development mode with `npm run dev`.
+
+NOTE: Make sure you've created an `.env.development` file at the project root with the required environment variables before running this command! See _Environment Variables_ above.
+
+Once the workflow is complete, the following messages will appear in the terminal:
+
+```text
+  Successfully connected to MongoDB
+  added "user" to roles collection
+  added "moderator" to roles collection
+  added "admin" to roles collection
+  added "US Holidays" to calendars collection
+```
+
+Verify the newly created documents in the `roles` and `calendars` collections by inspecting your database instance using the Mongo shell CLI or another database management tool (e.g. Robot 3T).
+
+Next you need to seed your database with default calendar events using the script `seedHolidayEvents.js`.
+
+- Open a new terminal window and run the command `node seedHolidayEvents.js`.
+
+This script produces calendar events corresponding to US Holidays data retrieved from the Calendarific API and assigns them to the `US Holidays` system calendar in MongoDB.
+
+NOTE: System calendars contain events that are visible to all users.
+
+Once the workflow is complete, the following messages will appear in the terminal:
+
+```text
+  Connected correctly to server
+  Database seeded!
+```
+
+Verify the newly created documents in the `events` collection of your database. Then try reloading the page at `http://localhost:8080` in your browser to see the updated calendar events.
+
+## Run the app
+
+To run the app in **development mode**, run the command `npm run dev`. This triggers a webpack workflow which lints the source code, applies formatting changes based on Prettier.js configs, builds the `server.cjs` file, and serves up the frontend files in-memory via Webpack Dev Server. Once the workflow is complete, you should be able to see the server running in the terminal. If it started correctly, the following message will appear in the terminal, `Server started at http://localhost:3001`. Then try visiting `http://localhost:8080` in your browser to verify that you can access the frontend.
+
+NOTE: Hot module reloading is turned on by default in development mode. To turn HMR off, remove `hot: true` from the `client` config in `webpack.development.js`.
+
+To run the app in **production mode**, first run the command `npm run build`.
+
+NOTE: Make sure you've created a `.env.production` file with the required environment variables before running this command!
+
+This triggers a webpack workflow which bundles the source code and static assets using Webpack,and emits them into the `build` folder. Once you've verified the bundled files have been created, run `npm run pm2` to start the app as a background process using the process management tool PM2. You can use any process manager of your choice, but PM2 generally works well with Node apps.
+
+## Authentication
+
+React Calendar uses JSON Web Token (JWT) for authentication. JWT is a popular choice for authentication in Node.js apps for several reasons:
+
+- Fewer database queries
+- Less development time
+- Easier to scale up with userbase
+- Better portability across services
+
+Since the backend of React Calendar acts as both issuer and verifier of JWT tokens, it only needs one private key for authentication purposes. This is the key designated in your `.env` files as the `JWT_SECRET_KEY` environment variable.
+
+IMPORTANT: Never share sensitive information such as keys or passwords! Make sure to apply appropriate security settings to prevent exposing your files.
+
+## React & Redux
+
+The frontend is a single-page React app that supports client-side routing via React-Router. This enables fast navigation between views and reduces the amount of network calls initiated by the frontend.
+
+NOTE: To support single-page apps in production, you will need to update the configuration of the web server used to serve your app externally (e.g Nginx).
+
+Client data is stored using Redux which promotes data consistency, reduces database calls, and allows the use of Redux Devtools for development.
+
+All updates to Redux data are also persisted to localStorage (in the object located at `localStorage.state`) for access between browser sessions. If at any point the app displays data which appears out of sync, try clearing out your browser's localStorage and reloading the browser window.

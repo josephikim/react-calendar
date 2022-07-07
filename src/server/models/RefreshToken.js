@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
-import config from '../../config/authConfig';
 import { v4 as uuidv4 } from 'uuid';
+
+const JWT_REFRESH_EXPIRATION = process.env.JWT_REFRESH_EXPIRATION;
 
 const refreshTokenSchema = new mongoose.Schema({
   token: String,
@@ -14,7 +15,7 @@ const refreshTokenSchema = new mongoose.Schema({
 refreshTokenSchema.statics.createToken = async function (user) {
   let expiredAt = new Date();
 
-  expiredAt.setSeconds(expiredAt.getSeconds() + config.JWT_REFRESH_EXPIRATION);
+  expiredAt.setSeconds(expiredAt.getSeconds() + JWT_REFRESH_EXPIRATION);
 
   let _token = uuidv4();
 

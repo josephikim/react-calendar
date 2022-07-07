@@ -56,6 +56,5 @@ app.use(function (err, req, res, next) {
 });
 
 app.listen(PORT, () => {
-  console.log(`App started, listening to ${PORT}....`);
-  console.log('Press Ctrl+C to quit.');
+  console.log(`server started at http://localhost:${PORT}`);
 });

@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
-import config from '../../config/authConfig';
 import { NotFoundError, AuthorizationError } from '../utils/userFacingErrors';
 
 const User = db.user;
 const Role = db.role;
 const RefreshToken = db.refreshToken;
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const JWT_EXPIRATION = process.env.JWT_EXPIRATION;
 
 const register = (req, res, next) => {
   const user = new User({
@@ -85,8 +86,8 @@ const login = (req, res, next) => {
         }
 
         // If password is valid, create JWT token
-        let token = jwt.sign({ id: user._id }, config.SECRET, {
-          expiresIn: config.JWT_EXPIRATION
+        let token = jwt.sign({ id: user._id }, JWT_SECRET_KEY, {
+          expiresIn: JWT_EXPIRATION
         });
 
         let refreshToken = await RefreshToken.createToken(user);
@@ -133,8 +134,8 @@ const refreshToken = async (req, res, next) => {
       return res.redirect('/login');
     }
 
-    let newAccessToken = jwt.sign({ id: refreshToken.user._id }, config.SECRET, {
-      expiresIn: config.JWT_EXPIRATION
+    let newAccessToken = jwt.sign({ id: refreshToken.user._id }, JWT_SECRET_KEY, {
+      expiresIn: JWT_EXPIRATION
     });
 
     return res.status(200).send({

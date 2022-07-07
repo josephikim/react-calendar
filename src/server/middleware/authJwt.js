@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
-import config from '../../config/authConfig';
 import db from '../models';
 
 const { TokenExpiredError } = jwt;
 
 const User = db.user;
 const Role = db.role;
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const catchError = (err, res) => {
   if (err instanceof TokenExpiredError) {
@@ -22,7 +22,7 @@ const verifyToken = (req, res, next) => {
     return res.status(403).send({ message: 'No token provided!' });
   }
 
-  jwt.verify(token, config.SECRET, (err, decoded) => {
+  jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
     if (err) {
       return catchError(err, res);
     }

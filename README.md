@@ -144,7 +144,7 @@ To run the app in **production mode**, first run the command `npm run build`.
 
 NOTE: Make sure you've created a `.env.production` file with the required environment variables before running this command!
 
-This triggers a webpack workflow which bundles the source code and static assets using Webpack,and emits them into the `build` folder. Once you've verified the bundled files have been created, run `npm run pm2` to start the app as a background process using the process management tool PM2. You can use any process manager of your choice, but PM2 generally works well with Node apps.
+This triggers a webpack workflow which bundles the source code and static assets using Webpack and emits them into the `build` folder. Once you've verified the bundled files have been created, run `npm run pm2` to start the app as a background process using the process management tool PM2. You can use any process manager of your choice, but PM2 generally works well with Node apps.
 
 ## Authentication
 
@@ -155,9 +155,13 @@ React Calendar uses JSON Web Token (JWT) for authentication. JWT is a popular ch
 - Easier to scale up with userbase
 - Better portability across services
 
-Since the backend of React Calendar acts as both issuer and verifier of JWT tokens, it only needs one private key for authentication purposes. This is the key designated in your `.env` files as the `JWT_SECRET_KEY` environment variable.
+Since the backend of the app acts as both issuer and verifier of JWT tokens, it only needs one private key for authentication purposes. This is the key designated in your `.env` files as the `JWT_SECRET_KEY` environment variable.
 
 IMPORTANT: Never share sensitive information such as keys or passwords! Make sure to apply appropriate security settings to prevent exposing your files.
+
+### Authorization
+
+Each user document in the database includes a `roles` field which can take on one of three values: `user`, `moderator` or `admin`. These values aren't currently used for authorization purposes, but can be used to build out an authorization layer on top of the authentication workflow if desired.
 
 ## React & Redux
 

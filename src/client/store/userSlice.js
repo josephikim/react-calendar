@@ -87,6 +87,8 @@ const calendarEventsSelector = (state) => state.user.calendarEvents;
 export const calendarSelectionWithSlotAndEvent = createSelector(
   [calendarSlotSelector, calendarEventSelector],
   (calendarSlot, calendarEvent) => {
+    if (!calendarSlot || !calendarEvent) return null;
+
     const isCalendarSlotSelected = Object.keys(calendarSlot).length > 0;
     const isCalendarEventSelected = Object.keys(calendarEvent).length > 0;
 
@@ -104,6 +106,8 @@ export const calendarSelectionWithSlotAndEvent = createSelector(
 );
 
 export const calendarEventsWithDateObjects = createSelector([calendarEventsSelector], (calendarEvents) => {
+  if (!calendarEvents) return null;
+
   let clonedEvents = JSON.parse(JSON.stringify(calendarEvents));
 
   clonedEvents.forEach((event) => {

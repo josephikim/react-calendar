@@ -1,13 +1,17 @@
 import webpack from 'webpack';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { merge } from 'webpack-merge';
 import Dotenv from 'dotenv-webpack';
 import nodeExternals from 'webpack-node-externals';
 import HtmlWebPackPlugin from 'html-webpack-plugin';
-
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 import common from './webpack.common.js';
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 
 const client = merge(common, {
   name: 'client',
@@ -19,6 +23,23 @@ const client = merge(common, {
     port: 8080,
     historyApiFallback: true,
     hot: true
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'assets'
+          }
+        }
+      }
+    ]
+  },
+  resolve: {
+    modules: ['node_modules', path.join(__dirname, 'src')]
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
@@ -45,6 +66,9 @@ const server = merge(common, {
   output: {
     path: path.resolve('./build'),
     filename: 'server.cjs'
+  },
+  resolve: {
+    modules: ['node_modules', path.join(__dirname, 'src')]
   },
   externals: [nodeExternals()],
   plugins: [

@@ -1,6 +1,6 @@
 import express from 'express';
-import { verifyRegistration } from '../middleware';
-import authController from '../controllers/authController';
+import { verifyRegistration } from 'server/middleware';
+import authController from 'server/controllers/authController';
 
 const authRouter = express.Router();
 

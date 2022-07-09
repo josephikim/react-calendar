@@ -1,5 +1,5 @@
-import db from '../models';
-import { systemColors } from '../../config/appConfig';
+import db from 'server/models';
+import { systemColors } from 'config/appConfig';
 
 const Role = db.role;
 const Calendar = db.calendar;

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { authApi } from '../utils/axios';
+import { authApi } from 'client/utils/axios';
 
 const initialState = {
   accessToken: null,

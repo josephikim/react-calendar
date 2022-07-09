@@ -6,7 +6,7 @@ import AccountUserSettings from './AccountUserSettings';
 import AccountCalendarSettings from './AccountCalendarSettings';
 
 import './Account.css';
-import ContentWrapper from '../../components/ContentWrapper';
+import ContentWrapper from 'client/components/ContentWrapper';
 
 const Account = () => {
   const userId = useSelector((state) => state.auth.userId);

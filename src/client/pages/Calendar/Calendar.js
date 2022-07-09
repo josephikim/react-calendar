@@ -14,11 +14,11 @@ import {
   calendarSelectionWithSlotAndEvent,
   calendarEventsWithDateObjects,
   initializeCalendarView
-} from '../../store/userSlice';
+} from 'client/store/userSlice';
 
 import './Calendar.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import ContentWrapper from '../../components/ContentWrapper';
+import ContentWrapper from 'client/components/ContentWrapper';
 
 const localizer = momentLocalizer(moment);
 

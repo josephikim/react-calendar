@@ -1,6 +1,6 @@
-import db from '../models';
-import { AuthorizationError } from '../utils/userFacingErrors';
-import { userColors } from '../../config/appConfig';
+import db from 'server/models';
+import { AuthorizationError } from 'server/utils/userFacingErrors';
+import { userColors } from 'config/appConfig';
 
 const Event = db.event;
 const User = db.user;

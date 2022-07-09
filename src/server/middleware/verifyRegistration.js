@@ -1,5 +1,5 @@
-import db from '../models';
-import { BadRequestError } from '../utils/userFacingErrors';
+import db from 'server/models';
+import { BadRequestError } from 'server/utils/userFacingErrors';
 
 const ROLES = db.ROLES;
 const User = db.user;

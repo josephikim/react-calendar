@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Navbar } from 'react-bootstrap';
 
-import '../styles/UserIndicator.css';
+import 'client/styles/UserIndicator.css';
 
 const UserIndicator = () => {
   const username = useSelector((state) => state.user.username);

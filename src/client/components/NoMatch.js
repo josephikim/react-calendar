@@ -2,7 +2,7 @@ import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import '../styles/NoMatch.css';
+import 'client/styles/NoMatch.css';
 
 const NoMatch = () => (
   <Container className="NoMatch">

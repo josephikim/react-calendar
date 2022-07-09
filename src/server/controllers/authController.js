@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import db from '../models';
-import { NotFoundError, AuthorizationError } from '../utils/userFacingErrors';
+import db from 'server/models';
+import { NotFoundError, AuthorizationError } from 'server/utils/userFacingErrors';
 
 const User = db.user;
 const Role = db.role;

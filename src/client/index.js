@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import App from './App';
-import { baseURL } from '../config/appConfig';
+import { baseURL } from 'config/appConfig';
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';

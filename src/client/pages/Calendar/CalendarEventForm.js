@@ -8,13 +8,13 @@ import { connect } from 'react-redux';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 
 import CalendarSelectMenu from './CalendarSelectMenu';
-import { validateFields } from '../../validation.js';
+import { validateFields } from 'client/validation.js';
 import {
   createCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent,
   calendarSelectionWithSlotAndEvent
-} from '../../store/userSlice';
+} from 'client/store/userSlice';
 
 import './CalendarEventForm.css';
 import 'react-day-picker/lib/style.css';

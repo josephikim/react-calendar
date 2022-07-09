@@ -1,8 +1,8 @@
 import React from 'react';
 import { Row, Col, Button, Badge } from 'react-bootstrap';
-import Checkbox from '../../components/Checkbox';
+import Checkbox from 'client/components/Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
-import { calendarUpdated, calendarsUpdated } from '../../store/userSlice';
+import { calendarUpdated, calendarsUpdated } from 'client/store/userSlice';
 
 import './CalendarToggleMenu.css';
 

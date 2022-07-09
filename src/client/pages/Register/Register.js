@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 
 import RegisterForm from './RegisterForm';
-import ContentWrapper from '../../components/ContentWrapper';
-import mockup from '../../assets/calendar.png';
+import ContentWrapper from 'client/components/ContentWrapper';
+import mockup from 'client/assets/calendar.png';
 
 import './Register.css';
 

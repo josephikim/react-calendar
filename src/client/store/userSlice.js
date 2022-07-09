@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { userApi } from '../utils/axios';
-import { defaultView } from '../../config/appConfig';
+import { userApi } from 'client/utils/axios';
+import { defaultView } from 'config/appConfig';
 
 const initialState = {
   username: null,

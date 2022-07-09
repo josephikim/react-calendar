@@ -1,6 +1,6 @@
 import axios from 'axios';
-import store from '../store/createStore';
-import { accessTokenUpdated } from '../store/authSlice';
+import store from 'client/store/createStore';
+import { accessTokenUpdated } from 'client/store/authSlice';
 
 const authApi = axios.create({
   baseURL: `${process.env.API_URL}` + '/auth',

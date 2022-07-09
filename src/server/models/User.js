@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Calendar from './Calendar';
-import { userColors } from '../../config/appConfig';
-import { DuplicateKeyError } from '../utils/databaseErrors';
+import { userColors } from 'config/appConfig';
+import { DuplicateKeyError } from 'server/utils/databaseErrors';
 
 const SALT_WORK_FACTOR = 10;
 

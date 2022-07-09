@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { validateFields } from '../../validation';
-import { updateUsername, updatePassword } from '../../store/userSlice';
+import { validateFields } from 'client/validation';
+import { updateUsername, updatePassword } from 'client/store/userSlice';
 
 import AccountUserSettingsItem from './AccountUserSettingsItem';
 

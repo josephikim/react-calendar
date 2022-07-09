@@ -4,7 +4,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import LoginForm from './LoginForm';
 
 import './Login.css';
-import ContentWrapper from '../../components/ContentWrapper';
+import ContentWrapper from 'client/components/ContentWrapper';
 
 const Login = () => (
   <div className="Login">

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from 'client/utils/axios';
 
-const initialState = {
+export const initialState = {
   accessToken: null,
   refreshToken: null,
   userId: null

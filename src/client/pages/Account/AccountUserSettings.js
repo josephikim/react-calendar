@@ -145,14 +145,14 @@ class AccountUserSettings extends Component {
 
     if (newPasswordError === false) {
       // no input errors, submit the form
-      const data = {
+      const payload = {
         userId: this.props.userId,
         password: password.value,
         newPassword: newPassword.value
       };
 
       this.props
-        .updatePassword(data)
+        .updatePassword(payload)
         .then(() => {
           this.setState({
             password: {

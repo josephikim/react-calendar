@@ -6,6 +6,10 @@ import authReducer from './authSlice';
 import userReducer from './userSlice';
 
 const doCreateStore = () => {
+  const persistedState = loadState();
+
+  const preloadedState = persistedState ? persistedState : {};
+
   const allReducers = combineReducers({
     auth: authReducer,
     user: userReducer
@@ -18,10 +22,6 @@ const doCreateStore = () => {
 
     return allReducers(state, action);
   };
-
-  const persistedState = loadState();
-
-  const preloadedState = persistedState ? persistedState : {};
 
   const store = configureStore({
     reducer: rootReducer,

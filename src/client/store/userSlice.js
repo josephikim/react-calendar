@@ -3,7 +3,7 @@ import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { userApi } from 'client/utils/axios';
 import { defaultView } from 'config/appConfig';
 
-const initialState = {
+export const initialState = {
   username: null,
   calendars: [],
   calendarSlotSelection: {},
@@ -303,9 +303,9 @@ export const initializeCalendarView = () => async (dispatch) => {
 };
 
 // NOT AN ACTION
-export const updatePassword = (data) => async () => {
+export const updatePassword = (payload) => async () => {
   try {
-    const res = await userApi.post(`/account/password/update`, data);
+    const res = await userApi.post(`/account/password/update`, payload);
 
     return Promise.resolve(res.data);
   } catch (err) {

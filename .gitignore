@@ -5,4 +5,5 @@ npm-debug.log
 .env.development
 .DS_Store
 notes
+coverage
 .txt

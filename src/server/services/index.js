@@ -1,20 +1,20 @@
 import db from 'server/models';
-import CalendarService from './CalendarService.js';
-import UserService from './UserService.js';
-import RefreshTokenService from './RefreshTokenService.js';
-import RoleService from './RoleService.js';
-import EventService from './EventService.js';
+import calendarService from './calendarService.js';
+import eventService from './eventService.js';
+import refreshTokenService from './refreshTokenService.js';
+import roleService from './roleService.js';
+import userService from './userService.js';
 
 const Calendar = db.calendar;
-const User = db.user;
-const RefreshToken = db.refreshToken;
 const Event = db.event;
+const RefreshToken = db.refreshToken;
 const Role = db.role;
+const User = db.user;
 
-export default {
-  CalendarService: CalendarService(Calendar),
-  UserService: UserService(User),
-  RefreshTokenService: RefreshTokenService(RefreshToken),
-  RoleService: RoleService(Role),
-  EventService: EventService(Event)
-};
+const CalendarService = calendarService(Calendar);
+const EventService = eventService(Event);
+const RefreshTokenService = refreshTokenService(RefreshToken);
+const RoleService = roleService(Role);
+const UserService = userService(User);
+
+export { CalendarService, EventService, RefreshTokenService, RoleService, UserService };

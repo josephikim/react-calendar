@@ -2,27 +2,23 @@ import db from 'server/models';
 import { systemColors } from 'config/appConfig';
 import { userColors } from 'config/appConfig';
 
-const initCalendars = (Calendar) => () => {
-  Calendar.estimatedDocumentCount((err, count) => {
-    if (!err && count === 0) {
-      const _obj = new Calendar({
-        name: 'US Holidays',
-        color: `#${systemColors[0]}`,
-        user: null,
-        systemCalendar: true
-      });
+const createSystemCalendar = (Calendar) => (name) => {
+  const _obj = new Calendar({
+    name: name,
+    color: `#${systemColors[0]}`,
+    user: null,
+    systemCalendar: true
+  });
 
-      _obj.save().exec(function (err, calendar) {
-        if (err) {
-          throw err;
-        }
-        return console.log('added', calendar.name, 'to calendars collection');
-      });
+  return _obj.save((err, calendar) => {
+    if (err) {
+      throw err;
     }
+    console.log('added', calendar.name, 'to calendars collection');
   });
 };
 
-const createDefaultCalendar = (Calendar) => (userId, username) => {
+const createUserDefaultCalendar = (Calendar) => (userId, username) => {
   const userCalendar = Calendar.find({ user: userId, userDefault: true }).exec();
 
   if (userCalendar.length > 0) {
@@ -41,16 +37,10 @@ const createDefaultCalendar = (Calendar) => (userId, username) => {
   return _obj.save();
 };
 
-const getCalendars = (Calendar) => (userId) => {
-  return Calendar.find({
-    $or: [{ user: userId }, { systemCalendar: true }]
-  });
-};
-
-const createCalendar = (Calendar) => (userId, calendarName) => {
+const createUserCalendar = (Calendar) => (userId, calendarName) => {
   const calendars = Calendar.find({ user: userId }).exec();
 
-  const newCalendar = new Calendar({
+  const _obj = new Calendar({
     name: calendarName,
     color: `#${userColors[calendars.length % userColors.length]}`,
     user: userId,
@@ -58,7 +48,13 @@ const createCalendar = (Calendar) => (userId, calendarName) => {
     systemCalendar: false
   });
 
-  return newCalendar.save();
+  return _obj.save();
+};
+
+const getCalendars = (Calendar) => (userId) => {
+  return Calendar.find({
+    $or: [{ user: userId }, { systemCalendar: true }]
+  });
 };
 
 const updateCalendar = (Calendar) => (calendarId, calendarName) => {
@@ -69,15 +65,15 @@ const deleteCalendar = (Calendar) => (calendarId) => {
   return Calendar.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(calendarId) });
 };
 
-const CalendarService = (Calendar) => {
+const calendarService = (Calendar) => {
   return {
-    initCalendars: initCalendars(Calendar),
-    createDefaultCalendar: createDefaultCalendar(Calendar),
+    createSystemCalendar: createSystemCalendar(Calendar),
+    createUserDefaultCalendar: createUserDefaultCalendar(Calendar),
+    createUserCalendar: createUserCalendar(Calendar),
     getCalendars: getCalendars(Calendar),
-    createCalendar: createCalendar(Calendar),
     updateCalendar: updateCalendar(Calendar),
     deleteCalendar: deleteCalendar(Calendar)
   };
 };
 
-export default CalendarService;
+export default calendarService;

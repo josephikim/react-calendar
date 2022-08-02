@@ -21,9 +21,9 @@ const eventSchema = new mongoose.Schema({
     required: true,
     default: false
   },
-  calendarId: {
+  calendar: {
     type: mongoose.Schema.Types.ObjectId,
-    required: [true, 'Enter a calendar ID'],
+    required: [true, 'Enter a calendar for this event'],
     ref: 'Calendar'
   }
 });

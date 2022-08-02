@@ -60,6 +60,11 @@ const register = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
+  // Look up User
+  // validate pw
+  // create Refresh token
+  // return login data
+
   try {
     User.findOne({
       username: req.body.username
@@ -90,12 +95,7 @@ const login = (req, res, next) => {
           expiresIn: JWT_EXPIRATION
         });
 
-        let refreshToken = await RefreshToken.createToken(user);
-
-        let authorities = [];
-        for (let i = 0; i < user.roles.length; i++) {
-          authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
-        }
+        let refreshToken = await RefreshToken.createToken(user._id);
 
         const authData = {
           id: user._id,

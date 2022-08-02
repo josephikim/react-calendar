@@ -111,15 +111,10 @@
     },
     "ignorePatterns": [
       "node_modules",
-      "build"
+      "build",
+      "*.unit.test.js"
     ],
     "rules": {
-      "prettier/prettier": [
-        "error",
-        {
-          "endOfLine": "auto"
-        }
-      ],
       "react/display-name": 0,
       "react/prop-types": "off",
       "no-unused-vars": "warn",

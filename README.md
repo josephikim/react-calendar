@@ -30,7 +30,7 @@ The MERN stack makes it possible to quickly build and easily maintain a full-sta
     - `index.html` - Our index.html file
     - `index.css` - Stylesheet for app-wide styles
     - `index.js` - Entrypoint for React app
-    - `validation.ts` - Used for form validation
+    - `validation.js` - Used for form validation
   - `server` - This folder holds backend files
     - `controllers` - This folder holds controller functions used by Express.js
     - `db` - This folder holds database connection files

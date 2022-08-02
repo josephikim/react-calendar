@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+
 import { DuplicateKeyError } from 'server/utils/databaseErrors';
 
 const calendarSchema = new mongoose.Schema({

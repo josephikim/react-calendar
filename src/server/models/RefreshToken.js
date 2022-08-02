@@ -1,7 +1,4 @@
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
-
-const JWT_REFRESH_EXPIRATION = process.env.JWT_REFRESH_EXPIRATION;
 
 const refreshTokenSchema = new mongoose.Schema({
   token: String,
@@ -12,23 +9,49 @@ const refreshTokenSchema = new mongoose.Schema({
   expiryDate: Date
 });
 
-refreshTokenSchema.statics.createToken = async function (user) {
-  let expiredAt = new Date();
+// refreshTokenSchema.statics.createToken = async function (userId) {
+//   let expiredAt = new Date();
 
-  expiredAt.setSeconds(expiredAt.getSeconds() + JWT_REFRESH_EXPIRATION);
+//   expiredAt.setSeconds(expiredAt.getSeconds() + JWT_REFRESH_EXPIRATION);
 
-  let _token = uuidv4();
+//   let _token = uuidv4();
 
-  let _object = new this({
-    token: _token,
-    user: user._id,
-    expiryDate: expiredAt.getTime()
-  });
+//   let _obj = new this({
+//     token: _token,
+//     user: userId,
+//     expiryDate: expiredAt.getTime()
+//   });
 
-  let refreshToken = await _object.save();
+//   let refreshToken = await _obj.save();
 
-  return refreshToken.token;
-};
+//   return refreshToken.token;
+// };
+
+// refreshTokenSchema.statics.refreshToken = async function (requestToken) {
+//   let refreshToken = await this.findOne({ token: requestToken });
+
+//   // Refresh token not found in database
+//   if (!refreshToken) {
+//     return;
+//   }
+
+//   // Refresh token expired
+//   if (this.verifyExpiration(refreshToken)) {
+//     this.findByIdAndRemove(refreshToken._id, {
+//       useFindAndModify: false
+//     }).exec();
+//     return;
+//   }
+
+//   let newAccessToken = jwt.sign({ id: refreshToken.user._id }, JWT_SECRET_KEY, {
+//     expiresIn: JWT_EXPIRATION
+//   });
+
+//   return {
+//     accessToken: newAccessToken,
+//     refreshToken: refreshToken.token
+//   }
+// };
 
 refreshTokenSchema.statics.verifyExpiration = (token) => {
   return token.expiryDate.getTime() < new Date().getTime();

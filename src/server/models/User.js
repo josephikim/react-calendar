@@ -50,6 +50,59 @@ userSchema.pre('save', async function (next) {
   }
 });
 
+// userSchema.statics.registerUser = async function (username, password) {
+//   const _obj = new this({
+//     username: username,
+//     password: password
+//   });
+
+//   let user = await _obj.save();
+
+//   return user;
+// };
+
+// userSchema.statics.loginUser = async function (username, password) {
+//   User.findOne({
+//     username: username
+//   })
+//     .populate('roles', '-__v')
+//     .exec(async (err, user) => {
+//       if (err) {
+//         return next(err);
+//       }
+
+//       if (!user) {
+//         return next(new NotFoundError('User not found', { errorCode: 'username' }));
+//       }
+
+//       let passwordIsValid = await user.validatePassword(password);
+
+//       if (!passwordIsValid) {
+//         return next(
+//           new AuthorizationError('Invalid password', {
+//             errorCode: 'password',
+//             accessToken: null
+//           })
+//         );
+//       }
+
+//       // If password is valid, create JWT token
+//       let token = jwt.sign({ id: user._id }, JWT_SECRET_KEY, {
+//         expiresIn: JWT_EXPIRATION
+//       });
+
+//       let refreshToken = await RefreshToken.createToken(user);
+
+//       let authData = {
+//         id: user._id,
+//         accessToken: token,
+//         refreshToken: refreshToken
+//       };
+
+//       return authData
+//     });
+// };
+
 // schema middleware to apply after saving
 const handleE11000 = (error, res, next) => {
   if (error.name === 'MongoError' && error.code === 11000) {
@@ -67,40 +120,40 @@ userSchema.post('save', handleE11000);
 userSchema.post('findOneAndUpdate', handleE11000);
 
 // Middleware to create user calendar on user creation
-userSchema.post('save', async function () {
-  if (this._id && this.wasNew) {
-    Calendar.find(
-      {
-        user: this._id,
-        userDefault: true
-      },
-      (err, calendar) => {
-        if (err) {
-          return err;
-        }
+// userSchema.post('save', async function () {
+//   if (this._id && this.wasNew) {
+//     Calendar.find(
+//       {
+//         user: this._id,
+//         userDefault: true
+//       },
+//       (err, calendar) => {
+//         if (err) {
+//           return err;
+//         }
 
-        if (calendar.length > 0) {
-          return;
-        }
+//         if (calendar.length > 0) {
+//           return;
+//         }
 
-        // Create default user calendar
-        return new Calendar({
-          name: this.username,
-          color: `#${userColors[0]}`,
-          user: this._id,
-          userDefault: true,
-          systemCalendar: false
-        }).save((err) => {
-          if (err) {
-            return err;
-          }
+//         // Create default user calendar
+//         return new Calendar({
+//           name: this.username,
+//           color: `#${userColors[0]}`,
+//           user: this._id,
+//           userDefault: true,
+//           systemCalendar: false
+//         }).save((err) => {
+//           if (err) {
+//             return err;
+//           }
 
-          console.log('added new user calendar to calendars collection');
-        });
-      }
-    );
-  }
-});
+//           console.log('added new user calendar to calendars collection');
+//         });
+//       }
+//     );
+//   }
+// });
 
 userSchema.methods.validatePassword = async function validatePassword(data) {
   return bcrypt.compare(data, this.password);

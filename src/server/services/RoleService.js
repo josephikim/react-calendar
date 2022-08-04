@@ -1,12 +1,7 @@
 const addRole = (Role) => (name) => {
-  const _obj = new Role({ name: name });
+  const _obj = new Role({ name });
 
-  return _obj.save((err, role) => {
-    if (err) {
-      throw err;
-    }
-    console.log('added', role.name, 'to roles collection');
-  });
+  return _obj.save();
 };
 
 const getRoles = (Role) => (roles) => {

@@ -107,12 +107,12 @@
     "env": {
       "browser": true,
       "node": true,
-      "es6": true
+      "es6": true,
+      "jest": true
     },
     "ignorePatterns": [
       "node_modules",
-      "build",
-      "*.unit.test.js"
+      "build"
     ],
     "rules": {
       "react/display-name": 0,

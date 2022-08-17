@@ -16,7 +16,7 @@ const validateLogin = (User) => (username, password) => {
     return new NotFoundError('User not found', { errorCode: 'username' });
   }
 
-  return User.validatePassword(password);
+  return user.validatePassword(password);
 };
 
 const UserService = (User) => {

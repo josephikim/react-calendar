@@ -1,9 +1,9 @@
 import db from 'server/models';
-import calendarService from './calendarService.js';
-import eventService from './eventService.js';
-import refreshTokenService from './refreshTokenService.js';
-import roleService from './roleService.js';
-import userService from './userService.js';
+import calendarService from './CalendarService.js';
+import eventService from './EventService.js';
+import refreshTokenService from './RefreshTokenService.js';
+import roleService from './RoleService.js';
+import userService from './UserService.js';
 
 const Calendar = db.calendar;
 const Event = db.event;

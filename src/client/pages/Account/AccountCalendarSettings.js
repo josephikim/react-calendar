@@ -47,20 +47,19 @@ class AccountCalendarSettings extends Component {
   };
 
   getCalendarsState = () => {
-    let calendarsState = {};
+    const state = {};
 
     this.props.calendars.forEach((calendar) => {
-      const id = calendar.id;
       const calendarState = {
         value: calendar.name,
         validateOnChange: false,
         error: null,
         editMode: false
       };
-      calendarsState[id] = calendarState;
+      state[calendar.id] = calendarState;
     });
 
-    return calendarsState;
+    return state;
   };
 
   handleBlur = (validationFunc, event) => {
@@ -100,10 +99,11 @@ class AccountCalendarSettings extends Component {
     this.setState(newState);
   };
 
+  // update state of selected calendar
   handleEdit = (id) => {
     if (!this.state[id]) return;
 
-    let newState = {};
+    const newState = {};
 
     newState[id] = {
       ...this.state[id],
@@ -119,7 +119,7 @@ class AccountCalendarSettings extends Component {
     // Reset component calendar state to match app state
     const calendar = this.props.calendars.filter((calendar) => calendar.id === id)[0];
 
-    let newState = {
+    const newState = {
       ...this.state[id],
       value: calendar.name,
       validateOnChange: false,
@@ -144,8 +144,8 @@ class AccountCalendarSettings extends Component {
         .then(() => {
           alert(`Calendar "${calendar.name}" deleted!`);
         })
-        .catch((err) => {
-          const error = err.response ? err.response.data : err;
+        .catch((e) => {
+          const error = e.response ? e.response.data : e;
           alert(`Error deleting calendar: ${error.message}`);
         });
     }
@@ -161,8 +161,8 @@ class AccountCalendarSettings extends Component {
     if (newCalendarError === false) {
       // no input errors, submit the form
       const data = {
-        name: newCalendar.value.trim(),
-        userId: this.props.userId
+        user: this.props.userId,
+        name: newCalendar.value.trim()
       };
 
       this.props
@@ -170,8 +170,8 @@ class AccountCalendarSettings extends Component {
         .then(() => {
           alert('New calendar created!');
         })
-        .catch((err) => {
-          const error = err.response ? err.response.data : err;
+        .catch((e) => {
+          const error = e.response ? e.response.data : e;
           alert(`Error creating calendar: ${error.message}`);
           if (error.errorCode && error.errorCode === 'calendar') {
             this.setState((state) => ({
@@ -225,8 +225,8 @@ class AccountCalendarSettings extends Component {
         .then(() => {
           alert(`Successfully updated calendar: "${data.name}"`);
         })
-        .catch((err) => {
-          const error = err.response ? err.response.data : err;
+        .catch((e) => {
+          const error = e.response ? e.response.data : e;
           alert(`Error updating calendar: ${error.message}`);
           if (error.errorCode && error.errorCode === 'calendarName') {
             this.setState((state) => ({

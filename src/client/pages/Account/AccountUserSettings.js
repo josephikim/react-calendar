@@ -16,7 +16,7 @@ class AccountUserSettings extends Component {
   }
 
   componentDidMount = () => {
-    let newState = {
+    const newState = {
       username: {
         value: this.props.username,
         validateOnChange: false,
@@ -107,8 +107,8 @@ class AccountUserSettings extends Component {
           });
           alert('Username updated!');
         })
-        .catch((err) => {
-          const error = err.response ? err.response.data : err;
+        .catch((e) => {
+          const error = e.response ? e.response.data : e;
           alert(`Error updating username: ${error.message}`);
           if (error.errorCode && error.errorCode === 'username') {
             this.setState((state) => ({
@@ -135,15 +135,15 @@ class AccountUserSettings extends Component {
     event.preventDefault();
 
     const { password, newPassword } = this.state;
-    let newPasswordError = false;
+    let passwordError = false;
 
     if (password.value === newPassword.value) {
-      newPasswordError = 'New password cannot match current password.';
+      passwordError = 'New password cannot match current password.';
     } else {
-      newPasswordError = validateFields.validatePassword(newPassword.value);
+      passwordError = validateFields.validatePassword(newPassword.value);
     }
 
-    if (newPasswordError === false) {
+    if (passwordError === false) {
       // no input errors, submit the form
       const payload = {
         userId: this.props.userId,
@@ -169,8 +169,8 @@ class AccountUserSettings extends Component {
           });
           alert('Password updated!');
         })
-        .catch((err) => {
-          const error = err.response ? err.response.data : err;
+        .catch((e) => {
+          const error = e.response ? e.response.data : e;
           alert(`Error updating password: ${error.message}`);
           if (error.errorCode && error.errorCode === 'password') {
             this.setState((state) => ({
@@ -187,14 +187,14 @@ class AccountUserSettings extends Component {
         newPassword: {
           ...state.newPassword,
           validateOnChange: true,
-          error: newPasswordError
+          error: passwordError
         }
       }));
     }
   };
 
   handleEdit = (id) => {
-    let newState = {};
+    const newState = {};
 
     if (id === 'password') {
       newState.password = {
@@ -218,7 +218,7 @@ class AccountUserSettings extends Component {
   };
 
   handleCancel = (id) => {
-    let newState = {};
+    const newState = {};
 
     if (id === 'username') {
       newState.username = {

@@ -2,15 +2,15 @@ import React from 'react';
 import { Switch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import Register from './pages/Register/Register';
-import Login from './pages/Login/Login';
-import Calendar from './pages/Calendar/Calendar';
-import Account from './pages/Account/Account';
-import PublicRoute from './components/PublicRoute';
-import PrivateRoute from './components/PrivateRoute';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import NoMatch from './components/NoMatch';
+import Register from 'client/pages/Register/Register';
+import Login from 'client/pages/Login/Login';
+import Calendar from 'client/pages/Calendar/Calendar';
+import Account from 'client/pages/Account/Account';
+import PublicRoute from 'client/components/PublicRoute';
+import PrivateRoute from 'client/components/PrivateRoute';
+import Header from 'client/components/Header';
+import Footer from 'client/components/Footer';
+import NoMatch from 'client/components/NoMatch';
 
 const App = () => {
   const accessToken = useSelector((state) => state.auth.accessToken);

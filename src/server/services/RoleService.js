@@ -1,27 +1,22 @@
-const addRole = (Role) => (name) => {
-  const _obj = new Role({ name });
+class RoleService {
+  constructor(model) {
+    this.model = model;
+  }
 
-  return _obj.save();
-};
-
-const getRoles = (Role) => (roles) => {
-  return Role.find({ name: { $in: roles } });
-};
-
-const assignRoles = (Role) => (user, rolesArr) => {
-  const roles = Role.find({ name: { $in: rolesArr } }).exec();
-
-  user.roles = roles.map((role) => role._id);
-
-  return user.save();
-};
-
-const roleService = (Role) => {
-  return {
-    addRole: addRole(Role),
-    getRoles: getRoles(Role),
-    assignRoles: assignRoles(Role)
+  create = async (name) => {
+    await this.model.create({ name }).then((e, role) => {
+      if (e) {
+        throw e;
+      }
+      console.log(`Created role: ${role.name}`);
+    });
   };
-};
 
-export default roleService;
+  get = async (roles) => {
+    const result = await this.model.find({ name: { $in: roles } });
+
+    return result;
+  };
+}
+
+export default RoleService;

@@ -9,11 +9,11 @@ mongoose.Promise = global.Promise;
 
 const db = {
   mongoose,
-  user: User,
-  role: Role,
-  event: Event,
-  calendar: Calendar,
-  refreshToken: RefreshToken,
+  User,
+  Role,
+  Event,
+  Calendar,
+  RefreshToken,
   ROLES: ['user', 'admin', 'moderator']
 };
 

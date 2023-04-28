@@ -21,7 +21,7 @@ export const loadState = () => {
     } else {
       return json;
     }
-  } catch (err) {
+  } catch (e) {
     return undefined;
   }
 };
@@ -30,7 +30,7 @@ export const saveState = (state) => {
   try {
     const serializedState = JSON.stringify(state);
     localStorage.setItem('state', serializedState);
-  } catch (err) {
-    Promise.reject(err);
+  } catch (e) {
+    Promise.reject(e);
   }
 };

@@ -1,10 +1,12 @@
 import express from 'express';
 import userRouter from './userRouter';
-import authRouter from './authRouter';
+import calendarRouter from './calendarRouter';
+import eventRouter from './eventRouter';
 
-const apiRouter = express.Router();
+const router = express.Router();
 
-apiRouter.use('/auth', authRouter);
-apiRouter.use('/user', userRouter);
+router.use('/user', userRouter);
+router.use('/calendar', calendarRouter);
+router.use('/event', eventRouter);
 
-export default apiRouter;
+export default router;

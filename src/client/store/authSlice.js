@@ -46,12 +46,12 @@ export const loginUser = (data) => async (dispatch) => {
       dispatch(accessTokenUpdated(accessToken));
       dispatch(refreshTokenUpdated(refreshToken));
     });
-  } catch (err) {
-    if (err.response && err.response.data.name === 'AuthorizationError') {
+  } catch (e) {
+    if (e.response && e.response.data.name === 'AuthorizationError') {
       // unauthorize user
       dispatch(accessTokenUpdated(null));
     }
-    return Promise.reject(err);
+    return Promise.reject(e);
   }
 };
 
@@ -68,7 +68,7 @@ export const registerUser = (data) => async (dispatch) => {
       dispatch(accessTokenUpdated(accessToken));
       dispatch(refreshTokenUpdated(refreshToken));
     });
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };

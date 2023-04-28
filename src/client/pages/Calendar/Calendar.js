@@ -86,11 +86,11 @@ class Calendar extends Component {
   };
 
   isSameSlot = (prevSlot, currentSlot) => {
-    let prevSlotStartDate = new Date(prevSlot.start);
-    let prevSlotEndDate = new Date(prevSlot.end);
+    const prevSlotStartDate = new Date(prevSlot.start);
+    const prevSlotEndDate = new Date(prevSlot.end);
 
-    let currentSlotStartDate = currentSlot.start;
-    let currentSlotEndDate = currentSlot.end;
+    const currentSlotStartDate = currentSlot.start;
+    const currentSlotEndDate = currentSlot.end;
 
     let isSameSlotStart = false;
     let isSameSlotEnd = false;

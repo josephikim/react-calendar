@@ -24,8 +24,8 @@ userApi.interceptors.request.use(
     }
     return config;
   },
-  (err) => {
-    return Promise.reject(err);
+  (e) => {
+    return Promise.reject(e);
   }
 );
 
@@ -33,12 +33,12 @@ userApi.interceptors.response.use(
   (res) => {
     return res;
   },
-  async (err) => {
-    const originalConfig = err.config;
+  async (e) => {
+    const originalConfig = e.config;
 
-    if (err.response) {
+    if (e.response) {
       // Access Token was expired
-      if (err.response.status === 401 && !originalConfig._retry) {
+      if (e.response.status === 401 && !originalConfig._retry) {
         originalConfig._retry = true;
 
         try {
@@ -60,12 +60,12 @@ userApi.interceptors.response.use(
         }
       }
 
-      if (err.response.status === 403) {
-        return Promise.reject(err);
+      if (e.response.status === 403) {
+        return Promise.reject(e);
       }
     }
 
-    return Promise.reject(err);
+    return Promise.reject(e);
   }
 );
 

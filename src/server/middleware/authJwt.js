@@ -1,14 +1,12 @@
 import jwt from 'jsonwebtoken';
 import db from 'server/models';
 
+const User = db.User;
+const Role = db.Role;
 const { TokenExpiredError } = jwt;
 
-const User = db.user;
-const Role = db.role;
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-
-const catchError = (err, res) => {
-  if (err instanceof TokenExpiredError) {
+const catchError = (e, res) => {
+  if (e instanceof TokenExpiredError) {
     return res.status(401).send({ message: 'Unauthorized! Access Token was expired!' });
   }
 
@@ -16,15 +14,15 @@ const catchError = (err, res) => {
 };
 
 const verifyToken = (req, res, next) => {
-  let token = req.headers['x-access-token'];
+  const token = req.headers['x-access-token'];
 
   if (!token) {
     return res.status(403).send({ message: 'No token provided!' });
   }
 
-  jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
-    if (err) {
-      return catchError(err, res);
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (e, decoded) => {
+    if (e) {
+      return catchError(e, res);
     }
     req.id = decoded.id;
     next();
@@ -32,18 +30,18 @@ const verifyToken = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-  User.findById(req.id).exec((err, user) => {
-    if (err) {
-      return next(err);
+  User.findById(req.id).exec((e, user) => {
+    if (e) {
+      return next(e);
     }
 
     Role.find(
       {
-        _id: { $in: user.roles }
+        id: { $in: user.roles }
       },
-      (err, roles) => {
-        if (err) {
-          return next(err);
+      (e, roles) => {
+        if (e) {
+          return next(e);
         }
 
         for (let i = 0; i < roles.length; i++) {
@@ -61,18 +59,18 @@ const isAdmin = (req, res, next) => {
 };
 
 const isModerator = (req, res, next) => {
-  User.findById(req.id).exec((err, user) => {
-    if (err) {
-      return next(err);
+  User.findById(req.id).exec((e, user) => {
+    if (e) {
+      return next(e);
     }
 
     Role.find(
       {
-        _id: { $in: user.roles }
+        id: { $in: user.roles }
       },
-      (err, roles) => {
-        if (err) {
-          return next(err);
+      (e, roles) => {
+        if (e) {
+          return next(e);
         }
 
         for (let i = 0; i < roles.length; i++) {

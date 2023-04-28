@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 
 import db from './db/connection';
-import apiRouter from './routers';
+import router from './routers';
 import { UserFacingError, DatabaseError } from './utils/baseErrors';
 
 const BUILD_DIR = __dirname;
@@ -22,29 +22,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(BUILD_DIR));
 
 // Use API routes
-app.use('/api', apiRouter);
+app.use('/api', router);
 
 app.get('*', (req, res) => {
   res.sendFile(HTML_FILE);
 });
 
 // Global error handler
-app.use(function (err, req, res, next) {
-  if (err instanceof UserFacingError || err instanceof DatabaseError) {
-    let error = {
-      message: err.message
-    };
-    for (const [key, value] of Object.entries(err)) {
-      error[key] = value;
-    }
-    res.status(err.statusCode).send(error);
-  } else {
-    let error = {
-      name: err.name,
-      message: err.message
-    };
+app.use(function (err, req, res) {
+  const response = {
+    message: err.message
+  };
 
-    res.status(500).send(error);
+  if (err instanceof UserFacingError || err instanceof DatabaseError) {
+    for (const [key, value] of Object.entries(err)) {
+      response[key] = value;
+    }
+    res.status(err.statusCode).send(response);
+  } else {
+    response.name = err.name;
+    res.status(500).send(response);
   }
 });
 

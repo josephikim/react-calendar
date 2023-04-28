@@ -46,6 +46,6 @@ calendarSchema.post('findOneAndUpdate', handleE11000);
 // schema index
 calendarSchema.index({ user: 1, name: 1 }, { unique: true });
 
-let Calendar = mongoose.model('Calendar', calendarSchema);
+const Calendar = mongoose.model('Calendar', calendarSchema);
 
 export default Calendar;

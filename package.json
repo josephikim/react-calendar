@@ -116,9 +116,12 @@
     ],
     "rules": {
       "react/display-name": 0,
-      "react/prop-types": "off",
-      "no-unused-vars": "warn",
+      "react/prop-types": 0,
+      "no-undef": 1,
+      "no-unused-vars": 1,
+      "no-const-assign": 1,
       "no-console": 1,
+      "no-useless-catch": 1,
       "no-debugger": 1
     }
   }

@@ -1,57 +1,59 @@
-import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
+import { AuthorizationError } from 'server/utils/userFacingErrors';
 
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-const JWT_EXPIRATION = process.env.JWT_EXPIRATION;
-const JWT_REFRESH_EXPIRATION = process.env.JWT_REFRESH_EXPIRATION;
-
-const createToken = (RefreshToken) => (userId) => {
-  let expiredAt = new Date();
-
-  expiredAt.setSeconds(expiredAt.getSeconds() + JWT_REFRESH_EXPIRATION);
-
-  let _token = uuidv4();
-
-  let _obj = new RefreshToken({
-    token: _token,
-    user: userId,
-    expiryDate: expiredAt.getTime()
-  });
-
-  return _obj.save();
-};
-
-const refreshToken = (RefreshToken) => (requestToken) => {
-  const refreshToken = RefreshToken.findOne({ token: requestToken }).exec();
-
-  // Refresh token not found in database
-  if (!refreshToken) {
-    return;
+class RefreshTokenService {
+  constructor(model) {
+    this.model = model;
   }
 
-  // Refresh token expired
-  if (RefreshToken.verifyExpiration(refreshToken)) {
-    RefreshToken.findByIdAndRemove(refreshToken._id, {
-      useFindAndModify: false
-    }).exec();
-    return;
-  }
+  create = async (userId) => {
+    try {
+      const expiredAt = new Date();
 
-  const newAccessToken = jwt.sign({ id: refreshToken.user._id }, JWT_SECRET_KEY, {
-    expiresIn: JWT_EXPIRATION
-  });
+      expiredAt.setSeconds(expiredAt.getSeconds() + process.env.JWT_REFRESH_EXPIRATION);
 
-  return {
-    accessToken: newAccessToken,
-    refreshToken: refreshToken
+      const _token = uuidv4();
+
+      const _obj = {
+        token: _token,
+        user: userId,
+        // expiryDate: expiredAt.getTime()
+        expiryDate: expiredAt
+      };
+
+      const result = await this.model.create(_obj);
+      return result;
+    } catch (e) {
+      throw e;
+    }
   };
-};
 
-const RefreshTokenService = (RefreshToken) => {
-  return {
-    createToken: createToken(RefreshToken),
-    refreshToken: refreshToken(RefreshToken)
+  get = async (requestToken) => {
+    try {
+      const result = await this.model.findOne({ token: requestToken });
+
+      return result;
+    } catch (e) {
+      throw e;
+    }
   };
-};
+
+  verify = async (token) => {
+    try {
+      if (this.model.verifyExpiration(token)) {
+        // Refresh token expired
+        await this.model.findByIdAndRemove(token.id, {
+          useFindAndModify: false
+        });
+
+        throw new AuthorizationError('Refresh token expired', { errorCode: 'refreshToken' });
+      } else {
+        return true;
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+}
 
 export default RefreshTokenService;

@@ -11,13 +11,13 @@ const CalendarToggleMenu = () => {
 
   const calendars = useSelector((state) => state.user.calendars);
 
-  const handleChange = (event) => {
-    const isChecked = event.target.checked;
-    const calendarId = event.target.id;
+  const handleVisibilityChange = (event) => {
+    const visibility = event.target.checked;
+    const id = event.target.id;
 
     const payload = {
-      id: calendarId,
-      visibility: isChecked
+      id,
+      visibility
     };
     dispatch(calendarUpdated(payload));
   };
@@ -47,7 +47,7 @@ const CalendarToggleMenu = () => {
             <Checkbox
               id={`${calendar.id}`}
               checked={calendar.visibility}
-              handleChange={(event) => handleChange(event)}
+              handleChange={(event) => handleVisibilityChange(event)}
             />
           </Col>
 

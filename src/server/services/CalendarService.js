@@ -1,79 +1,70 @@
-import db from 'server/models';
-import { systemColors } from 'config/appConfig';
-import { userColors } from 'config/appConfig';
+import { systemColors, userColors } from 'config/appConfig';
 
-const createSystemCalendar = (Calendar) => (name) => {
-  const _obj = new Calendar({
-    name: name,
-    color: `#${systemColors[0]}`,
-    user: null,
-    systemCalendar: true
-  });
-
-  return _obj.save((err, calendar) => {
-    if (err) {
-      throw err;
-    }
-    console.log('added', calendar.name, 'to calendars collection');
-  });
-};
-
-const createUserDefaultCalendar = (Calendar) => (userId, username) => {
-  const userCalendar = Calendar.find({ user: userId, userDefault: true }).exec();
-
-  if (userCalendar.length > 0) {
-    return;
+class CalendarService {
+  constructor(model) {
+    this.model = model;
   }
 
-  // Create initial user calendar
-  const _obj = new Calendar({
-    name: username,
-    color: `#${userColors[0]}`,
-    user: userId,
-    userDefault: true,
-    systemCalendar: false
-  });
+  // Get user and system calendars
+  getAll = async (userId) => {
+    try {
+      const result = await this.model.find({
+        $or: [{ user: userId }, { systemCalendar: true }]
+      });
 
-  return _obj.save();
-};
-
-const createUserCalendar = (Calendar) => (userId, calendarName) => {
-  const calendars = Calendar.find({ user: userId }).exec();
-
-  const _obj = new Calendar({
-    name: calendarName,
-    color: `#${userColors[calendars.length % userColors.length]}`,
-    user: userId,
-    userDefault: false,
-    systemCalendar: false
-  });
-
-  return _obj.save();
-};
-
-const getCalendars = (Calendar) => (userId) => {
-  return Calendar.find({
-    $or: [{ user: userId }, { systemCalendar: true }]
-  });
-};
-
-const updateCalendar = (Calendar) => (calendarId, calendarName) => {
-  return Calendar.findOneAndUpdate({ _id: db.mongoose.Types.ObjectId(calendarId) }, { calendarName }, { new: true });
-};
-
-const deleteCalendar = (Calendar) => (calendarId) => {
-  return Calendar.findOneAndDelete({ _id: db.mongoose.Types.ObjectId(calendarId) });
-};
-
-const calendarService = (Calendar) => {
-  return {
-    createSystemCalendar: createSystemCalendar(Calendar),
-    createUserDefaultCalendar: createUserDefaultCalendar(Calendar),
-    createUserCalendar: createUserCalendar(Calendar),
-    getCalendars: getCalendars(Calendar),
-    updateCalendar: updateCalendar(Calendar),
-    deleteCalendar: deleteCalendar(Calendar)
+      return result;
+    } catch (e) {
+      throw e;
+    }
   };
-};
 
-export default calendarService;
+  create = async (data) => {
+    try {
+      const isSystemCalendar = data.user === null;
+      const calendarCount = await this.model.countDocuments(data.user);
+
+      const _obj = {
+        user: data.user,
+        name: data.name,
+        userDefault: isSystemCalendar ? false : calendarCount === 0 ? true : false,
+        systemCalendar: isSystemCalendar ?? false,
+        color: isSystemCalendar ? `#${systemColors[0]}` : `#${userColors[calendarCount % userColors.length]}`
+      };
+
+      const result = await this.model.create(_obj);
+
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  update = async (id, name) => {
+    try {
+      const result = await this.model.findOneAndUpdate({ id }, { name }, { new: true });
+
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  delete = async (id) => {
+    try {
+      const result = await this.model.findByIdAndDelete({ id });
+
+      if (!result) {
+        const error = new Error('Calendar not found');
+
+        error.statusCode = 404;
+        throw error;
+      } else {
+        return { deleted: true };
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+}
+
+export default CalendarService;

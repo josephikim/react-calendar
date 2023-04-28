@@ -43,8 +43,8 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt);
 
     return next();
-  } catch (err) {
-    return next(err);
+  } catch (e) {
+    return next(e);
   }
 });
 
@@ -64,10 +64,14 @@ const handleE11000 = (error, res, next) => {
 userSchema.post('save', handleE11000);
 userSchema.post('findOneAndUpdate', handleE11000);
 
-userSchema.methods.validatePassword = async function validatePassword(data) {
-  return bcrypt.compare(data, this.password);
+userSchema.statics.findByUsername = (username) => {
+  return this.findOne({ username });
 };
 
-let User = mongoose.model('User', userSchema);
+userSchema.methods.validatePassword = async function validatePassword(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+const User = mongoose.model('User', userSchema);
 
 export default User;

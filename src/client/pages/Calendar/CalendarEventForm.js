@@ -72,7 +72,7 @@ class CalendarEventForm extends Component {
     }
 
     // Prepare component state update
-    let newState = {
+    const newState = {
       title: {
         validateOnChange: false,
         error: null
@@ -115,11 +115,11 @@ class CalendarEventForm extends Component {
       if (calendarView === 'month') {
         // single day slot
         if (calendarSlot.action === 'click') {
-          let startDate = new Date(calendarSlot.start);
+          const startDate = new Date(calendarSlot.start);
           startDate.setHours(12);
           const startDateISO = startDate.toISOString();
 
-          let endDate = new Date(calendarSlot.end);
+          const endDate = new Date(calendarSlot.end);
           endDate.setDate(endDate.getDate() - 1);
           endDate.setHours(13);
           const endDateISO = endDate.toISOString();
@@ -204,8 +204,8 @@ class CalendarEventForm extends Component {
 
   handleDayChange = (onDayChangeValue, id) => {
     const target = id.startsWith('start') ? 'start' : 'end';
-    let updateValue = new Date(onDayChangeValue);
-    let targetValue = new Date(this.state[target].value);
+    const updateValue = new Date(onDayChangeValue);
+    const targetValue = new Date(this.state[target].value);
 
     // Update day, month, year of target value
     const [year, month, day] = [updateValue.getFullYear(), updateValue.getMonth(), updateValue.getDate()];
@@ -213,7 +213,7 @@ class CalendarEventForm extends Component {
 
     const targetValueStr = targetValue.toISOString();
 
-    let newState = {
+    const newState = {
       [target]: {
         value: targetValueStr
       }
@@ -221,7 +221,7 @@ class CalendarEventForm extends Component {
 
     // update end date if later start date is selected
     if (target === 'start' && targetValueStr > this.state.end.value) {
-      let endDate = new Date(this.state.end.value);
+      const endDate = new Date(this.state.end.value);
       endDate.setFullYear(year, month, day);
 
       newState.end = {
@@ -231,7 +231,7 @@ class CalendarEventForm extends Component {
 
     // update start date if earlier end date is selected
     if (target === 'end' && targetValueStr < this.state.start.value) {
-      let startDate = new Date(this.state.start.value);
+      const startDate = new Date(this.state.start.value);
       startDate.setFullYear(year, month, day);
 
       newState.start = {
@@ -246,7 +246,7 @@ class CalendarEventForm extends Component {
     const target = id.startsWith('start') ? 'start' : 'end';
     const updateStr = onChangeValue._d.toISOString();
 
-    let newState = {
+    const newState = {
       [target]: {
         value: updateStr
       }
@@ -270,7 +270,7 @@ class CalendarEventForm extends Component {
         return;
       }
 
-      let data = {
+      const data = {
         title: this.state.title.value,
         desc: this.state.desc.value,
         allDay: this.state.allDay,
@@ -279,8 +279,8 @@ class CalendarEventForm extends Component {
 
       // add start and end values
       if (this.state.allDay === true) {
-        let startTimeAsDateObj = new Date(this.state.start.value);
-        let endTimeAsDateObj = new Date(this.state.end.value);
+        const startTimeAsDateObj = new Date(this.state.start.value);
+        const endTimeAsDateObj = new Date(this.state.end.value);
 
         // Set hours, minutes, and seconds to zero
         startTimeAsDateObj.setHours(0, 0, 0);
@@ -303,8 +303,8 @@ class CalendarEventForm extends Component {
           .then(() => {
             alert(`Successfully added new event: "${data.title}"`);
           })
-          .catch((err) => {
-            const error = err.response ? err.response.data : err;
+          .catch((e) => {
+            const error = e.response ? e.response.data : e;
             alert(`Error creating event: ${error}`);
             this.setState({ error: error.message });
           });
@@ -329,8 +329,8 @@ class CalendarEventForm extends Component {
           .then(() => {
             alert(`Successfully updated event: "${data.title}"`);
           })
-          .catch((err) => {
-            const error = err.response ? err.response.data : err;
+          .catch((e) => {
+            const error = e.response ? e.response.data : e;
             alert(`Error updating event: ${error}`);
             this.setState({ error: error.message });
           });
@@ -373,8 +373,8 @@ class CalendarEventForm extends Component {
 
     const eventId = this.props.calendarSelectionWithSlotAndEvent.calendarEvent.id;
 
-    this.props.deleteCalendarEvent(eventId).catch((err) => {
-      const error = err.response ? err.response.data : err;
+    this.props.deleteCalendarEvent(eventId).catch((e) => {
+      const error = e.response ? e.response.data : e;
       alert(`Error deleting calendar: ${error}`);
       this.setState({ error: error.message });
     });

@@ -1,16 +1,16 @@
 import db from 'server/models';
 import { BadRequestError } from 'server/utils/userFacingErrors';
 
+const User = db.User;
 const ROLES = db.ROLES;
-const User = db.user;
 
 const checkDuplicateUsername = (req, res, next) => {
   // Username
   User.findOne({
     username: req.body.username
-  }).exec((err, user) => {
-    if (err) {
-      return next(err);
+  }).exec((e, user) => {
+    if (e) {
+      return next(e);
     }
 
     if (user) {

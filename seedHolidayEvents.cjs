@@ -35,7 +35,7 @@ const makeEvents = async () => {
 
   const calendar = await client.db(MONGO_DB).collection('calendars').find({ name: 'US Holidays' }).toArray();
 
-  const calendarId = calendar[0]._id;
+  const calendarId = calendar[0].id;
 
   const processedEvents = await getHolidays().then((response) => {
     const holidays = response.data.response.holidays;
@@ -73,8 +73,8 @@ const seedDB = async () => {
       });
       console.log('Database seeded!');
     });
-  } catch (err) {
-    console.log(err.stack);
+  } catch (e) {
+    console.log(e.stack);
   }
 };
 

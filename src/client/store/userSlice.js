@@ -96,11 +96,11 @@ export const calendarSelectionWithSlotAndEvent = createSelector(
     const updateCompleteWithNewEvent = isCalendarEventSelected && !isCalendarSlotSelected;
 
     if (updateCompleteWithNewSlot || updateCompleteWithNewEvent) {
-      let updateObj = {
+      const update = {
         calendarSlot: calendarSlot,
         calendarEvent: calendarEvent
       };
-      return updateObj;
+      return update;
     } else return null;
   }
 );
@@ -108,7 +108,7 @@ export const calendarSelectionWithSlotAndEvent = createSelector(
 export const calendarEventsWithDateObjects = createSelector([calendarEventsSelector], (calendarEvents) => {
   if (!calendarEvents) return null;
 
-  let clonedEvents = JSON.parse(JSON.stringify(calendarEvents));
+  const clonedEvents = JSON.parse(JSON.stringify(calendarEvents));
 
   clonedEvents.forEach((event) => {
     event.start = new Date(event.start);
@@ -131,8 +131,8 @@ export const retrieveUserData = (userId) => async (dispatch) => {
       dispatch(calendarsUpdated(res.calendars));
       dispatch(calendarEventsUpdated(res.calendarEvents));
     });
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
@@ -145,8 +145,8 @@ export const createCalendarEvent = (data) => async (dispatch) => {
       dispatch(calendarEventSelectionUpdated(res));
       dispatch(calendarSlotSelectionUpdated({}));
     });
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
@@ -158,8 +158,8 @@ export const updateCalendarEvent = (event) => async (dispatch) => {
       dispatch(calendarEventUpdated(res));
       dispatch(calendarEventSelectionUpdated(res));
     });
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
@@ -169,8 +169,8 @@ export const deleteCalendarEvent = (eventId) => async (dispatch) => {
 
     return Promise.resolve(res.data).then((res) => {
       // set slot selection to current date
-      let start = new Date();
-      let end = new Date();
+      const start = new Date();
+      const end = new Date();
       start.setHours(start.getHours() + 1, 0, 0, 0);
       end.setHours(end.getHours() + 2, 0, 0, 0);
 
@@ -185,8 +185,8 @@ export const deleteCalendarEvent = (eventId) => async (dispatch) => {
       dispatch(updateCalendarEventSelection({}));
       dispatch(updateCalendarSlotSelection(slot));
     });
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
@@ -197,8 +197,8 @@ export const createCalendar = (data) => async (dispatch) => {
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarAdded(res));
     });
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
@@ -209,8 +209,8 @@ export const updateCalendar = (data) => async (dispatch) => {
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarUpdated(res));
     });
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
@@ -221,8 +221,8 @@ export const deleteCalendar = (calendarId) => async (dispatch) => {
     return Promise.resolve(res.data).then((res) => {
       dispatch(calendarDeleted(res.id));
     });
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
@@ -233,13 +233,13 @@ export const updateUsername = (data) => async (dispatch) => {
     return Promise.resolve(res.data).then((res) => {
       dispatch(usernameUpdated(res.username));
     });
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
 export const updateCalendarSlotSelection = (slot) => async (dispatch) => {
-  let clonedSlot = _.cloneDeep(slot);
+  const clonedSlot = _.cloneDeep(slot);
 
   // Convert dates to strings
   if (!_.isEmpty(clonedSlot)) {
@@ -254,7 +254,7 @@ export const updateCalendarSlotSelection = (slot) => async (dispatch) => {
 };
 
 export const updateCalendarEventSelection = (event) => async (dispatch) => {
-  let clonedEvent = _.cloneDeep(event);
+  const clonedEvent = _.cloneDeep(event);
 
   // Convert dates to strings
   if (!_.isEmpty(clonedEvent)) {
@@ -280,8 +280,8 @@ export const onSelectView = (view) => (dispatch) => {
 export const initializeCalendarView = () => async (dispatch) => {
   try {
     // Initial calendar slot
-    let start = new Date();
-    let end = new Date();
+    const start = new Date();
+    const end = new Date();
     start.setHours(start.getHours() + 1, 0, 0, 0);
     end.setHours(end.getHours() + 2, 0, 0, 0);
 
@@ -297,8 +297,8 @@ export const initializeCalendarView = () => async (dispatch) => {
       dispatch(updateCalendarEventSelection({})),
       dispatch(onSelectView(defaultView))
     ]);
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
@@ -308,7 +308,7 @@ export const updatePassword = (payload) => async () => {
     const res = await userApi.post(`/account/password/update`, payload);
 
     return Promise.resolve(res.data);
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };

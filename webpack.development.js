@@ -55,7 +55,7 @@ const client = {
 const server = {
   name: 'server',
   target: 'node',
-  entry: './src/server/server-dev.js',
+  entry: ['webpack/hot/poll?1000', './src/server/server-dev.js'],
   output: {
     path: path.resolve('./build'),
     filename: 'server.js'
@@ -63,12 +63,18 @@ const server = {
   resolve: {
     modules: ['node_modules', path.join(__dirname, 'src')]
   },
-  externals: [nodeExternals()],
+  externals: [nodeExternals({ allowlist: ['webpack/hot/poll?1000'] })],
   plugins: [
     new Dotenv({
       path: '.env.development'
-    })
-  ]
+    }),
+    new webpack.HotModuleReplacementPlugin()
+  ],
+  node: {
+    global: false,
+    __filename: false,
+    __dirname: false
+  }
 };
 
 module.exports = [merge(commonClientConfig, client), server];

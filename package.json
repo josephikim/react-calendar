@@ -7,7 +7,8 @@
   "scripts": {
     "watch:dev-client": "webpack serve --open --mode development --config webpack.development.js --config-name client",
     "start:dev-server": "node-dev build/server.js",
-    "dev": "npm run lint && npm run prettier && npm run build:dev && npm-run-all --parallel start:dev-server watch:dev-client",
+    "watch:dev-server": "webpack --mode development --config webpack.development.js --config-name server --watch",
+    "dev": "npm run lint && npm run prettier && npm run build:dev && npm-run-all --parallel start:dev-server watch:dev-server watch:dev-client",
     "build:dev": "rm -rf build && webpack --mode development --config webpack.development.js --config-name server",
     "build": "rm -rf build && npm-run-all build:server build:client",
     "build:server": "webpack --mode=production --config webpack.production.js --config-name server",

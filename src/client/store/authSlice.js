@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { authApi } from 'client/utils/axios';
+import { userApi } from 'client/utils/axios';
 
 export const initialState = {
   accessToken: null,
@@ -35,7 +35,7 @@ export const logoutUser = () => (dispatch) => {
 
 export const loginUser = (data) => async (dispatch) => {
   try {
-    const res = await authApi.post('/login', data);
+    const res = await userApi.post('/login', data);
 
     return Promise.resolve(res.data).then((res) => {
       const userId = res.id;
@@ -57,7 +57,7 @@ export const loginUser = (data) => async (dispatch) => {
 
 export const registerUser = (data) => async (dispatch) => {
   try {
-    const res = await authApi.post('/register', data);
+    const res = await userApi.post('/register', data);
 
     return Promise.resolve(res.data).then((res) => {
       const userId = res.id;

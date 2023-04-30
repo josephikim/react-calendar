@@ -2,13 +2,6 @@ import axios from 'axios';
 import store from 'client/store/createStore';
 import { accessTokenUpdated } from 'client/store/authSlice';
 
-const authApi = axios.create({
-  baseURL: `${process.env.API_URL}` + '/auth',
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
 const userApi = axios.create({
   baseURL: `${process.env.API_URL}` + '/user',
   headers: {
@@ -80,9 +73,9 @@ const getLocalRefreshToken = () => {
 };
 
 const refreshToken = () => {
-  return authApi.post('/refreshtoken', {
+  return userApi.post('/refreshtoken', {
     refreshToken: getLocalRefreshToken()
   });
 };
 
-export { authApi, userApi };
+export { userApi };

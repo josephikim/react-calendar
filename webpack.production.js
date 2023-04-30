@@ -1,22 +1,16 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { merge } from 'webpack-merge';
-import HtmlWebPackPlugin from 'html-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import nodeExternals from 'webpack-node-externals';
-import Dotenv from 'dotenv-webpack';
+const path = require('path');
+const { merge } = require('webpack-merge');
+const Dotenv = require('dotenv-webpack');
+const nodeExternals = require('webpack-node-externals');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const commonClientConfig = require('./webpack.common.js');
 
-import common from './webpack.common.js';
-
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = path.dirname(__filename);
-
-const client = merge(common, {
+const client = {
   name: 'client',
-  mode: 'production',
   target: 'web',
   entry: './src/client/index.js',
+  devtool: 'source-map',
   output: {
     path: path.resolve('./build'),
     filename: 'bundle.js',
@@ -53,16 +47,16 @@ const client = merge(common, {
       path: '.env.production'
     })
   ]
-});
+};
 
-const server = merge(common, {
+const server = {
   name: 'server',
-  mode: 'production',
   target: 'node',
   entry: './src/server/server-prod.js',
+  devtool: 'source-map',
   output: {
     path: path.resolve('./build'),
-    filename: 'server.cjs'
+    filename: 'server.js'
   },
   resolve: {
     modules: ['node_modules', path.join(__dirname, 'src')]
@@ -73,8 +67,6 @@ const server = merge(common, {
       path: '.env.production'
     })
   ]
-});
+};
 
-const config = [client, server];
-
-export default config;
+module.exports = [merge(commonClientConfig, client), server];

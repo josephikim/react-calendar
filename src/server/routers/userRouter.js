@@ -7,7 +7,7 @@ const router = express.Router();
 // POST request to register user
 router.post(
   '/register',
-  [verifyRegistration.checkDuplicateUsername, verifyRegistration.checkRolesExisted],
+  [verifyRegistration.checkDuplicateUsername, verifyRegistration.checkRolesExist],
   [UserController.register, UserController.login]
 );
 

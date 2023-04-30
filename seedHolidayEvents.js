@@ -62,10 +62,6 @@ const seedDB = async () => {
     console.log('Connected correctly to server');
     const collection = client.db(MONGO_DB).collection('events');
 
-    // The drop() command destroys all data from a collection.
-    // Make sure you run it against proper database and collection.
-    // collection.drop();
-
     // Insert events into DB
     makeEvents().then((events) => {
       collection.insertMany(events, () => {

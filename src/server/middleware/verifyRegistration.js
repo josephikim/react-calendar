@@ -4,24 +4,23 @@ import { BadRequestError } from 'server/utils/userFacingErrors';
 const User = db.User;
 const ROLES = db.ROLES;
 
-const checkDuplicateUsername = (req, res, next) => {
-  // Username
-  User.findOne({
-    username: req.body.username
-  }).exec((e, user) => {
-    if (e) {
-      return next(e);
-    }
+const checkDuplicateUsername = async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      username: req.body.username
+    });
 
     if (user) {
       return next(new BadRequestError('Username is already in use', { errorCode: 'username' }));
+    } else {
+      return next();
     }
-
-    next();
-  });
+  } catch (e) {
+    return next(e);
+  }
 };
 
-const checkRolesExisted = (req, res, next) => {
+const checkRolesExist = (req, res, next) => {
   if (req.body.roles) {
     for (let i = 0; i < req.body.roles.length; i++) {
       if (!ROLES.includes(req.body.roles[i])) {
@@ -35,7 +34,7 @@ const checkRolesExisted = (req, res, next) => {
 
 const verifyRegistration = {
   checkDuplicateUsername,
-  checkRolesExisted
+  checkRolesExist
 };
 
 export default verifyRegistration;

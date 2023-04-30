@@ -48,5 +48,3 @@ app.use(function (err, req, res) {
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);
 });
-
-if (module.hot) module.hot.accept();

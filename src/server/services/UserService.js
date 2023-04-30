@@ -10,9 +10,9 @@ class UserService {
     this.roleService = new RoleService(roleModel);
   }
 
-  create = async (username, password) => {
+  create = async (data) => {
     try {
-      const result = await this.model.save({ username, password });
+      const result = await this.model.create(data);
 
       return result;
     } catch (e) {
@@ -100,7 +100,7 @@ class UserService {
 
   assignRoles = async (user, rolesArr) => {
     try {
-      const roles = await this.roleService.getRoles(rolesArr);
+      const roles = await this.roleService.get(rolesArr);
 
       if (!roles) {
         return new NotFoundError('Role(s) not found', { errorCode: 'role' });

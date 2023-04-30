@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import store from 'client/store/createStore';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -12,13 +12,16 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-ReactDOM.render(
-  <Provider store={store}>
-    <React.Fragment>
-      <BrowserRouter basename={isProduction ? baseURL : '/'}>
-        <App />
-      </BrowserRouter>
-    </React.Fragment>
-  </Provider>,
-  document.getElementById('root')
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <React.Fragment>
+        <BrowserRouter basename={isProduction ? baseURL : '/'}>
+          <App />
+        </BrowserRouter>
+      </React.Fragment>
+    </Provider>
+  </React.StrictMode>
 );

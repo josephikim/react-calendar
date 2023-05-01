@@ -4,10 +4,7 @@ class RoleService {
   }
 
   create = async (name) => {
-    await this.model.create({ name }).then((e, role) => {
-      if (e) {
-        throw e;
-      }
+    await this.model.create({ name }).then((role) => {
       console.log(`Created role: ${role.name}`);
     });
   };

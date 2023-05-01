@@ -7,17 +7,17 @@ const { TokenExpiredError } = jwt;
 
 const catchError = (e, res) => {
   if (e instanceof TokenExpiredError) {
-    return res.status(401).send({ message: 'Unauthorized! Access Token was expired!' });
+    return res.status(401).send({ message: 'Unauthorized! Access Token was expired!', errorCode: 'accesstoken' });
   }
 
-  return res.sendStatus(401).send({ message: 'Unauthorized!' });
+  return res.sendStatus(401).send({ message: 'Unauthorized!', errorCode: 'accesstoken' });
 };
 
 const verifyToken = (req, res, next) => {
   const token = req.headers['x-access-token'];
 
   if (!token) {
-    return res.status(403).send({ message: 'No token provided!' });
+    return res.status(403).send({ message: 'No token provided!', errorCode: 'accesstoken' });
   }
 
   jwt.verify(token, process.env.JWT_SECRET_KEY, (e, decoded) => {
@@ -25,7 +25,7 @@ const verifyToken = (req, res, next) => {
       return catchError(e, res);
     }
     req.id = decoded.id;
-    next();
+    return next();
   });
 };
 
@@ -46,13 +46,11 @@ const isAdmin = (req, res, next) => {
 
         for (let i = 0; i < roles.length; i++) {
           if (roles[i].name === 'admin') {
-            next();
-            return;
+            return next();
           }
         }
 
-        res.status(403).send({ message: 'Require Admin Role!' });
-        return;
+        return res.status(403).send({ message: 'Require Admin Role!', errorCode: 'role' });
       }
     );
   });
@@ -75,13 +73,11 @@ const isModerator = (req, res, next) => {
 
         for (let i = 0; i < roles.length; i++) {
           if (roles[i].name === 'moderator') {
-            next();
-            return;
+            return next();
           }
         }
 
-        res.status(403).send({ message: 'Require Moderator Role!' });
-        return;
+        return res.status(403).send({ message: 'Require Moderator Role!', errorCode: 'role' });
       }
     );
   });

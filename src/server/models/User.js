@@ -51,13 +51,11 @@ userSchema.pre('save', async function (next) {
 // schema middleware to apply after saving
 const handleE11000 = (error, res, next) => {
   if (error.name === 'MongoError' && error.code === 11000) {
-    next(
-      new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
-        errorCode: 'username'
-      })
-    );
+    throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
+      errorCode: 'username'
+    });
   } else {
-    next();
+    return next();
   }
 };
 

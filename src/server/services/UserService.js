@@ -103,7 +103,7 @@ class UserService {
       const roles = await this.roleService.get(rolesArr);
 
       if (!roles) {
-        return new NotFoundError('Role(s) not found', { errorCode: 'role' });
+        throw new NotFoundError('Role(s) not found', { errorCode: 'role' });
       }
 
       user.roles = roles.map((role) => role.id);

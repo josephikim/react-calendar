@@ -17,7 +17,7 @@ class UserController {
 
       await this.service.assignRoles(user, roles).then(next());
     } catch (e) {
-      next(e);
+      return next(e);
     }
   };
 
@@ -28,7 +28,7 @@ class UserController {
 
       await res.status(response.statusCode).json(response);
     } catch (e) {
-      next(e);
+      return next(e);
     }
   };
 

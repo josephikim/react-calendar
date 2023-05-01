@@ -19,15 +19,19 @@ const checkDuplicateUsername = async (req, res, next) => {
 };
 
 const checkRolesExist = (req, res, next) => {
-  if (req.body.roles) {
+  // Attaching roles to registration request is optional
+  if (!req.body.roles) return next();
+
+  // Check attached roles
+  try {
     for (let i = 0; i < req.body.roles.length; i++) {
       if (!ROLES.includes(req.body.roles[i])) {
-        return next(new BadRequestError(`Role ${req.body.roles[i]} does not exist!`, { errorCode: 'roles' }));
+        throw new BadRequestError(`Role ${req.body.roles[i]} does not exist!`, { errorCode: 'role' });
       }
     }
+  } catch (e) {
+    return next(e);
   }
-
-  next();
 };
 
 const verifyRegistration = {

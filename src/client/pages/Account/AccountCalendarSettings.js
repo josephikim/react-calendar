@@ -171,13 +171,17 @@ class AccountCalendarSettings extends Component {
           alert('New calendar created!');
         })
         .catch((e) => {
-          const error = e.response ? e.response.data : e;
-          alert(`Error creating calendar: ${error.message}`);
-          if (error.errorCode && error.errorCode === 'calendar') {
+          const status = e.status;
+          const name = e.data.name;
+          const message = e.data.message ?? e.statusText;
+          alert(`${status} ${name}: ${message}`);
+
+          // Update state to reflect response errors
+          if (e.data.errorCode && ['calendar'].includes(e.data.errorCode)) {
             this.setState((state) => ({
               newCalendar: {
                 ...state.newCalendar,
-                error: error.message
+                error: e.message
               }
             }));
           }

@@ -90,14 +90,17 @@ class LoginForm extends Component {
       };
 
       this.props.loginUser(data).catch((e) => {
-        const error = e.response ? e.response.data : e;
-        alert(`${error.name}: ${error.message}`);
+        const status = e.status;
+        const name = e.data.name;
+        const message = e.data.message ?? e.statusText;
+        alert(`${status} ${name}: ${message}`);
 
-        if (error.errorCode && ['username', 'password'].includes(error.errorCode)) {
+        // Update state to reflect response errors
+        if (e.data.errorCode && ['username', 'password'].includes(e.data.errorCode)) {
           this.setState((state) => ({
-            [error.errorCode]: {
-              ...state[error.errorCode],
-              error: error.message
+            [e.data.errorCode]: {
+              ...state[e.data.errorCode],
+              error: e.message
             }
           }));
         }

@@ -69,6 +69,6 @@ export const registerUser = (data) => async (dispatch) => {
       dispatch(refreshTokenUpdated(refreshToken));
     });
   } catch (e) {
-    return Promise.reject(e);
+    return Promise.reject(e.response);
   }
 };

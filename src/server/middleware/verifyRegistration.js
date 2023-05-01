@@ -11,9 +11,7 @@ const checkDuplicateUsername = async (req, res, next) => {
     });
 
     if (user) {
-      return next(new BadRequestError('Username is already in use', { errorCode: 'username' }));
-    } else {
-      return next();
+      throw new BadRequestError('Username is already in use', { errorCode: 'username' });
     }
   } catch (e) {
     return next(e);

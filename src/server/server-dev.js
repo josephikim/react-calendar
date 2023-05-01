@@ -29,20 +29,22 @@ app.get('*', (req, res) => {
 });
 
 // Global error handler
-app.use(function (err, req, res) {
+app.use(function (err, req, res, next) {
+  res.header('Content-Type', 'application/json');
+
+  const status = err.status || 400;
+
   const response = {
-    message: err.message
+    name: err.name,
+    message: err.message ?? ''
   };
 
   if (err instanceof UserFacingError || err instanceof DatabaseError) {
     for (const [key, value] of Object.entries(err)) {
       response[key] = value;
     }
-    res.status(err.statusCode).send(response);
-  } else {
-    response.name = err.name;
-    res.status(500).send(response);
   }
+  res.status(status).send(response);
 });
 
 app.listen(PORT, () => {

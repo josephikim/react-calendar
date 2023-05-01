@@ -83,24 +83,29 @@ class RegisterForm extends Component {
 
     if ([usernameError, passwordError, passwordConfirmError].every((e) => e === false)) {
       // no input errors, submit the form
-      const data = {
-        username: username.value,
-        password: password.value
-      };
+      try {
+        const data = {
+          username: username.value,
+          password: password.value
+        };
 
-      this.props.registerUser(data).catch((e) => {
-        const error = e.response ? e.response.data : e;
-        alert(`${error.name}: ${error.message}`);
+        await this.props.registerUser(data);
+      } catch (e) {
+        const status = e.status;
+        const name = e.data.name;
+        const message = e.data.message ?? e.statusText;
+        alert(`${status} ${name}: ${message}`);
 
-        if (error.errorCode && ['username', 'password'].includes(error.errorCode)) {
+        // Update state to reflect response errors
+        if (e.data.errorCode && ['username', 'password'].includes(e.data.errorCode)) {
           this.setState((state) => ({
-            [error.errorCode]: {
-              ...state[error.errorCode],
-              error: error.message
+            [e.data.errorCode]: {
+              ...state[e.data.errorCode],
+              error: e.message
             }
           }));
         }
-      });
+      }
     } else {
       // update state with input errors
       this.setState((state) => ({

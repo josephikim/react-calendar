@@ -1,7 +1,7 @@
 import { ValidationError } from 'mongoose';
 import db from 'server/models';
 
-const Role = db.role;
+const Role = db.Role;
 
 describe('Validating role', () => {
   it('Should return an error if name property is missing', async () => {

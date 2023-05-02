@@ -1,12 +1,9 @@
 const webpack = require('webpack');
 const path = require('path');
-const { merge } = require('webpack-merge');
 const Dotenv = require('dotenv-webpack');
 const nodeExternals = require('webpack-node-externals');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-const commonClientConfig = require('./webpack.common.js');
 
 const client = {
   name: 'client',
@@ -21,6 +18,23 @@ const client = {
   module: {
     rules: [
       {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader'
+        }
+      },
+      {
+        // Loads the javacript into html template provided.
+        // Entry point is set below in HtmlWebPackPlugin in Plugins
+        test: /\.html$/,
+        loader: 'html-loader'
+      },
+      {
         test: /\.(png|svg|jpg|gif)$/,
         use: {
           loader: 'file-loader',
@@ -33,7 +47,8 @@ const client = {
     ]
   },
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'src')]
+    modules: ['node_modules', path.join(__dirname, 'src')],
+    extensions: ['.js', '.jsx', '.json']
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
@@ -60,6 +75,17 @@ const server = {
     path: path.resolve('./build'),
     filename: 'server.js'
   },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader'
+        }
+      }
+    ]
+  },
   resolve: {
     modules: ['node_modules', path.join(__dirname, 'src')]
   },
@@ -77,4 +103,4 @@ const server = {
   }
 };
 
-module.exports = [merge(commonClientConfig, client), server];
+module.exports = [client, server];

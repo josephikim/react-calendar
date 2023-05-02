@@ -4,7 +4,7 @@ import { DuplicateKeyError } from 'server/utils/databaseErrors';
 
 const SALT_WORK_FACTOR = 10;
 
-const userSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -28,13 +28,13 @@ const userSchema = new mongoose.Schema(
 );
 
 // preserving isNew state for 'post' middleware
-userSchema.pre('save', function (next) {
+schema.pre('save', function (next) {
   this.wasNew = this.isNew;
   next();
 });
 
 // schema middleware to apply before saving
-userSchema.pre('save', async function (next) {
+schema.pre('save', async function (next) {
   // only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) return next();
 
@@ -59,17 +59,18 @@ const handleE11000 = (error, res, next) => {
   }
 };
 
-userSchema.post('save', handleE11000);
-userSchema.post('findOneAndUpdate', handleE11000);
+schema.post('save', handleE11000);
+schema.post('findOneAndUpdate', handleE11000);
 
-userSchema.statics.findByUsername = (username) => {
+schema.statics.findByUsername = async function (username) {
+  console.log({ username });
   return this.findOne({ username });
 };
 
-userSchema.methods.validatePassword = async function validatePassword(candidatePassword) {
+schema.methods.validatePassword = async function validatePassword(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', schema);
 
 export default User;

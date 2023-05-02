@@ -13,7 +13,7 @@ class UserController {
     try {
       const user = await this.service.create(req.body);
 
-      const roles = req.body.roles ?? ['user'];
+      const roles = req.body?.roles ?? ['user'];
 
       await this.service.assignRoles(user, roles).then(next());
     } catch (e) {
@@ -24,7 +24,7 @@ class UserController {
   // Look up user, validate pw, create refresh token
   login = async (req, res, next) => {
     try {
-      const response = await this.service.login(req.body);
+      const response = await this.service.login(req.body.username, req.body.password);
 
       await res.status(response.statusCode).json(response);
     } catch (e) {

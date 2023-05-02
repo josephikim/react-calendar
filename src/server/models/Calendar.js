@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 import { DuplicateKeyError } from 'server/utils/databaseErrors';
 
-const calendarSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -38,12 +38,12 @@ const handleE11000 = (error, res, next) => {
   }
 };
 
-calendarSchema.post('save', handleE11000);
-calendarSchema.post('findOneAndUpdate', handleE11000);
+schema.post('save', handleE11000);
+schema.post('findOneAndUpdate', handleE11000);
 
 // schema index
-calendarSchema.index({ user: 1, name: 1 }, { unique: true });
+schema.index({ user: 1, name: 1 }, { unique: true });
 
-const Calendar = mongoose.model('Calendar', calendarSchema);
+const Calendar = mongoose.model('Calendar', schema);
 
 export default Calendar;

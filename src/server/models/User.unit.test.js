@@ -1,7 +1,7 @@
 import mongoose, { ValidationError } from 'mongoose';
 import db from 'server/models';
 
-const User = db.user;
+const User = db.User;
 
 describe('Validating user', () => {
   it('Should return an error if username property is missing', async () => {

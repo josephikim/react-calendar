@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const refreshTokenSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   token: {
     type: String,
     required: [true, 'Enter a name.']
@@ -16,10 +16,10 @@ const refreshTokenSchema = new mongoose.Schema({
   }
 });
 
-refreshTokenSchema.statics.verifyExpiration = (token) => {
+schema.statics.verifyExpiration = (token) => {
   return token.expiryDate.getTime() < new Date().getTime();
 };
 
-const RefreshToken = mongoose.model('RefreshToken', refreshTokenSchema);
+const RefreshToken = mongoose.model('RefreshToken', schema);
 
 export default RefreshToken;

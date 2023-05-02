@@ -1,7 +1,7 @@
 import mongoose, { ValidationError } from 'mongoose';
 import db from 'server/models';
 
-const RefreshToken = db.refreshToken;
+const RefreshToken = db.RefreshToken;
 
 describe('Validating refresh token', () => {
   it('Should return an error if token property is missing', async () => {

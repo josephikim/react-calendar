@@ -5,8 +5,6 @@ import Event from './Event';
 import Calendar from './Calendar';
 import RefreshToken from './RefreshToken';
 
-mongoose.Promise = global.Promise;
-
 const db = {
   mongoose,
   User,
@@ -14,7 +12,7 @@ const db = {
   Event,
   Calendar,
   RefreshToken,
-  ROLES: ['user', 'admin', 'moderator']
+  roles: ['user', 'admin', 'moderator']
 };
 
 export default db;

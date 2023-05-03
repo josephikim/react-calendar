@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import RefreshTokenService from './RefreshTokenService';
 import RoleService from './RoleService';
 import { AuthorizationError, NotFoundError } from 'server/utils/userFacingErrors';
+import HttpResponse from '../utils/httpResponse';
 
 class UserService {
   constructor(model, refreshTokenModel, roleModel) {
@@ -43,14 +44,15 @@ class UserService {
           expiresIn: Number(process.env.JWT_EXPIRATION)
         });
 
-        const refreshToken = await this.refreshTokenService.create(user.id);
-
-        const result = {
-          accessToken,
-          refreshToken
+        let response = {
+          accessToken
         };
 
-        return result;
+        await this.refreshTokenService.create(user.id).then((refreshToken) => {
+          response.refreshToken = refreshToken.token;
+        });
+
+        return new HttpResponse(response);
       } catch (e) {
         throw e;
       }

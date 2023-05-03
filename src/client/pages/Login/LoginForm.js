@@ -91,7 +91,7 @@ class LoginForm extends Component {
 
       this.props.loginUser(data).catch((e) => {
         const status = e.status;
-        const name = e.data.name;
+        const name = e.data.name ?? 'Unknown Error';
         const message = e.data.message ?? e.statusText;
         alert(`${status} ${name}: ${message}`);
 

@@ -26,7 +26,7 @@ class UserController {
     try {
       const response = await this.service.login(req.body.username, req.body.password);
 
-      return res.status(200).send(response);
+      await res.status(response.statusCode).send(response);
     } catch (e) {
       return next(e);
     }

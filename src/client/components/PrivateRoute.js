@@ -4,8 +4,7 @@ import { useSelector } from 'react-redux';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const accessToken = useSelector((state) => state.auth.accessToken);
-  const userId = useSelector((state) => state.auth.userId);
-  const isAuthenticated = accessToken && userId;
+  const isAuthenticated = !!accessToken;
 
   return (
     // Show the component only when the user is logged in

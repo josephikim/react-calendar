@@ -10,14 +10,13 @@ class RefreshTokenService {
     try {
       const expiredAt = new Date();
 
-      expiredAt.setSeconds(expiredAt.getSeconds() + process.env.JWT_REFRESH_EXPIRATION);
+      expiredAt.setSeconds(expiredAt.getSeconds() + Number(process.env.JWT_REFRESH_EXPIRATION));
 
       const _token = uuidv4();
 
       const _obj = {
         token: _token,
         user: userId,
-        // expiryDate: expiredAt.getTime()
         expiryDate: expiredAt
       };
 

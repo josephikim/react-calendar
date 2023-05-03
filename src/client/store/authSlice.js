@@ -3,8 +3,7 @@ import { userApi } from 'client/utils/axios';
 
 export const initialState = {
   accessToken: null,
-  refreshToken: null,
-  userId: null
+  refreshToken: null
 };
 
 const authSlice = createSlice({
@@ -16,14 +15,11 @@ const authSlice = createSlice({
     },
     refreshTokenUpdated(state, action) {
       state.refreshToken = action.payload;
-    },
-    userIdUpdated(state, action) {
-      state.userId = action.payload;
     }
   }
 });
 
-export const { accessTokenUpdated, refreshTokenUpdated, userIdUpdated } = authSlice.actions;
+export const { accessTokenUpdated, refreshTokenUpdated } = authSlice.actions;
 
 export default authSlice.reducer;
 
@@ -35,16 +31,11 @@ export const logoutUser = () => (dispatch) => {
 
 export const loginUser = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post('/login', data);
-
-    return Promise.resolve(res.data).then((res) => {
-      const userId = res.id;
-      const accessToken = res.accessToken;
-      const refreshToken = res.refreshToken;
-
-      dispatch(userIdUpdated(userId));
-      dispatch(accessTokenUpdated(accessToken));
-      dispatch(refreshTokenUpdated(refreshToken));
+    await userApi.post('/login', data).then((res) => {
+      return Promise.resolve(res.data).then((res) => {
+        dispatch(accessTokenUpdated(res.data.accessToken));
+        dispatch(refreshTokenUpdated(res.data.refreshToken));
+      });
     });
   } catch (e) {
     if (e.response && e.response.data.name === 'AuthorizationError') {
@@ -60,11 +51,9 @@ export const registerUser = (data) => async (dispatch) => {
     const res = await userApi.post('/register', data);
 
     return Promise.resolve(res.data).then((res) => {
-      const userId = res.id;
       const accessToken = res.accessToken;
       const refreshToken = res.refreshToken;
 
-      dispatch(userIdUpdated(userId));
       dispatch(accessTokenUpdated(accessToken));
       dispatch(refreshTokenUpdated(refreshToken));
     });

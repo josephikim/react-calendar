@@ -140,11 +140,9 @@ export const logoutUser = () => (dispatch) => {
 
 export const loginUser = (data) => async (dispatch) => {
   try {
-    await userApi.post('/login', data).then((res) => {
-      return Promise.resolve(res.data).then((res) => {
-        dispatch(accessTokenUpdated(res.data.accessToken));
-        dispatch(refreshTokenUpdated(res.data.refreshToken));
-      });
+    userApi.post('/login', data).then((res) => {
+      dispatch(accessTokenUpdated(res.data.accessToken));
+      dispatch(refreshTokenUpdated(res.data.refreshToken));
     });
   } catch (e) {
     if (e.response && e.response.data.name === 'AuthorizationError') {
@@ -157,14 +155,9 @@ export const loginUser = (data) => async (dispatch) => {
 
 export const registerUser = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post('/register', data);
-
-    return Promise.resolve(res.data).then((res) => {
-      const accessToken = res.accessToken;
-      const refreshToken = res.refreshToken;
-
-      dispatch(accessTokenUpdated(accessToken));
-      dispatch(refreshTokenUpdated(refreshToken));
+    userApi.post('/register', data).then((res) => {
+      dispatch(accessTokenUpdated(res.data.accessToken));
+      dispatch(refreshTokenUpdated(res.data.refreshToken));
     });
   } catch (e) {
     return Promise.reject(e.response);

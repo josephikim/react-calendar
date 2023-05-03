@@ -5,6 +5,8 @@ import { defaultView } from 'config/appConfig';
 
 export const initialState = {
   username: null,
+  accessToken: null,
+  refreshToken: null,
   calendars: [],
   calendarSlotSelection: {},
   calendarEventSelection: {},
@@ -18,6 +20,12 @@ const userSlice = createSlice({
   reducers: {
     usernameUpdated(state, action) {
       state.username = action.payload;
+    },
+    accessTokenUpdated(state, action) {
+      state.accessToken = action.payload;
+    },
+    refreshTokenUpdated(state, action) {
+      state.refreshToken = action.payload;
     },
     calendarsUpdated(state, action) {
       state.calendars = [...action.payload];
@@ -61,6 +69,8 @@ const userSlice = createSlice({
 
 export const {
   usernameUpdated,
+  accessTokenUpdated,
+  refreshTokenUpdated,
   calendarsUpdated,
   calendarAdded,
   calendarUpdated,
@@ -122,9 +132,48 @@ export const calendarEventsWithDateObjects = createSelector([calendarEventsSelec
 // Bound action creators
 //
 
-export const retrieveUserData = (userId) => async (dispatch) => {
+export const logoutUser = () => (dispatch) => {
+  dispatch({
+    type: 'user/userLoggedOut'
+  });
+};
+
+export const loginUser = (data) => async (dispatch) => {
   try {
-    const res = await userApi.get('/data', { params: { userId } });
+    await userApi.post('/login', data).then((res) => {
+      return Promise.resolve(res.data).then((res) => {
+        dispatch(accessTokenUpdated(res.data.accessToken));
+        dispatch(refreshTokenUpdated(res.data.refreshToken));
+      });
+    });
+  } catch (e) {
+    if (e.response && e.response.data.name === 'AuthorizationError') {
+      // unauthorize user
+      dispatch(accessTokenUpdated(null));
+    }
+    return Promise.reject(e);
+  }
+};
+
+export const registerUser = (data) => async (dispatch) => {
+  try {
+    const res = await userApi.post('/register', data);
+
+    return Promise.resolve(res.data).then((res) => {
+      const accessToken = res.accessToken;
+      const refreshToken = res.refreshToken;
+
+      dispatch(accessTokenUpdated(accessToken));
+      dispatch(refreshTokenUpdated(refreshToken));
+    });
+  } catch (e) {
+    return Promise.reject(e.response);
+  }
+};
+
+export const retrieveUserData = () => async (dispatch) => {
+  try {
+    const res = await userApi.get('/data');
 
     return Promise.resolve(res.data).then((res) => {
       dispatch(usernameUpdated(res.username));

@@ -1,6 +1,5 @@
 import _ from 'lodash';
 
-import { initialState as authInitialState } from './authSlice';
 import { initialState as userInitialState } from './userSlice';
 
 export const loadState = () => {
@@ -12,11 +11,10 @@ export const loadState = () => {
     }
 
     const json = JSON.parse(serializedState);
-    const isAuthStateValid = _.isEqual(Object.keys(json.auth), Object.keys(authInitialState));
     const isUserStateValid = _.isEqual(Object.keys(json.user), Object.keys(userInitialState));
-    const isRootStateValid = _.isEqual(Object.keys(json).sort(), ['auth', 'user'].sort());
+    const isRootStateValid = _.isEqual(Object.keys(json).sort(), ['user']);
 
-    if (!isAuthStateValid || !isUserStateValid || !isRootStateValid) {
+    if (!isUserStateValid || !isRootStateValid) {
       return undefined;
     } else {
       return json;

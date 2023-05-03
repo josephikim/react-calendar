@@ -4,7 +4,7 @@ import { Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { validateFields } from 'client/validation.js';
-import { registerUser } from 'client/store/authSlice';
+import { registerUser } from 'client/store/userSlice';
 
 import './RegisterForm.css';
 

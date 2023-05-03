@@ -161,7 +161,6 @@ class AccountCalendarSettings extends Component {
     if (newCalendarError === false) {
       // no input errors, submit the form
       const data = {
-        user: this.props.userId,
         name: newCalendar.value.trim()
       };
 
@@ -299,7 +298,6 @@ class AccountCalendarSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userId: state.auth.userId,
     calendars: state.user.calendars
   };
 };

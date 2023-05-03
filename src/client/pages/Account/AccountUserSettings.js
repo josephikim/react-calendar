@@ -90,7 +90,6 @@ class AccountUserSettings extends Component {
     if (usernameError === false) {
       // no input errors, submit the form
       const data = {
-        userId: this.props.userId,
         username: username.value
       };
 
@@ -150,7 +149,6 @@ class AccountUserSettings extends Component {
     if (passwordError === false) {
       // no input errors, submit the form
       const payload = {
-        userId: this.props.userId,
         password: password.value,
         newPassword: newPassword.value
       };
@@ -307,7 +305,6 @@ class AccountUserSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userId: state.auth.userId,
     username: state.user.username
   };
 };

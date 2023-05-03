@@ -4,7 +4,7 @@ import { Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { validateFields } from 'client/validation.js';
-import { loginUser } from 'client/store/authSlice';
+import { loginUser } from 'client/store/userSlice';
 
 import './LoginForm.css';
 

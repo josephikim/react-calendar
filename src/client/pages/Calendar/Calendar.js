@@ -32,7 +32,7 @@ class Calendar extends Component {
   }
 
   componentDidMount = () => {
-    Promise.all([this.props.retrieveUserData(this.props.userId), this.props.initializeCalendarView()]);
+    Promise.all([this.props.retrieveUserData(), this.props.initializeCalendarView()]);
   };
 
   componentDidUpdate = () => {
@@ -173,7 +173,6 @@ class Calendar extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userId: state.auth.userId,
     username: state.user.username,
     calendars: state.user.calendars,
     calendarSelectionWithSlotAndEvent: calendarSelectionWithSlotAndEvent(state),

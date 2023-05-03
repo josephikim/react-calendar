@@ -9,13 +9,9 @@ import './Account.css';
 import ContentWrapper from 'client/components/ContentWrapper';
 
 const Account = () => {
-  const userId = useSelector((state) => state.auth.userId);
-  const username = useSelector((state) => state.user.username);
   const calendars = useSelector((state) => state.user.calendars);
 
-  const isAccountDataLoaded = userId && username && calendars.length > 0;
-
-  if (isAccountDataLoaded) {
+  if (calendars.length > 0) {
     return (
       <div className="Account">
         <Container>

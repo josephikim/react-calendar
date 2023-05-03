@@ -2,7 +2,6 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { loadState, saveState } from './localStorage';
 import throttle from 'lodash/throttle';
 
-import authReducer from './authSlice';
 import userReducer from './userSlice';
 
 const doCreateStore = () => {
@@ -11,12 +10,11 @@ const doCreateStore = () => {
   const preloadedState = persistedState ? persistedState : {};
 
   const allReducers = combineReducers({
-    auth: authReducer,
     user: userReducer
   });
 
   const rootReducer = (state, action) => {
-    if (action.type === 'auth/userLoggedOut') {
+    if (action.type === 'user/userLoggedOut') {
       state = undefined;
     }
 

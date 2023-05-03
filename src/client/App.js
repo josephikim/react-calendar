@@ -12,7 +12,7 @@ import Header from 'client/components/Header';
 import Footer from 'client/components/Footer';
 
 const App = () => {
-  const accessToken = useSelector((state) => state.auth.accessToken);
+  const accessToken = useSelector((state) => state.user.accessToken);
   const isAuthenticated = !!accessToken;
 
   return (

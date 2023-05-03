@@ -46,7 +46,7 @@ const client = {
     ]
   },
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'src')],
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
     extensions: ['.js', '.jsx', '.json']
   },
   plugins: [
@@ -86,7 +86,7 @@ const server = {
     ]
   },
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'src')]
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },
   externals: [nodeExternals()],
   plugins: [

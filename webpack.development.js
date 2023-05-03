@@ -11,7 +11,7 @@ const client = {
   entry: './src/client/index.js',
   devtool: 'inline-source-map',
   devServer: {
-    port: 8080,
+    port: 8081,
     historyApiFallback: true,
     hot: true
   },
@@ -47,7 +47,7 @@ const client = {
     ]
   },
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'src')],
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
     extensions: ['.js', '.jsx', '.json']
   },
   plugins: [
@@ -75,6 +75,7 @@ const server = {
     path: path.resolve('./build'),
     filename: 'server.js'
   },
+  cache: false,
   module: {
     rules: [
       {
@@ -87,7 +88,7 @@ const server = {
     ]
   },
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'src')]
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },
   externals: [nodeExternals({ allowlist: ['webpack/hot/poll?1000'] })],
   plugins: [
@@ -95,12 +96,7 @@ const server = {
       path: '.env.development'
     }),
     new webpack.HotModuleReplacementPlugin()
-  ],
-  node: {
-    global: false,
-    __filename: false,
-    __dirname: false
-  }
+  ]
 };
 
 module.exports = [client, server];

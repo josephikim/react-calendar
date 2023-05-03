@@ -63,7 +63,6 @@ schema.post('save', handleE11000);
 schema.post('findOneAndUpdate', handleE11000);
 
 schema.statics.findByUsername = async function (username) {
-  console.log({ username });
   return this.findOne({ username });
 };
 

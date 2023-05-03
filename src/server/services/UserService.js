@@ -1,4 +1,4 @@
-import { jwt } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import RefreshTokenService from './RefreshTokenService';
 import RoleService from './RoleService';
 import { AuthorizationError, NotFoundError } from 'server/utils/userFacingErrors';
@@ -40,7 +40,7 @@ class UserService {
 
         // If password is valid, create JWT token
         const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY, {
-          expiresIn: process.env.JWT_EXPIRATION
+          expiresIn: Number(process.env.JWT_EXPIRATION)
         });
 
         const refreshToken = await this.refreshTokenService.create(user.id);
@@ -86,7 +86,7 @@ class UserService {
 
       // create new JWT token
       const accessToken = jwt.sign({ id: refreshToken.user.id }, process.env.JWT_SECRET_KEY, {
-        expiresIn: process.env.JWT_EXPIRATION
+        expiresIn: Number(process.env.JWT_EXPIRATION)
       });
 
       return {

@@ -8,7 +8,7 @@ import { UserFacingError, DatabaseError } from './utils/baseErrors';
 import { baseURL } from 'config/appConfig';
 
 const BUILD_DIR = __dirname;
-const HTML_FILE = path.join(BUILD_DIR, 'index.html');
+const HTML_FILE = path.resolve(BUILD_DIR, 'index.html');
 const PORT = process.env.PORT || 3001;
 
 const app = express();

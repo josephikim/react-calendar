@@ -9,6 +9,10 @@ const client = {
   name: 'client',
   target: 'web',
   entry: './src/client/index.js',
+  output: {
+    path: path.resolve(__dirname, 'build'),
+    filename: 'bundle.js'
+  },
   devtool: 'inline-source-map',
   devServer: {
     port: 8081,
@@ -51,15 +55,15 @@ const client = {
     extensions: ['.js', '.jsx', '.json']
   },
   plugins: [
-    new webpack.NoEmitOnErrorsPlugin(),
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css'
-    }),
     new HtmlWebPackPlugin({
       template: 'src/client/index.html',
       filename: './index.html',
       excludeChunks: ['server']
+    }),
+    new webpack.NoEmitOnErrorsPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css'
     }),
     new Dotenv({
       path: '.env.development'

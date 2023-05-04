@@ -50,14 +50,14 @@ const client = {
     extensions: ['.js', '.jsx', '.json']
   },
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css'
-    }),
     new HtmlWebPackPlugin({
       template: 'src/client/index.html',
       filename: './index.html',
       excludeChunks: ['server']
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css'
     }),
     new Dotenv({
       path: '.env.production'

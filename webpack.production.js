@@ -71,7 +71,7 @@ const server = {
   entry: './src/server/server-prod.js',
   devtool: 'source-map',
   output: {
-    path: path.resolve('./build'),
+    path: path.resolve(__dirname, 'build'),
     filename: 'server.js'
   },
   module: {

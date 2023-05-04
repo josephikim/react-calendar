@@ -91,10 +91,11 @@ class UserService {
         expiresIn: Number(process.env.JWT_EXPIRATION)
       });
 
-      return {
+      const response = {
         accessToken,
         refreshToken
       };
+      return new HttpResponse(response);
     } catch (e) {
       throw e;
     }

@@ -32,16 +32,6 @@ class UserController {
     }
   };
 
-  update = async (req, res, next) => {
-    try {
-      const response = await this.service.update(req.body.id, req.body.data);
-
-      return res.status(200).send(response);
-    } catch (e) {
-      return next(e);
-    }
-  };
-
   refreshToken = async (req, res, next) => {
     const { refreshToken: requestToken } = req.body;
 
@@ -52,6 +42,17 @@ class UserController {
 
     try {
       const response = await this.service.refreshToken(requestToken);
+
+      console.log({ response });
+      await res.status(response.status).send(response.data);
+    } catch (e) {
+      return next(e);
+    }
+  };
+
+  update = async (req, res, next) => {
+    try {
+      const response = await this.service.update(req.body.id, req.body.data);
 
       return res.status(200).send(response);
     } catch (e) {

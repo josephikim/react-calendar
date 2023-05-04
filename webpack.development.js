@@ -4,6 +4,7 @@ const Dotenv = require('dotenv-webpack');
 const nodeExternals = require('webpack-node-externals');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 
 const client = {
   name: 'client',
@@ -57,9 +58,11 @@ const client = {
   plugins: [
     new HtmlWebPackPlugin({
       template: 'src/client/index.html',
+      alwaysWriteToDisk: true, // prevents webpack error 'no such file or directory' for in-memory index.html
       filename: './index.html',
       excludeChunks: ['server']
     }),
+    new HtmlWebpackHarddiskPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -76,7 +79,7 @@ const server = {
   target: 'node',
   entry: ['webpack/hot/poll?1000', './src/server/server-dev.js'],
   output: {
-    path: path.resolve('./build'),
+    path: path.resolve(__dirname, 'build'),
     filename: 'server.js'
   },
   cache: false,

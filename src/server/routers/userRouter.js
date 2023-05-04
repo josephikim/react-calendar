@@ -14,10 +14,10 @@ router.post(
 // POST request to login user
 router.post('/login', UserController.login);
 
-// POST request to update user
-router.post('/update', [authJwt.verifyToken], UserController.update);
-
 // POST request to refresh token
 router.post('/refreshtoken', UserController.refreshToken);
+
+// POST request to update user
+router.post('/update', [authJwt.verifyToken], UserController.update);
 
 export default router;

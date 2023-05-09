@@ -35,7 +35,7 @@ const CalendarToggleMenu = () => {
         <CalendarToggleMenuItem
           id={calendar.id}
           key={calendar.id}
-          visilibity={calendar.visilibity}
+          visibility={calendar.visibility}
           name={calendar.name}
           color={calendar.color}
           userDefault={calendar.userDefault}

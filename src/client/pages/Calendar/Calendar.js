@@ -115,7 +115,7 @@ class Calendar extends Component {
 
     const visibleCalendars = this.props.calendars
       .filter((calendar) => calendar.visibility === true)
-      .map((calendar) => calendar._id);
+      .map((calendar) => calendar.id);
 
     const events = this.props.calendarEventsWithDateObjects.filter((event) =>
       visibleCalendars.includes(event.calendarId)

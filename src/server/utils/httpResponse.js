@@ -29,11 +29,19 @@ class HttpResponse {
           if (defaultExclusionsFromResponse.includes(key)) {
             delete data[index][key];
           }
+          if (key === '_id') {
+            data[index]['id'] = data[index][key];
+            delete data[index][key];
+          }
         });
       });
     } else if (typeof data === 'object') {
       Object.keys(data).forEach((key) => {
         if (defaultExclusionsFromResponse.includes(key)) {
+          delete data[key];
+        }
+        if (key === '_id') {
+          data['id'] = data[key];
           delete data[key];
         }
       });

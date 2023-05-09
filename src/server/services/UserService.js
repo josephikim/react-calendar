@@ -118,7 +118,7 @@ class UserService {
       }
 
       const calendarIdArray = calendars.data.map((calendar) => {
-        return calendar._id;
+        return calendar.id;
       });
 
       const events = await this.eventService.getAll(calendarIdArray);

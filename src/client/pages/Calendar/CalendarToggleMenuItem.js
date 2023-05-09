@@ -17,6 +17,7 @@ const CalendarToggleMenuItem = ({ id, visibility, name, color, userDefault, syst
       id,
       visibility
     };
+
     dispatch(calendarUpdated(payload));
   };
 

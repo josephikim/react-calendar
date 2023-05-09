@@ -13,7 +13,7 @@ import {
   retrieveUserData,
   calendarSelectionWithSlotAndEvent,
   calendarEventsWithDateObjects,
-  initializeCalendarView
+  initCalendarUI
 } from 'client/store/userSlice';
 
 import './Calendar.css';
@@ -25,25 +25,18 @@ const localizer = momentLocalizer(moment);
 class Calendar extends Component {
   constructor(...args) {
     super(...args);
-
-    this.state = {
-      isUserDataLoaded: false
-    };
   }
 
   componentDidMount = () => {
-    Promise.all([this.props.retrieveUserData(), this.props.initializeCalendarView()]);
-  };
-
-  componentDidUpdate = () => {
-    const isUserDataLoaded =
-      this.props.username &&
-      this.props.calendars.some((calendar) => calendar.userDefault === true) &&
-      this.props.calendarEventsWithDateObjects.length > 0;
-
-    if (isUserDataLoaded && !this.state.isUserDataLoaded) {
-      this.setState({ isUserDataLoaded: true });
+    // Prevent duplicate initData calls due to double mounting in strict mode
+    if (this.initData) {
+      // already mounted previously
+      return;
     }
+
+    this.initData = [this.props.retrieveUserData(), this.props.initCalendarUI()];
+
+    Promise.all(this.initData);
   };
 
   eventStyleGetter = (event) => {
@@ -117,26 +110,22 @@ class Calendar extends Component {
   };
 
   render() {
-    let visibleCalendars = [];
-    let visibleEvents = [];
-    const isUserDataLoaded = this.state.isUserDataLoaded;
+    // returns array of calendar IDs
+    const isDefaultCalendarLoaded = this.props.calendars.some((calendar) => calendar.userDefault === true);
 
-    if (isUserDataLoaded) {
-      // returns array of calendar IDs
-      visibleCalendars = this.props.calendars
-        .filter((calendar) => calendar.visibility === true)
-        .map((calendar) => calendar.id);
+    const visibleCalendars = this.props.calendars
+      .filter((calendar) => calendar.visibility === true)
+      .map((calendar) => calendar._id);
 
-      visibleEvents = this.props.calendarEventsWithDateObjects.filter((event) =>
-        visibleCalendars.includes(event.calendarId)
-      );
-    }
+    const events = this.props.calendarEventsWithDateObjects.filter((event) =>
+      visibleCalendars.includes(event.calendarId)
+    );
 
-    if (isUserDataLoaded) {
-      return (
-        <div className="Calendar">
-          <Container>
-            <ContentWrapper>
+    return (
+      <div className="Calendar">
+        <Container>
+          <ContentWrapper>
+            {isDefaultCalendarLoaded ? (
               <Row>
                 <Col xs={12} lg={2}>
                   <CalendarToggleMenu />
@@ -145,7 +134,7 @@ class Calendar extends Component {
                   <ReactBigCalendar
                     selectable
                     localizer={localizer}
-                    events={visibleEvents}
+                    events={events}
                     defaultView="month"
                     onView={(view) => this.handleView(view)}
                     defaultDate={new Date()}
@@ -161,13 +150,13 @@ class Calendar extends Component {
                   <CalendarEventForm />
                 </Col>
               </Row>
-            </ContentWrapper>
-          </Container>
-        </div>
-      );
-    } else {
-      return <div>Loading page...</div>;
-    }
+            ) : (
+              <div>loading calendar...</div>
+            )}
+          </ContentWrapper>
+        </Container>
+      </div>
+    );
   }
 }
 
@@ -185,7 +174,7 @@ const mapActionsToProps = {
   onSelectEvent,
   onSelectView,
   retrieveUserData,
-  initializeCalendarView
+  initCalendarUI
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(Calendar);

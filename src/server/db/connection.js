@@ -37,7 +37,8 @@ mongoose
       if (!e && count === 0) {
         const data = {
           name: 'US Holidays',
-          user: null
+          user: null,
+          visibility: true
         };
 
         calendarService.create(data);

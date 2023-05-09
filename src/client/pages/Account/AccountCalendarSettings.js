@@ -161,7 +161,8 @@ class AccountCalendarSettings extends Component {
     if (newCalendarError === false) {
       // no input errors, submit the form
       const data = {
-        name: newCalendar.value.trim()
+        name: newCalendar.value.trim(),
+        visibility: true
       };
 
       this.props

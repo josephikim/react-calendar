@@ -1,14 +1,18 @@
 import jwt from 'jsonwebtoken';
 import RefreshTokenService from './RefreshTokenService';
 import RoleService from './RoleService';
+import CalendarService from './CalendarService';
+import EventService from './EventService';
 import { AuthorizationError, NotFoundError } from 'server/utils/userFacingErrors';
-import HttpResponse from '../utils/httpResponse';
+import HttpResponse from 'server/utils/httpResponse';
 
 class UserService {
-  constructor(model, refreshTokenModel, roleModel) {
+  constructor(model, refreshTokenModel, roleModel, calendarModel, eventModel) {
     this.model = model;
     this.refreshTokenService = new RefreshTokenService(refreshTokenModel);
     this.roleService = new RoleService(roleModel);
+    this.calendarService = new CalendarService(calendarModel);
+    this.eventService = new EventService(eventModel);
   }
 
   create = async (data) => {
@@ -45,6 +49,7 @@ class UserService {
         });
 
         let response = {
+          username,
           accessToken
         };
 
@@ -56,22 +61,6 @@ class UserService {
       } catch (e) {
         throw e;
       }
-    }
-  };
-
-  update = async (userId, data) => {
-    try {
-      const result = await this.model.findByIdAndUpdate(
-        {
-          id: userId
-        },
-        data,
-        { new: true }
-      );
-
-      return result;
-    } catch (e) {
-      throw e;
     }
   };
 
@@ -112,6 +101,48 @@ class UserService {
       user.roles = roles.map((role) => role.id);
 
       const result = await user.save();
+
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  getData = async (userId) => {
+    try {
+      // Get ids of system and user calendars
+      const calendars = await this.calendarService.getAll(userId);
+
+      if (!calendars.data || calendars.data.length < 1) {
+        throw new NotFoundError('No matching calendar(s) found', { errorCode: 'calendar' });
+      }
+
+      const calendarIdArray = calendars.data.map((calendar) => {
+        return calendar._id;
+      });
+
+      const events = await this.eventService.getAll(calendarIdArray);
+
+      const response = {
+        calendars: calendars.data,
+        events: events.data
+      };
+
+      return new HttpResponse(response);
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  update = async (userId, data) => {
+    try {
+      const result = await this.model.findByIdAndUpdate(
+        {
+          id: userId
+        },
+        data,
+        { new: true }
+      );
 
       return result;
     } catch (e) {

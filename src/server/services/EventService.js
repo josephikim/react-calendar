@@ -1,3 +1,6 @@
+import mongoose from 'mongoose';
+import HttpResponse from 'server/utils/httpResponse';
+
 class EventService {
   constructor(model) {
     this.model = model;
@@ -14,20 +17,21 @@ class EventService {
   };
 
   // get all user and system events
-  getAll = async (id) => {
-    try {
-      const calendars = await this.calendarService.getAll(id);
+  getAll = async (calendarIdArray) => {
+    const objectIds = calendarIdArray.map((calendarId) => {
+      return mongoose.Types.ObjectId(calendarId);
+    });
 
+    try {
       const result = await this.model
         .find({
           calendarId: {
-            $in: calendars
+            $in: objectIds
           }
         })
-        .select('-__v')
         .sort({ start: -1 });
 
-      return result;
+      return new HttpResponse(result);
     } catch (e) {
       throw e;
     }

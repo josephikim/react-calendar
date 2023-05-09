@@ -141,6 +141,7 @@ export const logoutUser = () => (dispatch) => {
 export const loginUser = (data) => async (dispatch) => {
   try {
     userApi.post('/login', data).then((res) => {
+      dispatch(usernameUpdated(res.data.username));
       dispatch(accessTokenUpdated(res.data.accessToken));
       dispatch(refreshTokenUpdated(res.data.refreshToken));
     });
@@ -156,6 +157,7 @@ export const loginUser = (data) => async (dispatch) => {
 export const registerUser = (data) => async (dispatch) => {
   try {
     userApi.post('/register', data).then((res) => {
+      dispatch(usernameUpdated(res.data.username));
       dispatch(accessTokenUpdated(res.data.accessToken));
       dispatch(refreshTokenUpdated(res.data.refreshToken));
     });
@@ -166,12 +168,9 @@ export const registerUser = (data) => async (dispatch) => {
 
 export const retrieveUserData = () => async (dispatch) => {
   try {
-    const res = await userApi.get('/data');
-
-    return Promise.resolve(res.data).then((res) => {
-      dispatch(usernameUpdated(res.username));
-      dispatch(calendarsUpdated(res.calendars));
-      dispatch(calendarEventsUpdated(res.calendarEvents));
+    userApi.get('/data').then((res) => {
+      dispatch(calendarsUpdated(res.data.calendars));
+      dispatch(calendarEventsUpdated(res.data.events));
     });
   } catch (e) {
     return Promise.reject(e);
@@ -319,9 +318,9 @@ export const onSelectView = (view) => (dispatch) => {
   dispatch(calendarViewUpdated(view));
 };
 
-export const initializeCalendarView = () => async (dispatch) => {
+export const initCalendarUI = () => async (dispatch) => {
   try {
-    // Initial calendar slot
+    // Set initial calendar slot
     const start = new Date();
     const end = new Date();
     start.setHours(start.getHours() + 1, 0, 0, 0);

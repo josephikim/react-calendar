@@ -24,6 +24,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: true,
     default: false
+  },
+  visibility: {
+    type: Boolean,
+    required: true
   }
 });
 

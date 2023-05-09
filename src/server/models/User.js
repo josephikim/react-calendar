@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import Calendar from './Calendar';
 import { DuplicateKeyError } from 'server/utils/databaseErrors';
+import { userColors } from '../../config/appConfig';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -48,7 +50,7 @@ schema.pre('save', async function (next) {
   }
 });
 
-// schema middleware to apply after saving
+// schema middleware to check for duplicate keys
 const handleE11000 = (error, res, next) => {
   if (error.name === 'MongoError' && error.code === 11000) {
     throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
@@ -61,6 +63,39 @@ const handleE11000 = (error, res, next) => {
 
 schema.post('save', handleE11000);
 schema.post('findOneAndUpdate', handleE11000);
+
+// Create user default calendar on user creation
+schema.post('save', async function () {
+  if (this.id && this.wasNew) {
+    Calendar.find(
+      {
+        user: this.id,
+        userDefault: true
+      },
+      (e, calendar) => {
+        if (e) {
+          return next(e);
+        }
+
+        if (calendar.length > 0) {
+          throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
+            errorCode: 'calendar'
+          });
+        }
+
+        // Create default user calendar
+        return new Calendar({
+          name: this.username,
+          color: `#${userColors[0]}`,
+          user: this.id,
+          userDefault: true,
+          systemCalendar: false,
+          visibility: true
+        }).save();
+      }
+    );
+  }
+});
 
 schema.statics.findByUsername = async function (username) {
   return this.findOne({ username });

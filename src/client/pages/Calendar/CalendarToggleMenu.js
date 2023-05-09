@@ -1,8 +1,8 @@
 import React from 'react';
-import { Row, Col, Button, Badge } from 'react-bootstrap';
-import Checkbox from 'client/components/Checkbox';
+import { Row, Col, Button } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
-import { calendarUpdated, calendarsUpdated } from 'client/store/userSlice';
+import CalendarToggleMenuItem from './CalendarToggleMenuItem';
+import { calendarsUpdated } from 'client/store/userSlice';
 
 import './CalendarToggleMenu.css';
 
@@ -11,26 +11,16 @@ const CalendarToggleMenu = () => {
 
   const calendars = useSelector((state) => state.user.calendars);
 
-  const handleVisibilityChange = (event) => {
-    const visibility = event.target.checked;
-    const id = event.target.id;
-
-    const payload = {
-      id,
-      visibility
-    };
-    dispatch(calendarUpdated(payload));
-  };
-
-  const handleSelectAll = () => {
-    const mappedObjectsArray = calendars.map((calendar) => {
+  const handleSelectAll = (event) => {
+    event.preventDefault();
+    const newState = calendars.map((calendar) => {
       return {
         ...calendar,
         visibility: true
       };
     });
 
-    dispatch(calendarsUpdated(mappedObjectsArray));
+    dispatch(calendarsUpdated(newState));
   };
 
   return (
@@ -42,36 +32,20 @@ const CalendarToggleMenu = () => {
       </Row>
 
       {calendars.map((calendar) => (
-        <Row id="calendar-toggle" key={calendar.id}>
-          <Col xs={2}>
-            <Checkbox
-              id={`${calendar.id}`}
-              checked={calendar.visibility}
-              handleChange={(event) => handleVisibilityChange(event)}
-            />
-          </Col>
-
-          <Col xs={10}>
-            <label htmlFor={`${calendar.id}`} style={{ backgroundColor: calendar.color }}>
-              {calendar.name}
-              {calendar.userDefault && (
-                <Badge pill variant="light">
-                  Default
-                </Badge>
-              )}
-              {calendar.systemCalendar && (
-                <Badge pill variant="light">
-                  System
-                </Badge>
-              )}
-            </label>
-          </Col>
-        </Row>
+        <CalendarToggleMenuItem
+          id={calendar.id}
+          key={calendar.id}
+          visilibity={calendar.visilibity}
+          name={calendar.name}
+          color={calendar.color}
+          userDefault={calendar.userDefault}
+          systemCalendar={calendar.systemCalendar}
+        />
       ))}
 
       <Row>
         <Col>
-          <Button type="button" id="select-all-btn" variant="primary" onClick={() => handleSelectAll()}>
+          <Button type="button" id="select-all-btn" variant="primary" onClick={(e) => handleSelectAll(e)}>
             Select All
           </Button>
         </Col>

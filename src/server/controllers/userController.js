@@ -1,7 +1,8 @@
 import UserService from 'server/services/userService';
 import db from 'server/models';
+import { AuthorizationError } from '../utils/userFacingErrors';
 
-const userService = new UserService(db.User, db.RefreshToken, db.Role);
+const userService = new UserService(db.User, db.RefreshToken, db.Role, db.Calendar, db.Event);
 
 class UserController {
   constructor(service) {
@@ -43,10 +44,26 @@ class UserController {
     try {
       const response = await this.service.refreshToken(requestToken);
 
-      console.log({ response });
-      await res.status(response.status).send(response.data);
+      await res.status(response.statusCode).send(response.data);
     } catch (e) {
       return next(e);
+    }
+  };
+
+  getData = async (req, res, next) => {
+    const userId = req.id;
+
+    if (!userId) {
+      throw new AuthorizationError('Access token corrupted. Please login again.', { errorCode: 'accessToken' });
+    }
+
+    try {
+      // get user calendars and events
+      const response = await this.service.getData(userId);
+
+      await res.status(response.statusCode).send(response.data);
+    } catch (err) {
+      return next(err);
     }
   };
 

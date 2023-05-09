@@ -1,3 +1,4 @@
+import HttpResponse from 'server/utils/httpResponse';
 import { systemColors, userColors } from 'config/appConfig';
 
 class CalendarService {
@@ -12,7 +13,7 @@ class CalendarService {
         $or: [{ user: userId }, { systemCalendar: true }]
       });
 
-      return result;
+      return new HttpResponse(result);
     } catch (e) {
       throw e;
     }
@@ -28,7 +29,8 @@ class CalendarService {
         name: data.name,
         userDefault: isSystemCalendar ? false : calendarCount === 0 ? true : false,
         systemCalendar: isSystemCalendar ?? false,
-        color: isSystemCalendar ? `#${systemColors[0]}` : `#${userColors[calendarCount % userColors.length]}`
+        color: isSystemCalendar ? `#${systemColors[0]}` : `#${userColors[calendarCount % userColors.length]}`,
+        visibility: data.visibility
       };
 
       const result = await this.model.create(_obj);

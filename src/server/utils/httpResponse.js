@@ -12,6 +12,8 @@ class HttpResponse {
       this.deleted = options.deleted;
     }
     if (Array.isArray(filteredData)) {
+      filteredData = this.filterData(JSON.parse(JSON.stringify(filteredData)));
+
       this.data = [...filteredData];
     } else if (typeof filteredData === 'object') {
       this.data = { ...filteredData };

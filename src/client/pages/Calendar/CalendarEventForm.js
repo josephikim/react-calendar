@@ -23,7 +23,7 @@ class CalendarEventForm extends Component {
 
     const defaultCalendarId = this.props.calendars.filter((calendar) => calendar.userDefault === true)[0].id;
 
-    const { calendarSlot } = this.props.currentSelection;
+    const { currentSlot } = this.props.currentSelection;
 
     const initialState = {
       title: {
@@ -35,10 +35,10 @@ class CalendarEventForm extends Component {
         value: ''
       },
       start: {
-        value: calendarSlot.start
+        value: currentSlot.start
       },
       end: {
-        value: calendarSlot.end
+        value: currentSlot.end
       },
       allDay: false,
       defaultCalendarId: defaultCalendarId,
@@ -57,9 +57,9 @@ class CalendarEventForm extends Component {
     }
 
     // Check if app state updated calendar selection (via memoized selector)
-    const isCalendarSelectionUpdated = !_.isEqual(prevProps.currentSelection, this.props.currentSelection);
+    const isSelectionUpdated = !_.isEqual(prevProps.currentSelection, this.props.currentSelection);
 
-    if (!isCalendarSelectionUpdated) {
+    if (!isSelectionUpdated) {
       return;
     }
 
@@ -77,17 +77,17 @@ class CalendarEventForm extends Component {
     };
 
     // Check if current selection is a slot or event
-    const { calendarEvent, calendarSlot } = this.props.currentSelection;
-    const isEventSelected = Object.keys(calendarEvent).length > 0;
-    const isSlotSelected = Object.keys(calendarSlot).length > 0;
+    const { currentEvent, currentSlot } = this.props.currentSelection;
+    const isEventSelected = Object.keys(currentEvent).length > 0;
+    const isSlotSelected = Object.keys(currentSlot).length > 0;
 
     if (isEventSelected) {
-      newState.title.value = calendarEvent.title;
-      newState.desc.value = calendarEvent.desc;
-      newState.start.value = calendarEvent.start;
-      newState.end.value = calendarEvent.end;
-      newState.allDay = calendarEvent.allDay;
-      newState.selectedCalendarId = calendarEvent.calendarId;
+      newState.title.value = currentEvent.title;
+      newState.desc.value = currentEvent.desc;
+      newState.start.value = currentEvent.start;
+      newState.end.value = currentEvent.end;
+      newState.allDay = currentEvent.allDay;
+      newState.selectedCalendarId = currentEvent.calendarId;
     } else if (isSlotSelected) {
       // Set title and desc depending on previous selection
       const isPrevSelectionASlot = !!prevProps.currentSelection;
@@ -106,12 +106,12 @@ class CalendarEventForm extends Component {
 
       if (calendarView === 'month') {
         // single day slot
-        if (calendarSlot.action === 'click') {
-          const startDate = new Date(calendarSlot.start);
+        if (currentSlot.action === 'click') {
+          const startDate = new Date(currentSlot.start);
           startDate.setHours(12);
           const startDateISO = startDate.toISOString();
 
-          const endDate = new Date(calendarSlot.end);
+          const endDate = new Date(currentSlot.end);
           endDate.setDate(endDate.getDate() - 1);
           endDate.setHours(13);
           const endDateISO = endDate.toISOString();
@@ -121,19 +121,19 @@ class CalendarEventForm extends Component {
           newState.allDay = false;
         }
         // multi day slot
-        if (calendarSlot.action === 'select') {
-          newState.start.value = calendarSlot.start;
-          newState.end.value = calendarSlot.end;
+        if (currentSlot.action === 'select') {
+          newState.start.value = currentSlot.start;
+          newState.end.value = currentSlot.end;
           newState.allDay = true;
         }
       }
 
       if (calendarView === 'week' || calendarView === 'day') {
-        newState.start.value = calendarSlot.start;
-        newState.end.value = calendarSlot.end;
+        newState.start.value = currentSlot.start;
+        newState.end.value = currentSlot.end;
 
         // single or multi day slot
-        if (Object.prototype.hasOwnProperty.call(calendarSlot, 'box')) {
+        if (Object.prototype.hasOwnProperty.call(currentSlot, 'box')) {
           newState.allDay = false;
         } else {
           // all day slot
@@ -303,12 +303,12 @@ class CalendarEventForm extends Component {
       }
 
       if (clickedId === 'update-event-btn') {
-        data.id = this.props.currentSelection.calendarEvent.id;
+        data.id = this.props.currentSelection.event.id;
 
         // Check for valid event update
-        const { calendarEvent } = this.props.currentSelection;
+        const { event } = this.props.currentSelection;
 
-        const isEventUpdateValid = this.checkEventUpdate(calendarEvent, data);
+        const isEventUpdateValid = this.checkEventUpdate(event, data);
 
         if (!isEventUpdateValid) {
           alert('No changes detected!');
@@ -357,13 +357,13 @@ class CalendarEventForm extends Component {
 
   handleDelete = (event) => {
     event.preventDefault();
-    if (!this.props.currentSelection.calendarEvent) return;
+    if (!this.props.currentSelection.event) return;
 
     // Confirm delete via user input
     const deleteConfirmation = confirm('Are you sure you want to delete this event?');
     if (deleteConfirmation === false) return;
 
-    const eventId = this.props.currentSelection.calendarEvent.id;
+    const eventId = this.props.currentSelection.event.id;
 
     this.props.deleteEvent(eventId).catch((e) => {
       const error = e.response ? e.response.data : e;
@@ -399,7 +399,7 @@ class CalendarEventForm extends Component {
     )[0];
     const isSystemCalendarSelected = !!selectedCalendar.systemCalendar;
     const isSlotSelected = this.props.currentSelection
-      ? Object.keys(this.props.currentSelection.calendarSlot).length > 0
+      ? Object.keys(this.props.currentSelection.currentSlot).length > 0
       : false;
 
     return (
@@ -621,7 +621,7 @@ class CalendarEventForm extends Component {
 const mapStateToProps = (state) => {
   return {
     calendars: state.user.calendars,
-    calendarView: state.user.calendarViewSelection,
+    view: state.user.viewSelection,
     currentSelection: currentSelection(state)
   };
 };

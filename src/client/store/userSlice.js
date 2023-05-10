@@ -8,10 +8,10 @@ export const initialState = {
   accessToken: null,
   refreshToken: null,
   calendars: [],
-  calendarSlotSelection: {},
-  calendarEventSelection: {},
-  calendarEvents: [],
-  calendarViewSelection: null
+  slotSelection: {},
+  eventSelection: {},
+  events: [],
+  viewSelection: null
 };
 
 const userSlice = createSlice({
@@ -42,27 +42,25 @@ const userSlice = createSlice({
       state.calendars = state.calendars.filter((calendar) => calendar.id !== action.payload);
     },
     eventsUpdated(state, action) {
-      state.calendarEvents = action.payload;
+      state.events = action.payload;
     },
     eventAdded(state, action) {
-      state.calendarEvents = [...state.calendarEvents, action.payload];
+      state.events = [...state.events, action.payload];
     },
     eventUpdated(state, action) {
-      state.calendarEvents = state.calendarEvents.map((event) =>
-        event.id === action.payload.id ? action.payload : event
-      );
+      state.events = state.events.map((event) => (event.id === action.payload.id ? action.payload : event));
     },
     eventDeleted(state, action) {
-      state.calendarEvents = state.calendarEvents.filter((event) => event.id !== action.payload);
+      state.events = state.events.filter((event) => event.id !== action.payload);
     },
     slotSelectionUpdated(state, action) {
-      state.calendarSlotSelection = action.payload;
+      state.slotSelection = action.payload;
     },
     eventSelectionUpdated(state, action) {
-      state.calendarEventSelection = action.payload;
+      state.eventSelection = action.payload;
     },
     viewUpdated(state, action) {
-      state.calendarViewSelection = action.payload;
+      state.viewSelection = action.payload;
     }
   }
 });
@@ -86,34 +84,35 @@ export const {
 
 export default userSlice.reducer;
 
+const slotSelector = (state) => state.user.slotSelection;
+const eventSelector = (state) => state.user.eventSelection;
+const eventsSelector = (state) => state.user.events;
+
 //
 // Memoized selectors
 //
 
-const slotSelector = (state) => state.user.calendarSlotSelection;
-const eventSelector = (state) => state.user.calendarEventSelection;
-const eventsSelector = (state) => state.user.calendarEvents;
+export const currentSelection = createSelector([slotSelector, eventSelector], (slot, event) => {
+  if (!slot && !event) return null;
 
-export const currentSelection = createSelector([slotSelector, eventSelector], (calendarSlot, calendarEvent) => {
-  if (!calendarSlot || !calendarEvent) return null;
+  const isSlotSelected = Object.keys(slot).length > 0 && Object.keys(event).length < 1;
 
-  const isSlotSelected = Object.keys(calendarSlot).length > 0 && Object.keys(calendarEvent).length < 1;
-
-  const isEventSelected = Object.keys(calendarEvent).length > 0 && Object.keys(calendarSlot).length < 1;
+  const isEventSelected = Object.keys(event).length > 0 && Object.keys(slot).length < 1;
 
   if (isSlotSelected || isEventSelected) {
     const update = {
-      calendarSlot,
-      calendarEvent
+      currentSlot: slot,
+      currentEvent: event
     };
     return update;
-  } else return null;
+  }
+  return null;
 });
 
-export const calendarEventsWithDateObjects = createSelector([eventsSelector], (calendarEvents) => {
-  if (!calendarEvents) return null;
+export const eventsWithDateObjects = createSelector([eventsSelector], (events) => {
+  if (!events) return null;
 
-  const clonedEvents = JSON.parse(JSON.stringify(calendarEvents));
+  const clonedEvents = JSON.parse(JSON.stringify(events));
 
   clonedEvents.forEach((event) => {
     event.start = new Date(event.start);
@@ -161,7 +160,7 @@ export const registerUser = (data) => async (dispatch) => {
   }
 };
 
-export const retrieveUserData = () => async (dispatch) => {
+export const fetchUserData = () => async (dispatch) => {
   try {
     userApi.get('/data').then((res) => {
       dispatch(calendarsUpdated(res.data.calendars));

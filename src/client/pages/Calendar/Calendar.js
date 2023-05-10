@@ -10,9 +10,9 @@ import {
   onSelectSlot,
   onSelectEvent,
   onSelectView,
-  retrieveUserData,
+  fetchUserData,
   currentSelection,
-  calendarEventsWithDateObjects,
+  eventsWithDateObjects,
   initCalendarUI
 } from 'client/store/userSlice';
 
@@ -34,7 +34,7 @@ class Calendar extends Component {
       return;
     }
 
-    this.initData = [this.props.retrieveUserData(), this.props.initCalendarUI()];
+    this.initData = [this.props.fetchUserData(), this.props.initCalendarUI()];
 
     Promise.all(this.initData);
   };
@@ -58,22 +58,22 @@ class Calendar extends Component {
     };
   };
 
-  handleSelectEvent = (event) => {
-    const { calendarEvent } = this.props.currentSelection;
+  handleSelectEvent = (e) => {
+    const { currentEvent } = this.props.currentSelection;
 
     // If event matches previous selection, do nothing
-    if (Object.keys(calendarEvent).length > 0 && event.id === calendarEvent.id) return;
+    if (Object.keys(currentEvent).length > 0 && e.id === currentEvent.id) return;
 
-    this.props.onSelectEvent(event);
+    this.props.onSelectEvent(e);
   };
 
   handleSelectSlot = (slot) => {
-    const { calendarSlot } = this.props.currentSelection;
+    const { currentSlot } = this.props.currentSelection;
 
     // If slot matches previous selection, do nothing
-    const isSameSlotSelected = this.isSameSlot(calendarSlot, slot);
+    const isSameSlotSelected = this.isSameSlot(currentSlot, slot);
 
-    if (Object.keys(calendarSlot).length > 0 && isSameSlotSelected) return;
+    if (isSameSlotSelected && Object.keys(currentSlot).length > 0) return;
 
     this.props.onSelectSlot(slot);
   };
@@ -117,9 +117,7 @@ class Calendar extends Component {
       .filter((calendar) => calendar.visibility === true)
       .map((calendar) => calendar.id);
 
-    const events = this.props.calendarEventsWithDateObjects.filter((event) =>
-      visibleCalendars.includes(event.calendarId)
-    );
+    const events = this.props.events.filter((event) => visibleCalendars.includes(event.calendarId));
 
     return (
       <div className="Calendar">
@@ -139,11 +137,11 @@ class Calendar extends Component {
                     onView={(view) => this.handleView(view)}
                     defaultDate={new Date()}
                     scrollToTime={new Date(1970, 1, 1, 6)}
-                    onSelectEvent={(event) => this.handleSelectEvent(event)}
+                    onSelectEvent={(e) => this.handleSelectEvent(e)}
                     onSelectSlot={(slot) => this.handleSelectSlot(slot)}
-                    startAccessor={(event) => event.start}
-                    endAccessor={(event) => event.end}
-                    eventPropGetter={(event) => this.eventStyleGetter(event)}
+                    startAccessor={(e) => e.start}
+                    endAccessor={(e) => e.end}
+                    eventPropGetter={(e) => this.eventStyleGetter(e)}
                   />
                 </Col>
                 <Col xs={12} lg={3}>
@@ -165,7 +163,7 @@ const mapStateToProps = (state) => {
     username: state.user.username,
     calendars: state.user.calendars,
     currentSelection: currentSelection(state),
-    calendarEventsWithDateObjects: calendarEventsWithDateObjects(state)
+    events: eventsWithDateObjects(state)
   };
 };
 
@@ -173,7 +171,7 @@ const mapActionsToProps = {
   onSelectSlot,
   onSelectEvent,
   onSelectView,
-  retrieveUserData,
+  fetchUserData,
   initCalendarUI
 };
 

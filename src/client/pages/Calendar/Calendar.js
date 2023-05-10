@@ -11,7 +11,7 @@ import {
   onSelectEvent,
   onSelectView,
   retrieveUserData,
-  calendarSelectionWithSlotAndEvent,
+  currentSelection,
   calendarEventsWithDateObjects,
   initCalendarUI
 } from 'client/store/userSlice';
@@ -59,7 +59,7 @@ class Calendar extends Component {
   };
 
   handleSelectEvent = (event) => {
-    const { calendarEvent } = this.props.calendarSelectionWithSlotAndEvent;
+    const { calendarEvent } = this.props.currentSelection;
 
     // If event matches previous selection, do nothing
     if (Object.keys(calendarEvent).length > 0 && event.id === calendarEvent.id) return;
@@ -68,7 +68,7 @@ class Calendar extends Component {
   };
 
   handleSelectSlot = (slot) => {
-    const { calendarSlot } = this.props.calendarSelectionWithSlotAndEvent;
+    const { calendarSlot } = this.props.currentSelection;
 
     // If slot matches previous selection, do nothing
     const isSameSlotSelected = this.isSameSlot(calendarSlot, slot);
@@ -164,7 +164,7 @@ const mapStateToProps = (state) => {
   return {
     username: state.user.username,
     calendars: state.user.calendars,
-    calendarSelectionWithSlotAndEvent: calendarSelectionWithSlotAndEvent(state),
+    currentSelection: currentSelection(state),
     calendarEventsWithDateObjects: calendarEventsWithDateObjects(state)
   };
 };

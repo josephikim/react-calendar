@@ -9,12 +9,7 @@ import { Row, Col, Button, Form } from 'react-bootstrap';
 
 import CalendarSelectMenu from './CalendarSelectMenu';
 import { validateFields } from 'client/validation.js';
-import {
-  createCalendarEvent,
-  updateCalendarEvent,
-  deleteCalendarEvent,
-  calendarSelectionWithSlotAndEvent
-} from 'client/store/userSlice';
+import { createEvent, updateEvent, deleteEvent, currentSelection } from 'client/store/userSlice';
 
 import './CalendarEventForm.css';
 import 'react-day-picker/lib/style.css';
@@ -28,7 +23,7 @@ class CalendarEventForm extends Component {
 
     const defaultCalendarId = this.props.calendars.filter((calendar) => calendar.userDefault === true)[0].id;
 
-    const { calendarSlot } = this.props.calendarSelectionWithSlotAndEvent;
+    const { calendarSlot } = this.props.currentSelection;
 
     const initialState = {
       title: {
@@ -57,15 +52,12 @@ class CalendarEventForm extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    if (!this.props.calendarSelectionWithSlotAndEvent) {
+    if (!this.props.currentSelection) {
       return;
     }
 
     // Check if app state updated calendar selection (via memoized selector)
-    const isCalendarSelectionUpdated = !_.isEqual(
-      prevProps.calendarSelectionWithSlotAndEvent,
-      this.props.calendarSelectionWithSlotAndEvent
-    );
+    const isCalendarSelectionUpdated = !_.isEqual(prevProps.currentSelection, this.props.currentSelection);
 
     if (!isCalendarSelectionUpdated) {
       return;
@@ -85,7 +77,7 @@ class CalendarEventForm extends Component {
     };
 
     // Check if current selection is a slot or event
-    const { calendarEvent, calendarSlot } = this.props.calendarSelectionWithSlotAndEvent;
+    const { calendarEvent, calendarSlot } = this.props.currentSelection;
     const isEventSelected = Object.keys(calendarEvent).length > 0;
     const isSlotSelected = Object.keys(calendarSlot).length > 0;
 
@@ -98,7 +90,7 @@ class CalendarEventForm extends Component {
       newState.selectedCalendarId = calendarEvent.calendarId;
     } else if (isSlotSelected) {
       // Set title and desc depending on previous selection
-      const isPrevSelectionASlot = !!prevProps.calendarSelectionWithSlotAndEvent;
+      const isPrevSelectionASlot = !!prevProps.currentSelection;
 
       if (isPrevSelectionASlot) {
         newState.title.value = this.state.title.value;
@@ -297,9 +289,9 @@ class CalendarEventForm extends Component {
       }
 
       if (clickedId === 'add-event-btn') {
-        // Dispatch createCalendarEvent action
+        // Dispatch createEvent action
         this.props
-          .createCalendarEvent(data)
+          .createEvent(data)
           .then(() => {
             alert(`Successfully added new event: "${data.title}"`);
           })
@@ -311,10 +303,10 @@ class CalendarEventForm extends Component {
       }
 
       if (clickedId === 'update-event-btn') {
-        data.id = this.props.calendarSelectionWithSlotAndEvent.calendarEvent.id;
+        data.id = this.props.currentSelection.calendarEvent.id;
 
         // Check for valid event update
-        const { calendarEvent } = this.props.calendarSelectionWithSlotAndEvent;
+        const { calendarEvent } = this.props.currentSelection;
 
         const isEventUpdateValid = this.checkEventUpdate(calendarEvent, data);
 
@@ -323,9 +315,9 @@ class CalendarEventForm extends Component {
           return;
         }
 
-        // If update is valid, dispatch updateCalendarEvent action
+        // If update is valid, dispatch updateEvent action
         this.props
-          .updateCalendarEvent(data)
+          .updateEvent(data)
           .then(() => {
             alert(`Successfully updated event: "${data.title}"`);
           })
@@ -365,15 +357,15 @@ class CalendarEventForm extends Component {
 
   handleDelete = (event) => {
     event.preventDefault();
-    if (!this.props.calendarSelectionWithSlotAndEvent.calendarEvent) return;
+    if (!this.props.currentSelection.calendarEvent) return;
 
     // Confirm delete via user input
     const deleteConfirmation = confirm('Are you sure you want to delete this event?');
     if (deleteConfirmation === false) return;
 
-    const eventId = this.props.calendarSelectionWithSlotAndEvent.calendarEvent.id;
+    const eventId = this.props.currentSelection.calendarEvent.id;
 
-    this.props.deleteCalendarEvent(eventId).catch((e) => {
+    this.props.deleteEvent(eventId).catch((e) => {
       const error = e.response ? e.response.data : e;
       alert(`Error deleting calendar: ${error}`);
       this.setState({ error: error.message });
@@ -406,8 +398,8 @@ class CalendarEventForm extends Component {
       (calendar) => calendar.id === this.state.selectedCalendarId
     )[0];
     const isSystemCalendarSelected = !!selectedCalendar.systemCalendar;
-    const isSlotSelected = this.props.calendarSelectionWithSlotAndEvent
-      ? Object.keys(this.props.calendarSelectionWithSlotAndEvent.calendarSlot).length > 0
+    const isSlotSelected = this.props.currentSelection
+      ? Object.keys(this.props.currentSelection.calendarSlot).length > 0
       : false;
 
     return (
@@ -630,14 +622,14 @@ const mapStateToProps = (state) => {
   return {
     calendars: state.user.calendars,
     calendarView: state.user.calendarViewSelection,
-    calendarSelectionWithSlotAndEvent: calendarSelectionWithSlotAndEvent(state)
+    currentSelection: currentSelection(state)
   };
 };
 
 const mapActionsToProps = {
-  createCalendarEvent,
-  updateCalendarEvent,
-  deleteCalendarEvent
+  createEvent,
+  updateEvent,
+  deleteEvent
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(CalendarEventForm);

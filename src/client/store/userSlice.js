@@ -41,27 +41,27 @@ const userSlice = createSlice({
     calendarDeleted(state, action) {
       state.calendars = state.calendars.filter((calendar) => calendar.id !== action.payload);
     },
-    calendarEventsUpdated(state, action) {
+    eventsUpdated(state, action) {
       state.calendarEvents = action.payload;
     },
-    calendarEventAdded(state, action) {
+    eventAdded(state, action) {
       state.calendarEvents = [...state.calendarEvents, action.payload];
     },
-    calendarEventUpdated(state, action) {
+    eventUpdated(state, action) {
       state.calendarEvents = state.calendarEvents.map((event) =>
         event.id === action.payload.id ? action.payload : event
       );
     },
-    calendarEventDeleted(state, action) {
+    eventDeleted(state, action) {
       state.calendarEvents = state.calendarEvents.filter((event) => event.id !== action.payload);
     },
-    calendarSlotSelectionUpdated(state, action) {
+    slotSelectionUpdated(state, action) {
       state.calendarSlotSelection = action.payload;
     },
-    calendarEventSelectionUpdated(state, action) {
+    eventSelectionUpdated(state, action) {
       state.calendarEventSelection = action.payload;
     },
-    calendarViewUpdated(state, action) {
+    viewUpdated(state, action) {
       state.calendarViewSelection = action.payload;
     }
   }
@@ -75,13 +75,13 @@ export const {
   calendarAdded,
   calendarUpdated,
   calendarDeleted,
-  calendarSlotSelectionUpdated,
-  calendarEventSelectionUpdated,
-  calendarEventsUpdated,
-  calendarEventAdded,
-  calendarEventDeleted,
-  calendarEventUpdated,
-  calendarViewUpdated
+  slotSelectionUpdated,
+  eventSelectionUpdated,
+  eventsUpdated,
+  eventAdded,
+  eventDeleted,
+  eventUpdated,
+  viewUpdated
 } = userSlice.actions;
 
 export default userSlice.reducer;
@@ -90,32 +90,27 @@ export default userSlice.reducer;
 // Memoized selectors
 //
 
-const calendarSlotSelector = (state) => state.user.calendarSlotSelection;
-const calendarEventSelector = (state) => state.user.calendarEventSelection;
-const calendarEventsSelector = (state) => state.user.calendarEvents;
+const slotSelector = (state) => state.user.calendarSlotSelection;
+const eventSelector = (state) => state.user.calendarEventSelection;
+const eventsSelector = (state) => state.user.calendarEvents;
 
-export const calendarSelectionWithSlotAndEvent = createSelector(
-  [calendarSlotSelector, calendarEventSelector],
-  (calendarSlot, calendarEvent) => {
-    if (!calendarSlot || !calendarEvent) return null;
+export const currentSelection = createSelector([slotSelector, eventSelector], (calendarSlot, calendarEvent) => {
+  if (!calendarSlot || !calendarEvent) return null;
 
-    const isCalendarSlotSelected = Object.keys(calendarSlot).length > 0;
-    const isCalendarEventSelected = Object.keys(calendarEvent).length > 0;
+  const isSlotSelected = Object.keys(calendarSlot).length > 0 && Object.keys(calendarEvent).length < 1;
 
-    const updateCompleteWithNewSlot = isCalendarSlotSelected && !isCalendarEventSelected;
-    const updateCompleteWithNewEvent = isCalendarEventSelected && !isCalendarSlotSelected;
+  const isEventSelected = Object.keys(calendarEvent).length > 0 && Object.keys(calendarSlot).length < 1;
 
-    if (updateCompleteWithNewSlot || updateCompleteWithNewEvent) {
-      const update = {
-        calendarSlot: calendarSlot,
-        calendarEvent: calendarEvent
-      };
-      return update;
-    } else return null;
-  }
-);
+  if (isSlotSelected || isEventSelected) {
+    const update = {
+      calendarSlot,
+      calendarEvent
+    };
+    return update;
+  } else return null;
+});
 
-export const calendarEventsWithDateObjects = createSelector([calendarEventsSelector], (calendarEvents) => {
+export const calendarEventsWithDateObjects = createSelector([eventsSelector], (calendarEvents) => {
   if (!calendarEvents) return null;
 
   const clonedEvents = JSON.parse(JSON.stringify(calendarEvents));
@@ -170,41 +165,41 @@ export const retrieveUserData = () => async (dispatch) => {
   try {
     userApi.get('/data').then((res) => {
       dispatch(calendarsUpdated(res.data.calendars));
-      dispatch(calendarEventsUpdated(res.data.events));
+      dispatch(eventsUpdated(res.data.events));
     });
   } catch (e) {
     return Promise.reject(e);
   }
 };
 
-export const createCalendarEvent = (data) => async (dispatch) => {
+export const createEvent = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/event', data);
 
     return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarEventAdded(res));
-      dispatch(calendarEventSelectionUpdated(res));
-      dispatch(calendarSlotSelectionUpdated({}));
+      dispatch(eventAdded(res));
+      dispatch(eventSelectionUpdated(res));
+      dispatch(slotSelectionUpdated({}));
     });
   } catch (e) {
     return Promise.reject(e);
   }
 };
 
-export const updateCalendarEvent = (event) => async (dispatch) => {
+export const updateEvent = (event) => async (dispatch) => {
   try {
     const res = await userApi.post(`/event/update`, event);
 
     return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarEventUpdated(res));
-      dispatch(calendarEventSelectionUpdated(res));
+      dispatch(eventUpdated(res));
+      dispatch(eventSelectionUpdated(res));
     });
   } catch (e) {
     return Promise.reject(e);
   }
 };
 
-export const deleteCalendarEvent = (eventId) => async (dispatch) => {
+export const deleteEvent = (eventId) => async (dispatch) => {
   try {
     const res = await userApi.delete(`/event/${eventId}/delete`);
 
@@ -222,9 +217,9 @@ export const deleteCalendarEvent = (eventId) => async (dispatch) => {
         slots: [start]
       };
 
-      dispatch(calendarEventDeleted(res.id));
-      dispatch(updateCalendarEventSelection({}));
-      dispatch(updateCalendarSlotSelection(slot));
+      dispatch(eventDeleted(res.id));
+      dispatch(updateEventSelection({}));
+      dispatch(updateSlotSelection(slot));
     });
   } catch (e) {
     return Promise.reject(e);
@@ -279,7 +274,7 @@ export const updateUsername = (data) => async (dispatch) => {
   }
 };
 
-export const updateCalendarSlotSelection = (slot) => async (dispatch) => {
+export const updateSlotSelection = (slot) => async (dispatch) => {
   const clonedSlot = _.cloneDeep(slot);
 
   // Convert dates to strings
@@ -291,10 +286,10 @@ export const updateCalendarSlotSelection = (slot) => async (dispatch) => {
     });
   }
 
-  dispatch(calendarSlotSelectionUpdated(clonedSlot));
+  dispatch(slotSelectionUpdated(clonedSlot));
 };
 
-export const updateCalendarEventSelection = (event) => async (dispatch) => {
+export const updateEventSelection = (event) => async (dispatch) => {
   const clonedEvent = _.cloneDeep(event);
 
   // Convert dates to strings
@@ -303,19 +298,19 @@ export const updateCalendarEventSelection = (event) => async (dispatch) => {
     clonedEvent.end = clonedEvent.end.toISOString();
   }
 
-  dispatch(calendarEventSelectionUpdated(clonedEvent));
+  dispatch(eventSelectionUpdated(clonedEvent));
 };
 
 export const onSelectSlot = (slot) => (dispatch) => {
-  return Promise.all([dispatch(updateCalendarSlotSelection(slot)), dispatch(updateCalendarEventSelection({}))]);
+  return Promise.all([dispatch(updateSlotSelection(slot)), dispatch(updateEventSelection({}))]);
 };
 
 export const onSelectEvent = (event) => (dispatch) => {
-  return Promise.all([dispatch(updateCalendarEventSelection(event)), dispatch(updateCalendarSlotSelection({}))]);
+  return Promise.all([dispatch(updateEventSelection(event)), dispatch(updateSlotSelection({}))]);
 };
 
 export const onSelectView = (view) => (dispatch) => {
-  dispatch(calendarViewUpdated(view));
+  dispatch(viewUpdated(view));
 };
 
 export const initCalendarUI = () => async (dispatch) => {
@@ -334,8 +329,8 @@ export const initCalendarUI = () => async (dispatch) => {
     };
 
     return Promise.all([
-      dispatch(updateCalendarSlotSelection(initialSlot)),
-      dispatch(updateCalendarEventSelection({})),
+      dispatch(updateSlotSelection(initialSlot)),
+      dispatch(updateEventSelection({})),
       dispatch(onSelectView(defaultView))
     ]);
   } catch (e) {

@@ -84,32 +84,33 @@ export const {
 
 export default userSlice.reducer;
 
-const slotSelector = (state) => state.user.slotSelection;
-const eventSelector = (state) => state.user.eventSelection;
-const eventsSelector = (state) => state.user.events;
-
 //
 // Memoized selectors
 //
 
-export const currentSelection = createSelector([slotSelector, eventSelector], (slot, event) => {
-  if (!slot && !event) return null;
+const slotSelector = (state) => state.user.slotSelection;
+const eventSelector = (state) => state.user.eventSelection;
+const eventsSelector = (state) => state.user.events;
 
+// Returns start and end value as Date objects
+export const currentSelectionSelector = createSelector([slotSelector, eventSelector], (slot, event) => {
   const isSlotSelected = Object.keys(slot).length > 0 && Object.keys(event).length < 1;
 
   const isEventSelected = Object.keys(event).length > 0 && Object.keys(slot).length < 1;
 
-  if (isSlotSelected || isEventSelected) {
-    const update = {
-      currentSlot: slot,
-      currentEvent: event
-    };
-    return update;
-  }
-  return null;
+  if (!isSlotSelected && !isEventSelected) return null;
+
+  const newSlot = isSlotSelected ? { ...slot, start: new Date(slot.start), end: new Date(slot.end) } : {};
+
+  const newEvent = isEventSelected ? { ...event, start: new Date(event.start), end: new Date(event.end) } : {};
+
+  return {
+    slot: newSlot,
+    event: newEvent
+  };
 });
 
-export const eventsWithDateObjects = createSelector([eventsSelector], (events) => {
+export const eventsWithDateObjectsSelector = createSelector([eventsSelector], (events) => {
   if (!events) return null;
 
   const clonedEvents = JSON.parse(JSON.stringify(events));
@@ -175,9 +176,9 @@ export const createEvent = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/event', data);
 
-    return Promise.resolve(res.data).then((res) => {
-      dispatch(eventAdded(res));
-      dispatch(eventSelectionUpdated(res));
+    return Promise.resolve(res.data).then((data) => {
+      dispatch(eventAdded(data));
+      dispatch(eventSelectionUpdated(data));
       dispatch(slotSelectionUpdated({}));
     });
   } catch (e) {
@@ -189,9 +190,9 @@ export const updateEvent = (event) => async (dispatch) => {
   try {
     const res = await userApi.post(`/event/update`, event);
 
-    return Promise.resolve(res.data).then((res) => {
-      dispatch(eventUpdated(res));
-      dispatch(eventSelectionUpdated(res));
+    return Promise.resolve(res.data).then((data) => {
+      dispatch(eventUpdated(data));
+      dispatch(eventSelectionUpdated(data));
     });
   } catch (e) {
     return Promise.reject(e);
@@ -202,23 +203,13 @@ export const deleteEvent = (eventId) => async (dispatch) => {
   try {
     const res = await userApi.delete(`/event/${eventId}/delete`);
 
-    return Promise.resolve(res.data).then((res) => {
+    return Promise.resolve(res.data).then((data) => {
       // set slot selection to current date
-      const start = new Date();
-      const end = new Date();
-      start.setHours(start.getHours() + 1, 0, 0, 0);
-      end.setHours(end.getHours() + 2, 0, 0, 0);
+      const newSlot = getCurrentDateSlot();
 
-      const slot = {
-        action: 'click',
-        start,
-        end,
-        slots: [start]
-      };
-
-      dispatch(eventDeleted(res.id));
-      dispatch(updateEventSelection({}));
-      dispatch(updateSlotSelection(slot));
+      dispatch(eventDeleted(data.id));
+      dispatch(eventSelectionUpdated({}));
+      dispatch(slotSelectionUpdated(newSlot));
     });
   } catch (e) {
     return Promise.reject(e);
@@ -229,8 +220,8 @@ export const createCalendar = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/calendar', data);
 
-    return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarAdded(res));
+    return Promise.resolve(res.data).then((data) => {
+      dispatch(calendarAdded(data));
     });
   } catch (e) {
     return Promise.reject(e);
@@ -241,8 +232,8 @@ export const updateCalendar = (data) => async (dispatch) => {
   try {
     const res = await userApi.post(`/calendar/update`, data);
 
-    return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarUpdated(res));
+    return Promise.resolve(res.data).then((data) => {
+      dispatch(calendarUpdated(data));
     });
   } catch (e) {
     return Promise.reject(e);
@@ -253,8 +244,8 @@ export const deleteCalendar = (calendarId) => async (dispatch) => {
   try {
     const res = await userApi.delete(`/calendar/${calendarId}/delete`);
 
-    return Promise.resolve(res.data).then((res) => {
-      dispatch(calendarDeleted(res.id));
+    return Promise.resolve(res.data).then((data) => {
+      dispatch(calendarDeleted(data.id));
     });
   } catch (e) {
     return Promise.reject(e);
@@ -265,47 +256,27 @@ export const updateUsername = (data) => async (dispatch) => {
   try {
     const res = await userApi.post(`/account/username/update`, data);
 
-    return Promise.resolve(res.data).then((res) => {
-      dispatch(usernameUpdated(res.username));
+    return Promise.resolve(res.data).then((data) => {
+      dispatch(usernameUpdated(data.username));
     });
   } catch (e) {
     return Promise.reject(e);
   }
 };
 
-export const updateSlotSelection = (slot) => async (dispatch) => {
-  const clonedSlot = _.cloneDeep(slot);
-
-  // Convert dates to strings
-  if (!_.isEmpty(clonedSlot)) {
-    clonedSlot.start = clonedSlot.start.toISOString();
-    clonedSlot.end = clonedSlot.end.toISOString();
-    clonedSlot.slots = clonedSlot.slots.map((slot) => {
-      return slot.toISOString();
-    });
-  }
-
-  dispatch(slotSelectionUpdated(clonedSlot));
-};
-
-export const updateEventSelection = (event) => async (dispatch) => {
-  const clonedEvent = _.cloneDeep(event);
-
-  // Convert dates to strings
-  if (!_.isEmpty(clonedEvent)) {
-    clonedEvent.start = clonedEvent.start.toISOString();
-    clonedEvent.end = clonedEvent.end.toISOString();
-  }
-
-  dispatch(eventSelectionUpdated(clonedEvent));
-};
-
+// convert Date objects to strings
 export const onSelectSlot = (slot) => (dispatch) => {
-  return Promise.all([dispatch(updateSlotSelection(slot)), dispatch(updateEventSelection({}))]);
+  return Promise.all([dispatch(slotSelectionUpdated(slot)), dispatch(eventSelectionUpdated({}))]);
 };
 
 export const onSelectEvent = (event) => (dispatch) => {
-  return Promise.all([dispatch(updateEventSelection(event)), dispatch(updateSlotSelection({}))]);
+  const newEvent = {
+    ...event,
+    start: event.start.toISOString(),
+    end: event.end.toISOString()
+  };
+
+  return Promise.all([dispatch(eventSelectionUpdated(newEvent)), dispatch(slotSelectionUpdated({}))]);
 };
 
 export const onSelectView = (view) => (dispatch) => {
@@ -315,21 +286,11 @@ export const onSelectView = (view) => (dispatch) => {
 export const initCalendarUI = () => async (dispatch) => {
   try {
     // Set initial calendar slot
-    const start = new Date();
-    const end = new Date();
-    start.setHours(start.getHours() + 1, 0, 0, 0);
-    end.setHours(end.getHours() + 2, 0, 0, 0);
-
-    const initialSlot = {
-      action: 'click',
-      start,
-      end,
-      slots: [start]
-    };
+    const newSlot = getCurrentDateSlot();
 
     return Promise.all([
-      dispatch(updateSlotSelection(initialSlot)),
-      dispatch(updateEventSelection({})),
+      dispatch(slotSelectionUpdated(newSlot)),
+      dispatch(eventSelectionUpdated({})),
       dispatch(onSelectView(defaultView))
     ]);
   } catch (e) {
@@ -346,4 +307,19 @@ export const updatePassword = (payload) => async () => {
   } catch (e) {
     return Promise.reject(e);
   }
+};
+
+// return start and end dates as strings spanning one hour starting from the nearest upcoming hour
+const getCurrentDateSlot = () => {
+  const start = new Date();
+  const end = new Date();
+  start.setHours(start.getHours(), 0, 0, 0);
+  end.setHours(end.getHours() + 1, 0, 0, 0);
+
+  return {
+    action: 'click',
+    start: start.toISOString(),
+    end: end.toISOString(),
+    slots: [start.toISOString()]
+  };
 };

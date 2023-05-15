@@ -5,15 +5,15 @@ import { Link } from 'react-router-dom';
 
 const CalendarSelectMenu = (props) => {
   const calendars = useSelector((state) => state.user.calendars);
-  const clonedCalendars = JSON.parse(JSON.stringify(calendars));
 
-  const options = clonedCalendars.map((calendar) => {
+  const options = calendars.map((calendar) => {
     // Disable system calendars
-    if (calendar.systemCalendar) {
-      calendar.disabled = true;
-    }
+    const result = {
+      ...calendar,
+      disabled: calendar.systemCalendar === true
+    };
 
-    return calendar;
+    return result;
   });
 
   return (

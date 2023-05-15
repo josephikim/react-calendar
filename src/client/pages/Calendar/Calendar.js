@@ -1,26 +1,27 @@
 import React, { Component } from 'react';
+import dayjs from 'dayjs';
+import { Calendar as ReactBigCalendar, dayjsLocalizer } from 'react-big-calendar';
+import timezone from 'dayjs/plugin/timezone';
 import { Container, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import { Calendar as ReactBigCalendar, momentLocalizer } from 'react-big-calendar';
-
-import CalendarToggleMenu from './CalendarToggleMenu';
-import CalendarEventForm from './CalendarEventForm';
 import {
   onSelectSlot,
   onSelectEvent,
   onSelectView,
   fetchUserData,
-  currentSelection,
-  eventsWithDateObjects,
+  currentSelectionSelector,
+  eventsWithDateObjectsSelector,
   initCalendarUI
 } from 'client/store/userSlice';
-
+import ContentWrapper from 'client/components/ContentWrapper';
+import CalendarToggleMenu from './CalendarToggleMenu';
+import CalendarEventForm from './CalendarEventForm';
 import './Calendar.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import ContentWrapper from 'client/components/ContentWrapper';
 
-const localizer = momentLocalizer(moment);
+dayjs.extend(timezone);
+
+const localizer = dayjsLocalizer(dayjs);
 
 class Calendar extends Component {
   constructor(...args) {
@@ -59,7 +60,7 @@ class Calendar extends Component {
   };
 
   handleSelectEvent = (e) => {
-    const { currentEvent } = this.props.currentSelection;
+    const { event: currentEvent } = this.props.currentSelection;
 
     // If event matches previous selection, do nothing
     if (Object.keys(currentEvent).length > 0 && e.id === currentEvent.id) return;
@@ -68,40 +69,44 @@ class Calendar extends Component {
   };
 
   handleSelectSlot = (slot) => {
-    const { currentSlot } = this.props.currentSelection;
+    const { slot: currentSlot } = this.props.currentSelection;
 
-    // If slot matches previous selection, do nothing
-    const isSameSlotSelected = this.isSameSlot(currentSlot, slot);
+    // If selected slot matches current slot, do nothing
+    if (this.isSameSlot(currentSlot, slot)) return;
 
-    if (isSameSlotSelected && Object.keys(currentSlot).length > 0) return;
+    const isMonthView = this.props.viewSelection === 'month';
 
-    this.props.onSelectSlot(slot);
+    // For month view, set new slot of length 1 hour starting at noon
+    if (isMonthView) {
+      slot.start.setHours(12);
+      slot.end.setHours(13);
+    }
+
+    const serializedSlot = {
+      ...slot,
+      start: slot.start.toISOString(),
+      end: slot.end.toISOString(),
+      slots: slot.slots.map((slot) => slot.toISOString())
+    };
+
+    // debugger;
+    this.props.onSelectSlot(serializedSlot);
   };
 
-  isSameSlot = (prevSlot, currentSlot) => {
-    const prevSlotStartDate = new Date(prevSlot.start);
-    const prevSlotEndDate = new Date(prevSlot.end);
+  // Comparisons are done using Date objects' primitive values ie Date.valueOf()
+  isSameSlot = (currentSlot, candidateSlot) => {
+    if (Object.keys(currentSlot).length < 1 || Object.keys(candidateSlot).length < 1) return false;
 
-    const currentSlotStartDate = currentSlot.start;
-    const currentSlotEndDate = currentSlot.end;
+    const currentSlotStartValue = currentSlot.start.valueOf();
+    const currentSlotEndValue = currentSlot.end.valueOf();
+    const candidateSlotStartValue = candidateSlot.start.valueOf();
+    const candidateSlotEndValue = candidateSlot.end.valueOf();
 
-    let isSameSlotStart = false;
-    let isSameSlotEnd = false;
+    const isSame = candidateSlotStartValue <= currentSlotStartValue && candidateSlotEndValue >= currentSlotEndValue;
 
-    // For month view with single-day slot selected, compare dates only
-    if (currentSlot.slots.length === 1) {
-      prevSlotStartDate.setHours(0, 0, 0, 0);
-      prevSlotEndDate.setHours(0, 0, 0, 0);
-      currentSlotStartDate.setHours(0, 0, 0, 0);
-      currentSlotEndDate.setHours(0, 0, 0, 0);
-    }
+    // debugger;
+    if (isSame) return true;
 
-    isSameSlotStart = prevSlotStartDate.valueOf() === currentSlotStartDate.valueOf();
-    isSameSlotEnd = prevSlotEndDate.valueOf() === currentSlotEndDate.valueOf();
-
-    if (isSameSlotStart && isSameSlotEnd) {
-      return true;
-    }
     return false;
   };
 
@@ -162,8 +167,9 @@ const mapStateToProps = (state) => {
   return {
     username: state.user.username,
     calendars: state.user.calendars,
-    currentSelection: currentSelection(state),
-    events: eventsWithDateObjects(state)
+    viewSelection: state.user.viewSelection,
+    currentSelection: currentSelectionSelector(state),
+    events: eventsWithDateObjectsSelector(state)
   };
 };
 

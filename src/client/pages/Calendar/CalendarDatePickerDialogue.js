@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { format, isValid, parse } from 'date-fns';
 import FocusTrap from 'focus-trap-react';
 import { DayPicker } from 'react-day-picker';
@@ -11,6 +11,11 @@ const CalendarDatePickerDialog = (props) => {
   const popperRef = useRef(null);
   const buttonRef = useRef(null);
   const [popperElement, setPopperElement] = useState(null);
+
+  // Update state based on props update
+  useEffect(() => {
+    setInputValue(props.value);
+  }, [props.value]);
 
   const popper = usePopper(popperRef.current, popperElement, {
     placement: 'bottom-start'
@@ -113,8 +118,8 @@ const CalendarDatePickerDialog = (props) => {
             <DayPicker
               initialFocus={isPopperOpen}
               mode="single"
-              defaultMonth={props.primaryValue}
-              selected={props.primaryValue}
+              defaultMonth={inputValue}
+              selected={inputValue}
               onSelect={handleDaySelect}
             />
           </div>

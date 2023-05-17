@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import { validateFields } from 'client/validation.js';
@@ -12,23 +12,45 @@ import 'react-day-picker/dist/style.css';
 const CalendarEventForm = () => {
   const calendars = useSelector((state) => state.user.calendars);
   const currentSelection = useSelector(currentSelectionSelector);
-  const defaultCal = calendars.find((calendar) => calendar.userDefault === true);
 
+  const defaultCal = calendars.find((calendar) => calendar.userDefault === true);
+  const selectedCal = calendars.find((calendar) => calendar.id === currentSelection?.event.calendarId);
+
+  const isSystemCalSelected = selectedCal?.systemCalendar === true;
+  const isSlotSelected = Object.keys(currentSelection.slot).length > 0;
+  const isEventSelected = Object.keys(currentSelection.event).length > 0;
+
+  // Initialize component state
   const [title, setTitle] = useState({
-    value: '',
+    value: isEventSelected ? currentSelection.event.title : '',
     validateOnChange: false,
     error: null
   });
-  const [desc, setDesc] = useState('');
-  const [start, setStart] = useState(currentSelection.slot.start);
-  const [end, setEnd] = useState(currentSelection.slot.end);
-  const [isAllDay, setIsAllDay] = useState(false);
-  const [defaultCalId, setDefaultCalId] = useState(defaultCal.id);
-  const [selectedCalId, setSelectedCalId] = useState(defaultCal.id);
+  const [desc, setDesc] = useState(currentSelection.event.desc ?? '');
+  const [start, setStart] = useState(currentSelection.event.start ?? currentSelection.slot.start);
+  const [end, setEnd] = useState(currentSelection.event.end ?? currentSelection.slot.end);
+  const [isAllDay, setIsAllDay] = useState(currentSelection.event.end ?? false);
+  const [selectedCalId, setSelectedCalId] = useState(selectedCal?.id ?? defaultCal.id);
   const [isSubmitCalled, setIsSubmitCalled] = useState(false);
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
   const [error, setError] = useState(null);
+
+  // Update state based on currentSelection update
+  useEffect(() => {
+    const titleUpdate = {
+      value: isEventSelected ? currentSelection.event.title : '',
+      validateOnChange: false,
+      error: null
+    };
+
+    setTitle(titleUpdate);
+    setDesc(currentSelection.event.desc ?? '');
+    setStart(currentSelection.event.start ?? currentSelection.slot.start);
+    setEnd(currentSelection.event.end ?? currentSelection.slot.end);
+    setIsAllDay(currentSelection.event.end ?? false);
+    setError(null);
+  }, [currentSelection]);
 
   const handleTitleBlur = (validationFunc, e) => {
     e.preventDefault();
@@ -71,7 +93,7 @@ const CalendarEventForm = () => {
         return;
       }
 
-      const data = {
+      const update = {
         title: title.value,
         desc,
         allDay: isAllDay,
@@ -90,18 +112,18 @@ const CalendarEventForm = () => {
         const allDayStartTimeAsISOString = startTimeAsDateObj.toISOString();
         const allDayEndTimeAsISOString = endTimeAsDateObj.toISOString();
 
-        data.start = allDayStartTimeAsISOString;
-        data.end = allDayEndTimeAsISOString;
+        update.start = allDayStartTimeAsISOString;
+        update.end = allDayEndTimeAsISOString;
       } else {
-        data.start = start;
-        data.end = end;
+        update.start = start;
+        update.end = end;
       }
 
       if (clickedId === 'add-event-btn') {
         // Dispatch createEvent action
-        createEvent(data)
+        createEvent(update)
           .then(() => {
-            alert(`Successfully added new event: "${data.title}"`);
+            alert(`Successfully added new event: "${update.title}"`);
           })
           .catch((e) => {
             const error = e.response ? e.response.data : e;
@@ -114,19 +136,17 @@ const CalendarEventForm = () => {
         // Check for valid event update
         const { event } = currentSelection;
 
-        const isEventUpdateValid = checkEventUpdate(event, data);
-
-        if (!isEventUpdateValid) {
+        if (!isValidEventUpdate(event, update)) {
           alert('No changes detected!');
           return;
         }
 
         // If update is valid, dispatch updateEvent action
-        data.id = event.id;
+        update.id = event.id;
 
-        updateEvent(data)
+        updateEvent(update)
           .then(() => {
-            alert(`Successfully updated event: "${data.title}"`);
+            alert(`Successfully updated event: "${update.title}"`);
           })
           .catch((e) => {
             const error = e.response ? e.response.data : e;
@@ -146,7 +166,7 @@ const CalendarEventForm = () => {
     }
   };
 
-  const checkEventUpdate = (event, update) => {
+  const isValidEventUpdate = (event, update) => {
     const isUpdateValid =
       event.title != update.title ||
       event.desc != update.desc ||
@@ -165,7 +185,7 @@ const CalendarEventForm = () => {
     event.preventDefault();
 
     // If no valid event selected, do nothing
-    if (!currentSelection.event || currentSelection.event.length < 1) return;
+    if (!currentSelection.event.id) return;
 
     // Confirm delete via user input
     const deleteConfirmation = confirm('Are you sure you want to delete this event?');
@@ -181,13 +201,13 @@ const CalendarEventForm = () => {
   };
 
   const handleCalendarChange = (values) => {
-    const calId = values[0].id;
-    if (!calId) return;
+    if (!values || values.length < 1) return;
 
-    const isNewCalSelected = calId !== selectedCalId;
+    const newCalId = values[0].id;
+    const isNewCalSelected = newCalId !== selectedCalId;
 
     if (isNewCalSelected) {
-      setSelectedCalId(calId);
+      setSelectedCalId(newCalId);
     }
   };
 
@@ -198,10 +218,6 @@ const CalendarEventForm = () => {
       setIsAllDay(isChecked);
     }
   };
-
-  const selectedCal = calendars.find((calendar) => calendar.id === selectedCalId);
-  const isSystemCalSelected = selectedCal?.systemCalendar === true;
-  const isSlotSelected = currentSelection ? Object.keys(currentSelection.slot).length > 0 : false;
 
   return (
     <Form className="CalendarEventForm">
@@ -265,8 +281,7 @@ const CalendarEventForm = () => {
               <CalendarDatePickerDialog
                 inputId="startDate"
                 dateFormat={dateFormat}
-                primaryValue={start}
-                secondaryValue={end}
+                value={start}
                 setStart={setStart}
                 setEnd={setEnd}
               />
@@ -298,8 +313,7 @@ const CalendarEventForm = () => {
               <CalendarDatePickerDialog
                 inputId="endDate"
                 dateFormat={dateFormat}
-                primaryValue={end}
-                secondaryValue={start}
+                value={end}
                 setStart={setStart}
                 setEnd={setEnd}
               />
@@ -339,7 +353,7 @@ const CalendarEventForm = () => {
       <Row>
         <Col>
           <CalendarSelectMenu
-            selected={selectedCal ? [selectedCal] : []}
+            selected={selectedCal ? [selectedCal] : [defaultCal]}
             disabled={isSystemCalSelected}
             onChange={(values) => handleCalendarChange(values)}
           />
@@ -362,7 +376,7 @@ const CalendarEventForm = () => {
               Add
             </Button>
           )}
-          {!isSlotSelected && (
+          {isEventSelected && (
             <Button
               type="submit"
               name="update-event-btn"
@@ -378,7 +392,7 @@ const CalendarEventForm = () => {
         </Col>
 
         <Col>
-          {!isSlotSelected && (
+          {isEventSelected && (
             <Button
               name="delete-event-btn"
               id="delete-event-btn"

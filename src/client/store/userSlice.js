@@ -270,13 +270,7 @@ export const onSelectSlot = (slot) => (dispatch) => {
 };
 
 export const onSelectEvent = (event) => (dispatch) => {
-  const newEvent = {
-    ...event,
-    start: event.start.toISOString(),
-    end: event.end.toISOString()
-  };
-
-  return Promise.all([dispatch(eventSelectionUpdated(newEvent)), dispatch(slotSelectionUpdated({}))]);
+  return Promise.all([dispatch(eventSelectionUpdated(event)), dispatch(slotSelectionUpdated({}))]);
 };
 
 export const onSelectView = (view) => (dispatch) => {

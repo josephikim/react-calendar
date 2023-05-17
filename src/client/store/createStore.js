@@ -7,7 +7,7 @@ import userReducer from './userSlice';
 const doCreateStore = () => {
   const persistedState = loadState();
 
-  const preloadedState = persistedState ? persistedState : {};
+  const preloadedState = persistedState ?? {};
 
   const allReducers = combineReducers({
     user: userReducer

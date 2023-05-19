@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
+import { Row, Col, Button, Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation.js';
 import { createEvent, updateEvent, deleteEvent, currentSelectionSelector } from 'client/store/userSlice';
 import CalendarSelectMenu from './CalendarSelectMenu';
-import CalendarDatePickerDialog from './CalendarDatePickerDialogue';
-import { Row, Col, Button, Form } from 'react-bootstrap';
+import CalendarDatePickerDialog from './CalendarDatePickerDialog';
 import './CalendarEventForm.css';
 import 'react-day-picker/dist/style.css';
 
@@ -259,12 +259,7 @@ const CalendarEventForm = () => {
             disabled={isSystemCalSelected}
             rows="6"
             value={desc}
-            onChange={(e) =>
-              setDesc({
-                ...desc,
-                value: e.target.value
-              })
-            }
+            onChange={(e) => setDesc(e.target.value)}
           >
             enter description
           </textarea>
@@ -282,6 +277,8 @@ const CalendarEventForm = () => {
                 inputId="startDate"
                 dateFormat={dateFormat}
                 value={start}
+                start={start}
+                end={end}
                 setStart={setStart}
                 setEnd={setEnd}
               />
@@ -314,6 +311,8 @@ const CalendarEventForm = () => {
                 inputId="endDate"
                 dateFormat={dateFormat}
                 value={end}
+                start={start}
+                end={end}
                 setStart={setStart}
                 setEnd={setEnd}
               />

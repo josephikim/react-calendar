@@ -1,0 +1,5 @@
+.CalendarDatePickerDialog .dialog-sheet {
+  background: whitesmoke;
+  border: 2px solid black;
+  z-index: 1;
+}

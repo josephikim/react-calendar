@@ -3,9 +3,10 @@ import { format, isValid, parse } from 'date-fns';
 import FocusTrap from 'focus-trap-react';
 import { DayPicker } from 'react-day-picker';
 import { usePopper } from 'react-popper';
+import './CalendarDatePickerDialog.css';
 
 const CalendarDatePickerDialog = (props) => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(props.value);
   const [isPopperOpen, setIsPopperOpen] = useState(false);
 
   const popperRef = useRef(null);
@@ -18,7 +19,15 @@ const CalendarDatePickerDialog = (props) => {
   }, [props.value]);
 
   const popper = usePopper(popperRef.current, popperElement, {
-    placement: 'bottom-start'
+    placement: 'top-start',
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, 8]
+        }
+      }
+    ]
   });
 
   const closePopper = () => {
@@ -63,25 +72,24 @@ const CalendarDatePickerDialog = (props) => {
   };
 
   const handleDaySelect = (date) => {
-    setSelections(date);
-    if (date) {
-      setInputValue(format(date, props.dateFormat));
+    if (date instanceof Date && !isNaN(date)) {
+      setInputValue(date);
+      setSelections(date);
       closePopper();
-    } else {
-      setInputValue('');
     }
   };
 
   return (
-    <div>
+    <div className="CalendarDatePickerDialog">
       <div ref={popperRef}>
         <input
           id={props.inputId}
           type="text"
           placeholder={format(new Date(), props.dateFormat)}
-          value={inputValue}
+          value={format(inputValue, props.dateFormat)}
           onChange={handleInputChange}
-          className="input-reset pa2 ma2 bg-white black ba"
+          className="input-reset"
+          onClick={handleButtonClick}
         />
         <button
           ref={buttonRef}
@@ -95,15 +103,17 @@ const CalendarDatePickerDialog = (props) => {
           </span>
         </button>
       </div>
+
       {isPopperOpen && (
         <FocusTrap
           active
           focusTrapOptions={{
-            initialFocus: false,
-            allowOutsideClick: true,
-            clickOutsideDeactivates: true,
-            onDeactivate: closePopper,
-            fallbackFocus: buttonRef.current
+            fallbackFocus: buttonRef.current,
+            clickOutsideDeactivates: (e) => {
+              closePopper();
+              return true;
+            },
+            returnFocusOnDeactivate: true
           }}
         >
           <div

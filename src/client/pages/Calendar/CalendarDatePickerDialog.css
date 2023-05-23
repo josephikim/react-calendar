@@ -1,3 +1,25 @@
+.CalendarDatePickerDialog .inputContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+.CalendarDatePickerDialog .inputContainer input {
+  width: 100%;
+}
+
+.CalendarDatePickerDialog .inputContainer button {
+  position: absolute;
+  line-height: 25px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 0;
+}
+
+.CalendarDatePickerDialog .inputContainer span {
+  font-size: 1.75rem;
+}
+
 .CalendarDatePickerDialog .dialog-sheet {
   background: whitesmoke;
   border: 2px solid black;

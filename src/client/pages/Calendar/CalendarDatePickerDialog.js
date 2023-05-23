@@ -81,7 +81,7 @@ const CalendarDatePickerDialog = (props) => {
 
   return (
     <div className="CalendarDatePickerDialog">
-      <div ref={popperRef}>
+      <div className="inputContainer" ref={popperRef}>
         <input
           id={props.inputId}
           type="text"

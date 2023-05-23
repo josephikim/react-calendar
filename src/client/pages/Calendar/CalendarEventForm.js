@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
+import TimePicker from 'react-time-picker';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation.js';
 import { createEvent, updateEvent, deleteEvent, currentSelectionSelector } from 'client/store/userSlice';
@@ -8,6 +9,7 @@ import CalendarSelectMenu from './CalendarSelectMenu';
 import CalendarDatePickerDialog from './CalendarDatePickerDialog';
 import './CalendarEventForm.css';
 import 'react-day-picker/dist/style.css';
+import 'react-time-picker/dist/TimePicker.css';
 
 const CalendarEventForm = () => {
   const calendars = useSelector((state) => state.user.calendars);
@@ -29,7 +31,7 @@ const CalendarEventForm = () => {
   const [desc, setDesc] = useState(currentSelection.event.desc ?? '');
   const [start, setStart] = useState(currentSelection.event.start ?? currentSelection.slot.start);
   const [end, setEnd] = useState(currentSelection.event.end ?? currentSelection.slot.end);
-  const [isAllDay, setIsAllDay] = useState(currentSelection.event.end ?? false);
+  const [isAllDay, setIsAllDay] = useState(currentSelection.event.allDay ?? false);
   const [selectedCalId, setSelectedCalId] = useState(selectedCal?.id ?? defaultCal.id);
   const [isSubmitCalled, setIsSubmitCalled] = useState(false);
   const [timeFormat, setTimeFormat] = useState('h:mm a');
@@ -48,7 +50,7 @@ const CalendarEventForm = () => {
     setDesc(currentSelection.event.desc ?? '');
     setStart(currentSelection.event.start ?? currentSelection.slot.start);
     setEnd(currentSelection.event.end ?? currentSelection.slot.end);
-    setIsAllDay(currentSelection.event.end ?? false);
+    setIsAllDay(currentSelection.event.allDay ?? false);
     setError(null);
   }, [currentSelection]);
 
@@ -219,6 +221,28 @@ const CalendarEventForm = () => {
     }
   };
 
+  const handleTimeChange = (id, timeStr) => {
+    const [hour, min] = getTimePickerValues(timeStr);
+
+    if (id === 'startTime') {
+      const update = new Date(start.setHours(hour, min));
+      setStart(update);
+    }
+    if (id === 'endTime') {
+      const update = new Date(end.setHours(hour, min));
+      setEnd(update);
+    }
+  };
+
+  const getTimePickerValues = (timeStr) => {
+    const arr = timeStr.split(':');
+    if (arr.length < 2) alert('Invalid time entered!');
+
+    const hour = parseInt(arr[0]);
+    const min = parseInt(arr[1]);
+    return [hour, min];
+  };
+
   return (
     <Form className="CalendarEventForm">
       <Row>
@@ -289,11 +313,13 @@ const CalendarEventForm = () => {
         <Col xs={6}>
           <Row>
             <Col>
-              <label htmlFor="startTime" className="text-primary">
-                Start Time
-              </label>
-
-              <input id="startTimeInput"></input>
+              <label className="text-primary">Start Time</label>
+              <TimePicker
+                disableClock
+                disabled={isAllDay}
+                onChange={(value) => handleTimeChange('startTime', value)}
+                value={isAllDay ? '00:00' : start}
+              />
             </Col>
           </Row>
         </Col>
@@ -323,11 +349,13 @@ const CalendarEventForm = () => {
         <Col xs={6}>
           <Row>
             <Col>
-              <label htmlFor="endTime" className="text-primary">
-                End Time
-              </label>
-
-              <input className="endTimeInput"></input>
+              <label className="text-primary">End Time</label>
+              <TimePicker
+                disableClock
+                disabled={isAllDay}
+                onChange={(value) => handleTimeChange('endTime', value)}
+                value={isAllDay ? '00:00' : end}
+              />
             </Col>
           </Row>
         </Col>

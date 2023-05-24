@@ -35,6 +35,7 @@ const isAdmin = (req, res, next) => {
       return next(e);
     }
 
+    // Mongoose returns [] for .find query with no matches
     Role.find(
       {
         id: { $in: user.roles }
@@ -62,6 +63,7 @@ const isModerator = (req, res, next) => {
       return next(e);
     }
 
+    // Mongoose returns [] for .find query with no matches
     Role.find(
       {
         id: { $in: user.roles }

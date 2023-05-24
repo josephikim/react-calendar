@@ -9,6 +9,7 @@ class CalendarService {
   // Get user and system calendars
   getAll = async (userId) => {
     try {
+      // Mongoose returns [] for .find query with no matches
       const result = await this.model.find({
         $or: [{ user: userId }, { systemCalendar: true }]
       });
@@ -43,6 +44,7 @@ class CalendarService {
 
   update = async (id, name) => {
     try {
+      // Mongoose returns the modified document (or null) for .findOneAndUpdate query with option 'new: true'
       const result = await this.model.findOneAndUpdate({ id }, { name }, { new: true });
 
       return result;
@@ -53,6 +55,7 @@ class CalendarService {
 
   delete = async (id) => {
     try {
+      // Mongoose returns the matching document (or null) for .findByIdAndDelete query
       const result = await this.model.findByIdAndDelete({ id });
 
       if (!result) {

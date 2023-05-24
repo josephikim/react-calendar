@@ -66,8 +66,9 @@ class UserService {
 
   refreshToken = async (requestToken) => {
     try {
-      const refreshToken = await this.refreshTokenService.get({ token: requestToken });
+      const refreshToken = await this.refreshTokenService.get(requestToken);
 
+      // Mongoose returns null for Model.findOne query with no matches
       if (!refreshToken) {
         // Refresh token not found
         throw new NotFoundError('Invalid request token', { errorCode: 'refreshToken' });
@@ -136,6 +137,7 @@ class UserService {
 
   update = async (userId, data) => {
     try {
+      // Mongoose returns the modified document (or null) for .findByIdAndUpdate query with option 'new: true'
       const result = await this.model.findByIdAndUpdate(
         {
           id: userId

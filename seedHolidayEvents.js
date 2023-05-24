@@ -35,6 +35,9 @@ const makeEvents = async () => {
 
   const calendar = await client.db(MONGO_DB).collection('calendars').find({ name: 'US Holidays' }).toArray();
 
+  // Mongoose returns [] for .find query with no matches
+  if (!calendar.length || calendar.length < 1) return;
+
   const calendarId = calendar[0]._id;
 
   await getHolidays().then((response) => {

@@ -23,6 +23,7 @@ class EventService {
     });
 
     try {
+      // Mongoose returns [] for .find query with no matches
       const result = await this.model
         .find({
           calendarId: {
@@ -44,7 +45,7 @@ class EventService {
         start: new Date(data.start),
         end: new Date(data.end)
       };
-
+      // Mongoose returns the modified document (or null) for .findByIdAndUpdate query with option 'new: true'
       const result = await this.model.findByIdAndUpdate({ id }, _obj, { new: true });
 
       return result;
@@ -55,6 +56,7 @@ class EventService {
 
   delete = async (id) => {
     try {
+      // Mongoose returns the matching document (or null) for .findByIdAndDelete query
       const result = await this.model.findByIdAndDelete({ id });
 
       return result;

@@ -10,6 +10,7 @@ class RoleService {
   };
 
   get = async (roles) => {
+    // Mongoose returns [] for .find query with no matches
     const result = await this.model.find({ name: { $in: roles } });
 
     return result;

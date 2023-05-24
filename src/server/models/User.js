@@ -67,6 +67,7 @@ schema.post('findOneAndUpdate', handleE11000);
 // Create user default calendar on user creation
 schema.post('save', async function () {
   if (this.id && this.wasNew) {
+    // Mongoose returns [] for .find query with no matches
     Calendar.find(
       {
         user: this.id,
@@ -98,6 +99,7 @@ schema.post('save', async function () {
 });
 
 schema.statics.findByUsername = async function (username) {
+  // Mongoose returns null for .findOne query with no matches
   return this.findOne({ username });
 };
 

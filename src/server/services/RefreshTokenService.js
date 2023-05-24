@@ -29,6 +29,7 @@ class RefreshTokenService {
 
   get = async (requestToken) => {
     try {
+      // Mongoose returns null for .findOne query with no matches
       const result = await this.model.findOne({ token: requestToken });
 
       return result;
@@ -41,6 +42,7 @@ class RefreshTokenService {
     try {
       if (this.model.verifyExpiration(token)) {
         // Refresh token expired
+        // Mongoose returns the matching document (or null) for .findByIdAndRemove query
         await this.model.findByIdAndRemove(token.id, {
           useFindAndModify: false
         });

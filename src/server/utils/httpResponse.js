@@ -5,6 +5,7 @@ class HttpResponse {
     this.statusCode = options.statusCode || 200;
     let filteredData = data;
 
+    // handles JS arrays or objects
     if (typeof filteredData === 'object') {
       filteredData = this.filterData(JSON.parse(JSON.stringify(filteredData)));
     }
@@ -12,8 +13,6 @@ class HttpResponse {
       this.deleted = options.deleted;
     }
     if (Array.isArray(filteredData)) {
-      filteredData = this.filterData(JSON.parse(JSON.stringify(filteredData)));
-
       this.data = [...filteredData];
     } else if (typeof filteredData === 'object') {
       this.data = { ...filteredData };

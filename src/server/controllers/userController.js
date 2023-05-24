@@ -61,7 +61,7 @@ class UserController {
       // get user calendars and events
       const response = await this.service.getData(userId);
 
-      await res.status(response.statusCode).send(response.data);
+      await res.status(200).send(response);
     } catch (err) {
       return next(err);
     }

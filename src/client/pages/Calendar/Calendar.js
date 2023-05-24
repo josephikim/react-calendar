@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
@@ -24,6 +24,7 @@ const localizer = dayjsLocalizer(dayjs);
 
 const Calendar = () => {
   const dispatch = useDispatch();
+  const shouldInitData = useRef(true);
   const calendars = useSelector((state) => state.user.calendars);
   const viewSelection = useSelector((state) => state.user.viewSelection);
   const events = useSelector((state) => state.user.events);
@@ -31,9 +32,11 @@ const Calendar = () => {
 
   // Fetch initial user data
   useEffect(() => {
-    const initData = [dispatch(fetchUserData()), dispatch(initCalendarUI())];
-
-    Promise.all(initData);
+    if (shouldInitData.current) {
+      const initData = [dispatch(fetchUserData()), dispatch(initCalendarUI())];
+      Promise.all(initData);
+      shouldInitData.current = false;
+    }
   }, []);
 
   // Styles used for displaying calendar events
@@ -115,7 +118,7 @@ const Calendar = () => {
         .filter((calendar) => calendar.visibility === true)
         .map((calendar) => calendar.id);
 
-      const visibleEvents = events.filter((event) => visibleCalendars.includes(event.calendarId)) || [];
+      const visibleEvents = events?.filter((event) => visibleCalendars.includes(event.calendarId)) || [];
 
       return (
         <Row>

@@ -129,7 +129,7 @@ class UserService {
         events: events.data
       };
 
-      return new HttpResponse(response);
+      return response;
     } catch (e) {
       throw e;
     }

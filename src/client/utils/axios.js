@@ -1,6 +1,6 @@
 import axios from 'axios';
 import store from 'client/store/createStore';
-import { accessTokenUpdated } from 'client/store/userSlice';
+import { accessTokenUpdated, logoutUser } from 'client/store/userSlice';
 
 const userApi = axios.create({
   baseURL: `${process.env.API_URL}` + '/user',
@@ -46,15 +46,20 @@ userApi.interceptors.response.use(
           return userApi(originalConfig);
         } catch (_error) {
           if (_error.response && _error.response.data) {
-            return Promise.reject(_error.response.data);
+            // refresh token was expired - log out user
+            if (_error.response.data.errorCode === 'refreshToken') {
+              console.log('Please login again.');
+              store.dispatch(logoutUser());
+              // End request by sending unresolved promise
+              // see https://github.com/axios/axios/issues/715
+              return new Promise(() => {});
+            } else {
+              return Promise.reject(_error.response.data);
+            }
           }
 
           return Promise.reject(_error);
         }
-      }
-
-      if (e.response.status === 403) {
-        return Promise.reject(e);
       }
     }
 

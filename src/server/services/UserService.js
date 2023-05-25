@@ -77,13 +77,12 @@ class UserService {
       await this.refreshTokenService.verify(refreshToken);
 
       // create new JWT token
-      const accessToken = jwt.sign({ id: refreshToken.user.id }, process.env.JWT_SECRET_KEY, {
+      const accessToken = jwt.sign({ id: refreshToken.user._id }, process.env.JWT_SECRET_KEY, {
         expiresIn: Number(process.env.JWT_EXPIRATION)
       });
 
       const response = {
-        accessToken,
-        refreshToken
+        accessToken
       };
       return new HttpResponse(response);
     } catch (e) {

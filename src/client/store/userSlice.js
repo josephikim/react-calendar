@@ -163,9 +163,11 @@ export const registerUser = (data) => async (dispatch) => {
 
 export const fetchUserData = () => async (dispatch) => {
   try {
-    userApi.get('/data').then((res) => {
-      dispatch(calendarsUpdated(res.data.calendars));
-      dispatch(eventsUpdated(res.data.events));
+    const res = await userApi.get('/data');
+
+    return Promise.resolve(res.data).then((data) => {
+      dispatch(calendarsUpdated(data.calendars));
+      dispatch(eventsUpdated(data.events));
     });
   } catch (e) {
     return Promise.reject(e);

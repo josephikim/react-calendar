@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import HttpResponse from 'server/utils/httpResponse';
 import { systemColors, userColors } from 'config/appConfig';
 
@@ -11,7 +12,7 @@ class CalendarService {
     try {
       // Mongoose returns [] for .find query with no matches
       const result = await this.model.find({
-        $or: [{ user: userId }, { systemCalendar: true }]
+        $or: [{ user: mongoose.Types.ObjectId(userId) }, { systemCalendar: true }]
       });
 
       return new HttpResponse(result);

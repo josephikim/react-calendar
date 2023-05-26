@@ -52,8 +52,8 @@ const makeEvents = async () => {
       const event = {
         title: holiday.name,
         desc: holiday.description,
-        start: startDate,
-        end: endDate,
+        start: startDate.toISOString(),
+        end: endDate.toISOString(),
         allDay: true,
         calendarId: calendarId
       };

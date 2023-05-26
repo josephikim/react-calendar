@@ -17,7 +17,7 @@ class RefreshTokenService {
       const _obj = {
         token: _token,
         user: userId,
-        expiryDate: expiredAt
+        expiryDate: expiredAt.toISOString()
       };
 
       const result = await this.model.create(_obj);

@@ -7,6 +7,7 @@ import {
   onSelectEvent,
   onSelectView,
   fetchUserData,
+  rbcEventsSelector,
   currentSelectionSelector,
   initCalendarUI
 } from 'client/store/userSlice';
@@ -27,7 +28,7 @@ const Calendar = () => {
   const shouldInitData = useRef(true);
   const calendars = useSelector((state) => state.user.calendars);
   const viewSelection = useSelector((state) => state.user.viewSelection);
-  const events = useSelector((state) => state.user.events);
+  const events = useSelector(rbcEventsSelector);
   const currentSelection = useSelector(currentSelectionSelector);
 
   // Fetch initial user data
@@ -86,13 +87,13 @@ const Calendar = () => {
     dispatch(onSelectSlot(serializedSlot));
   };
 
-  // Comparisons are made using primitive values of Date objects i.e. date.valueOf()
+  // Comparisons are made using primitive values of Date objects i.e. date.getTime()
   const isSameSlot = (currentSlot, candidateSlot) => {
     if (Object.keys(currentSlot).length < 1 || Object.keys(candidateSlot).length < 1) return false;
 
     const isSame =
-      candidateSlot.start.valueOf() === currentSlot.start.valueOf() &&
-      candidateSlot.end.valueOf() === currentSlot.end.valueOf();
+      candidateSlot.start.getTime() === currentSlot.start.getTime() &&
+      candidateSlot.end.getTime() === currentSlot.end.getTime();
 
     if (isSame) return true;
 

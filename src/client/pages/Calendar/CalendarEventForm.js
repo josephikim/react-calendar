@@ -23,22 +23,28 @@ const CalendarEventForm = () => {
   const isEventSelected = Object.keys(currentSelection.event).length > 0;
 
   // Initialize component state
+
+  // stores strings
   const [title, setTitle] = useState({
     value: isEventSelected ? currentSelection.event.title : '',
     validateOnChange: false,
     error: null
   });
   const [desc, setDesc] = useState(currentSelection.event.desc ?? '');
-  const [start, setStart] = useState(currentSelection.event.start ?? currentSelection.slot.start);
-  const [end, setEnd] = useState(currentSelection.event.end ?? currentSelection.slot.end);
-  const [isAllDay, setIsAllDay] = useState(currentSelection.event.allDay ?? false);
   const [selectedCalId, setSelectedCalId] = useState(selectedCal?.id ?? defaultCal.id);
-  const [isSubmitCalled, setIsSubmitCalled] = useState(false);
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
   const [error, setError] = useState(null);
 
-  // Update state based on currentSelection update
+  // stores booleans
+  const [isAllDay, setIsAllDay] = useState(currentSelection.event.allDay ?? false);
+  const [isSubmitCalled, setIsSubmitCalled] = useState(false);
+
+  // stores Date objects
+  const [start, setStart] = useState(currentSelection.event.start ?? currentSelection.slot.start);
+  const [end, setEnd] = useState(currentSelection.event.end ?? currentSelection.slot.end);
+
+  // Hook for updating state based on current rbc selection
   useEffect(() => {
     const titleUpdate = {
       value: isEventSelected ? currentSelection.event.title : '',
@@ -90,36 +96,20 @@ const CalendarEventForm = () => {
       // if no error, submit form
 
       // Check for valid end time
-      if (isAllDay === false && end <= start) {
+      if (isAllDay === false && end.getTime() <= start.getTime()) {
         alert('Input error: End time should be after start time!');
         return;
       }
 
+      // convert Date objs to strings
       const update = {
         title: title.value,
         desc,
+        start: start.toISOString(),
+        end: end.toISOString(),
         allDay: isAllDay,
         calendarId: selectedCalId
       };
-
-      // add start and end values
-      if (isAllDay === true) {
-        const startTimeAsDateObj = new Date(start);
-        const endTimeAsDateObj = new Date(end);
-
-        // Set hours, minutes, and seconds to zero
-        startTimeAsDateObj.setHours(0, 0, 0);
-        endTimeAsDateObj.setHours(0, 0, 0);
-
-        const allDayStartTimeAsISOString = startTimeAsDateObj.toISOString();
-        const allDayEndTimeAsISOString = endTimeAsDateObj.toISOString();
-
-        update.start = allDayStartTimeAsISOString;
-        update.end = allDayEndTimeAsISOString;
-      } else {
-        update.start = start;
-        update.end = end;
-      }
 
       if (clickedId === 'add-event-btn') {
         // Dispatch createEvent action
@@ -139,7 +129,7 @@ const CalendarEventForm = () => {
         const { event } = currentSelection;
 
         if (!isValidEventUpdate(event, update)) {
-          alert('No changes detected!');
+          alert('No changes to event detected!');
           return;
         }
 
@@ -169,15 +159,15 @@ const CalendarEventForm = () => {
   };
 
   const isValidEventUpdate = (event, update) => {
-    const isUpdateValid =
+    const isValidUpdate =
       event.title != update.title ||
       event.desc != update.desc ||
-      event.start != update.start ||
-      event.end != update.end ||
+      event.start.toISOstring() != update.start ||
+      event.end.toISOString() != update.end ||
       event.allDay != update.allDay ||
       event.calendarId != update.calendarId;
 
-    if (isUpdateValid) {
+    if (isValidUpdate) {
       return true;
     }
     return false;
@@ -225,12 +215,12 @@ const CalendarEventForm = () => {
     const [hour, min] = getTimePickerValues(timeStr);
 
     if (id === 'startTime') {
-      const update = new Date(start.setHours(hour, min));
-      setStart(update);
+      const newStart = new Date(start.setHours(hour, min));
+      setStart(newStart);
     }
     if (id === 'endTime') {
-      const update = new Date(end.setHours(hour, min));
-      setEnd(update);
+      const newEnd = new Date(end.setHours(hour, min));
+      setEnd(newEnd);
     }
   };
 

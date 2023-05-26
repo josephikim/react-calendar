@@ -11,13 +11,14 @@ const schema = new mongoose.Schema({
     required: [true, 'Enter a user id.']
   },
   expiryDate: {
-    type: Date,
+    type: String,
     required: [true, 'Enter expiration date.']
   }
 });
 
 schema.statics.verifyExpiration = (token) => {
-  return token.expiryDate.getTime() < new Date().getTime();
+  const expiryDateObj = new Date(token.expiryDate);
+  return expiryDateObj.getTime() < new Date().getTime();
 };
 
 const RefreshToken = mongoose.model('RefreshToken', schema);

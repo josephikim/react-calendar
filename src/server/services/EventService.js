@@ -41,10 +41,9 @@ class EventService {
   update = async (id, data) => {
     try {
       const _obj = {
-        ...data,
-        start: new Date(data.start),
-        end: new Date(data.end)
+        ...data
       };
+
       // Mongoose returns the modified document (or null) for .findByIdAndUpdate query with option 'new: true'
       const result = await this.model.findByIdAndUpdate({ id }, _obj, { new: true });
 

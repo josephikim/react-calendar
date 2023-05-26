@@ -6,18 +6,24 @@ import { usePopper } from 'react-popper';
 import './CalendarDatePickerDialog.css';
 
 const CalendarDatePickerDialog = (props) => {
-  const [inputValue, setInputValue] = useState(props.value);
-  const [isPopperOpen, setIsPopperOpen] = useState(false);
-
   const popperRef = useRef(null);
   const buttonRef = useRef(null);
+
+  // stores Date objects
+  const [inputValue, setInputValue] = useState(props.value);
+
+  // stores booleans
+  const [isPopperOpen, setIsPopperOpen] = useState(false);
+
+  // stores focus trap container ref
   const [popperElement, setPopperElement] = useState(null);
 
-  // Update state based on props update
+  // Hook to update input value based on prop change
   useEffect(() => {
     setInputValue(props.value);
   }, [props.value]);
 
+  // Initialize popper
   const popper = usePopper(popperRef.current, popperElement, {
     placement: 'top-start',
     modifiers: [
@@ -35,23 +41,23 @@ const CalendarDatePickerDialog = (props) => {
     buttonRef?.current?.focus();
   };
 
-  const setSelections = (date) => {
+  const setEventFormDates = (date) => {
     if (props.inputId === 'startDate') {
-      props.setStart(date);
-
       // update end date if start date is after end date
-      if (date.valueOf() >= props.end.valueOf()) {
+      if (date.getTime() >= props.end.getTime()) {
         props.setEnd(date);
       }
+
+      props.setStart(date);
     }
 
     if (props.inputId === 'endDate') {
-      props.setEnd(date);
-
       // update start date if end date is before start date
-      if (date.valueOf() <= props.start.valueOf()) {
+      if (date.getTime() <= props.start.getTime()) {
         props.setStart(date);
       }
+
+      props.setEnd(date);
     }
 
     return;
@@ -60,10 +66,9 @@ const CalendarDatePickerDialog = (props) => {
   const handleInputChange = (e) => {
     setInputValue(e.currentTarget.value);
     const date = parse(e.currentTarget.value, props.dateFormat, new Date());
+
     if (isValid(date)) {
-      setSelections(date);
-    } else {
-      setSelections(undefined);
+      setEventFormDates(date);
     }
   };
 
@@ -74,7 +79,7 @@ const CalendarDatePickerDialog = (props) => {
   const handleDaySelect = (date) => {
     if (date instanceof Date && !isNaN(date)) {
       setInputValue(date);
-      setSelections(date);
+      setEventFormDates(date);
       closePopper();
     }
   };

@@ -90,7 +90,20 @@ export default userSlice.reducer;
 
 const slotSelector = (state) => state.user.slotSelection;
 const eventSelector = (state) => state.user.eventSelection;
-const eventsSelector = (state) => state.user.events;
+
+// returns events with start and end times as Date objects
+export const rbcEventsSelector = (state) => {
+  if (!state.user.events || state.user.events.length < 1) return null;
+
+  const rbcEvents = JSON.parse(JSON.stringify(state.user.events));
+
+  rbcEvents.forEach((event) => {
+    event.start = new Date(event.start);
+    event.end = new Date(event.end);
+  });
+
+  return rbcEvents;
+};
 
 // Returns start and end value as Date objects
 export const currentSelectionSelector = createSelector([slotSelector, eventSelector], (slot, event) => {
@@ -108,19 +121,6 @@ export const currentSelectionSelector = createSelector([slotSelector, eventSelec
     slot: newSlot,
     event: newEvent
   };
-});
-
-export const eventsWithDateObjectsSelector = createSelector([eventsSelector], (events) => {
-  if (!events) return null;
-
-  const clonedEvents = JSON.parse(JSON.stringify(events));
-
-  clonedEvents.forEach((event) => {
-    event.start = new Date(event.start);
-    event.end = new Date(event.end);
-  });
-
-  return clonedEvents;
 });
 
 //

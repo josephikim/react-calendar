@@ -9,11 +9,11 @@ const schema = new mongoose.Schema({
     type: String
   },
   start: {
-    type: Date,
+    type: String,
     required: [true, 'Enter a start date.']
   },
   end: {
-    type: Date,
+    type: String,
     required: [true, 'Enter an end date.']
   },
   allDay: {

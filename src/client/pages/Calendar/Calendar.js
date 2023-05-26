@@ -110,10 +110,10 @@ const Calendar = () => {
   };
 
   const render = () => {
-    // check for user calendar
-    const isDefaultCalendarLoaded = calendars.some((calendar) => calendar.userDefault === true);
+    // check for calendar data
+    const isCalendarLoaded = calendars.some((calendar) => calendar.userDefault === true) && currentSelection != null;
 
-    if (isDefaultCalendarLoaded) {
+    if (isCalendarLoaded) {
       const visibleCalendars = calendars
         .filter((calendar) => calendar.visibility === true)
         .map((calendar) => calendar.id);
@@ -147,7 +147,7 @@ const Calendar = () => {
         </Row>
       );
     } else {
-      return <div>loading calendar...</div>;
+      return <h4>loading calendar...</h4>;
     }
   };
 

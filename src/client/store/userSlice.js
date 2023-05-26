@@ -305,12 +305,12 @@ export const updatePassword = (payload) => async () => {
   }
 };
 
-// return start and end dates as strings spanning one hour starting from the nearest upcoming hour
+// return start and end dates as strings spanning 24 hours starting at 12:00am of current day
 const getCurrentDateSlot = () => {
   const start = new Date();
-  const end = new Date();
-  start.setHours(start.getHours(), 0, 0, 0);
-  end.setHours(end.getHours() + 1, 0, 0, 0);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
 
   return {
     action: 'click',

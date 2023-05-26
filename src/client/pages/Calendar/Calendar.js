@@ -73,12 +73,6 @@ const Calendar = () => {
   const handleSelectSlot = (slot) => {
     const { slot: currentSlot } = currentSelection;
 
-    // For month view, set new slot to length of 1 hour starting at noon
-    if (viewSelection === 'month') {
-      slot.start.setHours(12);
-      slot.end.setHours(13);
-    }
-
     // If selected slot matches current slot, do nothing
     if (isSameSlot(currentSlot, slot)) return;
 
@@ -92,7 +86,7 @@ const Calendar = () => {
     dispatch(onSelectSlot(serializedSlot));
   };
 
-  // Comparisons are made using primitive values of Date objects ie Date.valueOf()
+  // Comparisons are made using primitive values of Date objects i.e. date.valueOf()
   const isSameSlot = (currentSlot, candidateSlot) => {
     if (Object.keys(currentSlot).length < 1 || Object.keys(candidateSlot).length < 1) return false;
 

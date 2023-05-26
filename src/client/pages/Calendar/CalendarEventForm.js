@@ -398,7 +398,7 @@ const CalendarEventForm = () => {
               variant="primary"
               disabled={isSystemCalSelected}
               onMouseDown={() => setIsSubmitCalled(true)}
-              onClick={(e) => handleSubmit(e, this.id)}
+              onClick={(e) => handleSubmit(e)}
             >
               Add
             </Button>
@@ -411,7 +411,7 @@ const CalendarEventForm = () => {
               className="btn"
               variant="success"
               disabled={isSystemCalSelected}
-              onClick={(e) => handleSubmit(e, this.id)}
+              onClick={(e) => handleSubmit(e)}
             >
               Save
             </Button>

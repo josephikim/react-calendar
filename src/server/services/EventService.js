@@ -18,7 +18,7 @@ class EventService {
 
   // get all user and system events
   getAll = async (calendarIdArray) => {
-    const objectIds = calendarIdArray.map((calendarId) => {
+    const calendarIds = calendarIdArray.map((calendarId) => {
       return mongoose.Types.ObjectId(calendarId);
     });
 
@@ -26,8 +26,8 @@ class EventService {
       // Mongoose returns [] for .find query with no matches
       const result = await this.model
         .find({
-          calendarId: {
-            $in: objectIds
+          calendar: {
+            $in: calendarIds
           }
         })
         .sort({ start: -1 });

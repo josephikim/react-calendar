@@ -5,6 +5,7 @@ import TimePicker from 'react-time-picker';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation.js';
 import { createEvent, updateEvent, deleteEvent, currentSelectionSelector } from 'client/store/userSlice';
+import { getDayStart, getDayEnd, getSmartStart, getSmartEnd, isValidEndTime, isAllDaySpan } from 'client/utils/dates';
 import CalendarSelectMenu from './CalendarSelectMenu';
 import CalendarDatePickerDialog from './CalendarDatePickerDialog';
 import './CalendarEventForm.css';
@@ -12,12 +13,14 @@ import 'react-day-picker/dist/style.css';
 import 'react-time-picker/dist/TimePicker.css';
 
 const CalendarEventForm = () => {
+  // Redux selectors
   const calendars = useSelector((state) => state.user.calendars);
+  const viewSelection = useSelector((state) => state.user.viewSelection);
   const currentSelection = useSelector(currentSelectionSelector);
 
+  // Derived states
   const defaultCal = calendars.find((calendar) => calendar.userDefault === true);
-  const selectedCal = calendars.find((calendar) => calendar.id === currentSelection?.event.calendarId);
-
+  const selectedCal = calendars.find((calendar) => calendar.id === currentSelection?.event.calendar);
   const isSystemCalSelected = selectedCal?.systemCalendar === true;
   const isSlotSelected = Object.keys(currentSelection.slot).length > 0;
   const isEventSelected = Object.keys(currentSelection.event).length > 0;
@@ -26,39 +29,56 @@ const CalendarEventForm = () => {
 
   // stores strings
   const [title, setTitle] = useState({
-    value: isEventSelected ? currentSelection.event.title : '',
+    value: '',
     validateOnChange: false,
     error: null
   });
-  const [desc, setDesc] = useState(currentSelection.event.desc ?? '');
+  const [desc, setDesc] = useState('');
   const [selectedCalId, setSelectedCalId] = useState(selectedCal?.id ?? defaultCal.id);
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
   const [error, setError] = useState(null);
 
   // stores booleans
-  const [isAllDay, setIsAllDay] = useState(currentSelection.event.allDay ?? false);
+  const [isAllDay, setIsAllDay] = useState(true);
   const [isSubmitCalled, setIsSubmitCalled] = useState(false);
 
   // stores Date objects
-  const [start, setStart] = useState(currentSelection.event.start ?? currentSelection.slot.start);
-  const [end, setEnd] = useState(currentSelection.event.end ?? currentSelection.slot.end);
+  const [start, setStart] = useState(currentSelection.slot.start);
+  const [end, setEnd] = useState(currentSelection.slot.end);
+  const [allDayStart, setAllDayStart] = useState(currentSelection.slot.start);
+  const [allDayEnd, setAllDayEnd] = useState(currentSelection.slot.end);
 
-  // Hook for updating state based on current rbc selection
+  // Hook for updating state based on rbc selection
   useEffect(() => {
     const titleUpdate = {
-      value: isEventSelected ? currentSelection.event.title : '',
+      value: currentSelection.event.title ?? '',
       validateOnChange: false,
       error: null
     };
 
     setTitle(titleUpdate);
-    setDesc(currentSelection.event.desc ?? '');
+    setDesc(currentSelection.event.desc ?? desc);
     setStart(currentSelection.event.start ?? currentSelection.slot.start);
     setEnd(currentSelection.event.end ?? currentSelection.slot.end);
-    setIsAllDay(currentSelection.event.allDay ?? false);
+    setIsAllDay(currentSelection.event.allDay ?? isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end));
     setError(null);
-  }, [currentSelection]);
+
+    // If isAllDay=true, use day start/end times
+    if (isAllDay === true) {
+      const setAllDayTimes = [
+        setAllDayStart(currentSelection.event.start ?? currentSelection.slot.start),
+        setAllDayEnd(currentSelection.event.end ?? currentSelection.slot.end)
+      ];
+      Promise.all(setAllDayTimes);
+    }
+
+    // If isAllDay=false, use smart start/end times (ignore multi-day selections)
+    if (isAllDay === false && currentSelection.slot?.slots.length === 1) {
+      const setSmartTimes = [setStart(getSmartStart()), setEnd(getSmartEnd())];
+      Promise.all(setSmartTimes);
+    }
+  }, [currentSelection, isAllDay]);
 
   const handleTitleBlur = (validationFunc, e) => {
     e.preventDefault();
@@ -96,7 +116,7 @@ const CalendarEventForm = () => {
       // if no error, submit form
 
       // Check for valid end time
-      if (isAllDay === false && end.getTime() <= start.getTime()) {
+      if (!isAllDay && !isValidEndTime(start, end)) {
         alert('Input error: End time should be after start time!');
         return;
       }
@@ -105,10 +125,10 @@ const CalendarEventForm = () => {
       const update = {
         title: title.value,
         desc,
-        start: start.toISOString(),
-        end: end.toISOString(),
-        allDay: isAllDay,
-        calendarId: selectedCalId
+        start: isAllDay ? allDayStart.toISOString() : start.toISOString(),
+        end: isAllDay ? allDayEnd.toISOString() : end.toISOString(),
+        allDay: isAllDay === true ?? isAllDaySpan(start, end),
+        calendar: selectedCalId
       };
 
       if (clickedId === 'add-event-btn') {
@@ -165,7 +185,7 @@ const CalendarEventForm = () => {
       event.start.toISOstring() != update.start ||
       event.end.toISOString() != update.end ||
       event.allDay != update.allDay ||
-      event.calendarId != update.calendarId;
+      event.calendar != update.calendar;
 
     if (isValidUpdate) {
       return true;
@@ -217,10 +237,12 @@ const CalendarEventForm = () => {
     if (id === 'startTime') {
       const newStart = new Date(start.setHours(hour, min));
       setStart(newStart);
+      setIsAllDay(false);
     }
     if (id === 'endTime') {
       const newEnd = new Date(end.setHours(hour, min));
       setEnd(newEnd);
+      setIsAllDay(false);
     }
   };
 
@@ -290,9 +312,8 @@ const CalendarEventForm = () => {
               <CalendarDatePickerDialog
                 inputId="startDate"
                 dateFormat={dateFormat}
-                value={start}
-                start={start}
-                end={end}
+                value={isAllDay ? allDayStart : start}
+                end={isAllDay ? allDayEnd : end}
                 setStart={setStart}
                 setEnd={setEnd}
               />
@@ -308,7 +329,7 @@ const CalendarEventForm = () => {
                 disableClock
                 disabled={isAllDay}
                 onChange={(value) => handleTimeChange('startTime', value)}
-                value={isAllDay ? '00:00' : start}
+                value={isAllDay ? allDayStart : start}
               />
             </Col>
           </Row>
@@ -326,9 +347,8 @@ const CalendarEventForm = () => {
               <CalendarDatePickerDialog
                 inputId="endDate"
                 dateFormat={dateFormat}
-                value={end}
-                start={start}
-                end={end}
+                value={isAllDay ? allDayEnd : end}
+                start={isAllDay ? allDayStart : start}
                 setStart={setStart}
                 setEnd={setEnd}
               />
@@ -344,7 +364,7 @@ const CalendarEventForm = () => {
                 disableClock
                 disabled={isAllDay}
                 onChange={(value) => handleTimeChange('endTime', value)}
-                value={isAllDay ? '00:00' : end}
+                value={isAllDay ? allDayEnd : end}
               />
             </Col>
           </Row>

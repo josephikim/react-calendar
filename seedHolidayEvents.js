@@ -55,7 +55,7 @@ const makeEvents = async () => {
         start: startDate.toISOString(),
         end: endDate.toISOString(),
         allDay: true,
-        calendarId: calendarId
+        calendar: calendarId
       };
       events.push(event);
     });

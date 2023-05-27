@@ -220,7 +220,7 @@ class AccountCalendarSettings extends Component {
       // no input errors, submit the form
 
       const data = {
-        calendarId: id,
+        id,
         name: calendarState.value.trim()
       };
 

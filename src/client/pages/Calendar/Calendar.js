@@ -26,8 +26,9 @@ const localizer = dayjsLocalizer(dayjs);
 const Calendar = () => {
   const dispatch = useDispatch();
   const shouldInitData = useRef(true);
+
+  // Redux selectors
   const calendars = useSelector((state) => state.user.calendars);
-  const viewSelection = useSelector((state) => state.user.viewSelection);
   const events = useSelector(rbcEventsSelector);
   const currentSelection = useSelector(currentSelectionSelector);
 
@@ -42,7 +43,7 @@ const Calendar = () => {
 
   // Styles used for displaying calendar events
   const eventStyleGetter = (event) => {
-    const calendar = calendars.filter((calendar) => calendar.id === event.calendarId);
+    const calendar = calendars.filter((calendar) => calendar.id === event.calendar);
 
     if (calendar.length < 1) return;
 
@@ -60,15 +61,21 @@ const Calendar = () => {
     };
   };
 
-  const handleSelectEvent = (e) => {
+  const handleSelectEvent = (event) => {
     const { event: currentEvent } = currentSelection;
 
     // If event matches previous selection, do nothing
-    const isNewEventSelected = !currentEvent.id || e.id !== currentEvent.id;
+    const isNewEventSelected = !currentEvent.id || event.id !== currentEvent.id;
 
-    if (isNewEventSelected) {
-      dispatch(onSelectEvent(e));
-    }
+    if (!isNewEventSelected) return;
+
+    const serializedEvent = {
+      ...event,
+      start: event.start.toISOString(),
+      end: event.end.toISOString()
+    };
+
+    dispatch(onSelectEvent(serializedEvent));
   };
 
   const handleSelectSlot = (slot) => {
@@ -113,7 +120,7 @@ const Calendar = () => {
         .filter((calendar) => calendar.visibility === true)
         .map((calendar) => calendar.id);
 
-      const visibleEvents = events?.filter((event) => visibleCalendars.includes(event.calendarId)) || [];
+      const visibleEvents = events?.filter((event) => visibleCalendars.includes(event.calendar)) || [];
 
       return (
         <Row>

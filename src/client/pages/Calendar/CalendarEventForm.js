@@ -5,7 +5,15 @@ import TimePicker from 'react-time-picker';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation.js';
 import { createEvent, updateEvent, deleteEvent, currentSelectionSelector } from 'client/store/userSlice';
-import { getDayStart, getDayEnd, getSmartStart, getSmartEnd, isValidEndTime, isAllDaySpan } from 'client/utils/dates';
+import {
+  getDayStart,
+  getDayEnd,
+  getSmartStart,
+  getSmartEnd,
+  isValidEndTime,
+  isAllDaySpan,
+  isSingleDayAllDaySpan
+} from 'client/utils/dates';
 import CalendarSelectMenu from './CalendarSelectMenu';
 import CalendarDatePickerDialog from './CalendarDatePickerDialog';
 import './CalendarEventForm.css';
@@ -25,6 +33,29 @@ const CalendarEventForm = () => {
   const isSlotSelected = Object.keys(currentSelection.slot).length > 0;
   const isEventSelected = Object.keys(currentSelection.event).length > 0;
 
+  // State initialization helpers
+  const getInitialAllDayStart = () => {
+    if (isEventSelected) {
+      return getDayStart(currentSelection.event.start);
+    } else {
+      return getDayStart(currentSelection.slot.start);
+    }
+  };
+
+  const getInitialAllDayEnd = () => {
+    if (isEventSelected) {
+      if (isAllDaySpan(currentSelection.event.start, currentSelection.event.end)) {
+        return currentSelection.event.end;
+      }
+      return getDayEnd(currentSelection.event.end);
+    } else {
+      if (isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end)) {
+        return currentSelection.slot.end;
+      }
+      return getDayEnd(currentSelection.slot.end);
+    }
+  };
+
   // Initialize component state
 
   // stores strings
@@ -40,16 +71,20 @@ const CalendarEventForm = () => {
   const [error, setError] = useState(null);
 
   // stores booleans
-  const [isAllDay, setIsAllDay] = useState(true);
+  const [isAllDay, setIsAllDay] = useState(
+    isEventSelected
+      ? currentSelection.event.allDay
+      : isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end)
+  );
   const [isSubmitCalled, setIsSubmitCalled] = useState(false);
 
   // stores Date objects
-  const [start, setStart] = useState(currentSelection.slot.start);
-  const [end, setEnd] = useState(currentSelection.slot.end);
-  const [allDayStart, setAllDayStart] = useState(currentSelection.slot.start);
-  const [allDayEnd, setAllDayEnd] = useState(currentSelection.slot.end);
+  const [start, setStart] = useState(isSlotSelected ? currentSelection.slot.start : currentSelection.event.start);
+  const [end, setEnd] = useState(isSlotSelected ? currentSelection.slot.end : currentSelection.event.end);
+  const [allDayStart, setAllDayStart] = useState(getInitialAllDayStart());
+  const [allDayEnd, setAllDayEnd] = useState(getInitialAllDayEnd());
 
-  // Hook for updating state based on rbc selection
+  // Hook for updating state based on event or slot selection
   useEffect(() => {
     const titleUpdate = {
       value: currentSelection.event.title ?? '',
@@ -58,27 +93,50 @@ const CalendarEventForm = () => {
     };
 
     setTitle(titleUpdate);
-    setDesc(currentSelection.event.desc ?? desc);
-    setStart(currentSelection.event.start ?? currentSelection.slot.start);
-    setEnd(currentSelection.event.end ?? currentSelection.slot.end);
-    setIsAllDay(currentSelection.event.allDay ?? isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end));
+    setDesc(currentSelection.event.desc ?? '');
     setError(null);
 
-    // If isAllDay=true, use day start/end times
-    if (isAllDay === true) {
-      const setAllDayTimes = [
-        setAllDayStart(currentSelection.event.start ?? currentSelection.slot.start),
-        setAllDayEnd(currentSelection.event.end ?? currentSelection.slot.end)
-      ];
-      Promise.all(setAllDayTimes);
+    // Set start/end fields
+    if (isSlotSelected) {
+      const isSingleDayAllDaySlot = isSingleDayAllDaySpan(currentSelection.slot.start, currentSelection.slot.end);
+
+      const updateStartTime = isSingleDayAllDaySlot
+        ? setStart(getSmartStart(currentSelection.slot.start))
+        : setStart(currentSelection.slot.start);
+      const updateEndTime = isSingleDayAllDaySlot
+        ? setEnd(getSmartEnd(currentSelection.slot.end))
+        : setEnd(currentSelection.slot.end);
+
+      Promise.all([updateStartTime, updateEndTime]);
+    } else {
+      // Event is selected
+      const updateEventTimes = [setStart(currentSelection.event.start), setEnd(currentSelection.event.end)];
+      Promise.all(updateEventTimes);
     }
 
-    // If isAllDay=false, use smart start/end times (ignore multi-day selections)
-    if (isAllDay === false && currentSelection.slot?.slots.length === 1) {
-      const setSmartTimes = [setStart(getSmartStart()), setEnd(getSmartEnd())];
-      Promise.all(setSmartTimes);
+    // Set allDay fields
+    if (isSlotSelected) {
+      const isAllDaySlot = isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end);
+      const updateIsAllDay = setIsAllDay(isAllDaySlot);
+      const updateAllDayStart = setAllDayStart(
+        isAllDaySlot ? currentSelection.slot.start : getDayStart(currentSelection.slot.start)
+      );
+      const updateAllDayEnd = setAllDayEnd(
+        isAllDaySlot ? currentSelection.slot.end : getDayEnd(currentSelection.slot.end)
+      );
+      Promise.all([updateIsAllDay, updateAllDayStart, updateAllDayEnd]);
+    } else {
+      // Event is selected
+      const updateIsAllDay = setIsAllDay(currentSelection.event.allDay);
+      const updateAllDayStart = setAllDayStart(
+        currentSelection.event.allDay ? currentSelection.event.start : getDayStart(currentSelection.event.start)
+      );
+      const updateAllDayEnd = setAllDayEnd(
+        currentSelection.event.allDay ? currentSelection.event.end : getDayEnd(currentSelection.event.end)
+      );
+      Promise.all([updateIsAllDay, updateAllDayStart, updateAllDayEnd]);
     }
-  }, [currentSelection, isAllDay]);
+  }, [currentSelection]);
 
   const handleTitleBlur = (validationFunc, e) => {
     e.preventDefault();

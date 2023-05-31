@@ -31,8 +31,16 @@ export const getSmartEnd = (date) => {
 };
 
 // checks if start time is before end time
+export const isValidStartTime = (start, end) => {
+  if (start.getTime() > end.getTime()) {
+    return false;
+  }
+  return true;
+};
+
+// checks if end time is after start time
 export const isValidEndTime = (start, end) => {
-  if (end.getTime() <= start.getTime()) {
+  if (end.getTime() < start.getTime()) {
     return false;
   }
   return true;
@@ -42,7 +50,8 @@ export const isValidEndTime = (start, end) => {
 export const isAllDaySpan = (start, end) => {
   if (
     ((start.getHours() == start.getMinutes()) == start.getSeconds()) == 0 &&
-    ((end.getHours() == end.getMinutes()) == end.getSeconds()) == 0
+    ((end.getHours() == end.getMinutes()) == end.getSeconds()) == 0 &&
+    start.getTime() != end.getTime()
   ) {
     return true;
   }

@@ -41,22 +41,16 @@ const CalendarDatePickerDialog = (props) => {
     buttonRef?.current?.focus();
   };
 
-  const setEventFormDates = (date) => {
-    if (props.inputId === 'startDate') {
-      // update end date if start date is after end date
-      if (date.getTime() >= props.end.getTime()) {
-        props.setEnd(date);
-      }
+  // Updates CalendarEventForm start/end dates (date portion only)
+  const updateEventFormDates = (date) => {
+    const { value } = props;
+    date.setHours(value.getHours(), value.getMinutes());
 
+    if (props.inputId === 'startDate') {
       props.setStart(date);
     }
 
     if (props.inputId === 'endDate') {
-      // update start date if end date is before start date
-      if (date.getTime() <= props.start.getTime()) {
-        props.setStart(date);
-      }
-
       props.setEnd(date);
     }
 
@@ -68,7 +62,7 @@ const CalendarDatePickerDialog = (props) => {
     const date = parse(e.currentTarget.value, props.dateFormat, new Date());
 
     if (isValid(date)) {
-      setEventFormDates(date);
+      updateEventFormDates(date);
     }
   };
 
@@ -79,7 +73,7 @@ const CalendarDatePickerDialog = (props) => {
   const handleDaySelect = (date) => {
     if (date instanceof Date && !isNaN(date)) {
       setInputValue(date);
-      setEventFormDates(date);
+      updateEventFormDates(date);
       closePopper();
     }
   };

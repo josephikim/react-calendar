@@ -10,6 +10,7 @@ import {
   getDayEnd,
   getSmartStart,
   getSmartEnd,
+  isValidStartTime,
   isValidEndTime,
   isAllDaySpan,
   isSingleDayAllDaySpan
@@ -44,7 +45,7 @@ const CalendarEventForm = () => {
 
   const getInitialAllDayEnd = () => {
     if (isEventSelected) {
-      if (isAllDaySpan(currentSelection.event.start, currentSelection.event.end)) {
+      if (currentSelection.event.allDay === true) {
         return currentSelection.event.end;
       }
       return getDayEnd(currentSelection.event.end);
@@ -60,11 +61,11 @@ const CalendarEventForm = () => {
 
   // stores strings
   const [title, setTitle] = useState({
-    value: '',
+    value: currentSelection.event.title ?? '',
     validateOnChange: false,
     error: null
   });
-  const [desc, setDesc] = useState('');
+  const [desc, setDesc] = useState(currentSelection.event.desc ?? '');
   const [selectedCalId, setSelectedCalId] = useState(selectedCal?.id ?? defaultCal.id);
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
@@ -79,12 +80,12 @@ const CalendarEventForm = () => {
   const [isSubmitCalled, setIsSubmitCalled] = useState(false);
 
   // stores Date objects
-  const [start, setStart] = useState(isSlotSelected ? currentSelection.slot.start : currentSelection.event.start);
-  const [end, setEnd] = useState(isSlotSelected ? currentSelection.slot.end : currentSelection.event.end);
+  const [start, setStart] = useState(currentSelection.event.start ?? currentSelection.slot.start);
+  const [end, setEnd] = useState(currentSelection.event.end ?? currentSelection.slot.end);
   const [allDayStart, setAllDayStart] = useState(getInitialAllDayStart());
   const [allDayEnd, setAllDayEnd] = useState(getInitialAllDayEnd());
 
-  // Hook for updating state based on event or slot selection
+  // Hook for updating state based on currentSelection change (allDay fields will be handled in another hook)
   useEffect(() => {
     const titleUpdate = {
       value: currentSelection.event.title ?? '',
@@ -113,30 +114,42 @@ const CalendarEventForm = () => {
       const updateEventTimes = [setStart(currentSelection.event.start), setEnd(currentSelection.event.end)];
       Promise.all(updateEventTimes);
     }
-
-    // Set allDay fields
-    if (isSlotSelected) {
-      const isAllDaySlot = isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end);
-      const updateIsAllDay = setIsAllDay(isAllDaySlot);
-      const updateAllDayStart = setAllDayStart(
-        isAllDaySlot ? currentSelection.slot.start : getDayStart(currentSelection.slot.start)
-      );
-      const updateAllDayEnd = setAllDayEnd(
-        isAllDaySlot ? currentSelection.slot.end : getDayEnd(currentSelection.slot.end)
-      );
-      Promise.all([updateIsAllDay, updateAllDayStart, updateAllDayEnd]);
-    } else {
-      // Event is selected
-      const updateIsAllDay = setIsAllDay(currentSelection.event.allDay);
-      const updateAllDayStart = setAllDayStart(
-        currentSelection.event.allDay ? currentSelection.event.start : getDayStart(currentSelection.event.start)
-      );
-      const updateAllDayEnd = setAllDayEnd(
-        currentSelection.event.allDay ? currentSelection.event.end : getDayEnd(currentSelection.event.end)
-      );
-      Promise.all([updateIsAllDay, updateAllDayStart, updateAllDayEnd]);
-    }
   }, [currentSelection]);
+
+  // Hook for updating allDay fields based on start time change
+  useEffect(() => {
+    const isValidStart = isValidStartTime(start, end);
+
+    if (!isValidStart) {
+      const newEnd = new Date(start);
+      newEnd.setHours(start.getHours() + 1);
+      setEnd(newEnd);
+    } else {
+      updateAllDayStates(start, end);
+    }
+  }, [start]);
+
+  // Hook for updating allDay fields based on end time change
+  useEffect(() => {
+    const isValidEnd = isValidEndTime(start, end);
+
+    if (!isValidEnd) {
+      const newStart = new Date(end);
+      newStart.setHours(end.getHours() - 1);
+      setStart(newStart);
+    } else {
+      updateAllDayStates(start, end);
+    }
+  }, [end]);
+
+  // Helper for updating all day fields
+  const updateAllDayStates = (start, end) => {
+    const isAllDaySpanCheck = isAllDaySpan(start, end);
+    const updateIsAllDay = setIsAllDay(isAllDaySpanCheck);
+    const updateAllDayStart = setAllDayStart(isAllDaySpanCheck ? start : getDayStart(start));
+    const updateAllDayEnd = setAllDayEnd(isAllDaySpanCheck ? end : getDayEnd(end));
+    Promise.all([updateIsAllDay, updateAllDayStart, updateAllDayEnd]);
+  };
 
   const handleTitleBlur = (validationFunc, e) => {
     e.preventDefault();
@@ -290,21 +303,21 @@ const CalendarEventForm = () => {
   };
 
   const handleTimeChange = (id, timeStr) => {
-    const [hour, min] = getTimePickerValues(timeStr);
+    const [hour, min] = parseTimePickerValues(timeStr);
 
     if (id === 'startTime') {
-      const newStart = new Date(start.setHours(hour, min));
+      const newStart = new Date(start);
+      newStart.setHours(hour, min);
       setStart(newStart);
-      setIsAllDay(false);
     }
     if (id === 'endTime') {
-      const newEnd = new Date(end.setHours(hour, min));
+      const newEnd = new Date(end);
+      newEnd.setHours(hour, min);
       setEnd(newEnd);
-      setIsAllDay(false);
     }
   };
 
-  const getTimePickerValues = (timeStr) => {
+  const parseTimePickerValues = (timeStr) => {
     const arr = timeStr.split(':');
     if (arr.length < 2) alert('Invalid time entered!');
 
@@ -371,9 +384,9 @@ const CalendarEventForm = () => {
                 inputId="startDate"
                 dateFormat={dateFormat}
                 value={isAllDay ? allDayStart : start}
-                end={isAllDay ? allDayEnd : end}
+                // end={isAllDay ? allDayEnd : end}
                 setStart={setStart}
-                setEnd={setEnd}
+                // setEnd={setEnd}
               />
             </Col>
           </Row>
@@ -406,8 +419,8 @@ const CalendarEventForm = () => {
                 inputId="endDate"
                 dateFormat={dateFormat}
                 value={isAllDay ? allDayEnd : end}
-                start={isAllDay ? allDayStart : start}
-                setStart={setStart}
+                // start={isAllDay ? allDayStart : start}
+                // setStart={setStart}
                 setEnd={setEnd}
               />
             </Col>

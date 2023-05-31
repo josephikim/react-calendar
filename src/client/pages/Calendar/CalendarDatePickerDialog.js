@@ -6,6 +6,7 @@ import { usePopper } from 'react-popper';
 import './CalendarDatePickerDialog.css';
 
 const CalendarDatePickerDialog = (props) => {
+  const { isDisabled, value } = props;
   const popperRef = useRef(null);
   const buttonRef = useRef(null);
 
@@ -43,7 +44,6 @@ const CalendarDatePickerDialog = (props) => {
 
   // Updates CalendarEventForm start/end dates (date portion only)
   const updateEventFormDates = (date) => {
-    const { value } = props;
     date.setHours(value.getHours(), value.getMinutes());
 
     if (props.inputId === 'startDate') {
@@ -84,6 +84,7 @@ const CalendarDatePickerDialog = (props) => {
         <input
           id={props.inputId}
           type="text"
+          disabled={isDisabled}
           placeholder={format(new Date(), props.dateFormat)}
           value={format(inputValue, props.dateFormat)}
           onChange={handleInputChange}
@@ -93,6 +94,7 @@ const CalendarDatePickerDialog = (props) => {
         <button
           ref={buttonRef}
           type="button"
+          disabled={isDisabled}
           className="pa2 bg-white button-reset ba"
           aria-label="Pick a date"
           onClick={handleButtonClick}

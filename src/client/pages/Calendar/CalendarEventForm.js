@@ -382,11 +382,10 @@ const CalendarEventForm = () => {
               </label>
               <CalendarDatePickerDialog
                 inputId="startDate"
+                isDisabled={isSystemCalSelected}
                 dateFormat={dateFormat}
                 value={isAllDay ? allDayStart : start}
-                // end={isAllDay ? allDayEnd : end}
                 setStart={setStart}
-                // setEnd={setEnd}
               />
             </Col>
           </Row>
@@ -398,7 +397,7 @@ const CalendarEventForm = () => {
               <label className="text-primary">Start Time</label>
               <TimePicker
                 disableClock
-                disabled={isAllDay}
+                disabled={isSystemCalSelected}
                 onChange={(value) => handleTimeChange('startTime', value)}
                 value={isAllDay ? allDayStart : start}
               />
@@ -417,10 +416,9 @@ const CalendarEventForm = () => {
 
               <CalendarDatePickerDialog
                 inputId="endDate"
+                isDisabled={isSystemCalSelected}
                 dateFormat={dateFormat}
                 value={isAllDay ? allDayEnd : end}
-                // start={isAllDay ? allDayStart : start}
-                // setStart={setStart}
                 setEnd={setEnd}
               />
             </Col>
@@ -433,7 +431,7 @@ const CalendarEventForm = () => {
               <label className="text-primary">End Time</label>
               <TimePicker
                 disableClock
-                disabled={isAllDay}
+                disabled={isSystemCalSelected}
                 onChange={(value) => handleTimeChange('endTime', value)}
                 value={isAllDay ? allDayEnd : end}
               />

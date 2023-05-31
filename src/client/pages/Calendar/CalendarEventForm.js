@@ -69,6 +69,7 @@ const CalendarEventForm = () => {
   const [selectedCalId, setSelectedCalId] = useState(selectedCal?.id ?? defaultCal.id);
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
+  const [lastSelectedType, setLastSelectedType] = useState(isEventSelected ? 'event' : 'slot');
   const [error, setError] = useState(null);
 
   // stores booleans
@@ -88,13 +89,14 @@ const CalendarEventForm = () => {
   // Hook for updating state based on currentSelection change (allDay fields will be handled in another hook)
   useEffect(() => {
     const titleUpdate = {
-      value: currentSelection.event.title ?? '',
+      value: isEventSelected ? currentSelection.event.title : lastSelectedType === 'slot' ? title.value : '',
       validateOnChange: false,
       error: null
     };
 
     setTitle(titleUpdate);
-    setDesc(currentSelection.event.desc ?? '');
+    setDesc(isEventSelected ? currentSelection.event.desc : lastSelectedType === 'slot' ? desc : '');
+    setLastSelectedType(isEventSelected ? 'event' : 'slot');
     setError(null);
 
     // Set start/end fields

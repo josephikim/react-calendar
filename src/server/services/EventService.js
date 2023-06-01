@@ -56,9 +56,9 @@ class EventService {
   delete = async (id) => {
     try {
       // Mongoose returns the matching document (or null) for .findByIdAndDelete query
-      const result = await this.model.findByIdAndDelete({ id });
+      const result = await this.model.findByIdAndDelete(id);
 
-      return result;
+      return new HttpResponse(result, { deleted: true });
     } catch (e) {
       throw e;
     }

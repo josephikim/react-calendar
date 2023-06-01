@@ -201,15 +201,13 @@ export const updateEvent = (data) => async (dispatch) => {
   }
 };
 
-export const deleteEvent = (eventId) => async (dispatch) => {
+export const deleteEvent = (id) => async (dispatch) => {
   try {
-    const res = await userApi.delete(`/event/${eventId}/delete`);
-
-    return Promise.resolve(res.data).then((data) => {
-      // set slot selection to current date
+    userApi.delete(`/event/${id}`).then((res) => {
+      // Reset initial calendar slot
       const newSlot = getCurrentDateSlot();
 
-      dispatch(eventDeleted(data.id));
+      dispatch(eventDeleted(res.data.id));
       dispatch(eventSelectionUpdated({}));
       dispatch(slotSelectionUpdated(newSlot));
     });

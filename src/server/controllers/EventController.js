@@ -30,9 +30,9 @@ class EventController {
 
   update = async (req, res, next) => {
     try {
-      const result = await this.service.update(req.body.id, req.body);
+      const response = await this.service.update(req.body.id, req.body);
 
-      return res.status(result.statusCode).send(result.data);
+      return res.status(response.statusCode).send(response.data);
     } catch (e) {
       return next(e);
     }
@@ -40,9 +40,9 @@ class EventController {
 
   delete = async (req, res, next) => {
     try {
-      const response = await this.service.delete(req.query.id);
+      const response = await this.service.delete(req.params.id);
 
-      return res.status(200).send(response);
+      return res.status(response.statusCode).send(response.data);
     } catch (e) {
       return next(e);
     }

@@ -253,6 +253,25 @@ const CalendarEventForm = () => {
     }
   };
 
+  const handleDelete = (event) => {
+    event.preventDefault();
+
+    // If no valid event selected, do nothing
+    if (!currentSelection.event.id) return;
+
+    // Confirm delete via user input
+    const deleteConfirmation = confirm('Are you sure you want to delete this event?');
+    if (deleteConfirmation === false) return;
+
+    const id = currentSelection.event.id;
+
+    dispatch(deleteEvent(id)).catch((e) => {
+      const error = e.response ? e.response.data : e;
+      alert(`Error deleting event: ${error}`);
+      setError(error.message);
+    });
+  };
+
   const isValidEventUpdate = (event, update) => {
     const isValidUpdate =
       event.title != update.title ||
@@ -266,25 +285,6 @@ const CalendarEventForm = () => {
       return true;
     }
     return false;
-  };
-
-  const handleDelete = (event) => {
-    event.preventDefault();
-
-    // If no valid event selected, do nothing
-    if (!currentSelection.event.id) return;
-
-    // Confirm delete via user input
-    const deleteConfirmation = confirm('Are you sure you want to delete this event?');
-    if (deleteConfirmation === false) return;
-
-    const eventId = currentSelection.event.id;
-
-    deleteEvent(eventId).catch((e) => {
-      const error = e.response ? e.response.data : e;
-      alert(`Error deleting calendar: ${error}`);
-      setError(error.message);
-    });
   };
 
   const handleCalendarChange = (values) => {

@@ -14,6 +14,6 @@ router.post('/getall', [authJwt.verifyToken], EventController.getAll);
 router.post('/update', [authJwt.verifyToken], EventController.update);
 
 // DELETE request to delete event
-router.delete('/delete', [authJwt.verifyToken], EventController.delete);
+router.delete('/:id', [authJwt.verifyToken], EventController.delete);
 
 export default router;

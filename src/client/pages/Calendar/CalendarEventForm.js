@@ -231,7 +231,7 @@ const CalendarEventForm = () => {
         // If update is valid, dispatch updateEvent action
         update.id = event.id;
 
-        updateEvent(update)
+        dispatch(updateEvent(update))
           .then(() => {
             alert(`Successfully updated event: "${update.title}"`);
           })
@@ -242,13 +242,13 @@ const CalendarEventForm = () => {
           });
       }
     } else {
-      const newTitleState = {
+      const titleUpdate = {
         ...title,
         validateOnChange: true,
         error: titleError
       };
 
-      setTitle(newTitleState);
+      setTitle(titleUpdate);
       setIsSubmitCalled(false);
     }
   };

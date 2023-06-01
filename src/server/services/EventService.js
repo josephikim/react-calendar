@@ -45,9 +45,9 @@ class EventService {
       };
 
       // Mongoose returns the modified document (or null) for .findByIdAndUpdate query with option 'new: true'
-      const result = await this.model.findByIdAndUpdate({ id }, _obj, { new: true });
+      const result = await this.model.findByIdAndUpdate(id, _obj, { new: true });
 
-      return result;
+      return new HttpResponse(result);
     } catch (e) {
       throw e;
     }

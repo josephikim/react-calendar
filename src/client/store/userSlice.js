@@ -188,9 +188,9 @@ export const createEvent = (data) => async (dispatch) => {
   }
 };
 
-export const updateEvent = (event) => async (dispatch) => {
+export const updateEvent = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post(`/event/update`, event);
+    const res = await userApi.post(`/event/update`, data);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(eventUpdated(data));

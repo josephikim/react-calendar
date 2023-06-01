@@ -135,7 +135,7 @@ export const logoutUser = () => (dispatch) => {
 
 export const loginUser = (data) => async (dispatch) => {
   try {
-    userApi.post('/login', data).then((res) => {
+    userApi.post('/user/login', data).then((res) => {
       dispatch(usernameUpdated(res.data.username));
       dispatch(accessTokenUpdated(res.data.accessToken));
       dispatch(refreshTokenUpdated(res.data.refreshToken));
@@ -151,7 +151,7 @@ export const loginUser = (data) => async (dispatch) => {
 
 export const registerUser = (data) => async (dispatch) => {
   try {
-    userApi.post('/register', data).then((res) => {
+    userApi.post('/user/register', data).then((res) => {
       dispatch(usernameUpdated(res.data.username));
       dispatch(accessTokenUpdated(res.data.accessToken));
       dispatch(refreshTokenUpdated(res.data.refreshToken));
@@ -163,7 +163,7 @@ export const registerUser = (data) => async (dispatch) => {
 
 export const fetchUserData = () => async (dispatch) => {
   try {
-    const res = await userApi.get('/data');
+    const res = await userApi.get('/user/data');
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(calendarsUpdated(data.calendars));
@@ -176,7 +176,7 @@ export const fetchUserData = () => async (dispatch) => {
 
 export const createEvent = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post('/event', data);
+    const res = await userApi.post('/event/create', data);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(eventAdded(data));

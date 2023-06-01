@@ -12,7 +12,7 @@ class EventController {
     try {
       const response = await this.service.create(req.body);
 
-      return res.status(200).send(response);
+      await res.status(response.statusCode).send(response.data);
     } catch (e) {
       return next(e);
     }

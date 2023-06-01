@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import TimePicker from 'react-time-picker';
 import { Row, Col, Button, Form } from 'react-bootstrap';
@@ -22,6 +22,8 @@ import 'react-day-picker/dist/style.css';
 import 'react-time-picker/dist/TimePicker.css';
 
 const CalendarEventForm = () => {
+  const dispatch = useDispatch();
+
   // Redux selectors
   const calendars = useSelector((state) => state.user.calendars);
   const viewSelection = useSelector((state) => state.user.viewSelection);
@@ -206,7 +208,7 @@ const CalendarEventForm = () => {
 
       if (clickedId === 'add-event-btn') {
         // Dispatch createEvent action
-        createEvent(update)
+        dispatch(createEvent(update))
           .then(() => {
             alert(`Successfully added new event: "${update.title}"`);
           })

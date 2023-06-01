@@ -3,7 +3,7 @@ import store from 'client/store/createStore';
 import { accessTokenUpdated, logoutUser } from 'client/store/userSlice';
 
 const userApi = axios.create({
-  baseURL: `${process.env.API_URL}` + '/user',
+  baseURL: `${process.env.API_URL}`,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -78,7 +78,7 @@ const getLocalRefreshToken = () => {
 };
 
 const refreshToken = () => {
-  return userApi.post('/refreshtoken', {
+  return userApi.post('user/refreshtoken', {
     refreshToken: getLocalRefreshToken()
   });
 };

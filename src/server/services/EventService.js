@@ -10,7 +10,7 @@ class EventService {
     try {
       const result = await this.model.create(data);
 
-      return result;
+      return new HttpResponse(result);
     } catch (e) {
       throw e;
     }

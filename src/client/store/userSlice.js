@@ -240,9 +240,9 @@ export const updateCalendar = (data) => async (dispatch) => {
   }
 };
 
-export const deleteCalendar = (calendarId) => async (dispatch) => {
+export const deleteCalendar = (id) => async (dispatch) => {
   try {
-    const res = await userApi.delete(`/calendar/${calendarId}/delete`);
+    const res = await userApi.delete(`/calendar/${id}`);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(calendarDeleted(data.id));

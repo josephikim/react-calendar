@@ -8,16 +8,6 @@ class CalendarController {
     this.service = service;
   }
 
-  getAll = async (req, res, next) => {
-    try {
-      const response = await this.service.getAll(req.id);
-
-      await res.status(response.statusCode).send(response.data);
-    } catch (e) {
-      return next(e);
-    }
-  };
-
   create = async (req, res, next) => {
     try {
       const data = {
@@ -26,6 +16,16 @@ class CalendarController {
       };
 
       const response = await this.service.create(data);
+
+      await res.status(response.statusCode).send(response.data);
+    } catch (e) {
+      return next(e);
+    }
+  };
+
+  getAll = async (req, res, next) => {
+    try {
+      const response = await this.service.getAll(req.id);
 
       await res.status(response.statusCode).send(response.data);
     } catch (e) {
@@ -45,7 +45,7 @@ class CalendarController {
 
   delete = async (req, res, next) => {
     try {
-      const response = await this.service.delete(req.query.id);
+      const response = await this.service.delete(req.params.id);
 
       await res.status(response.statusCode).send(response.data);
     } catch (e) {

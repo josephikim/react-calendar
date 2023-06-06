@@ -58,7 +58,14 @@ class EventService {
       // Mongoose returns the matching document (or null) for .findByIdAndDelete query
       const result = await this.model.findByIdAndDelete(id);
 
-      return new HttpResponse(result, { deleted: true });
+      if (!result) {
+        const error = new Error('Event not found');
+
+        error.statusCode = 404;
+        throw error;
+      } else {
+        return new HttpResponse(result, { deleted: true });
+      }
     } catch (e) {
       throw e;
     }

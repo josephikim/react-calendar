@@ -14,6 +14,6 @@ router.get('/all', [authJwt.verifyToken], CalendarController.getAll);
 router.put('/:id', [authJwt.verifyToken], CalendarController.update);
 
 // DELETE request to delete calendar
-router.delete('/delete', [authJwt.verifyToken], CalendarController.delete);
+router.delete('/:id', [authJwt.verifyToken], CalendarController.delete);
 
 export default router;

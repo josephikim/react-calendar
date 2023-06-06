@@ -256,14 +256,14 @@ class AccountCalendarSettings extends Component {
   render() {
     const unsorted = [...this.props.calendars];
 
-    const sorted =
+    const sortedItems =
       unsorted.length > 0
         ? unsorted.sort((a, b) => b.userDefault - a.userDefault).sort((a, b) => b.systemCalendar - a.systemCalendar)
         : [];
 
     return (
       <Form className="AccountCalendarSettings">
-        {sorted.map((calendar) => (
+        {sortedItems.map((calendar) => (
           <AccountCalendarSettingsItem
             key={calendar.id}
             id={calendar.id}

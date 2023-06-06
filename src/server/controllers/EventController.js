@@ -20,9 +20,9 @@ class EventController {
 
   getAll = async (req, res, next) => {
     try {
-      const response = await this.service.getAll(req.query.id);
+      const response = await this.service.getAll(req.id);
 
-      return res.status(200).send(response);
+      return res.status(response.statusCode).send(response.data);
     } catch (e) {
       return next(e);
     }
@@ -30,7 +30,7 @@ class EventController {
 
   update = async (req, res, next) => {
     try {
-      const response = await this.service.update(req.body.id, req.body);
+      const response = await this.service.update(req.params.id, req.body);
 
       return res.status(response.statusCode).send(response.data);
     } catch (e) {

@@ -176,7 +176,7 @@ export const fetchUserData = () => async (dispatch) => {
 
 export const createEvent = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post('/event/create', data);
+    const res = await userApi.post('/event', data);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(eventAdded(data));
@@ -190,7 +190,7 @@ export const createEvent = (data) => async (dispatch) => {
 
 export const updateEvent = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post(`/event/update`, data);
+    const res = await userApi.put(`/event/${data.id}`, data);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(eventUpdated(data));
@@ -230,7 +230,7 @@ export const createCalendar = (data) => async (dispatch) => {
 
 export const updateCalendar = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post(`/calendar/update`, data);
+    const res = await userApi.put(`/calendar/${data.id}`, data);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(calendarUpdated(data));

@@ -5,13 +5,13 @@ import CalendarController from 'server/controllers/CalendarController';
 const router = express.Router();
 
 // POST request to create calendar
-router.post('/create', [authJwt.verifyToken], CalendarController.create);
+router.post('/', [authJwt.verifyToken], CalendarController.create);
 
 // GET request to get calendars
-router.post('/getall', [authJwt.verifyToken], CalendarController.getAll);
+router.get('/all', [authJwt.verifyToken], CalendarController.getAll);
 
-// POST request to update calendar
-router.post('/update', [authJwt.verifyToken], CalendarController.update);
+// PUT request to update calendar
+router.put('/:id', [authJwt.verifyToken], CalendarController.update);
 
 // DELETE request to delete calendar
 router.delete('/delete', [authJwt.verifyToken], CalendarController.delete);

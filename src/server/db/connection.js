@@ -38,7 +38,8 @@ mongoose
         const data = {
           name: 'US Holidays',
           user: null,
-          visibility: true
+          visibility: true,
+          systemCalendar: true
         };
 
         calendarService.create(data);

@@ -17,7 +17,7 @@ router.post('/login', UserController.login);
 // POST request to refresh token
 router.post('/refreshtoken', UserController.refreshToken);
 
-// GET request to update user
+// GET request to retrieve user data
 router.get('/data', [authJwt.verifyToken], UserController.getData);
 
 // POST request to update user

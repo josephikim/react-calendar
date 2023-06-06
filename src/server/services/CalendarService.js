@@ -23,21 +23,25 @@ class CalendarService {
 
   create = async (data) => {
     try {
-      const isSystemCalendar = data.user === null;
-      const calendarCount = await this.model.countDocuments(data.user);
+      const user = data.user;
+      const userCalendarsCount = await this.model.countDocuments({ user });
+      const systemCalendarsCount = await this.model.countDocuments({ systemCalendar: true });
 
       const _obj = {
-        user: data.user,
+        user,
         name: data.name,
-        userDefault: isSystemCalendar ? false : calendarCount === 0 ? true : false,
-        systemCalendar: isSystemCalendar ?? false,
-        color: isSystemCalendar ? `#${systemColors[0]}` : `#${userColors[calendarCount % userColors.length]}`,
-        visibility: data.visibility
+        userDefault: !user ? false : userCalendarsCount === 0 ? true : false,
+        systemCalendar: data.systemCalendar || false,
+        color:
+          data.systemCalendar === true
+            ? `#${systemColors[systemCalendarsCount & systemColors.length]}`
+            : `#${userColors[userCalendarsCount % userColors.length]}`,
+        visibility: data.visibility || true
       };
 
       const result = await this.model.create(_obj);
 
-      return result;
+      return new HttpResponse(result);
     } catch (e) {
       throw e;
     }
@@ -46,9 +50,9 @@ class CalendarService {
   update = async (id, name) => {
     try {
       // Mongoose returns the modified document (or null) for .findOneAndUpdate query with option 'new: true'
-      const result = await this.model.findOneAndUpdate({ id }, { name }, { new: true });
+      const result = await this.model.findOneAndUpdate({ _id: id }, { $set: { name } }, { new: true });
 
-      return result;
+      return new HttpResponse(result);
     } catch (e) {
       throw e;
     }

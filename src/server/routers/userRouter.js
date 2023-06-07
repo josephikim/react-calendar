@@ -20,7 +20,7 @@ router.post('/refreshtoken', UserController.refreshToken);
 // GET request to retrieve user data
 router.get('/data', [authJwt.verifyToken], UserController.getData);
 
-// POST request to update user
-router.post('/update', [authJwt.verifyToken], UserController.update);
+// PUT request to update user
+router.put('/', [authJwt.verifyToken], UserController.update);
 
 export default router;

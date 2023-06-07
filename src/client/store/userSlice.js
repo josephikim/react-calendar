@@ -252,9 +252,9 @@ export const deleteCalendar = (id) => async (dispatch) => {
   }
 };
 
-export const updateUsername = (data) => async (dispatch) => {
+export const updateUser = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post(`/account/username/update`, data);
+    const res = await userApi.put(`/user`, data);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(usernameUpdated(data.username));
@@ -287,17 +287,6 @@ export const initCalendarUI = () => async (dispatch) => {
       dispatch(eventSelectionUpdated({})),
       dispatch(onSelectView(defaultView))
     ]);
-  } catch (e) {
-    return Promise.reject(e);
-  }
-};
-
-// NOT AN ACTION
-export const updatePassword = (payload) => async () => {
-  try {
-    const res = await userApi.post(`/account/password/update`, payload);
-
-    return Promise.resolve(res.data);
   } catch (e) {
     return Promise.reject(e);
   }

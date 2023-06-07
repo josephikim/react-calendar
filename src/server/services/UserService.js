@@ -136,16 +136,32 @@ class UserService {
 
   update = async (userId, data) => {
     try {
-      // Mongoose returns the modified document (or null) for .findByIdAndUpdate query with option 'new: true'
-      const result = await this.model.findByIdAndUpdate(
-        {
-          id: userId
-        },
-        data,
-        { new: true }
-      );
+      // Use find doc, modify doc, save doc pattern - hooks into 'save' pre middleware
+      // Mongoose returns the modified document (or null) for .findById query
+      let user = await this.model.findById(userId);
 
-      return result;
+      if (!user) {
+        throw new NotFoundError('No matching user(s) found', { errorCode: 'user' });
+      }
+
+      // update password
+      if (data.password) {
+        const validated = await user.validatePassword(data.password);
+        if (!validated) {
+          throw new AuthorizationError('Invalid password. Please try again.', { errorCode: 'password' });
+        }
+
+        user.password = data.newPassword || '';
+      }
+
+      // update username
+      if (data.username) {
+        user.username = data.username;
+      }
+
+      const result = await user.save();
+
+      return new HttpResponse(result);
     } catch (e) {
       throw e;
     }

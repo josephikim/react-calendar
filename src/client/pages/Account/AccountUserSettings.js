@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation';
-import { updateUsername, updatePassword } from 'client/store/userSlice';
+import { updateUser } from 'client/store/userSlice';
 
 import AccountUserSettingsItem from './AccountUserSettingsItem';
 
@@ -94,11 +94,11 @@ class AccountUserSettings extends Component {
       };
 
       this.props
-        .updateUsername(data)
+        .updateUser(data)
         .then(() => {
           this.setState({
             username: {
-              value: this.props.username,
+              value: data.username,
               validateOnChange: false,
               error: null,
               editMode: false
@@ -107,17 +107,16 @@ class AccountUserSettings extends Component {
           alert('Username updated!');
         })
         .catch((e) => {
-          const status = e.status;
-          const name = e.data.name;
-          const message = e.data.message ?? e.statusText;
-          alert(`${status} ${name}: ${message}`);
+          const error = e.response ? e.response.data : e;
+          const errorCode = error.errorCode ?? null;
+          alert(`Error updating username: ${error.message}`);
 
           // Update state to reflect response errors
-          if (e.data.errorCode && ['username'].includes(e.data.errorCode)) {
+          if (errorCode && ['username'].includes(errorCode)) {
             this.setState((state) => ({
               username: {
                 ...state.username,
-                error: e.message
+                error: error.message
               }
             }));
           }
@@ -148,13 +147,13 @@ class AccountUserSettings extends Component {
 
     if (passwordError === false) {
       // no input errors, submit the form
-      const payload = {
+      const data = {
         password: password.value,
         newPassword: newPassword.value
       };
 
       this.props
-        .updatePassword(payload)
+        .updateUser(data)
         .then(() => {
           this.setState({
             password: {
@@ -173,8 +172,11 @@ class AccountUserSettings extends Component {
         })
         .catch((e) => {
           const error = e.response ? e.response.data : e;
+          const errorCode = error.errorCode ?? null;
           alert(`Error updating password: ${error.message}`);
-          if (error.errorCode && error.errorCode === 'password') {
+
+          // Update state to reflect response errors
+          if (errorCode && ['password'].includes(errorCode)) {
             this.setState((state) => ({
               password: {
                 ...state.password,
@@ -250,10 +252,10 @@ class AccountUserSettings extends Component {
   };
 
   render() {
-    const usernameError = this.state.username ? this.state.username.error : null;
-    const passwordError = this.state.password ? this.state.password.error : null;
-    const newPasswordError = this.state.newPassword ? this.state.newPassword.error : null;
-    const passwordEditMode = this.state.password ? this.state.password.editMode : false;
+    const usernameError = this.state.username?.error ?? null;
+    const passwordError = this.state.password?.error ?? null;
+    const newPasswordError = this.state.newPassword?.error ?? null;
+    const passwordEditMode = this.state.password?.editMode ?? false;
 
     return (
       <div className="AccountUserSettings">
@@ -262,9 +264,9 @@ class AccountUserSettings extends Component {
             id="username"
             type="text"
             label="Username"
-            value={this.state.username ? this.state.username.value : this.props.username}
+            value={this.state.username?.value ?? this.props.username}
             error={usernameError}
-            editMode={this.state.username ? this.state.username.editMode : false}
+            editMode={this.state.username?.editMode ?? false}
             onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
             onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
             onSubmit={(event) => this.handleSubmitUsername(event)}
@@ -276,7 +278,7 @@ class AccountUserSettings extends Component {
             id="password"
             type="password"
             label={passwordEditMode ? 'Confirm Current Password' : 'Password'}
-            value={this.state.password ? this.state.password.value : '****'}
+            value={this.state.password?.value ?? '****'}
             error={passwordError}
             editMode={passwordEditMode}
             onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
@@ -290,9 +292,9 @@ class AccountUserSettings extends Component {
               id="newPassword"
               type="password"
               label="Enter New Password"
-              value={this.state.newPassword ? this.state.newPassword.value : undefined}
+              value={this.state.newPassword?.value ?? ''}
               error={newPasswordError}
-              editMode={passwordEditMode}
+              editMode="true"
               onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
               onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
             />
@@ -310,8 +312,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapActionsToProps = {
-  updateUsername,
-  updatePassword
+  updateUser
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(AccountUserSettings);

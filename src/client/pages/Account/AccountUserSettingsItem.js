@@ -5,6 +5,7 @@ import './AccountUserSettingsItem.css';
 
 const AccountUserSettingsItem = (props) => {
   const newPasswordComponent = props.id === 'newPassword';
+  const onBlur = props.onBlur ?? null;
 
   return (
     <div className="AccountUserSettingsItem">
@@ -25,7 +26,7 @@ const AccountUserSettingsItem = (props) => {
               value={props.value}
               readOnly={!props.editMode}
               onChange={(event) => props.onChange(event)}
-              onBlur={(event) => (props.id === 'password' ? undefined : props.onBlur(event))}
+              onBlur={(event) => (props.id === 'password' ? undefined : onBlur(event))}
             />
           </Form.Group>
         </Col>

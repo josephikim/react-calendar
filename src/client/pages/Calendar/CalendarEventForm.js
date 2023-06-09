@@ -191,7 +191,7 @@ const CalendarEventForm = () => {
       // if no error, submit form
 
       // Check for valid end time
-      if (!isAllDay && !isValidEndTime(start, end)) {
+      if (!isValidEndTime(start, end)) {
         alert('Input error: End time should be after start time!');
         return;
       }
@@ -200,9 +200,9 @@ const CalendarEventForm = () => {
       const update = {
         title: title.value,
         desc,
-        start: isAllDay ? allDayStart.toISOString() : start.toISOString(),
-        end: isAllDay ? allDayEnd.toISOString() : end.toISOString(),
-        allDay: isAllDay === true ?? isAllDaySpan(start, end),
+        start: isAllDay === true ? allDayStart.toISOString() : start.toISOString(),
+        end: isAllDay === true ? allDayEnd.toISOString() : end.toISOString(),
+        allDay: isAllDay || isAllDaySpan(start, end),
         calendar: selectedCalId
       };
 
@@ -213,7 +213,7 @@ const CalendarEventForm = () => {
             alert(`Successfully added new event: "${update.title}"`);
           })
           .catch((e) => {
-            const error = e.response ? e.response.data : e;
+            const error = e.response?.data ?? e;
             alert(`Error creating event: ${error}`);
             setError(error.message);
           });
@@ -236,7 +236,7 @@ const CalendarEventForm = () => {
             alert(`Successfully updated event: "${update.title}"`);
           })
           .catch((e) => {
-            const error = e.response ? e.response.data : e;
+            const error = e.response?.data ?? e;
             alert(`Error updating event: ${error}`);
             setError(error.message);
           });
@@ -266,7 +266,7 @@ const CalendarEventForm = () => {
     const id = currentSelection.event.id;
 
     dispatch(deleteEvent(id)).catch((e) => {
-      const error = e.response ? e.response.data : e;
+      const error = e.response?.data ?? e;
       alert(`Error deleting event: ${error}`);
       setError(error.message);
     });
@@ -276,7 +276,7 @@ const CalendarEventForm = () => {
     const isValidUpdate =
       event.title != update.title ||
       event.desc != update.desc ||
-      event.start.toISOstring() != update.start ||
+      event.start.toISOString() != update.start ||
       event.end.toISOString() != update.end ||
       event.allDay != update.allDay ||
       event.calendar != update.calendar;

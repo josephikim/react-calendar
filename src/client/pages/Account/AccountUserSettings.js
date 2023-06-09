@@ -107,9 +107,9 @@ class AccountUserSettings extends Component {
           alert('Username updated!');
         })
         .catch((e) => {
-          const error = e.response ? e.response.data : e;
-          const errorCode = error.errorCode ?? null;
-          alert(`Error updating username: ${error.message}`);
+          const error = e.response?.data ?? e;
+          const errorCode = error?.errorCode ?? null;
+          alert(`Error updating username: ${error.message ?? error.statusText}`);
 
           // Update state to reflect response errors
           if (errorCode && ['username'].includes(errorCode)) {
@@ -171,9 +171,9 @@ class AccountUserSettings extends Component {
           alert('Password updated!');
         })
         .catch((e) => {
-          const error = e.response ? e.response.data : e;
-          const errorCode = error.errorCode ?? null;
-          alert(`Error updating password: ${error.message}`);
+          const error = e.response?.data ?? e;
+          const errorCode = error?.errorCode ?? null;
+          alert(`Error updating password: ${error.message ?? error.statusText}`);
 
           // Update state to reflect response errors
           if (errorCode && ['password'].includes(errorCode)) {

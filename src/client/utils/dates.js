@@ -40,7 +40,7 @@ export const isValidStartTime = (start, end) => {
 
 // checks if end time is after start time
 export const isValidEndTime = (start, end) => {
-  if (end.getTime() < start.getTime()) {
+  if (end.getTime() <= start.getTime()) {
     return false;
   }
   return true;

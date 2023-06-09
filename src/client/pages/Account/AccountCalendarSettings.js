@@ -145,7 +145,7 @@ class AccountCalendarSettings extends Component {
           alert(`Calendar "${calendar.name}" deleted!`);
         })
         .catch((e) => {
-          const error = e.response ? e.response.data : e;
+          const error = e.response?.data ?? e;
           alert(`Error deleting calendar: ${error.message}`);
         });
     }
@@ -171,9 +171,9 @@ class AccountCalendarSettings extends Component {
           alert('New calendar created!');
         })
         .catch((e) => {
-          const error = e.response ? e.response.data : e;
-          const errorCode = error.errorCode ?? null;
-          alert(`Error creating calendar: ${error.message}`);
+          const error = e.response?.data ?? e;
+          const errorCode = error?.errorCode ?? null;
+          alert(`Error creating calendar: ${error.message ?? error.statusText}`);
 
           // Update state to reflect response errors
           if (errorCode && ['calendar'].includes(errorCode)) {
@@ -229,9 +229,9 @@ class AccountCalendarSettings extends Component {
           alert(`Successfully updated calendar: "${data.name}"`);
         })
         .catch((e) => {
-          const error = e.response ? e.response.data : e;
-          const errorCode = error.errorCode ?? null;
-          alert(`Error updating calendar: ${error.message}`);
+          const error = e.response?.data ?? e;
+          const errorCode = error?.errorCode ?? null;
+          alert(`Error updating calendar: ${error.message ?? error.statusText}`);
           if (errorCode && ['calendarName'].includes(errorCode)) {
             this.setState((state) => ({
               [id]: {

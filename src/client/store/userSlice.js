@@ -147,19 +147,21 @@ export const loginUser = (data) => async (dispatch) => {
       // unauthorize user
       dispatch(accessTokenUpdated(null));
     }
-    return Promise.reject(e.response || e);
+    return Promise.reject(e);
   }
 };
 
 export const registerUser = (data) => async (dispatch) => {
   try {
-    userApi.post('/user/register', data).then((res) => {
-      dispatch(usernameUpdated(res.data.username));
-      dispatch(accessTokenUpdated(res.data.accessToken));
-      dispatch(refreshTokenUpdated(res.data.refreshToken));
+    const res = await userApi.post('/user/register', data);
+
+    return Promise.resolve(res.data).then((data) => {
+      dispatch(usernameUpdated(data.username));
+      dispatch(accessTokenUpdated(data.accessToken));
+      dispatch(refreshTokenUpdated(data.refreshToken));
     });
   } catch (e) {
-    return Promise.reject(e.response);
+    return Promise.reject(e);
   }
 };
 

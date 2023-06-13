@@ -35,7 +35,7 @@ class CalendarController {
 
   update = async (req, res, next) => {
     try {
-      const response = await this.service.update(req.body.id, req.body.name);
+      const response = await this.service.update(req.params.id, req.body);
 
       await res.status(response.statusCode).send(response.data);
     } catch (e) {

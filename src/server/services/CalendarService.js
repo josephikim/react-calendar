@@ -47,10 +47,10 @@ class CalendarService {
     }
   };
 
-  update = async (id, name) => {
+  update = async (id, data) => {
     try {
       // Mongoose returns the modified document (or null) for .findOneAndUpdate query with option 'new: true'
-      const result = await this.model.findOneAndUpdate({ _id: id }, { $set: { name } }, { new: true });
+      const result = await this.model.findOneAndUpdate({ _id: id }, { $set: data }, { new: true });
 
       return new HttpResponse(result);
     } catch (e) {

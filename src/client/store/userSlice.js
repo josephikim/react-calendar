@@ -234,7 +234,8 @@ export const createCalendar = (data) => async (dispatch) => {
 
 export const updateCalendar = (data) => async (dispatch) => {
   try {
-    const res = await userApi.put(`/calendar/${data.id}`, data);
+    const payload = _.omit(data, ['id']);
+    const res = await userApi.put(`/calendar/${data.id}`, payload);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(calendarUpdated(data));

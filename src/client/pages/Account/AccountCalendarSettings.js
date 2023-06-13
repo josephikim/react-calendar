@@ -268,7 +268,7 @@ class AccountCalendarSettings extends Component {
             key={calendar.id}
             id={calendar.id}
             type="text"
-            value={this.state[calendar.id] ? this.state[calendar.id].value : calendar.name}
+            value={this.state[calendar.id] ? this.state[calendar.id].value : ''}
             isSystemCalendar={calendar.systemCalendar}
             isDefaultCalendar={calendar.userDefault}
             error={this.state[calendar.id] ? this.state[calendar.id].error : null}

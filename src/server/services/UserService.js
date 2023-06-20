@@ -26,7 +26,9 @@ class UserService {
   };
 
   login = async (username, password) => {
-    const user = await this.model.findByUsername(username);
+    const user = await this.model.findOne({ username });
+
+    await user.populate('roles').execPopulate();
 
     if (!user) {
       // User not found
@@ -48,9 +50,12 @@ class UserService {
           expiresIn: Number(process.env.JWT_EXPIRATION)
         });
 
+        const roles = user.roles.map((role) => role.name);
+
         let response = {
           username,
-          accessToken
+          accessToken,
+          roles
         };
 
         await this.refreshTokenService.create(user.id).then((refreshToken) => {

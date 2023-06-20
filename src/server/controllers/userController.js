@@ -16,7 +16,9 @@ class UserController {
 
       const roles = req.body?.roles ?? ['user'];
 
-      await this.service.assignRoles(user, roles).then(next());
+      const assigned = await this.service.assignRoles(user, roles);
+
+      return next();
     } catch (e) {
       return next(e);
     }

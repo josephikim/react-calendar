@@ -7,6 +7,7 @@ export const initialState = {
   username: null,
   accessToken: null,
   refreshToken: null,
+  roles: [],
   calendars: [],
   slotSelection: {},
   eventSelection: {},
@@ -26,6 +27,9 @@ const userSlice = createSlice({
     },
     refreshTokenUpdated(state, action) {
       state.refreshToken = action.payload;
+    },
+    rolesUpdated(state, action) {
+      state.roles = action.payload;
     },
     calendarsUpdated(state, action) {
       state.calendars = [...action.payload];
@@ -69,6 +73,7 @@ export const {
   usernameUpdated,
   accessTokenUpdated,
   refreshTokenUpdated,
+  rolesUpdated,
   calendarsUpdated,
   calendarAdded,
   calendarUpdated,
@@ -141,6 +146,7 @@ export const loginUser = (data) => async (dispatch) => {
       dispatch(usernameUpdated(data.username));
       dispatch(accessTokenUpdated(data.accessToken));
       dispatch(refreshTokenUpdated(data.refreshToken));
+      dispatch(rolesUpdated(data.roles));
     });
   } catch (e) {
     if (e.response && e.response.data.name === 'AuthorizationError') {
@@ -159,6 +165,7 @@ export const registerUser = (data) => async (dispatch) => {
       dispatch(usernameUpdated(data.username));
       dispatch(accessTokenUpdated(data.accessToken));
       dispatch(refreshTokenUpdated(data.refreshToken));
+      dispatch(rolesUpdated(data.roles));
     });
   } catch (e) {
     return Promise.reject(e);

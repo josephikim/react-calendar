@@ -1,9 +1,13 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Row, Col, Form, Badge, Button } from 'react-bootstrap';
 
 import './AccountCalendarSettingsItem.css';
 
 const AccountCalendarSettingsItem = (props) => {
+  const roles = useSelector((state) => state.user.roles);
+
+  const isAdminUser = roles.some((role) => role === 'admin');
   const error = props.error;
   const onBlur = props.onBlur;
   const readOnly = !props.editMode;
@@ -49,17 +53,20 @@ const AccountCalendarSettingsItem = (props) => {
                 type="button"
                 name="editBtn"
                 variant="primary"
-                disabled={props.isSystemCalendar}
+                disabled={props.isSystemCalendar && isAdminUser === false}
                 onClick={() => props.onEdit(props.id)}
               >
                 Edit
               </Button>
             )}
-            {!props.editMode && !props.isDefaultCalendar && !props.isSystemCalendar && props.id !== 'newCalendar' && (
-              <Button type="button" name="deleteBtn" variant="danger" onClick={() => props.onDelete(props.id)}>
-                Delete
-              </Button>
-            )}
+            {!props.editMode &&
+              !props.isDefaultCalendar &&
+              props.id !== 'newCalendar' &&
+              !(props.isSystemCalendar && isAdminUser === false) && (
+                <Button type="button" name="deleteBtn" variant="danger" onClick={() => props.onDelete(props.id)}>
+                  Delete
+                </Button>
+              )}
             {props.editMode && (
               <Button
                 type="submit"

@@ -93,7 +93,7 @@ class RegisterForm extends Component {
       } catch (e) {
         const error = e.response?.data ?? e;
         const errorCode = error?.errorCode ?? null;
-        alert(`Error registering user: ${error.message ?? error.statusText}`);
+        alert(`Registration error: ${error.message ?? error.statusText}`);
 
         // Update state to reflect response errors
         if (errorCode && ['username', 'password'].includes(errorCode)) {

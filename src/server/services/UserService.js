@@ -28,14 +28,14 @@ class UserService {
   login = async (username, password) => {
     const user = await this.model.findOne({ username });
 
-    await user.populate('roles').execPopulate();
-
     if (!user) {
       // User not found
       throw new NotFoundError('Invalid username', { errorCode: 'username' });
     } else {
       // Process Login
       try {
+        await user.populate('roles').execPopulate();
+
         const validated = await user.validatePassword(password);
 
         if (!validated) {

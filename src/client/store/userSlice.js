@@ -142,12 +142,10 @@ export const loginUser = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/user/login', data);
 
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(usernameUpdated(data.username));
-      dispatch(accessTokenUpdated(data.accessToken));
-      dispatch(refreshTokenUpdated(data.refreshToken));
-      dispatch(rolesUpdated(data.roles));
-    });
+    dispatch(usernameUpdated(res.data.username));
+    dispatch(accessTokenUpdated(res.data.accessToken));
+    dispatch(refreshTokenUpdated(res.data.refreshToken));
+    dispatch(rolesUpdated(res.data.roles));
   } catch (e) {
     if (e.response && e.response.data.name === 'AuthorizationError') {
       // unauthorize user

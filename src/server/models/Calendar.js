@@ -35,7 +35,7 @@ const schema = new mongoose.Schema({
 const handleE11000 = (error, res, next) => {
   if (error.name === 'MongoError' && error.code === 11000) {
     throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
-      errorCode: 'calendarName'
+      errorCode: 'calendar'
     });
   } else {
     return next();

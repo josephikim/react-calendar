@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
 import { validateFields } from 'client/validation.js';
 import { registerUser } from 'client/store/userSlice';
 
@@ -21,62 +20,98 @@ const initialState = {
   },
   passwordConfirm: {
     value: '',
-    validateOnChange: false,
     error: null
   }
 };
-class RegisterForm extends Component {
-  constructor(...args) {
-    super(...args);
-    this.state = initialState;
-  }
+const RegisterForm = () => {
+  const dispatch = useDispatch();
+  const [username, setUsername] = useState(initialState.username);
+  const [password, setPassword] = useState(initialState.password);
+  const [passwordConfirm, setPasswordConfirm] = useState(initialState.passwordConfirm);
 
-  handleBlur = (validationFunc, event) => {
+  const handleBlur = (validationFunc, event) => {
     const {
       target: { name }
     } = event;
 
-    if (this.state[name].value && this.state[name]['validateOnChange'] === false) {
-      this.setState((state) => ({
-        [name]: {
-          ...state[name],
-          validateOnChange: true,
-          error: validationFunc(state[name].value)
+    switch (name) {
+      case 'username':
+        if (username.validateOnChange === false) {
+          setUsername((data) => {
+            const newState = {
+              ...data,
+              validateOnChange: true,
+              error: validationFunc(username.value)
+            };
+
+            return newState;
+          });
         }
-      }));
+        break;
+      case 'password':
+        if (password.validateOnChange === false) {
+          setPassword((data) => {
+            const newState = {
+              ...data,
+              validateOnChange: true,
+              error: validationFunc(password.value)
+            };
+
+            return newState;
+          });
+        }
+        break;
+      default:
+        break;
     }
-    return;
   };
 
-  handleChange = (validationFunc, event) => {
+  const handleChange = (validationFunc, event) => {
     const {
       target: { name, value }
     } = event;
 
-    if (validationFunc === null) {
-      // handle fields without validation
-      this.setState((state) => ({
-        [name]: {
-          ...state[name],
-          value: value
-        }
-      }));
-    } else {
-      // handle fields with validation
-      this.setState((state) => ({
-        [name]: {
-          ...state[name],
-          value: value,
-          error: state[name]['validateOnChange'] ? validationFunc(value) : null
-        }
-      }));
+    switch (name) {
+      case 'username':
+        setUsername((data) => {
+          const newState = {
+            ...data,
+            value,
+            error: data.validateOnChange ? validationFunc(value) : null
+          };
+
+          return newState;
+        });
+        break;
+      case 'password':
+        setPassword((data) => {
+          const newState = {
+            ...data,
+            value,
+            error: data.validateOnChange ? validationFunc(value) : null
+          };
+
+          return newState;
+        });
+        break;
+      case 'passwordConfirm':
+        setPasswordConfirm((data) => {
+          const newState = {
+            ...data,
+            value
+          };
+
+          return newState;
+        });
+        break;
+      default:
+        break;
     }
   };
 
-  handleSubmit = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const { username, password, passwordConfirm } = this.state;
     const usernameError = validateFields.validateUsername(username.value);
     const passwordError = validateFields.validatePassword(password.value);
     const passwordConfirmError = validateFields.validatePasswordConfirm(passwordConfirm.value, password.value);
@@ -88,109 +123,136 @@ class RegisterForm extends Component {
         password: password.value
       };
 
-      try {
-        await this.props.registerUser(data);
-      } catch (e) {
+      dispatch(registerUser(data)).catch((e) => {
         const error = e.response?.data ?? e;
         const errorCode = error?.errorCode ?? null;
         alert(`Registration error: ${error.message ?? error.statusText}`);
 
         // Update state to reflect response errors
-        if (errorCode && ['username', 'password'].includes(errorCode)) {
-          this.setState((state) => ({
-            [errorCode]: {
-              ...state[errorCode],
-              error: error.message
-            }
-          }));
+        if (errorCode) {
+          switch (errorCode) {
+            case 'username':
+              setUsername((data) => {
+                const newState = {
+                  ...data,
+                  error: error.message
+                };
+
+                return newState;
+              });
+              break;
+            case 'password':
+              setPassword((data) => {
+                const newState = {
+                  ...data,
+                  error: error.message
+                };
+
+                return newState;
+              });
+              break;
+            default:
+              break;
+          }
         }
-      }
+      });
     } else {
       // update state with input errors
-      this.setState((state) => ({
-        username: {
-          ...state.username,
-          validateOnChange: true,
-          error: usernameError
-        },
-        password: {
-          ...state.password,
-          validateOnChange: true,
-          error: passwordError
-        },
-        passwordConfirm: {
-          ...state.passwordConfirm,
-          validateOnChange: true,
-          error: passwordConfirmError
-        }
-      }));
+      if (usernameError) {
+        setUsername((data) => {
+          const newState = {
+            ...data,
+            validateOnChange: true,
+            error: usernameError
+          };
+
+          return newState;
+        });
+      }
+
+      if (passwordError) {
+        setPassword((data) => {
+          const newState = {
+            ...data,
+            validateOnChange: true,
+            error: passwordError
+          };
+
+          return newState;
+        });
+      }
+
+      if (passwordConfirmError) {
+        setPasswordConfirm((data) => {
+          const newState = {
+            ...data,
+            error: passwordConfirmError
+          };
+
+          return newState;
+        });
+      }
     }
   };
 
-  render() {
-    return (
-      <Form className="RegisterForm">
-        <div className="text-primary">
-          <h4>New User Registration</h4>
-        </div>
+  return (
+    <Form className="RegisterForm">
+      <div className="text-primary">
+        <h4>New User Registration</h4>
+      </div>
 
-        <Form.Group controlId="username">
-          <Form.Label className="text-primary">Username</Form.Label>
-          <Form.Control
-            name="username"
-            placeholder="Enter username"
-            onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
-            onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
-          />
-        </Form.Group>
+      <Form.Group controlId="username">
+        <Form.Label className="text-primary">Username</Form.Label>
+        <Form.Control
+          name="username"
+          placeholder="Enter username"
+          onChange={(event) => handleChange(validateFields.validateUsername, event)}
+          onBlur={(event) => handleBlur(validateFields.validateUsername, event)}
+        />
+      </Form.Group>
 
-        <div className="text-danger">
-          <small>{this.state.username.error}</small>
-        </div>
+      <div className="text-danger">
+        <small>{username.error}</small>
+      </div>
 
-        <Form.Group controlId="password">
-          <Form.Label className="text-primary">Password</Form.Label>
-          <Form.Control
-            type="password"
-            name="password"
-            placeholder="Enter password"
-            onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
-            onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
-          />
-        </Form.Group>
+      <Form.Group controlId="password">
+        <Form.Label className="text-primary">Password</Form.Label>
+        <Form.Control
+          type="password"
+          name="password"
+          placeholder="Enter password"
+          onChange={(event) => handleChange(validateFields.validatePassword, event)}
+          onBlur={(event) => handleBlur(validateFields.validatePassword, event)}
+        />
+      </Form.Group>
 
-        <div className="text-danger">
-          <small>{this.state.password.error}</small>
-        </div>
+      <div className="text-danger">
+        <small>{password.error}</small>
+      </div>
 
-        <Form.Group controlId="passwordConfirm">
-          <Form.Label className="text-primary">Confirm Password</Form.Label>
-          <Form.Control
-            type="password"
-            name="passwordConfirm"
-            placeholder="Confirm password"
-            onChange={(event) => this.handleChange(null, event)}
-          />
-        </Form.Group>
+      <Form.Group controlId="passwordConfirm">
+        <Form.Label className="text-primary">Confirm Password</Form.Label>
+        <Form.Control
+          type="password"
+          name="passwordConfirm"
+          placeholder="Confirm password"
+          onChange={(event) => handleChange(null, event)}
+        />
+      </Form.Group>
 
-        <div className="text-danger">
-          <small>{this.state.passwordConfirm.error}</small>
-        </div>
+      <div className="text-danger">
+        <small>{passwordConfirm.error}</small>
+      </div>
 
-        <Button type="submit" name="register-form-btn" variant="primary" onClick={this.handleSubmit}>
-          Register
-        </Button>
+      <Button type="submit" name="register-form-btn" variant="primary" onClick={handleSubmit}>
+        Register
+      </Button>
 
-        <div>
-          Already registered? Please <Link to="/login">login</Link>.
-        </div>
-      </Form>
-    );
-  }
-}
-
-const mapActionsToProps = {
-  registerUser
+      <div>
+        Already registered? Please <Link to="/login">login</Link>.
+      </div>
+    </Form>
+  );
 };
 
-export default connect(null, mapActionsToProps)(RegisterForm);
+export default RegisterForm;

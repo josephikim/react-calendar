@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { validateFields } from 'client/validation.js';
@@ -204,7 +204,7 @@ const LoginForm = () => {
         <small>{password.error}</small>
       </div>
 
-      <Button type="submit" name="login-form-btn" variant="primary" onClick={(e) => handleSubmit(e)}>
+      <Button type="submit" name="login-form-btn" variant="primary" onClick={handleSubmit}>
         Login
       </Button>
 

@@ -146,7 +146,7 @@ class UserService {
       let user = await this.model.findById(userId);
 
       if (!user) {
-        throw new NotFoundError('No matching user(s) found', { errorCode: 'user' });
+        throw new NotFoundError('No matching user found');
       }
 
       // update password

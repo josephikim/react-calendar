@@ -1,12 +1,10 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import _ from 'lodash';
-
-import AccountCalendarSettingsItem from './AccountCalendarSettingsItem';
 import { validateFields } from 'client/validation';
 import { createCalendar, updateCalendar, deleteCalendar } from 'client/store/userSlice';
-
+import AccountCalendarSettingsItem from './AccountCalendarSettingsItem';
 import './AccountCalendarSettings.css';
 
 const initialState = {
@@ -16,157 +14,163 @@ const initialState = {
     error: null
   }
 };
-class AccountCalendarSettings extends Component {
-  constructor(props) {
-    super(props);
 
-    const calendarsState = this.getCalendarsState();
+// Returns object with calendar ids as keys and settings objects as values
+const getCalendarsState = (calendars) => {
+  const newState = {};
 
-    this.state = {
-      newCalendar: {
-        ...initialState.newCalendar
-      },
-      ...calendarsState
-    };
-  }
-
-  componentDidUpdate = (prevProps) => {
-    const isCalendarsUpdated = !_.isEqual(this.props.calendars, prevProps.calendars);
-
-    // Reset component state when any calendar is added or updated
-    if (isCalendarsUpdated) {
-      const calendarsState = this.getCalendarsState();
-
-      this.setState({
-        newCalendar: {
-          ...initialState.newCalendar
-        },
-        ...calendarsState
-      });
-    }
-  };
-
-  getCalendarsState = () => {
-    const state = {};
-
-    this.props.calendars.forEach((calendar) => {
-      const calendarState = {
-        value: calendar.name,
-        validateOnChange: false,
-        error: null,
-        editMode: false
-      };
-      state[calendar.id] = calendarState;
-    });
-
-    return state;
-  };
-
-  handleBlur = (validationFunc, event) => {
-    const {
-      target: { id }
-    } = event;
-
-    if (!this.state[id]) return;
-
-    if (this.state[id].validateOnChange === false) {
-      this.setState((state) => ({
-        [id]: {
-          ...state[id],
-          validateOnChange: true,
-          error: validationFunc(state[id].value)
-        }
-      }));
-    }
-    return;
-  };
-
-  handleChange = (validationFunc, event) => {
-    const {
-      target: { id, value }
-    } = event;
-
-    if (!this.state[id]) return;
-
-    const newState = {
-      [id]: {
-        ...this.state[id],
-        value: value,
-        error: this.state[id].validateOnChange ? validationFunc(value) : null
-      }
-    };
-
-    this.setState(newState);
-  };
-
-  // update state of selected calendar
-  handleEdit = (id) => {
-    if (!this.state[id]) return;
-
-    const newState = {};
-
-    newState[id] = {
-      ...this.state[id],
-      editMode: true
-    };
-
-    this.setState(newState);
-  };
-
-  handleCancel = (id) => {
-    if (!id) return;
-
-    // Reset component calendar state to match app state
-    const calendar = this.props.calendars.filter((calendar) => calendar.id === id)[0];
-
-    const newState = {
-      ...this.state[id],
+  calendars.forEach((calendar) => {
+    const calendarState = {
       value: calendar.name,
       validateOnChange: false,
       error: null,
       editMode: false
     };
 
-    this.setState({
-      [id]: newState
-    });
-  };
+    newState[calendar.id] = calendarState;
+  });
 
-  handleDeleteCalendar = (id) => {
-    // Check if calendar is valid for deletion
-    const calendar = this.props.calendars.filter((calendar) => calendar.id === id)[0];
+  return newState;
+};
 
-    const isValidCalendar = !calendar.systemCalendar && !calendar.userDefault;
+const AccountCalendarSettings = () => {
+  const dispatch = useDispatch();
+  const calendars = useSelector((state) => state.user.calendars);
+  const [calendarsSettings, setCalendarsSettings] = useState(getCalendarsState(calendars));
+  const [newCalendarSettings, setNewCalendarSettings] = useState(initialState.newCalendar);
 
-    if (isValidCalendar) {
-      this.props
-        .deleteCalendar(id)
-        .then(() => {
-          alert(`Calendar "${calendar.name}" deleted!`);
-        })
-        .catch((e) => {
-          const error = e.response?.data ?? e;
-          alert(`Error deleting calendar: ${error.message}`);
-        });
+  // update component state based on app state
+  useEffect(() => {
+    setCalendarsSettings(getCalendarsState(calendars));
+    setNewCalendarSettings(initialState.newCalendar);
+  }, [calendars]);
+
+  const handleBlur = (validationFunc, event) => {
+    const {
+      target: { id }
+    } = event;
+
+    if (!calendars[id]) return;
+
+    if (calendars[id].validateOnChange === false) {
+      setCalendarsSettings((data) => {
+        const newState = {
+          ...data,
+          [id]: {
+            ...data[id],
+            validateOnChange: true,
+            error: validationFunc(data[id].value)
+          }
+        };
+
+        return newState;
+      });
     }
   };
 
-  handleAddCalendar = (event) => {
+  const handleChange = (validationFunc, event) => {
+    const {
+      target: { id, value }
+    } = event;
+
+    // update new calendar settings
+    if (id === 'newCalendar') {
+      setNewCalendarSettings((data) => {
+        const newState = {
+          ...data,
+          value,
+          error: data.validateOnChange ? validationFunc(value) : null
+        };
+
+        return newState;
+      });
+    } else {
+      // update calendar settings
+      if (!calendarsSettings[id]) return;
+
+      setCalendarsSettings((data) => {
+        const newState = {
+          ...data,
+          [id]: {
+            ...data[id],
+            value,
+            error: data[id].validateOnChange ? validationFunc(value) : null
+          }
+        };
+
+        return newState;
+      });
+    }
+  };
+
+  // update edit mode
+  const handleEdit = (id) => {
+    if (!calendarsSettings[id]) return;
+
+    setCalendarsSettings((data) => {
+      const newState = {
+        ...data,
+        [id]: {
+          ...data[id],
+          editMode: true
+        }
+      };
+
+      return newState;
+    });
+  };
+
+  // update edit mode and reset settings
+  const handleCancelEdit = (id) => {
+    if (!calendarsSettings[id]) return;
+
+    setCalendarsSettings((data) => {
+      const newState = {
+        ...data,
+        [id]: {
+          ...data[id],
+          value: calendars[id].name,
+          validateOnChange: false,
+          error: null,
+          editMode: false
+        }
+      };
+
+      return newState;
+    });
+  };
+
+  const handleDeleteCalendar = (id) => {
+    // Check if calendar is eligible for deletion
+    const calendar = calendars.filter((calendar) => calendar.id === id)[0];
+
+    const isValidCalendar = !calendar.systemCalendar && !calendar.userDefault;
+
+    if (!isValidCalendar) return;
+
+    dispatch(deleteCalendar(id))
+      .then(() => {
+        alert(`Calendar "${calendar.name}" deleted!`);
+      })
+      .catch((e) => {
+        const error = e.response?.data ?? e;
+        alert(`Error deleting calendar: ${error.message}`);
+      });
+  };
+
+  const handleAddCalendar = (event) => {
     event.preventDefault();
 
-    const { newCalendar } = this.state;
+    const inputError = validateFields.validateCalendarName(newCalendarSettings.value.trim());
 
-    const newCalendarError = validateFields.validateCalendarName(newCalendar.value.trim());
-
-    if (newCalendarError === false) {
+    if (inputError === false) {
       // no input errors, submit the form
       const data = {
-        name: newCalendar.value.trim(),
+        name: newCalendarSettings.value.trim(),
         visibility: true
       };
 
-      this.props
-        .createCalendar(data)
+      dispatch(createCalendar(data))
         .then(() => {
           alert('New calendar created!');
         })
@@ -176,55 +180,54 @@ class AccountCalendarSettings extends Component {
           alert(`Error creating calendar: ${error.message ?? error.statusText}`);
 
           // Update state to reflect response errors
-          if (errorCode && ['calendar'].includes(errorCode)) {
-            this.setState((state) => ({
-              newCalendar: {
-                ...state.newCalendar,
+          if (errorCode === 'calendar') {
+            setNewCalendarSettings((data) => {
+              const newState = {
+                ...data,
                 error: error.message
-              }
-            }));
+              };
+
+              return newState;
+            });
           }
         });
     } else {
       // update state with input error
-      this.setState((state) => ({
-        newCalendar: {
-          ...state.newCalendar,
+      setNewCalendarSettings((data) => {
+        const newState = {
+          ...data,
           validateOnChange: true,
-          error: newCalendarError
-        }
-      }));
+          error: inputError
+        };
+
+        return newState;
+      });
     }
   };
 
-  handleUpdateCalendar = (event, id) => {
+  const handleUpdateCalendar = (event, id) => {
     event.preventDefault();
 
-    const calendarState = this.state[id];
-
     // Check for valid input
-    const calendarName = this.props.calendars
-      .filter((calendar) => calendar.id === id)
-      .map((calendar) => calendar.name)[0];
+    const name = calendars.filter((calendar) => calendar.id === id)[0].name;
 
-    if (calendarState.value === calendarName) {
+    const newName = calendarsSettings[id].value;
+
+    if (newName.trim() === name.trim()) {
       alert('No change detected!');
       return;
     }
 
-    // Validate input
-    const calendarNameError = validateFields.validateCalendarName(calendarState.value.trim());
+    const inputError = validateFields.validateCalendarName(newName.trim());
 
-    if (calendarNameError === false) {
+    if (!inputError) {
       // no input errors, submit the form
-
       const data = {
         id,
-        name: calendarState.value.trim()
+        name: newName.trim()
       };
 
-      this.props
-        .updateCalendar(data)
+      dispatch(updateCalendar(data))
         .then(() => {
           alert(`Successfully updated calendar: "${data.name}"`);
         })
@@ -232,82 +235,87 @@ class AccountCalendarSettings extends Component {
           const error = e.response?.data ?? e;
           const errorCode = error?.errorCode ?? null;
           alert(`Error updating calendar: ${error.message ?? error.statusText}`);
-          if (errorCode && ['calendarName'].includes(errorCode)) {
-            this.setState((state) => ({
-              [id]: {
-                ...state[id],
-                error: error.message
-              }
-            }));
+          if (errorCode === 'calendar') {
+            setCalendarsSettings((data) => {
+              const newState = {
+                ...data,
+                [id]: {
+                  ...data[id],
+                  error: error.message
+                }
+              };
+
+              return newState;
+            });
           }
         });
     } else {
       // update state with input error
-      this.setState((state) => ({
-        [id]: {
-          ...state[id],
-          validateOnChange: true,
-          error: calendarNameError
-        }
-      }));
+      setCalendarsSettings((data) => {
+        const newState = {
+          ...data,
+          [id]: {
+            ...data[id],
+            validateOnChange: true,
+            error: calendarNameError
+          }
+        };
+
+        return newState;
+      });
     }
   };
 
-  render() {
-    const unsorted = [...this.props.calendars];
+  // prepare data for render
+  let calendarSettingsItems = [];
 
-    const sortedItems =
-      unsorted.length > 0
-        ? unsorted.sort((a, b) => b.userDefault - a.userDefault).sort((a, b) => b.systemCalendar - a.systemCalendar)
-        : [];
+  calendars.map((calendar) => {
+    const newItem = {
+      ...calendar,
+      ...calendarsSettings[calendar.id]
+    };
+    calendarSettingsItems.push(newItem);
+  });
 
-    return (
-      <Form className="AccountCalendarSettings">
-        {sortedItems.map((calendar) => (
-          <AccountCalendarSettingsItem
-            key={calendar.id}
-            id={calendar.id}
-            type="text"
-            value={this.state[calendar.id] ? this.state[calendar.id].value : ''}
-            isSystemCalendar={calendar.systemCalendar}
-            isDefaultCalendar={calendar.userDefault}
-            error={this.state[calendar.id] ? this.state[calendar.id].error : null}
-            editMode={this.state[calendar.id] ? this.state[calendar.id].editMode : false}
-            onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
-            onBlur={(event) => this.handleBlur(validateFields.validateCalendarName, event)}
-            onSubmit={(event, id) => this.handleUpdateCalendar(event, id)}
-            onDelete={(id) => this.handleDeleteCalendar(id)}
-            onEdit={(id) => this.handleEdit(id)}
-            onCancel={(id) => this.handleCancel(id)}
-          />
-        ))}
+  calendarSettingsItems
+    .sort((a, b) => b.id - a.id)
+    .sort((a, b) => b.userDefault - a.userDefault)
+    .sort((a, b) => b.systemCalendar - a.systemCalendar);
 
+  return (
+    <Form className="AccountCalendarSettings">
+      {calendarSettingsItems.map((item) => (
         <AccountCalendarSettingsItem
-          id="newCalendar"
+          key={item.id}
+          id={item.id}
           type="text"
-          label="Add Calendar"
-          placeholder="Enter calendar name"
-          value={this.state.newCalendar.value}
-          error={this.state.newCalendar.error}
-          editMode={true}
-          onChange={(event) => this.handleChange(validateFields.validateCalendarName, event)}
-          onSubmit={(event) => this.handleAddCalendar(event)}
+          value={item.value}
+          isSystemCalendar={item.systemCalendar}
+          isDefaultCalendar={item.userDefault}
+          error={item.error}
+          editMode={item.editMode}
+          onChange={(event) => handleChange(validateFields.validateCalendarName, event)}
+          onBlur={(event) => handleBlur(validateFields.validateCalendarName, event)}
+          onSubmit={(event, id) => handleUpdateCalendar(event, id)}
+          onDelete={(id) => handleDeleteCalendar(id)}
+          onEdit={(id) => handleEdit(id)}
+          onCancel={(id) => handleCancelEdit(id)}
         />
-      </Form>
-    );
-  }
-}
+      ))}
 
-const mapStateToProps = (state) => {
-  return {
-    calendars: state.user.calendars
-  };
+      <AccountCalendarSettingsItem
+        id="newCalendar"
+        type="text"
+        label="Add Calendar"
+        placeholder="Enter calendar name"
+        value={newCalendarSettings.value}
+        error={newCalendarSettings.error}
+        editMode={true}
+        onChange={(event) => handleChange(validateFields.validateCalendarName, event)}
+        onSubmit={(event) => handleAddCalendar(event)}
+      />
+    </Form>
+  );
 };
 
-const mapActionsToProps = {
-  createCalendar,
-  updateCalendar,
-  deleteCalendar
-};
-
-export default connect(mapStateToProps, mapActionsToProps)(AccountCalendarSettings);
+export default AccountCalendarSettings;

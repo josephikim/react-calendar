@@ -30,8 +30,8 @@ const CalendarEventForm = () => {
   const currentSelection = useSelector(currentSelectionSelector);
 
   // Derived states
-  const defaultCal = calendars.find((calendar) => calendar.userDefault === true);
-  const selectedCal = calendars.find((calendar) => calendar.id === currentSelection?.event.calendar);
+  const defaultCal = Object.values(calendars).find((v) => v.userDefault === true);
+  const selectedCal = Object.values(calendars).find((v) => v.id === currentSelection.event?.calendar);
   const isSystemCalSelected = selectedCal?.systemCalendar === true;
   const isSlotSelected = Object.keys(currentSelection.slot).length > 0;
   const isEventSelected = Object.keys(currentSelection.event).length > 0;
@@ -68,7 +68,7 @@ const CalendarEventForm = () => {
     error: null
   });
   const [desc, setDesc] = useState(currentSelection.event.desc ?? '');
-  const [selectedCalId, setSelectedCalId] = useState(selectedCal?.id ?? defaultCal.id);
+  const [selectedCalId, setSelectedCalId] = useState(selectedCal ? selectedCal.id : defaultCal.id);
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
   const [lastSelectedType, setLastSelectedType] = useState(isEventSelected ? 'event' : 'slot');

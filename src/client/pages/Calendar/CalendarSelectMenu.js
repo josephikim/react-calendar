@@ -6,14 +6,16 @@ import { Link } from 'react-router-dom';
 const CalendarSelectMenu = (props) => {
   const calendars = useSelector((state) => state.user.calendars);
 
-  const options = calendars.map((calendar) => {
+  // returns array of objects
+  const options = Object.values(calendars).map((v) => {
     // Disable system calendars
-    const result = {
-      ...calendar,
-      disabled: calendar.systemCalendar === true
+    const option = {
+      value: v.id,
+      label: v.name,
+      disabled: v.systemCalendar
     };
 
-    return result;
+    return option;
   });
 
   return (

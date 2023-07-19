@@ -19,15 +19,15 @@ const initialState = {
 const getCalendarsState = (calendars) => {
   const newState = {};
 
-  calendars.forEach((calendar) => {
+  Object.keys(calendars).forEach((key) => {
     const calendarState = {
-      value: calendar.name,
+      value: calendars[key].name,
       validateOnChange: false,
       error: null,
       editMode: false
     };
 
-    newState[calendar.id] = calendarState;
+    newState[key] = calendarState;
   });
 
   return newState;
@@ -50,9 +50,11 @@ const AccountCalendarSettings = () => {
       target: { id }
     } = event;
 
-    if (!calendars[id]) return;
+    const settings = calendarsSettings[id];
 
-    if (calendars[id].validateOnChange === false) {
+    if (!settings) return;
+
+    if (settings.editMode === true && settings.validateOnChange === false) {
       setCalendarsSettings((data) => {
         const newState = {
           ...data,
@@ -122,6 +124,11 @@ const AccountCalendarSettings = () => {
 
   // update edit mode and reset settings
   const handleCancelEdit = (id) => {
+    // check app state for calendar
+    const calendar = calendars[id];
+    if (!calendar) return;
+
+    // check local state for calendar settings
     if (!calendarsSettings[id]) return;
 
     setCalendarsSettings((data) => {
@@ -129,7 +136,7 @@ const AccountCalendarSettings = () => {
         ...data,
         [id]: {
           ...data[id],
-          value: calendars[id].name,
+          value: calendar.name,
           validateOnChange: false,
           error: null,
           editMode: false
@@ -141,12 +148,13 @@ const AccountCalendarSettings = () => {
   };
 
   const handleDeleteCalendar = (id) => {
-    // Check if calendar is eligible for deletion
-    const calendar = calendars.filter((calendar) => calendar.id === id)[0];
+    // check app state for calendar
+    const calendar = calendars[id];
+    if (!calendar) return;
 
-    const isValidCalendar = !calendar.systemCalendar && !calendar.userDefault;
-
-    if (!isValidCalendar) return;
+    // Check for valid deletion
+    const isValidDelete = !calendar.systemCalendar && !calendar.userDefault;
+    if (!isValidDelete) return;
 
     dispatch(deleteCalendar(id))
       .then(() => {
@@ -176,20 +184,7 @@ const AccountCalendarSettings = () => {
         })
         .catch((e) => {
           const error = e.response?.data ?? e;
-          const errorCode = error?.errorCode ?? null;
           alert(`Error creating calendar: ${error.message ?? error.statusText}`);
-
-          // Update state to reflect response errors
-          if (errorCode === 'calendar') {
-            setNewCalendarSettings((data) => {
-              const newState = {
-                ...data,
-                error: error.message
-              };
-
-              return newState;
-            });
-          }
         });
     } else {
       // update state with input error
@@ -208,16 +203,18 @@ const AccountCalendarSettings = () => {
   const handleUpdateCalendar = (event, id) => {
     event.preventDefault();
 
-    // Check for valid input
-    const name = calendars.filter((calendar) => calendar.id === id)[0].name;
+    // Check app state for calendar
+    const calendar = calendars[id];
+    if (!calendar) return;
 
-    const newName = calendarsSettings[id].value;
-
-    if (newName.trim() === name.trim()) {
+    // Check for valid update
+    const newName = calendarsSettings[id]?.value;
+    if (newName.trim() === calendar.name.trim()) {
       alert('No change detected!');
       return;
     }
 
+    // Check for input errors
     const inputError = validateFields.validateCalendarName(newName.trim());
 
     if (!inputError) {
@@ -257,7 +254,7 @@ const AccountCalendarSettings = () => {
           [id]: {
             ...data[id],
             validateOnChange: true,
-            error: calendarNameError
+            error: inputError
           }
         };
 
@@ -267,14 +264,22 @@ const AccountCalendarSettings = () => {
   };
 
   // prepare data for render
-  let calendarSettingsItems = [];
+  const calendarSettingsItems = [];
 
-  calendars.map((calendar) => {
-    const newItem = {
-      ...calendar,
-      ...calendarsSettings[calendar.id]
+  Object.keys(calendars).forEach((key) => {
+    const calendarSettings = calendarsSettings[key] ?? {
+      value: calendars[key].name,
+      validateOnChange: false,
+      error: null,
+      editMode: false
     };
-    calendarSettingsItems.push(newItem);
+
+    const item = {
+      ...calendars[key],
+      ...calendarSettings
+    };
+
+    calendarSettingsItems.push(item);
   });
 
   calendarSettingsItems

@@ -8,7 +8,7 @@ export const initialState = {
   accessToken: null,
   refreshToken: null,
   roles: [],
-  calendars: [],
+  calendars: {},
   slotSelection: {},
   eventSelection: {},
   events: [],
@@ -32,7 +32,13 @@ const userSlice = createSlice({
       state.roles = action.payload;
     },
     calendarsUpdated(state, action) {
-      state.calendars = [...action.payload];
+      const update = {};
+
+      action.payload.forEach((element) => {
+        update[element.id] = element;
+      });
+
+      state.calendars = update;
     },
     calendarAdded(state, action) {
       state.calendars = [...state.calendars, action.payload];

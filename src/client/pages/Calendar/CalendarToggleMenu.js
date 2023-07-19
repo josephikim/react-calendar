@@ -11,17 +11,31 @@ const CalendarToggleMenu = () => {
 
   const calendars = useSelector((state) => state.user.calendars);
 
+  // Set visibility=true for all calendars
   const handleSelectAll = (event) => {
     event.preventDefault();
-    const newState = calendars.map((calendar) => {
-      return {
-        ...calendar,
+
+    const newState = {};
+
+    Object.keys(calendars).forEach((key) => {
+      const calendar = {
+        ...calendars[key],
         visibility: true
       };
+
+      newState[key] = calendar;
     });
 
     dispatch(calendarsUpdated(newState));
   };
+
+  // prepare data for render
+  const menuItems = Object.values(calendars);
+
+  menuItems
+    .sort((a, b) => b.id - a.id)
+    .sort((a, b) => b.userDefault - a.userDefault)
+    .sort((a, b) => b.systemCalendar - a.systemCalendar);
 
   return (
     <div className="CalendarToggleMenu">
@@ -31,15 +45,15 @@ const CalendarToggleMenu = () => {
         </Col>
       </Row>
 
-      {calendars.map((calendar) => (
+      {menuItems.map((item) => (
         <CalendarToggleMenuItem
-          id={calendar.id}
-          key={calendar.id}
-          visibility={calendar.visibility}
-          name={calendar.name}
-          color={calendar.color}
-          userDefault={calendar.userDefault}
-          systemCalendar={calendar.systemCalendar}
+          id={item.id}
+          key={item.id}
+          visibility={item.visibility}
+          name={item.name}
+          color={item.color}
+          userDefault={item.userDefault}
+          systemCalendar={item.systemCalendar}
         />
       ))}
 

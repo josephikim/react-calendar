@@ -43,13 +43,13 @@ const Calendar = () => {
 
   // Styles used for displaying calendar events
   const eventStyleGetter = (event) => {
-    const calendar = calendars.filter((calendar) => calendar.id === event.calendar);
+    const calendar = calendars[event.calendar];
 
-    if (calendar.length < 1) return;
+    if (!calendar) return;
 
     // returns HEX code
     const getCalendarColor = () => {
-      return calendar[0].color;
+      return calendar.color;
     };
 
     const style = {
@@ -111,16 +111,26 @@ const Calendar = () => {
     dispatch(onSelectView(view));
   };
 
+  const getVisibleEvents = () => {
+    const visibleCalendars = [];
+
+    for (const key in calendars) {
+      if (calendars[key].visibility === true) {
+        visibleCalendars.push(key);
+      }
+    }
+
+    const result = events.filter((event) => visibleCalendars.includes(event.calendar));
+
+    return result;
+  };
+
   const render = () => {
     // check for calendar data
-    const isCalendarLoaded = calendars.some((calendar) => calendar.userDefault === true) && currentSelection != null;
+    const isCalendarsLoaded = Object.keys(calendars).length > 0;
 
-    if (isCalendarLoaded) {
-      const visibleCalendars = calendars
-        .filter((calendar) => calendar.visibility === true)
-        .map((calendar) => calendar.id);
-
-      const visibleEvents = events?.filter((event) => visibleCalendars.includes(event.calendar)) || [];
+    if (isCalendarsLoaded) {
+      const events = getVisibleEvents();
 
       return (
         <Row>
@@ -131,7 +141,7 @@ const Calendar = () => {
             <ReactBigCalendar
               selectable
               localizer={localizer}
-              events={visibleEvents}
+              events={events}
               defaultView="month"
               onView={(view) => handleView(view)}
               defaultDate={new Date()}

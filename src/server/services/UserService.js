@@ -52,7 +52,7 @@ class UserService {
 
         const roles = user.roles.map((role) => role.name);
 
-        let response = {
+        const response = {
           username,
           accessToken,
           roles
@@ -115,17 +115,19 @@ class UserService {
 
   getData = async (userId) => {
     try {
-      // Get ids of system and user calendars
+      // Get system and user calendars
       const calendars = await this.calendarService.getAll(userId);
 
       if (!calendars.data || calendars.data.length < 1) {
         throw new NotFoundError('No matching calendar(s) found', { errorCode: 'calendar' });
       }
 
+      // Extract calendar ids
       const calendarIdArray = calendars.data.map((calendar) => {
         return calendar.id;
       });
 
+      // Get system and user events
       const events = await this.eventService.getAll(calendarIdArray);
 
       const response = {
@@ -143,7 +145,7 @@ class UserService {
     try {
       // Use find doc, modify doc, save doc pattern - hooks into 'save' pre middleware
       // Mongoose returns the modified document (or null) for .findById query
-      let user = await this.model.findById(userId);
+      const user = await this.model.findById(userId);
 
       if (!user) {
         throw new NotFoundError('No matching user found');

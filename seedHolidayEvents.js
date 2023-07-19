@@ -31,7 +31,7 @@ const getHolidays = () => {
 
 // make a bunch of calendar events using API data
 const makeEvents = async () => {
-  let events = [];
+  const events = [];
 
   const calendar = await client.db(MONGO_DB).collection('calendars').find({ name: 'US Holidays' }).toArray();
 

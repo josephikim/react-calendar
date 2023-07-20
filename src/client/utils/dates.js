@@ -30,6 +30,28 @@ export const getSmartEnd = (date) => {
   return end;
 };
 
+export const getAllDayStart = (isEventSelected, currentSelection) => {
+  if (isEventSelected) {
+    return getDayStart(currentSelection.event.start);
+  } else {
+    return getDayStart(currentSelection.slot.start);
+  }
+};
+
+export const getAllDayEnd = (isEventSelected, currentSelection) => {
+  if (isEventSelected) {
+    if (currentSelection.event.allDay === true) {
+      return currentSelection.event.end;
+    }
+    return getDayEnd(currentSelection.event.end);
+  } else {
+    if (isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end)) {
+      return currentSelection.slot.end;
+    }
+    return getDayEnd(currentSelection.slot.end);
+  }
+};
+
 // checks if start time is before end time
 export const isValidStartTime = (start, end) => {
   if (start.getTime() > end.getTime()) {

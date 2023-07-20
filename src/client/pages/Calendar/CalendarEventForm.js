@@ -10,6 +10,8 @@ import {
   getDayEnd,
   getSmartStart,
   getSmartEnd,
+  getAllDayStart,
+  getAllDayEnd,
   isValidStartTime,
   isValidEndTime,
   isAllDaySpan,
@@ -31,33 +33,9 @@ const CalendarEventForm = () => {
 
   // Derived states
   const defaultCal = Object.values(calendars).find((v) => v.userDefault === true);
-  const selectedCal = Object.values(calendars).find((v) => v.id === currentSelection.event?.calendar);
-  const isSystemCalSelected = selectedCal?.systemCalendar === true;
+  const isSystemEventSelected = currentSelection.event.systemCalendar === true;
   const isSlotSelected = Object.keys(currentSelection.slot).length > 0;
   const isEventSelected = Object.keys(currentSelection.event).length > 0;
-
-  // State initialization helpers
-  const getInitialAllDayStart = () => {
-    if (isEventSelected) {
-      return getDayStart(currentSelection.event.start);
-    } else {
-      return getDayStart(currentSelection.slot.start);
-    }
-  };
-
-  const getInitialAllDayEnd = () => {
-    if (isEventSelected) {
-      if (currentSelection.event.allDay === true) {
-        return currentSelection.event.end;
-      }
-      return getDayEnd(currentSelection.event.end);
-    } else {
-      if (isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end)) {
-        return currentSelection.slot.end;
-      }
-      return getDayEnd(currentSelection.slot.end);
-    }
-  };
 
   // Initialize component state
 
@@ -68,9 +46,9 @@ const CalendarEventForm = () => {
     error: null
   });
   const [desc, setDesc] = useState(currentSelection.event.desc ?? '');
-  const [selectedCalId, setSelectedCalId] = useState(selectedCal ? selectedCal.id : defaultCal.id);
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
+  const [calendarSelect, setCalendarSelect] = useState(defaultCal.id); // store id of selected calendar
   const [lastSelectedType, setLastSelectedType] = useState(isEventSelected ? 'event' : 'slot');
   const [error, setError] = useState(null);
 
@@ -85,8 +63,8 @@ const CalendarEventForm = () => {
   // stores Date objects
   const [start, setStart] = useState(currentSelection.event.start ?? currentSelection.slot.start);
   const [end, setEnd] = useState(currentSelection.event.end ?? currentSelection.slot.end);
-  const [allDayStart, setAllDayStart] = useState(getInitialAllDayStart());
-  const [allDayEnd, setAllDayEnd] = useState(getInitialAllDayEnd());
+  const [allDayStart, setAllDayStart] = useState(getAllDayStart(isEventSelected, currentSelection));
+  const [allDayEnd, setAllDayEnd] = useState(getAllDayEnd(isEventSelected, currentSelection));
 
   // Hook for updating state based on currentSelection change (allDay fields will be handled in another hook)
   useEffect(() => {
@@ -98,6 +76,7 @@ const CalendarEventForm = () => {
 
     setTitle(titleUpdate);
     setDesc(isEventSelected ? currentSelection.event.desc : lastSelectedType === 'slot' ? desc : '');
+    setCalendarSelect(currentSelection.event.calendar || defaultCal.id);
     setLastSelectedType(isEventSelected ? 'event' : 'slot');
     setError(null);
 
@@ -203,7 +182,7 @@ const CalendarEventForm = () => {
         start: isAllDay === true ? allDayStart.toISOString() : start.toISOString(),
         end: isAllDay === true ? allDayEnd.toISOString() : end.toISOString(),
         allDay: isAllDay || isAllDaySpan(start, end),
-        calendar: selectedCalId
+        calendar: calendarSelect
       };
 
       if (clickedId === 'add-event-btn') {
@@ -290,11 +269,11 @@ const CalendarEventForm = () => {
   const handleCalendarChange = (values) => {
     if (!values || values.length < 1) return;
 
-    const newCalId = values[0].id;
-    const isNewCalSelected = newCalId !== selectedCalId;
+    const calendarId = values[0].id;
+    const isNewCalSelected = calendarId !== calendarSelect;
 
     if (isNewCalSelected) {
-      setSelectedCalId(newCalId);
+      setCalendarSelect(calendarId);
     }
   };
 
@@ -330,6 +309,7 @@ const CalendarEventForm = () => {
     return [hour, min];
   };
 
+  // debugger;
   return (
     <Form className="CalendarEventForm">
       <Row>
@@ -342,7 +322,7 @@ const CalendarEventForm = () => {
             id="title"
             name="title"
             className="input"
-            disabled={isSystemCalSelected}
+            disabled={isSystemEventSelected}
             rows="1"
             value={title.value}
             onChange={(e) => handleTitleChange(validateFields.validateTitle, e)}
@@ -367,7 +347,7 @@ const CalendarEventForm = () => {
             id="desc"
             name="desc"
             className="input"
-            disabled={isSystemCalSelected}
+            disabled={isSystemEventSelected}
             rows="6"
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
@@ -386,7 +366,7 @@ const CalendarEventForm = () => {
               </label>
               <CalendarDatePickerDialog
                 inputId="startDate"
-                isDisabled={isSystemCalSelected}
+                isDisabled={isSystemEventSelected}
                 dateFormat={dateFormat}
                 value={isAllDay ? allDayStart : start}
                 setStart={setStart}
@@ -401,7 +381,7 @@ const CalendarEventForm = () => {
               <label className="text-primary">Start Time</label>
               <TimePicker
                 disableClock
-                disabled={isSystemCalSelected}
+                disabled={isSystemEventSelected}
                 onChange={(value) => handleTimeChange('startTime', value)}
                 value={isAllDay ? allDayStart : start}
               />
@@ -420,7 +400,7 @@ const CalendarEventForm = () => {
 
               <CalendarDatePickerDialog
                 inputId="endDate"
-                isDisabled={isSystemCalSelected}
+                isDisabled={isSystemEventSelected}
                 dateFormat={dateFormat}
                 value={isAllDay ? allDayEnd : end}
                 setEnd={setEnd}
@@ -435,7 +415,7 @@ const CalendarEventForm = () => {
               <label className="text-primary">End Time</label>
               <TimePicker
                 disableClock
-                disabled={isSystemCalSelected}
+                disabled={isSystemEventSelected}
                 onChange={(value) => handleTimeChange('endTime', value)}
                 value={isAllDay ? allDayEnd : end}
               />
@@ -454,7 +434,7 @@ const CalendarEventForm = () => {
             type="checkbox"
             id="all-day"
             checked={isAllDay}
-            disabled={isSystemCalSelected}
+            disabled={isSystemEventSelected}
             onChange={(event) => handleAllDayChange(event)}
           />
         </Col>
@@ -463,8 +443,8 @@ const CalendarEventForm = () => {
       <Row>
         <Col>
           <CalendarSelectMenu
-            selected={selectedCal ? [selectedCal] : [defaultCal]}
-            disabled={isSystemCalSelected}
+            selected={[calendars[calendarSelect]]}
+            disabled={isSystemEventSelected}
             onChange={(values) => handleCalendarChange(values)}
           />
         </Col>
@@ -479,7 +459,7 @@ const CalendarEventForm = () => {
               id="add-event-btn"
               className="btn"
               variant="primary"
-              disabled={isSystemCalSelected}
+              disabled={isSystemEventSelected}
               onMouseDown={() => setIsSubmitCalled(true)}
               onClick={(e) => handleSubmit(e)}
             >
@@ -493,7 +473,7 @@ const CalendarEventForm = () => {
               id="update-event-btn"
               className="btn"
               variant="success"
-              disabled={isSystemCalSelected}
+              disabled={isSystemEventSelected}
               onClick={(e) => handleSubmit(e)}
             >
               Save
@@ -508,7 +488,7 @@ const CalendarEventForm = () => {
               id="delete-event-btn"
               className="btn"
               variant="danger"
-              disabled={isSystemCalSelected}
+              disabled={isSystemEventSelected}
               onClick={handleDelete}
             >
               Delete

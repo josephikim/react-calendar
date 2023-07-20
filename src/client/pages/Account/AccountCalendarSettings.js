@@ -263,23 +263,22 @@ const AccountCalendarSettings = () => {
     }
   };
 
-  // prepare data for render
+  // prepare array of settings items for render
   const calendarSettingsItems = [];
 
   Object.keys(calendars).forEach((key) => {
-    const calendarSettings = calendarsSettings[key] ?? {
+    // use settings from local state if found
+    const settings = calendarsSettings[key] ?? {
       value: calendars[key].name,
       validateOnChange: false,
       error: null,
       editMode: false
     };
 
-    const item = {
+    calendarSettingsItems.push({
       ...calendars[key],
-      ...calendarSettings
-    };
-
-    calendarSettingsItems.push(item);
+      ...settings
+    });
   });
 
   calendarSettingsItems

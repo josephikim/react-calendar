@@ -127,9 +127,9 @@ const Calendar = () => {
 
   const render = () => {
     // check for calendar data
-    const isCalendarsLoaded = Object.keys(calendars).length > 0;
+    const isCalendarInitialized = Object.keys(calendars).length > 0 && currentSelection !== null;
 
-    if (isCalendarsLoaded) {
+    if (isCalendarInitialized) {
       const events = getVisibleEvents();
 
       return (

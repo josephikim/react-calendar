@@ -32,24 +32,29 @@ const userSlice = createSlice({
       state.roles = action.payload;
     },
     calendarsUpdated(state, action) {
-      const update = {};
+      // convert array of objects to POJO
+      const newState = {};
 
       action.payload.forEach((element) => {
-        update[element.id] = element;
+        newState[element.id] = element;
       });
 
-      state.calendars = update;
+      state.calendars = newState;
     },
     calendarAdded(state, action) {
-      state.calendars = [...state.calendars, action.payload];
+      state.calendars = {
+        ...state.calendars,
+        [action.payload.id]: action.payload
+      };
     },
     calendarUpdated(state, action) {
-      state.calendars = state.calendars.map((calendar) =>
-        calendar.id === action.payload.id ? { ...calendar, ...action.payload } : calendar
-      );
+      state.calendars = {
+        ...state.calendars,
+        [action.payload.id]: action.payload
+      };
     },
     calendarDeleted(state, action) {
-      state.calendars = state.calendars.filter((calendar) => calendar.id !== action.payload);
+      state.calendars = _.omit(state.calendars, [action.payload]);
     },
     eventsUpdated(state, action) {
       state.events = action.payload;
@@ -296,11 +301,7 @@ export const initCalendarUI = () => async (dispatch) => {
     // Set initial calendar slot
     const newSlot = getCurrentDateSlot();
 
-    return Promise.all([
-      dispatch(slotSelectionUpdated(newSlot)),
-      dispatch(eventSelectionUpdated({})),
-      dispatch(onSelectView(defaultView))
-    ]);
+    dispatch(slotSelectionUpdated(newSlot)), dispatch(eventSelectionUpdated({})), dispatch(onSelectView(defaultView));
   } catch (e) {
     return Promise.reject(e);
   }

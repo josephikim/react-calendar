@@ -10,8 +10,8 @@ const CalendarSelectMenu = (props) => {
   const options = Object.values(calendars).map((v) => {
     // Disable system calendars
     const option = {
-      value: v.id,
-      label: v.name,
+      id: v.id,
+      name: v.name,
       disabled: v.systemCalendar
     };
 
@@ -30,6 +30,7 @@ const CalendarSelectMenu = (props) => {
 
       <Select
         placeholder="Select calendar..."
+        searchable={false}
         disabled={props.disabled}
         values={props.selected}
         options={options}

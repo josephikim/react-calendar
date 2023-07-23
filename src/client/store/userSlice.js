@@ -9,8 +9,7 @@ export const initialState = {
   refreshToken: null,
   roles: [],
   calendars: {},
-  slotSelection: {},
-  eventSelection: {},
+  rbcSelection: {},
   events: [],
   viewSelection: null
 };
@@ -68,11 +67,8 @@ const userSlice = createSlice({
     eventDeleted(state, action) {
       state.events = state.events.filter((event) => event.id !== action.payload);
     },
-    slotSelectionUpdated(state, action) {
-      state.slotSelection = action.payload;
-    },
-    eventSelectionUpdated(state, action) {
-      state.eventSelection = action.payload;
+    rbcSelectionUpdated(state, action) {
+      state.rbcSelection = action.payload;
     },
     viewUpdated(state, action) {
       state.viewSelection = action.payload;
@@ -89,8 +85,7 @@ export const {
   calendarAdded,
   calendarUpdated,
   calendarDeleted,
-  slotSelectionUpdated,
-  eventSelectionUpdated,
+  rbcSelectionUpdated,
   eventsUpdated,
   eventAdded,
   eventDeleted,
@@ -100,48 +95,73 @@ export const {
 
 export default userSlice.reducer;
 
+const eventsSelector = (state) => state.user.events;
+const rbcSelectionSelector = (state) => state.user.rbcSelection;
+
 //
 // Memoized selectors
 //
 
-const slotSelector = (state) => state.user.slotSelection;
-const eventSelector = (state) => state.user.eventSelection;
-
-// returns events with start and end times as Date objects
-export const rbcEventsSelector = (state) => {
-  if (!state.user.events || state.user.events.length < 1) return null;
-
-  const rbcEvents = JSON.parse(JSON.stringify(state.user.events));
-
-  rbcEvents.forEach((event) => {
-    event.start = new Date(event.start);
-    event.end = new Date(event.end);
+// returns times as Date objects
+export const deserializedEventsSelector = createSelector([eventsSelector], (events) => {
+  const result = events.map((event) => {
+    return {
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end)
+    };
   });
 
-  return rbcEvents;
-};
+  return result;
+});
 
-// Returns start and end value as Date objects
-export const currentSelectionSelector = createSelector([slotSelector, eventSelector], (slot, event) => {
-  const isSlotSelected = Object.keys(slot).length > 0 && Object.keys(event).length < 1;
+// returns times as Date objects
+export const deserializedRbcSelectionSelector = createSelector([rbcSelectionSelector], (rbcSelection) => {
+  const selectedSlot = rbcSelection.slot;
+  const selectedEvent = rbcSelection.event;
 
-  const isEventSelected = Object.keys(event).length > 0 && Object.keys(slot).length < 1;
+  const deserializedSlot = selectedSlot
+    ? {
+        ...selectedSlot,
+        start: new Date(selectedSlot.start),
+        end: new Date(selectedSlot.end),
+        slots: selectedSlot.slots.map((slot) => new Date(slot))
+      }
+    : null;
 
-  if (!isSlotSelected && !isEventSelected) return null;
+  const deserializedEvent = selectedEvent
+    ? { ...selectedEvent, start: new Date(selectedEvent.start), end: new Date(selectedEvent.end) }
+    : null;
 
-  const newSlot = isSlotSelected ? { ...slot, start: new Date(slot.start), end: new Date(slot.end) } : {};
-
-  const newEvent = isEventSelected ? { ...event, start: new Date(event.start), end: new Date(event.end) } : {};
-
-  return {
-    slot: newSlot,
-    event: newEvent
+  const result = {
+    slot: deserializedSlot,
+    event: deserializedEvent
   };
+
+  return result;
 });
 
 //
 // Bound action creators
 //
+
+export const onSelectSlot = (serializedSlot) => (dispatch) => {
+  const newState = {
+    slot: serializedSlot,
+    event: null
+  };
+
+  dispatch(rbcSelectionUpdated(newState));
+};
+
+export const onSelectEvent = (serializedEvent) => (dispatch) => {
+  const newState = {
+    slot: null,
+    event: serializedEvent
+  };
+
+  dispatch(rbcSelectionUpdated(newState));
+};
 
 export const logoutUser = () => (dispatch) => {
   dispatch({
@@ -197,9 +217,13 @@ export const createEvent = (data) => async (dispatch) => {
     const res = await userApi.post('/event', data);
 
     return Promise.resolve(res.data).then((data) => {
+      const newState = {
+        slot: null,
+        event: data
+      };
+
       dispatch(eventAdded(data));
-      dispatch(eventSelectionUpdated(data));
-      dispatch(slotSelectionUpdated({}));
+      dispatch(rbcSelectionUpdated(newState)); // set selection to newly created event
     });
   } catch (e) {
     return Promise.reject(e);
@@ -212,7 +236,6 @@ export const updateEvent = (data) => async (dispatch) => {
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(eventUpdated(data));
-      dispatch(eventSelectionUpdated(data));
     });
   } catch (e) {
     return Promise.reject(e);
@@ -222,12 +245,13 @@ export const updateEvent = (data) => async (dispatch) => {
 export const deleteEvent = (id) => async (dispatch) => {
   try {
     userApi.delete(`/event/${id}`).then((res) => {
-      // Reset initial calendar slot
-      const newSlot = getCurrentDateSlot();
+      const newState = {
+        slot: getCurrentDateSlot(),
+        event: null
+      };
 
       dispatch(eventDeleted(res.data.id));
-      dispatch(eventSelectionUpdated({}));
-      dispatch(slotSelectionUpdated(newSlot));
+      dispatch(rbcSelectionUpdated(newState)); // Reset initial calendar slot
     });
   } catch (e) {
     return Promise.reject(e);
@@ -283,15 +307,6 @@ export const updateUser = (data) => async (dispatch) => {
   }
 };
 
-// convert Date objects to strings
-export const onSelectSlot = (slot) => (dispatch) => {
-  return Promise.all([dispatch(slotSelectionUpdated(slot)), dispatch(eventSelectionUpdated({}))]);
-};
-
-export const onSelectEvent = (event) => (dispatch) => {
-  return Promise.all([dispatch(eventSelectionUpdated(event)), dispatch(slotSelectionUpdated({}))]);
-};
-
 export const onSelectView = (view) => (dispatch) => {
   dispatch(viewUpdated(view));
 };
@@ -299,15 +314,19 @@ export const onSelectView = (view) => (dispatch) => {
 export const initCalendarUI = () => async (dispatch) => {
   try {
     // Set initial calendar slot
-    const newSlot = getCurrentDateSlot();
+    const newState = {
+      slot: getCurrentDateSlot(),
+      event: null
+    };
 
-    dispatch(slotSelectionUpdated(newSlot)), dispatch(eventSelectionUpdated({})), dispatch(onSelectView(defaultView));
+    dispatch(rbcSelectionUpdated(newState));
+    dispatch(onSelectView(defaultView));
   } catch (e) {
     return Promise.reject(e);
   }
 };
 
-// return start and end dates as strings spanning 24 hours starting at 12:00am of current day
+// return serialized slot object with start/end spanning 24 hours starting at 12:00am
 const getCurrentDateSlot = () => {
   const start = new Date();
   start.setHours(0, 0, 0, 0);

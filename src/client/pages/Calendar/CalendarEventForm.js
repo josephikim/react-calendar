@@ -4,7 +4,7 @@ import _ from 'lodash';
 import TimePicker from 'react-time-picker';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation.js';
-import { createEvent, updateEvent, deleteEvent, currentSelectionSelector } from 'client/store/userSlice';
+import { createEvent, updateEvent, deleteEvent, deserializedRbcSelectionSelector } from 'client/store/userSlice';
 import {
   getDayStart,
   getDayEnd,
@@ -29,23 +29,22 @@ const CalendarEventForm = () => {
   // Redux selectors
   const calendars = useSelector((state) => state.user.calendars);
   const viewSelection = useSelector((state) => state.user.viewSelection);
-  const currentSelection = useSelector(currentSelectionSelector);
+  const currentSelection = useSelector(deserializedRbcSelectionSelector);
 
   // Derived states
   const defaultCal = Object.values(calendars).find((v) => v.userDefault === true);
-  const isSystemEventSelected = currentSelection.event.systemCalendar === true;
-  const isSlotSelected = Object.keys(currentSelection.slot).length > 0;
-  const isEventSelected = Object.keys(currentSelection.event).length > 0;
+  const isSystemEventSelected = currentSelection.event?.systemCalendar === true;
+  const isSlotSelected = !!currentSelection.slot;
+  const isEventSelected = !!currentSelection.event;
 
   // Initialize component state
-
   // stores strings
   const [title, setTitle] = useState({
-    value: currentSelection.event.title ?? '',
+    value: currentSelection.event?.title || '',
     validateOnChange: false,
     error: null
   });
-  const [desc, setDesc] = useState(currentSelection.event.desc ?? '');
+  const [desc, setDesc] = useState(currentSelection.event?.desc || '');
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
   const [calendarSelect, setCalendarSelect] = useState(defaultCal.id); // store id of selected calendar
@@ -61,12 +60,12 @@ const CalendarEventForm = () => {
   const [isSubmitCalled, setIsSubmitCalled] = useState(false);
 
   // stores Date objects
-  const [start, setStart] = useState(currentSelection.event.start ?? currentSelection.slot.start);
-  const [end, setEnd] = useState(currentSelection.event.end ?? currentSelection.slot.end);
+  const [start, setStart] = useState(currentSelection.event?.start ?? currentSelection.slot.start);
+  const [end, setEnd] = useState(currentSelection.event?.end ?? currentSelection.slot.end);
   const [allDayStart, setAllDayStart] = useState(getAllDayStart(isEventSelected, currentSelection));
   const [allDayEnd, setAllDayEnd] = useState(getAllDayEnd(isEventSelected, currentSelection));
 
-  // Hook for updating state based on currentSelection change (allDay fields will be handled in another hook)
+  // Hook for updating state based on currentSelection change (allDay fields will be updated via another hook)
   useEffect(() => {
     const titleUpdate = {
       value: isEventSelected ? currentSelection.event.title : lastSelectedType === 'slot' ? title.value : '',
@@ -76,7 +75,7 @@ const CalendarEventForm = () => {
 
     setTitle(titleUpdate);
     setDesc(isEventSelected ? currentSelection.event.desc : lastSelectedType === 'slot' ? desc : '');
-    setCalendarSelect(currentSelection.event.calendar || defaultCal.id);
+    setCalendarSelect(currentSelection.event?.calendar || defaultCal.id);
     setLastSelectedType(isEventSelected ? 'event' : 'slot');
     setError(null);
 
@@ -84,54 +83,45 @@ const CalendarEventForm = () => {
     if (isSlotSelected) {
       const isSingleDayAllDaySlot = isSingleDayAllDaySpan(currentSelection.slot.start, currentSelection.slot.end);
 
-      const updateStartTime = isSingleDayAllDaySlot
-        ? setStart(getSmartStart(currentSelection.slot.start))
-        : setStart(currentSelection.slot.start);
-      const updateEndTime = isSingleDayAllDaySlot
-        ? setEnd(getSmartEnd(currentSelection.slot.end))
-        : setEnd(currentSelection.slot.end);
+      const newStartState = isSingleDayAllDaySlot
+        ? getSmartStart(currentSelection.slot.start)
+        : currentSelection.slot.start;
+      const newEndState = isSingleDayAllDaySlot ? getSmartEnd(currentSelection.slot.end) : currentSelection.slot.end;
 
-      Promise.all([updateStartTime, updateEndTime]);
+      setStart(newStartState);
+      setEnd(newEndState);
     } else {
       // Event is selected
-      const updateEventTimes = [setStart(currentSelection.event.start), setEnd(currentSelection.event.end)];
-      Promise.all(updateEventTimes);
+      setStart(currentSelection.event.start);
+      setEnd(currentSelection.event.end);
     }
   }, [currentSelection]);
 
   // Hook for updating allDay fields based on start time change
   useEffect(() => {
     const isValidStart = isValidStartTime(start, end);
+    const isValidEnd = isValidEndTime(start, end);
 
     if (!isValidStart) {
       const newEnd = new Date(start);
       newEnd.setHours(start.getHours() + 1);
       setEnd(newEnd);
-    } else {
-      updateAllDayStates(start, end);
-    }
-  }, [start]);
-
-  // Hook for updating allDay fields based on end time change
-  useEffect(() => {
-    const isValidEnd = isValidEndTime(start, end);
-
-    if (!isValidEnd) {
+    } else if (!isValidEnd) {
       const newStart = new Date(end);
       newStart.setHours(end.getHours() - 1);
       setStart(newStart);
     } else {
       updateAllDayStates(start, end);
     }
-  }, [end]);
+  }, [start, end]);
 
-  // Helper for updating all day fields
+  // Helper method for updating all day fields
   const updateAllDayStates = (start, end) => {
     const isAllDaySpanCheck = isAllDaySpan(start, end);
-    const updateIsAllDay = setIsAllDay(isAllDaySpanCheck);
-    const updateAllDayStart = setAllDayStart(isAllDaySpanCheck ? start : getDayStart(start));
-    const updateAllDayEnd = setAllDayEnd(isAllDaySpanCheck ? end : getDayEnd(end));
-    Promise.all([updateIsAllDay, updateAllDayStart, updateAllDayEnd]);
+
+    setIsAllDay(isAllDaySpanCheck);
+    setAllDayStart(isAllDaySpanCheck ? start : getDayStart(start));
+    setAllDayEnd(isAllDaySpanCheck ? end : getDayEnd(end));
   };
 
   const handleTitleBlur = (validationFunc, e) => {
@@ -199,15 +189,17 @@ const CalendarEventForm = () => {
       }
 
       if (clickedId === 'update-event-btn') {
-        // Check for valid event update
         const { event } = currentSelection;
 
+        if (!event) return;
+
+        // Check for valid update
         if (!isValidEventUpdate(event, update)) {
           alert('No changes to event detected!');
           return;
         }
 
-        // If update is valid, dispatch updateEvent action
+        // If valid update, dispatch updateEvent action
         update.id = event.id;
 
         dispatch(updateEvent(update))
@@ -445,7 +437,7 @@ const CalendarEventForm = () => {
           <CalendarSelectMenu
             selected={[calendars[calendarSelect]]}
             disabled={isSystemEventSelected}
-            onChange={(values) => handleCalendarChange(values)}
+            onChange={handleCalendarChange}
           />
         </Col>
       </Row>

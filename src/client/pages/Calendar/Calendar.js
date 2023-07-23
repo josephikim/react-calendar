@@ -7,8 +7,8 @@ import {
   onSelectEvent,
   onSelectView,
   fetchUserData,
-  rbcEventsSelector,
-  currentSelectionSelector,
+  deserializedEventsSelector,
+  deserializedRbcSelectionSelector,
   initCalendarUI
 } from 'client/store/userSlice';
 import ContentWrapper from 'client/components/ContentWrapper';
@@ -29,14 +29,14 @@ const Calendar = () => {
 
   // Redux selectors
   const calendars = useSelector((state) => state.user.calendars);
-  const events = useSelector(rbcEventsSelector);
-  const currentSelection = useSelector(currentSelectionSelector);
+  const events = useSelector(deserializedEventsSelector);
+  const currentSelection = useSelector(deserializedRbcSelectionSelector);
 
   // Fetch initial user data
   useEffect(() => {
     if (shouldInitData.current) {
-      const initData = [dispatch(fetchUserData()), dispatch(initCalendarUI())];
-      Promise.all(initData);
+      dispatch(fetchUserData());
+      dispatch(initCalendarUI());
       shouldInitData.current = false;
     }
   }, []);
@@ -65,7 +65,7 @@ const Calendar = () => {
     const { event: currentEvent } = currentSelection;
 
     // If event matches previous selection, do nothing
-    const isNewEventSelected = !currentEvent.id || event.id !== currentEvent.id;
+    const isNewEventSelected = !currentEvent || event.id !== currentEvent.id;
 
     if (!isNewEventSelected) return;
 
@@ -82,7 +82,7 @@ const Calendar = () => {
     const { slot: currentSlot } = currentSelection;
 
     // If selected slot matches current slot, do nothing
-    if (isSameSlot(currentSlot, slot)) return;
+    if (!isValidSlot(currentSlot, slot)) return;
 
     const serializedSlot = {
       ...slot,
@@ -94,15 +94,16 @@ const Calendar = () => {
     dispatch(onSelectSlot(serializedSlot));
   };
 
+  // Returns true if candidate slot and current slot are unique from each other.
   // Comparisons are made using primitive values of Date objects i.e. date.getTime()
-  const isSameSlot = (currentSlot, candidateSlot) => {
-    if (Object.keys(currentSlot).length < 1 || Object.keys(candidateSlot).length < 1) return false;
+  const isValidSlot = (currentSlot, candidateSlot) => {
+    if (!currentSlot) return true;
 
-    const isSame =
-      candidateSlot.start.getTime() === currentSlot.start.getTime() &&
-      candidateSlot.end.getTime() === currentSlot.end.getTime();
+    const isUnique =
+      candidateSlot.start.getTime() !== currentSlot.start.getTime() ||
+      candidateSlot.end.getTime() !== currentSlot.end.getTime();
 
-    if (isSame) return true;
+    if (isUnique) return true;
 
     return false;
   };
@@ -127,7 +128,8 @@ const Calendar = () => {
 
   const render = () => {
     // check for calendar data
-    const isCalendarInitialized = Object.keys(calendars).length > 0 && currentSelection !== null;
+    const isCalendarInitialized =
+      Object.keys(calendars).length > 0 && (currentSelection.slot || currentSelection.event);
 
     if (isCalendarInitialized) {
       const events = getVisibleEvents();

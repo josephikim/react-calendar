@@ -41,11 +41,13 @@ export const getAllDayStart = (isEventSelected, currentSelection) => {
 export const getAllDayEnd = (isEventSelected, currentSelection) => {
   if (isEventSelected) {
     if (currentSelection.event.allDay === true) {
+      // all day event
       return currentSelection.event.end;
     }
     return getDayEnd(currentSelection.event.end);
   } else {
     if (isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end)) {
+      // all day slot
       return currentSelection.slot.end;
     }
     return getDayEnd(currentSelection.slot.end);

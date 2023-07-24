@@ -7,6 +7,11 @@ export const getDayStart = (date) => {
 
 // returns day following given date with time set to 12:00am
 export const getDayEnd = (date) => {
+  // if time is 12:00, return date as is
+  if (date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0) {
+    return date;
+  }
+
   const end = new Date(date);
   end.setDate(end.getDate() + 1);
   end.setHours(0, 0, 0, 0);
@@ -30,30 +35,6 @@ export const getSmartEnd = (date) => {
   return end;
 };
 
-export const getAllDayStart = (isEventSelected, currentSelection) => {
-  if (isEventSelected) {
-    return getDayStart(currentSelection.event.start);
-  } else {
-    return getDayStart(currentSelection.slot.start);
-  }
-};
-
-export const getAllDayEnd = (isEventSelected, currentSelection) => {
-  if (isEventSelected) {
-    if (currentSelection.event.allDay === true) {
-      // all day event
-      return currentSelection.event.end;
-    }
-    return getDayEnd(currentSelection.event.end);
-  } else {
-    if (isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end)) {
-      // all day slot
-      return currentSelection.slot.end;
-    }
-    return getDayEnd(currentSelection.slot.end);
-  }
-};
-
 // checks if start time is before end time
 export const isValidStartTime = (start, end) => {
   if (start.getTime() > end.getTime()) {
@@ -73,9 +54,13 @@ export const isValidEndTime = (start, end) => {
 // check if start and end both equal 12:00am
 export const isAllDaySpan = (start, end) => {
   if (
-    ((start.getHours() == start.getMinutes()) == start.getSeconds()) == 0 &&
-    ((end.getHours() == end.getMinutes()) == end.getSeconds()) == 0 &&
-    start.getTime() != end.getTime()
+    start.getHours() === 0 &&
+    start.getMinutes() === 0 &&
+    start.getSeconds() === 0 &&
+    end.getHours() === 0 &&
+    end.getMinutes() === 0 &&
+    end.getSeconds() === 0 &&
+    start.getTime() !== end.getTime()
   ) {
     return true;
   }

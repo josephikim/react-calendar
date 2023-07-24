@@ -320,7 +320,7 @@ export const initCalendarUI = () => async (dispatch) => {
     };
 
     dispatch(rbcSelectionUpdated(newState));
-    dispatch(onSelectView(defaultView));
+    dispatch(viewUpdated(defaultView));
   } catch (e) {
     return Promise.reject(e);
   }

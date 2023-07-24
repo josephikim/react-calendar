@@ -10,8 +10,6 @@ import {
   getDayEnd,
   getSmartStart,
   getSmartEnd,
-  getAllDayStart,
-  getAllDayEnd,
   isValidStartTime,
   isValidEndTime,
   isAllDaySpan,
@@ -62,8 +60,10 @@ const CalendarEventForm = () => {
   // stores Date objects
   const [start, setStart] = useState(currentSelection.event?.start ?? currentSelection.slot.start);
   const [end, setEnd] = useState(currentSelection.event?.end ?? currentSelection.slot.end);
-  const [allDayStart, setAllDayStart] = useState(getAllDayStart(isEventSelected, currentSelection));
-  const [allDayEnd, setAllDayEnd] = useState(getAllDayEnd(isEventSelected, currentSelection));
+  const [allDayStart, setAllDayStart] = useState(
+    getDayStart(currentSelection.slot?.start || currentSelection.event.start)
+  );
+  const [allDayEnd, setAllDayEnd] = useState(getDayEnd(currentSelection.slot?.end || currentSelection.event.end));
 
   // Hook for updating state based on currentSelection change (allDay fields will be updated via another hook)
   useEffect(() => {
@@ -301,7 +301,6 @@ const CalendarEventForm = () => {
     return [hour, min];
   };
 
-  // debugger;
   return (
     <Form className="CalendarEventForm">
       <Row>
@@ -373,6 +372,7 @@ const CalendarEventForm = () => {
               <label className="text-primary">Start Time</label>
               <TimePicker
                 disableClock
+                clearIcon={null}
                 disabled={isSystemEventSelected}
                 onChange={(value) => handleTimeChange('startTime', value)}
                 value={isAllDay ? allDayStart : start}
@@ -407,6 +407,7 @@ const CalendarEventForm = () => {
               <label className="text-primary">End Time</label>
               <TimePicker
                 disableClock
+                clearIcon={null}
                 disabled={isSystemEventSelected}
                 onChange={(value) => handleTimeChange('endTime', value)}
                 value={isAllDay ? allDayEnd : end}

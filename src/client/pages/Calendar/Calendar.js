@@ -2,6 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
+import _ from 'lodash';
+import { Calendar as ReactBigCalendar, dayjsLocalizer } from 'react-big-calendar';
+import { Container, Row, Col } from 'react-bootstrap';
 import {
   onSelectSlot,
   onSelectEvent,
@@ -14,8 +17,6 @@ import {
 import ContentWrapper from 'client/components/ContentWrapper';
 import CalendarToggleMenu from './CalendarToggleMenu';
 import CalendarEventForm from './CalendarEventForm';
-import { Calendar as ReactBigCalendar, dayjsLocalizer } from 'react-big-calendar';
-import { Container, Row, Col } from 'react-bootstrap';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
 
@@ -31,6 +32,15 @@ const Calendar = () => {
   const calendars = useSelector((state) => state.user.calendars);
   const events = useSelector(deserializedEventsSelector);
   const currentSelection = useSelector(deserializedRbcSelectionSelector);
+
+  // Derived values
+  const visibleCalendars = [];
+
+  for (const key in calendars) {
+    if (calendars[key].visibility === true) {
+      visibleCalendars.push(key);
+    }
+  }
 
   // Fetch initial user data
   useEffect(() => {
@@ -112,27 +122,23 @@ const Calendar = () => {
     dispatch(onSelectView(view));
   };
 
-  const getVisibleEvents = () => {
-    const visibleCalendars = [];
+  const getRbcVisibleEvents = () => {
+    const result = _.pickBy(events, isDefaultCalEvent);
 
-    for (const key in calendars) {
-      if (calendars[key].visibility === true) {
-        visibleCalendars.push(key);
-      }
-    }
+    return Object.values(result);
+  };
 
-    const result = events.filter((event) => visibleCalendars.includes(event.calendar));
-
-    return result;
+  const isDefaultCalEvent = (value, key) => {
+    return visibleCalendars.includes(value.calendar);
   };
 
   const render = () => {
     // check for calendar data
-    const isCalendarInitialized =
-      Object.keys(calendars).length > 0 && (currentSelection.slot || currentSelection.event);
+    const isCurrentSelectionSet = currentSelection.slot || currentSelection.event;
+    const isDefaultCalLoaded = _.some(calendars, ['userDefault', true]);
 
-    if (isCalendarInitialized) {
-      const events = getVisibleEvents();
+    if (isCurrentSelectionSet && isDefaultCalLoaded) {
+      const events = getRbcVisibleEvents();
 
       return (
         <Row>

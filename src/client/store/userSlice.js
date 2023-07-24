@@ -10,7 +10,7 @@ export const initialState = {
   roles: [],
   calendars: {},
   rbcSelection: {},
-  events: [],
+  events: {},
   viewSelection: null
 };
 
@@ -37,7 +37,6 @@ const userSlice = createSlice({
       action.payload.forEach((element) => {
         newState[element.id] = element;
       });
-
       state.calendars = newState;
     },
     calendarAdded(state, action) {
@@ -56,16 +55,29 @@ const userSlice = createSlice({
       state.calendars = _.omit(state.calendars, [action.payload]);
     },
     eventsUpdated(state, action) {
-      state.events = action.payload;
+      // convert array of objects to POJO
+      const newState = {};
+
+      action.payload.forEach((element) => {
+        newState[element.id] = element;
+      });
+
+      state.events = newState;
     },
     eventAdded(state, action) {
-      state.events = [...state.events, action.payload];
+      state.events = {
+        ...state.events,
+        [action.payload.id]: action.payload
+      };
     },
     eventUpdated(state, action) {
-      state.events = state.events.map((event) => (event.id === action.payload.id ? action.payload : event));
+      state.events = {
+        ...state.events,
+        [action.payload.id]: action.payload
+      };
     },
     eventDeleted(state, action) {
-      state.events = state.events.filter((event) => event.id !== action.payload);
+      state.events = _.omit(state.events, [action.payload]);
     },
     rbcSelectionUpdated(state, action) {
       state.rbcSelection = action.payload;
@@ -104,15 +116,17 @@ const rbcSelectionSelector = (state) => state.user.rbcSelection;
 
 // returns times as Date objects
 export const deserializedEventsSelector = createSelector([eventsSelector], (events) => {
-  const result = events.map((event) => {
-    return {
-      ...event,
-      start: new Date(event.start),
-      end: new Date(event.end)
+  const newState = {};
+
+  Object.keys(events).forEach((key) => {
+    newState[key] = {
+      ...events[key],
+      start: new Date(events[key].start),
+      end: new Date(events[key].end)
     };
   });
 
-  return result;
+  return newState;
 });
 
 // returns times as Date objects

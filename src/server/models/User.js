@@ -18,7 +18,7 @@ const schema = new mongoose.Schema({
     required: [true, 'Enter a password.'],
     minLength: [4, 'Password should be at least four characters']
   },
-  roles_ref: [
+  roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Role'
@@ -26,25 +26,20 @@ const schema = new mongoose.Schema({
   ],
   calendars: [
     {
-      calendar_ref: {
+      calendar: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Calendar'
-      }
-    },
-    {
+      },
       userDefault: {
         type: Boolean,
         required: true,
         default: false
-      }
-    },
-    {
+      },
       visibility: {
         type: Boolean,
-        required: true
-      }
-    },
-    {
+        required: true,
+        default: true
+      },
       color: {
         type: String,
         required: true
@@ -88,37 +83,36 @@ const handleE11000 = (error, res, next) => {
 schema.post('save', handleE11000);
 schema.post('findOneAndUpdate', handleE11000);
 
-// Create user default calendar on user creation
+// Create default calendar on user creation
 schema.post('save', async function () {
   if (this.id && this.wasNew) {
-    // Mongoose returns [] for .find query with no matches
-    Calendar.find(
-      {
-        user: this.id,
-        userDefault: true
-      },
-      (e, calendar) => {
-        if (e) {
-          return next(e);
-        }
+    const calendars = await Calendar.find({
+      user_id: this.id
+    });
 
-        if (calendar.length > 0) {
-          throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
-            errorCode: 'calendar'
-          });
-        }
+    if (calendars.length > 0) {
+      throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
+        errorCode: 'calendar'
+      });
+    }
 
-        // Create default user calendar
-        return new Calendar({
-          name: this.username,
-          color: `#${userColors[0]}`,
-          user: this.id,
-          userDefault: true,
-          systemCalendar: false,
-          visibility: true
-        }).save();
-      }
-    );
+    // Create default user calendar
+    const doc = new Calendar({
+      name: this.username,
+      user_id: this.id
+    });
+
+    const defaultCalendar = await doc.save();
+
+    // embed user context for default calendar
+    this.calendars.push({
+      calendar: defaultCalendar.id,
+      userDefault: true,
+      visibility: true,
+      color: `#${userColors[0]}`
+    });
+
+    await this.save();
   }
 });
 

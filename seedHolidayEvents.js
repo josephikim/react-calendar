@@ -30,20 +30,16 @@ const getHolidays = () => {
 };
 
 // make a bunch of calendar events using API data
-// assumes 'US Holidays' calendar exists in db
 const makeEvents = async () => {
   const events = [];
 
+  // check if 'US Holidays' calendar exists in db
   const calendar = await client
     .db(MONGO_DB)
     .collection('calendars')
-    .find({ name: 'US Holidays', user_id: 'system' })
-    .toArray();
+    .findOne({ name: 'US Holidays', user_id: 'system' });
 
-  // Mongoose returns [] for .find query with no matches
-  if (!calendar.length || calendar.length < 1) return;
-
-  const calendarId = calendar[0]._id;
+  if (!calendar || !Object.keys(calendar).includes('_id')) return;
 
   await getHolidays().then((response) => {
     const holidays = response.data.response.holidays;
@@ -60,7 +56,7 @@ const makeEvents = async () => {
         start: startDate.toISOString(),
         end: endDate.toISOString(),
         allDay: true,
-        calendar_ref: calendarId
+        calendar: calendar._id
       };
       events.push(event);
     });

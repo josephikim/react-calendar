@@ -50,12 +50,13 @@ class UserService {
           expiresIn: Number(process.env.JWT_EXPIRATION)
         });
 
-        const roles = user.roles.map((role) => role.name);
+        // Add roles array to response
+        const roleNames = user.roles.map((role) => role.name);
 
         const response = {
           username,
           accessToken,
-          roles
+          roles: roleNames
         };
 
         await this.refreshTokenService.create(user.id).then((refreshToken) => {

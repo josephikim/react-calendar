@@ -23,8 +23,8 @@ mongoose
   .then(() => {
     console.log('Successfully connected to MongoDB');
     // initialize roles
-    Role.countDocuments((e, count) => {
-      if (!e && count === 0) {
+    Role.countDocuments((err, count) => {
+      if (count === 0) {
         roleService.create('user');
         roleService.create('moderator');
         roleService.create('admin');
@@ -33,16 +33,18 @@ mongoose
   })
   .then(() => {
     // initialize system calendars
-    Calendar.countDocuments({ systemCalendar: true }, (e, count) => {
-      if (!e && count === 0) {
-        const data = {
-          name: 'US Holidays',
-          user_id: 'system'
-        };
+    Calendar.find({ user_id: 'system', name: 'US Holidays' })
+      .countDocuments()
+      .exec(function (err, count) {
+        if (count === 0) {
+          const data = {
+            name: 'US Holidays',
+            user_id: 'system'
+          };
 
-        calendarService.create(data);
-      }
-    });
+          calendarService.create(data);
+        }
+      });
   })
   .catch((e) => {
     console.error('Connection error', e);

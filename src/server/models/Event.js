@@ -21,7 +21,7 @@ const schema = new mongoose.Schema({
     required: true,
     default: false
   },
-  calendar_ref: {
+  calendar: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'Calendar'

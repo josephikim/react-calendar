@@ -7,27 +7,10 @@ const schema = new mongoose.Schema({
     type: String,
     required: true
   },
-  color: {
+  user_id: {
     type: String,
-    required: true
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  userDefault: {
-    type: Boolean,
     required: true,
-    default: false
-  },
-  systemCalendar: {
-    type: Boolean,
-    required: true,
-    default: false
-  },
-  visibility: {
-    type: Boolean,
-    required: true
+    default: 'system'
   }
 });
 
@@ -46,7 +29,7 @@ schema.post('save', handleE11000);
 schema.post('findOneAndUpdate', handleE11000);
 
 // schema index
-schema.index({ user: 1, name: 1 }, { unique: true });
+schema.index({ name: 1, user_id: 1 }, { unique: true });
 
 const Calendar = mongoose.model('Calendar', schema);
 

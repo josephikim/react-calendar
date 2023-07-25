@@ -6,28 +6,52 @@ import { userColors } from '../../config/appConfig';
 
 const SALT_WORK_FACTOR = 10;
 
-const schema = new mongoose.Schema(
-  {
-    username: {
-      type: String,
-      required: [true, 'Enter a username.'],
-      minLength: [4, 'Username should be at least four characters'],
-      unique: [true, 'That username is taken.']
-    },
-    password: {
-      type: String,
-      required: [true, 'Enter a password.'],
-      minLength: [4, 'Password should be at least four characters']
-    },
-    roles: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Role'
-      }
-    ]
+const schema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: [true, 'Enter a username.'],
+    minLength: [4, 'Username should be at least four characters'],
+    unique: [true, 'That username is taken.']
   },
-  { emitIndexErrors: true }
-);
+  password: {
+    type: String,
+    required: [true, 'Enter a password.'],
+    minLength: [4, 'Password should be at least four characters']
+  },
+  roles_ref: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Role'
+    }
+  ],
+  calendars: [
+    {
+      calendar_ref: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Calendar'
+      }
+    },
+    {
+      userDefault: {
+        type: Boolean,
+        required: true,
+        default: false
+      }
+    },
+    {
+      visibility: {
+        type: Boolean,
+        required: true
+      }
+    },
+    {
+      color: {
+        type: String,
+        required: true
+      }
+    }
+  ]
+});
 
 // preserving isNew state for 'post' middleware
 schema.pre('save', function (next) {

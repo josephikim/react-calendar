@@ -31,13 +31,7 @@ const userSlice = createSlice({
       state.roles = action.payload;
     },
     calendarsUpdated(state, action) {
-      // convert array of objects to POJO
-      const newState = {};
-
-      action.payload.forEach((element) => {
-        newState[element.id] = element;
-      });
-      state.calendars = newState;
+      state.calendars = action.payload;
     },
     calendarAdded(state, action) {
       state.calendars = {
@@ -191,6 +185,7 @@ export const loginUser = (data) => async (dispatch) => {
     dispatch(accessTokenUpdated(res.data.accessToken));
     dispatch(refreshTokenUpdated(res.data.refreshToken));
     dispatch(rolesUpdated(res.data.roles));
+    dispatch(calendarsUpdated(res.data.calendars));
   } catch (e) {
     if (e.response && e.response.data.name === 'AuthorizationError') {
       // unauthorize user
@@ -213,13 +208,12 @@ export const registerUser = (data) => async (dispatch) => {
   }
 };
 
-export const fetchUserData = () => async (dispatch) => {
+export const fetchCalendarEvents = () => async (dispatch) => {
   try {
-    const res = await userApi.get('/user/data');
+    const res = await userApi.get('/event/all');
 
     return Promise.resolve(res.data).then((data) => {
-      dispatch(calendarsUpdated(data.calendars));
-      dispatch(eventsUpdated(data.events));
+      dispatch(eventsUpdated(data));
     });
   } catch (e) {
     return Promise.reject(e);

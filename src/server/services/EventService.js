@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
+import CalendarService from './CalendarService';
 import HttpResponse from 'server/utils/httpResponse';
 
 class EventService {
-  constructor(model) {
+  constructor(model, calendarModel) {
     this.model = model;
+    this.calendarService = new CalendarService(calendarModel);
   }
 
   create = async (data) => {
@@ -17,22 +19,25 @@ class EventService {
   };
 
   // get all user and system events
-  getAll = async (calendarIdArray) => {
-    const calendarIds = calendarIdArray.map((calendarId) => {
-      return mongoose.Types.ObjectId(calendarId);
-    });
-
+  getAll = async (userId) => {
     try {
-      // Mongoose returns [] for .find query with no matches
-      const result = await this.model
-        .find({
-          calendar: {
-            $in: calendarIds
-          }
-        })
-        .sort({ start: -1 });
+      // Get system and user calendars
+      const calendars = await this.calendarService.getAll(userId);
 
-      return new HttpResponse(result);
+      if (!calendars.data || calendars.data.length < 1) {
+        throw new NotFoundError('No matching calendar(s) found', { errorCode: 'calendar' });
+      }
+
+      // Extract calendar ids
+      const calendarIds = calendars.data.map((calendar) => {
+        return calendar.id;
+      });
+
+      // Retrieve user events
+      // Mongoose returns [] for .find query with no matches
+      const events = await this.model.find({ calendar: { $in: calendarIds } });
+
+      return new HttpResponse(events);
     } catch (e) {
       throw e;
     }

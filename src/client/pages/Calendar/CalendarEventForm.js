@@ -30,8 +30,8 @@ const CalendarEventForm = () => {
   const currentSelection = useSelector(deserializedRbcSelectionSelector);
 
   // Derived states
-  const defaultCal = Object.values(calendars).find((v) => v.userDefault === true);
-  const isSystemEventSelected = currentSelection.event?.systemCalendar === true;
+  const defaultCalId = Object.keys(calendars).find((k) => calendars[k].userDefault === true);
+  const isSystemEventSelected = calendars[currentSelection.event?.calendar]?.systemCalendar === true;
   const isSlotSelected = !!currentSelection.slot;
   const isEventSelected = !!currentSelection.event;
 
@@ -45,7 +45,9 @@ const CalendarEventForm = () => {
   const [desc, setDesc] = useState(currentSelection.event?.desc || '');
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
-  const [calendarSelect, setCalendarSelect] = useState(defaultCal.id); // store id of selected calendar
+  const [selectedCalendarId, setSelectedCalendarId] = useState(
+    Object.keys(calendars).find((k) => calendars[k].userDefault === true)
+  );
   const [lastSelectedType, setLastSelectedType] = useState(isEventSelected ? 'event' : 'slot');
   const [error, setError] = useState(null);
 
@@ -75,7 +77,7 @@ const CalendarEventForm = () => {
 
     setTitle(titleUpdate);
     setDesc(isEventSelected ? currentSelection.event.desc : lastSelectedType === 'slot' ? desc : '');
-    setCalendarSelect(currentSelection.event?.calendar || defaultCal.id);
+    setSelectedCalendarId(currentSelection.event?.calendar || defaultCalId);
     setLastSelectedType(isEventSelected ? 'event' : 'slot');
     setError(null);
 
@@ -172,7 +174,7 @@ const CalendarEventForm = () => {
         start: isAllDay === true ? allDayStart.toISOString() : start.toISOString(),
         end: isAllDay === true ? allDayEnd.toISOString() : end.toISOString(),
         allDay: isAllDay || isAllDaySpan(start, end),
-        calendar: calendarSelect
+        calendar: selectedCalendarId
       };
 
       if (clickedId === 'add-event-btn') {
@@ -261,11 +263,11 @@ const CalendarEventForm = () => {
   const handleCalendarChange = (values) => {
     if (!values || values.length < 1) return;
 
-    const calendarId = values[0].id;
-    const isNewCalSelected = calendarId !== calendarSelect;
+    const calendarId = Object.keys(calendars).find((k) => calendars[k].name === values[0].name);
+    const isNewCalSelected = calendarId !== selectedCalendarId;
 
     if (isNewCalSelected) {
-      setCalendarSelect(calendarId);
+      setSelectedCalendarId(calendarId);
     }
   };
 
@@ -301,6 +303,8 @@ const CalendarEventForm = () => {
     return [hour, min];
   };
 
+  console.log('testa', selectedCalendarId);
+  // console.log('test', calendars[selectedCalendarId]);
   return (
     <Form className="CalendarEventForm">
       <Row>
@@ -436,7 +440,7 @@ const CalendarEventForm = () => {
       <Row>
         <Col>
           <CalendarSelectMenu
-            selected={[calendars[calendarSelect]]}
+            selected={[calendars[selectedCalendarId]]}
             disabled={isSystemEventSelected}
             onChange={handleCalendarChange}
           />

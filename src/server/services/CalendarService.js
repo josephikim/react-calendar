@@ -11,9 +11,7 @@ class CalendarService {
   getAll = async (userId) => {
     try {
       // Mongoose returns [] for .find query with no matches
-      const result = await this.model.find({
-        $or: [{ user: mongoose.Types.ObjectId(userId) }, { systemCalendar: true }]
-      });
+      const result = await this.model.find({ user_id: { $in: [userId, 'system'] } });
 
       return new HttpResponse(result);
     } catch (e) {

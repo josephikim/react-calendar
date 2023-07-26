@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Calendar from './Calendar';
 import { DuplicateKeyError } from 'server/utils/databaseErrors';
-import { userColors } from '../../config/appConfig';
+import { systemColors, userColors } from '../../config/appConfig';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -83,9 +83,10 @@ const handleE11000 = (error, res, next) => {
 schema.post('save', handleE11000);
 schema.post('findOneAndUpdate', handleE11000);
 
-// Create default calendar on user creation
+// Create default cal on user creation
 schema.post('save', async function () {
   if (this.id && this.wasNew) {
+    // check for existing user default cal
     const calendars = await Calendar.find({
       user_id: this.id
     });
@@ -96,21 +97,34 @@ schema.post('save', async function () {
       });
     }
 
-    // Create default user calendar
+    // Create user default cal
     const doc = new Calendar({
       name: this.username,
       user_id: this.id
     });
 
-    const defaultCalendar = await doc.save();
+    const defaultCal = await doc.save();
 
-    // embed user context for default calendar
-    this.calendars.push({
-      calendar: defaultCalendar.id,
-      userDefault: true,
-      visibility: true,
-      color: `#${userColors[0]}`
+    // Lookup system cals
+    const systemCal = await Calendar.find({
+      user_id: 'system'
     });
+
+    // embed user context for system cal and user default cal
+    this.calendars.push(
+      {
+        calendar: systemCal[0].id,
+        userDefault: false,
+        visibility: true,
+        color: `#${systemColors[0]}`
+      },
+      {
+        calendar: defaultCal.id,
+        userDefault: true,
+        visibility: true,
+        color: `#${userColors[0]}`
+      }
+    );
 
     await this.save();
   }

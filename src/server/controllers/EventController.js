@@ -1,7 +1,7 @@
 import EventService from 'server/services/EventService';
 import db from 'server/models';
 
-const eventService = new EventService(db.Event);
+const eventService = new EventService(db.Event, db.Calendar);
 
 class EventController {
   constructor(service) {

@@ -30,12 +30,11 @@ const CalendarToggleMenu = () => {
   };
 
   // prepare data for render
-  const menuItems = Object.values(calendars);
+  const menuItems = Object.entries(calendars);
 
   menuItems
-    .sort((a, b) => b.id - a.id)
-    .sort((a, b) => b.userDefault - a.userDefault)
-    .sort((a, b) => b.systemCalendar - a.systemCalendar);
+    .sort((a, b) => b[1].userDefault - a[1].userDefault)
+    .sort((a, b) => b[1].systemCalendar - a[1].systemCalendar);
 
   return (
     <div className="CalendarToggleMenu">
@@ -47,13 +46,13 @@ const CalendarToggleMenu = () => {
 
       {menuItems.map((item) => (
         <CalendarToggleMenuItem
-          id={item.id}
-          key={item.id}
-          visibility={item.visibility}
-          name={item.name}
-          color={item.color}
-          userDefault={item.userDefault}
-          systemCalendar={item.systemCalendar}
+          id={item[0]}
+          key={item[0]}
+          visibility={item[1].visibility}
+          name={item[1].name}
+          color={item[1].color}
+          userDefault={item[1].userDefault}
+          systemCalendar={item[1].systemCalendar}
         />
       ))}
 

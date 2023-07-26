@@ -7,12 +7,12 @@ const CalendarSelectMenu = (props) => {
   const calendars = useSelector((state) => state.user.calendars);
 
   // returns array of objects
-  const options = Object.values(calendars).map((v) => {
+  const options = Object.keys(calendars).map((k) => {
     // Disable system calendars
     const option = {
-      id: v.id,
-      name: v.name,
-      disabled: v.systemCalendar
+      id: k,
+      name: calendars[k].name,
+      disabled: calendars[k].systemCalendar
     };
 
     return option;

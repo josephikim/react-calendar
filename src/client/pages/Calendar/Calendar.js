@@ -9,7 +9,7 @@ import {
   onSelectSlot,
   onSelectEvent,
   onSelectView,
-  fetchUserData,
+  fetchCalendarEvents,
   deserializedEventsSelector,
   deserializedRbcSelectionSelector,
   initCalendarUI
@@ -33,19 +33,19 @@ const Calendar = () => {
   const events = useSelector(deserializedEventsSelector);
   const currentSelection = useSelector(deserializedRbcSelectionSelector);
 
-  // Derived values
-  const visibleCalendars = [];
+  // Extract visible calendars
+  const visibleCalendarIds = [];
 
   for (const key in calendars) {
     if (calendars[key].visibility === true) {
-      visibleCalendars.push(key);
+      visibleCalendarIds.push(key);
     }
   }
 
-  // Fetch initial user data
+  // Initialize calendar data
   useEffect(() => {
     if (shouldInitData.current) {
-      dispatch(fetchUserData());
+      dispatch(fetchCalendarEvents());
       dispatch(initCalendarUI());
       shouldInitData.current = false;
     }
@@ -129,7 +129,7 @@ const Calendar = () => {
   };
 
   const isDefaultCalEvent = (value, key) => {
-    return visibleCalendars.includes(value.calendar);
+    return visibleCalendarIds.includes(value.calendar);
   };
 
   const render = () => {

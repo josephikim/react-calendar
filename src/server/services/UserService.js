@@ -34,12 +34,12 @@ class UserService {
     } else {
       // Process Login
       try {
-        await user.populate('roles').execPopulate();
+        await user.populate(['roles', 'calendars.calendar']).execPopulate();
 
         const validated = await user.validatePassword(password);
 
         if (!validated) {
-          throw new AuthorizationError('Invalid password', {
+          throw new AuthorizationError('Invalid ßpassword', {
             errorCode: 'password',
             accessToken: null
           });
@@ -50,12 +50,26 @@ class UserService {
           expiresIn: Number(process.env.JWT_EXPIRATION)
         });
 
-        // Add roles array to response
+        // Extract role names
         const roleNames = user.roles.map((role) => role.name);
+
+        // Prepare calendar data
+        const calendars = {};
+
+        user.calendars.forEach((entry) => {
+          calendars[entry.calendar._id] = {
+            name: entry.calendar.name,
+            systemCalendar: entry.calendar.user_id === 'system',
+            userDefault: entry.userDefault,
+            visibility: entry.visibility,
+            color: entry.color
+          };
+        });
 
         const response = {
           username,
           accessToken,
+          calendars,
           roles: roleNames
         };
 
@@ -124,12 +138,12 @@ class UserService {
       }
 
       // Extract calendar ids
-      const calendarIdArray = calendars.data.map((calendar) => {
+      const calendarIds = calendars.data.map((calendar) => {
         return calendar.id;
       });
 
-      // Get system and user events
-      const events = await this.eventService.getAll(calendarIdArray);
+      // Get user events
+      const events = await this.eventService.getAll(calendarIds);
 
       const response = {
         calendars: calendars.data,

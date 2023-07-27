@@ -9,11 +9,10 @@ import {
   onSelectSlot,
   onSelectEvent,
   onSelectView,
-  fetchCalendarEvents,
-  deserializedEventsSelector,
   deserializedRbcSelectionSelector,
   initCalendarUI
 } from 'client/store/userSlice';
+import { fetchEvents, deserializedEventsSelector } from 'client/store/eventsSlice';
 import ContentWrapper from 'client/components/ContentWrapper';
 import CalendarToggleMenu from './CalendarToggleMenu';
 import CalendarEventForm from './CalendarEventForm';
@@ -45,7 +44,7 @@ const Calendar = () => {
   // Initialize calendar data
   useEffect(() => {
     if (shouldInitData.current) {
-      dispatch(fetchCalendarEvents());
+      dispatch(fetchEvents());
       dispatch(initCalendarUI());
       shouldInitData.current = false;
     }

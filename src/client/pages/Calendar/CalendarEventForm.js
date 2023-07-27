@@ -4,7 +4,8 @@ import _ from 'lodash';
 import TimePicker from 'react-time-picker';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation.js';
-import { createEvent, updateEvent, deleteEvent, deserializedRbcSelectionSelector } from 'client/store/userSlice';
+import { deserializedRbcSelectionSelector } from 'client/store/userSlice';
+import { createEvent, updateEvent, deleteEvent } from 'client/store/eventsSlice';
 import {
   getDayStart,
   getDayEnd,

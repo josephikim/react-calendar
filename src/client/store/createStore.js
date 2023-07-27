@@ -3,6 +3,7 @@ import { loadState, saveState } from './localStorage';
 import throttle from 'lodash/throttle';
 
 import userReducer from './userSlice';
+import eventsReducer from './eventsSlice';
 
 const doCreateStore = () => {
   const persistedState = loadState();
@@ -10,7 +11,8 @@ const doCreateStore = () => {
   const preloadedState = persistedState ?? {};
 
   const allReducers = combineReducers({
-    user: userReducer
+    user: userReducer,
+    events: eventsReducer
   });
 
   const rootReducer = (state, action) => {

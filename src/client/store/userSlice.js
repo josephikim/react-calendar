@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { userApi } from 'client/utils/axios';
+import { getCurrentDaySlot } from 'client/utils/rbc';
 import { defaultView } from 'config/appConfig';
 
 export const initialState = {
@@ -10,7 +11,6 @@ export const initialState = {
   roles: [],
   calendars: {},
   rbcSelection: {},
-  events: {},
   viewSelection: null
 };
 
@@ -48,31 +48,6 @@ const userSlice = createSlice({
     calendarDeleted(state, action) {
       state.calendars = _.omit(state.calendars, [action.payload]);
     },
-    eventsUpdated(state, action) {
-      // convert array of objects to POJO
-      const newState = {};
-
-      action.payload.forEach((element) => {
-        newState[element.id] = element;
-      });
-
-      state.events = newState;
-    },
-    eventAdded(state, action) {
-      state.events = {
-        ...state.events,
-        [action.payload.id]: action.payload
-      };
-    },
-    eventUpdated(state, action) {
-      state.events = {
-        ...state.events,
-        [action.payload.id]: action.payload
-      };
-    },
-    eventDeleted(state, action) {
-      state.events = _.omit(state.events, [action.payload]);
-    },
     rbcSelectionUpdated(state, action) {
       state.rbcSelection = action.payload;
     },
@@ -92,36 +67,17 @@ export const {
   calendarUpdated,
   calendarDeleted,
   rbcSelectionUpdated,
-  eventsUpdated,
-  eventAdded,
-  eventDeleted,
-  eventUpdated,
   viewUpdated
 } = userSlice.actions;
 
 export default userSlice.reducer;
 
-const eventsSelector = (state) => state.user.events;
+// Takes entire redux state as input (not just a state slice)
 const rbcSelectionSelector = (state) => state.user.rbcSelection;
 
 //
 // Memoized selectors
 //
-
-// returns times as Date objects
-export const deserializedEventsSelector = createSelector([eventsSelector], (events) => {
-  const newState = {};
-
-  Object.keys(events).forEach((key) => {
-    newState[key] = {
-      ...events[key],
-      start: new Date(events[key].start),
-      end: new Date(events[key].end)
-    };
-  });
-
-  return newState;
-});
 
 // returns times as Date objects
 export const deserializedRbcSelectionSelector = createSelector([rbcSelectionSelector], (rbcSelection) => {
@@ -208,64 +164,6 @@ export const registerUser = (data) => async (dispatch) => {
   }
 };
 
-export const fetchCalendarEvents = () => async (dispatch) => {
-  try {
-    const res = await userApi.get('/event/all');
-
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(eventsUpdated(data));
-    });
-  } catch (e) {
-    return Promise.reject(e);
-  }
-};
-
-export const createEvent = (data) => async (dispatch) => {
-  try {
-    const res = await userApi.post('/event', data);
-
-    return Promise.resolve(res.data).then((data) => {
-      const newState = {
-        slot: null,
-        event: data
-      };
-
-      dispatch(eventAdded(data));
-      dispatch(rbcSelectionUpdated(newState)); // set selection to newly created event
-    });
-  } catch (e) {
-    return Promise.reject(e);
-  }
-};
-
-export const updateEvent = (data) => async (dispatch) => {
-  try {
-    const res = await userApi.put(`/event/${data.id}`, data);
-
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(eventUpdated(data));
-    });
-  } catch (e) {
-    return Promise.reject(e);
-  }
-};
-
-export const deleteEvent = (id) => async (dispatch) => {
-  try {
-    userApi.delete(`/event/${id}`).then((res) => {
-      const newState = {
-        slot: getCurrentDateSlot(),
-        event: null
-      };
-
-      dispatch(eventDeleted(res.data.id));
-      dispatch(rbcSelectionUpdated(newState)); // Reset initial calendar slot
-    });
-  } catch (e) {
-    return Promise.reject(e);
-  }
-};
-
 export const createCalendar = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/calendar', data);
@@ -323,7 +221,7 @@ export const initCalendarUI = () => async (dispatch) => {
   try {
     // Set initial calendar slot
     const newState = {
-      slot: getCurrentDateSlot(),
+      slot: getCurrentDaySlot(),
       event: null
     };
 
@@ -332,19 +230,4 @@ export const initCalendarUI = () => async (dispatch) => {
   } catch (e) {
     return Promise.reject(e);
   }
-};
-
-// return serialized slot object with start/end spanning 24 hours starting at 12:00am
-const getCurrentDateSlot = () => {
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
-  const end = new Date(start);
-  end.setDate(end.getDate() + 1);
-
-  return {
-    action: 'click',
-    start: start.toISOString(),
-    end: end.toISOString(),
-    slots: [start.toISOString()]
-  };
 };

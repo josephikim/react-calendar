@@ -10,8 +10,8 @@ import {
   onSelectEvent,
   onSelectView,
   deserializedRbcSelectionSelector,
-  initCalendarUI
-} from 'client/store/userSlice';
+  initCalendar
+} from 'client/store/appSlice';
 import { fetchEvents, deserializedEventsSelector } from 'client/store/eventsSlice';
 import ContentWrapper from 'client/components/ContentWrapper';
 import CalendarToggleMenu from './CalendarToggleMenu';
@@ -45,7 +45,7 @@ const Calendar = () => {
   useEffect(() => {
     if (shouldInitData.current) {
       dispatch(fetchEvents());
-      dispatch(initCalendarUI());
+      dispatch(initCalendar());
       shouldInitData.current = false;
     }
   }, []);

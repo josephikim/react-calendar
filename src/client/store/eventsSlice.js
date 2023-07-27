@@ -39,7 +39,7 @@ const eventsSlice = createSlice({
   }
 });
 
-export const { eventsUpdated, eventAdded, eventDeleted, eventUpdated } = eventsSlice.actions;
+export const { eventsUpdated, eventAdded, eventUpdated, eventDeleted } = eventsSlice.actions;
 
 export default eventsSlice.reducer;
 

@@ -5,6 +5,7 @@ import throttle from 'lodash/throttle';
 import userReducer from './userSlice';
 import eventsReducer from './eventsSlice';
 import calendarsReducer from './calendarsSlice';
+import appReducer from './appSlice';
 
 const doCreateStore = () => {
   const persistedState = loadState();
@@ -14,7 +15,8 @@ const doCreateStore = () => {
   const allReducers = combineReducers({
     user: userReducer,
     events: eventsReducer,
-    calendars: calendarsReducer
+    calendars: calendarsReducer,
+    app: appReducer
   });
 
   const rootReducer = (state, action) => {

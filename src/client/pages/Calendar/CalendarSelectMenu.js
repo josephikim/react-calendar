@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const CalendarSelectMenu = (props) => {
-  const calendars = useSelector((state) => state.user.calendars);
+  const calendars = useSelector((state) => state.calendars.all);
 
   // returns array of objects
   const options = Object.keys(calendars).map((k) => {

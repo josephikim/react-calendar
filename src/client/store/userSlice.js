@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { calendarsUpdated } from './calendarsSlice';
 import { userApi } from 'client/utils/axios';
 import { getCurrentDaySlot } from 'client/utils/rbc';
 import { defaultView } from 'config/appConfig';
@@ -9,7 +10,6 @@ export const initialState = {
   accessToken: null,
   refreshToken: null,
   roles: [],
-  calendars: {},
   rbcSelection: {},
   viewSelection: null
 };
@@ -30,24 +30,6 @@ const userSlice = createSlice({
     rolesUpdated(state, action) {
       state.roles = action.payload;
     },
-    calendarsUpdated(state, action) {
-      state.calendars = action.payload;
-    },
-    calendarAdded(state, action) {
-      state.calendars = {
-        ...state.calendars,
-        [action.payload.id]: action.payload
-      };
-    },
-    calendarUpdated(state, action) {
-      state.calendars = {
-        ...state.calendars,
-        [action.payload.id]: action.payload
-      };
-    },
-    calendarDeleted(state, action) {
-      state.calendars = _.omit(state.calendars, [action.payload]);
-    },
     rbcSelectionUpdated(state, action) {
       state.rbcSelection = action.payload;
     },
@@ -62,10 +44,6 @@ export const {
   accessTokenUpdated,
   refreshTokenUpdated,
   rolesUpdated,
-  calendarsUpdated,
-  calendarAdded,
-  calendarUpdated,
-  calendarDeleted,
   rbcSelectionUpdated,
   viewUpdated
 } = userSlice.actions;

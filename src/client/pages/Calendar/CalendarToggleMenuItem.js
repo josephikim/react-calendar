@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Badge } from 'react-bootstrap';
 import Checkbox from 'client/components/Checkbox';
 import { useDispatch } from 'react-redux';
-import { calendarUpdated, updateCalendar } from 'client/store/userSlice';
+import { calendarUpdated, updateCalendar } from 'client/store/calendarsSlice';
 
 import './CalendarToggleMenu.css';
 

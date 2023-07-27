@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import _ from 'lodash';
 import { validateFields } from 'client/validation';
-import { createCalendar, updateCalendar, deleteCalendar } from 'client/store/userSlice';
+import { createCalendar, updateCalendar, deleteCalendar } from 'client/store/calendarsSlice';
 import AccountCalendarSettingsItem from './AccountCalendarSettingsItem';
 import './AccountCalendarSettings.css';
 
@@ -35,7 +35,7 @@ const getCalendarsState = (calendars) => {
 
 const AccountCalendarSettings = () => {
   const dispatch = useDispatch();
-  const calendars = useSelector((state) => state.user.calendars);
+  const calendars = useSelector((state) => state.calendars.all);
   const [calendarsSettings, setCalendarsSettings] = useState(getCalendarsState(calendars));
   const [newCalendarSettings, setNewCalendarSettings] = useState(initialState.newCalendar);
 

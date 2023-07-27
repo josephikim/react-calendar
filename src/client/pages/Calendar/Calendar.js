@@ -28,7 +28,7 @@ const Calendar = () => {
   const shouldInitData = useRef(true);
 
   // Redux selectors
-  const calendars = useSelector((state) => state.user.calendars);
+  const calendars = useSelector((state) => state.calendars.all);
   const events = useSelector(deserializedEventsSelector);
   const currentSelection = useSelector(deserializedRbcSelectionSelector);
 

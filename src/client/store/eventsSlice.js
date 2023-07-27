@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { userApi } from 'client/utils/axios';
 import { getCurrentDaySlot } from 'client/utils/rbc';
-import { defaultView } from 'config/appConfig';
 
 export const initialState = {
   all: {}

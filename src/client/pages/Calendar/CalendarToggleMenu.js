@@ -2,14 +2,14 @@ import React from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import CalendarToggleMenuItem from './CalendarToggleMenuItem';
-import { calendarsUpdated } from 'client/store/userSlice';
+import { calendarsUpdated } from 'client/store/calendarsSlice';
 
 import './CalendarToggleMenu.css';
 
 const CalendarToggleMenu = () => {
   const dispatch = useDispatch();
 
-  const calendars = useSelector((state) => state.user.calendars);
+  const calendars = useSelector((state) => state.calendars.all);
 
   // Set visibility=true for all calendars
   const handleSelectAll = (event) => {

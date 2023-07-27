@@ -26,7 +26,7 @@ const CalendarEventForm = () => {
   const dispatch = useDispatch();
 
   // Redux selectors
-  const calendars = useSelector((state) => state.user.calendars);
+  const calendars = useSelector((state) => state.calendars.all);
   const viewSelection = useSelector((state) => state.user.viewSelection);
   const currentSelection = useSelector(deserializedRbcSelectionSelector);
 
@@ -304,8 +304,6 @@ const CalendarEventForm = () => {
     return [hour, min];
   };
 
-  console.log('testa', selectedCalendarId);
-  // console.log('test', calendars[selectedCalendarId]);
   return (
     <Form className="CalendarEventForm">
       <Row>

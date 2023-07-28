@@ -24,7 +24,7 @@ const schema = new mongoose.Schema({
       ref: 'Role'
     }
   ],
-  calendars: [
+  calendarSettings: [
     {
       calendar: {
         type: mongoose.Schema.Types.ObjectId,
@@ -110,8 +110,8 @@ schema.post('save', async function () {
       user_id: 'system'
     });
 
-    // embed user context for system cal and user default cal
-    this.calendars.push(
+    // embed calendar settings in user doc
+    this.calendarSettings.push(
       {
         calendar: systemCal[0].id,
         userDefault: false,

@@ -19,9 +19,9 @@ const initialState = {
 const getCalendarsState = (calendars) => {
   const newState = {};
 
-  Object.keys(calendars).forEach((key) => {
+  calendarIds.forEach((id) => {
     const calendarState = {
-      value: calendars[key].name,
+      value: calendars[id].name,
       validateOnChange: false,
       error: null,
       editMode: false
@@ -35,7 +35,8 @@ const getCalendarsState = (calendars) => {
 
 const AccountCalendarSettings = () => {
   const dispatch = useDispatch();
-  const calendars = useSelector((state) => state.calendars.all);
+  const calendars = useSelector((state) => state.calendars.byId);
+  const calendarIds = useSelector((state) => state.calendars.allIds);
   const [calendarsSettings, setCalendarsSettings] = useState(getCalendarsState(calendars));
   const [newCalendarSettings, setNewCalendarSettings] = useState(initialState.newCalendar);
 
@@ -153,7 +154,7 @@ const AccountCalendarSettings = () => {
     if (!calendar) return;
 
     // Check for valid deletion
-    const isValidDelete = !calendar.systemCalendar && !calendar.userDefault;
+    const isValidDelete = !calendar.userDefault && !calendar.user_id === 'system';
     if (!isValidDelete) return;
 
     dispatch(deleteCalendar(id))
@@ -284,7 +285,7 @@ const AccountCalendarSettings = () => {
   calendarSettingsItems
     .sort((a, b) => b.id - a.id)
     .sort((a, b) => b.userDefault - a.userDefault)
-    .sort((a, b) => b.systemCalendar - a.systemCalendar);
+    .sort((a, b) => (b.user_id === 'system') - (a.user_id === 'system'));
 
   return (
     <Form className="AccountCalendarSettings">
@@ -294,7 +295,7 @@ const AccountCalendarSettings = () => {
           id={item.id}
           type="text"
           value={item.value}
-          isSystemCalendar={item.systemCalendar}
+          isSystemCalendar={item.user_id === 'system'}
           isDefaultCalendar={item.userDefault}
           error={item.error}
           editMode={item.editMode}

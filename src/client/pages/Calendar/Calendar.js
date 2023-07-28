@@ -12,7 +12,7 @@ import {
   deserializedRbcSelectionSelector,
   initCalendar
 } from 'client/store/appSlice';
-import { fetchEvents, deserializedEventsSelector } from 'client/store/eventsSlice';
+import { rbcEventsSelector } from 'client/store/eventsSlice';
 import ContentWrapper from 'client/components/ContentWrapper';
 import CalendarToggleMenu from './CalendarToggleMenu';
 import CalendarEventForm from './CalendarEventForm';
@@ -28,23 +28,19 @@ const Calendar = () => {
   const shouldInitData = useRef(true);
 
   // Redux selectors
-  const calendars = useSelector((state) => state.calendars.all);
-  const events = useSelector(deserializedEventsSelector);
+  const calendars = useSelector((state) => state.calendars.byId);
+  const calendarIds = useSelector((state) => state.calendars.allIds);
+  const events = useSelector(rbcEventsSelector);
   const currentSelection = useSelector(deserializedRbcSelectionSelector);
 
-  // Extract visible calendars
-  const visibleCalendarIds = [];
+  // Derived states
+  const visibleCalendarIds = calendarIds.map((id) => {
+    return calendars[id].visibility === true;
+  });
 
-  for (const key in calendars) {
-    if (calendars[key].visibility === true) {
-      visibleCalendarIds.push(key);
-    }
-  }
-
-  // Initialize calendar data
+  // Initialize calendar
   useEffect(() => {
     if (shouldInitData.current) {
-      dispatch(fetchEvents());
       dispatch(initCalendar());
       shouldInitData.current = false;
     }
@@ -121,15 +117,13 @@ const Calendar = () => {
     dispatch(onSelectView(view));
   };
 
-  const getRbcVisibleEvents = () => {
-    const result = _.pickBy(events, isDefaultCalEvent);
+  // const getVisibleEvents = () => {
+  //   return events.filter((event) => visibleCalendarIds.includes(event.calendar));
+  // };
 
-    return Object.values(result);
-  };
-
-  const isDefaultCalEvent = (value, key) => {
-    return visibleCalendarIds.includes(value.calendar);
-  };
+  // const isDefaultCalEvent = (value, key) => {
+  //   return visibleCalendarIds.includes(value.calendar);
+  // };
 
   const render = () => {
     // check for calendar data
@@ -137,7 +131,7 @@ const Calendar = () => {
     const isDefaultCalLoaded = _.some(calendars, ['userDefault', true]);
 
     if (isCurrentSelectionSet && isDefaultCalLoaded) {
-      const events = getRbcVisibleEvents();
+      // const events = getVisibleEvents();
 
       return (
         <Row>
@@ -148,7 +142,7 @@ const Calendar = () => {
             <ReactBigCalendar
               selectable
               localizer={localizer}
-              events={events}
+              events={events.filter((event) => visibleCalendarIds.includes(event.calendar))}
               defaultView="month"
               onView={(view) => handleView(view)}
               defaultDate={new Date()}

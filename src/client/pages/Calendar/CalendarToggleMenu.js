@@ -9,7 +9,8 @@ import './CalendarToggleMenu.css';
 const CalendarToggleMenu = () => {
   const dispatch = useDispatch();
 
-  const calendars = useSelector((state) => state.calendars.all);
+  const calendars = useSelector((state) => state.calendars.byId);
+  const calendarIds = useSelector((state) => state.calendars.allIds);
 
   // Set visibility=true for all calendars
   const handleSelectAll = (event) => {
@@ -17,24 +18,22 @@ const CalendarToggleMenu = () => {
 
     const newState = {};
 
-    Object.keys(calendars).forEach((key) => {
-      const calendar = {
-        ...calendars[key],
+    calendarIds.forEach((id) => {
+      const calendarState = {
+        ...calendars[id],
         visibility: true
       };
 
-      newState[key] = calendar;
+      newState[id] = calendarState;
     });
 
     dispatch(calendarsUpdated(newState));
   };
 
   // prepare data for render
-  const menuItems = Object.entries(calendars);
-
-  menuItems
-    .sort((a, b) => b[1].userDefault - a[1].userDefault)
-    .sort((a, b) => b[1].systemCalendar - a[1].systemCalendar);
+  const orderedCalendarIds = [...calendarIds]
+    .sort((a, b) => calendars[b].userDefault - calendars[a].userDefault)
+    .sort((a, b) => (calendars[b].user_id === 'system') - (calendars[a].user_id === 'system'));
 
   return (
     <div className="CalendarToggleMenu">
@@ -44,15 +43,15 @@ const CalendarToggleMenu = () => {
         </Col>
       </Row>
 
-      {menuItems.map((item) => (
+      {orderedCalendarIds.map((id) => (
         <CalendarToggleMenuItem
-          id={item[0]}
-          key={item[0]}
-          visibility={item[1].visibility}
-          name={item[1].name}
-          color={item[1].color}
-          userDefault={item[1].userDefault}
-          systemCalendar={item[1].systemCalendar}
+          id={id}
+          key={id}
+          visibility={calendars[id].visibility}
+          name={calendars[id].name}
+          color={calendars[id].color}
+          userDefault={calendars[id].userDefault}
+          isSystemCalendar={calendars[id].user_id === 'system'}
         />
       ))}
 

@@ -1,5 +1,6 @@
-import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { calendarsUpdated } from './calendarsSlice';
+import { eventsUpdated } from './eventsSlice';
 import { userApi } from 'client/utils/axios';
 
 export const initialState = {
@@ -51,6 +52,7 @@ export const loginUser = (data) => async (dispatch) => {
     dispatch(refreshTokenUpdated(res.data.refreshToken));
     dispatch(rolesUpdated(res.data.roles));
     dispatch(calendarsUpdated(res.data.calendars));
+    dispatch(eventsUpdated(res.data.events));
   } catch (e) {
     if (e.response && e.response.data.name === 'AuthorizationError') {
       // unauthorize user

@@ -4,15 +4,16 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const CalendarSelectMenu = (props) => {
-  const calendars = useSelector((state) => state.calendars.all);
+  const calendars = useSelector((state) => state.calendars.byId);
+  const calendarIds = useSelector((state) => state.calendars.allIds);
 
   // returns array of objects
-  const options = Object.keys(calendars).map((k) => {
+  const options = calendarIds.map((id) => {
     // Disable system calendars
     const option = {
-      id: k,
-      name: calendars[k].name,
-      disabled: calendars[k].systemCalendar
+      id,
+      name: calendars[id].name,
+      disabled: calendars[id].user_id === 'system'
     };
 
     return option;

@@ -18,22 +18,12 @@ class EventService {
     }
   };
 
-  // get all user and system events
-  getAll = async (userId) => {
+  getAll = async (calendarIds) => {
     try {
-      // Get system and user calendars
-      const calendars = await this.calendarService.getAll(userId);
-
-      if (!calendars.data || calendars.data.length < 1) {
+      if (!calendarIds || calendarIds.length < 1) {
         throw new NotFoundError('No matching calendar(s) found', { errorCode: 'calendar' });
       }
 
-      // Extract calendar ids
-      const calendarIds = calendars.data.map((calendar) => {
-        return calendar.id;
-      });
-
-      // Retrieve user events
       // Mongoose returns [] for .find query with no matches
       const events = await this.model.find({ calendar: { $in: calendarIds } });
 

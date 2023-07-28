@@ -1,9 +1,10 @@
 import _ from 'lodash';
-import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { userApi } from 'client/utils/axios';
 
 export const initialState = {
-  all: {}
+  byId: {},
+  allIds: []
 };
 
 const calendarsSlice = createSlice({
@@ -11,22 +12,33 @@ const calendarsSlice = createSlice({
   initialState,
   reducers: {
     calendarsUpdated(state, action) {
-      state.all = action.payload;
+      const byId = {}; // convert array of objects to POJO
+      const allIds = [];
+
+      action.payload.forEach((element) => {
+        byId[element.id] = element;
+        allIds.push(element.id);
+      });
+
+      state.byId = byId;
+      state.allIds = allIds;
     },
     calendarAdded(state, action) {
-      state.all = {
-        ...state.all,
+      state.byId = {
+        ...state.byId,
         [action.payload.id]: action.payload
       };
+      state.allIds = [...state.allIds, action.payload.id];
     },
     calendarUpdated(state, action) {
-      state.all = {
-        ...state.all,
+      state.byId = {
+        ...state.byId,
         [action.payload.id]: action.payload
       };
     },
     calendarDeleted(state, action) {
-      state.all = _.omit(state.all, [action.payload]);
+      state.byId = _.omit(state.byId, [action.payload]);
+      state.allIds = state.allIds.filter((id) => id !== action.payload);
     }
   }
 });

@@ -23,15 +23,15 @@ class CalendarService {
     try {
       const user = data.user;
       const userCalendarsCount = await this.model.countDocuments({ user });
-      const systemCalendarsCount = await this.model.countDocuments({ systemCalendar: true });
+      const systemCalendarsCount = await this.model.countDocuments({ user_id: 'system' });
 
       const _obj = {
         user,
         name: data.name,
         userDefault: !user ? false : userCalendarsCount === 0 ? true : false,
-        systemCalendar: data.systemCalendar || false,
+        systemCalendar: data.user_id === 'system',
         color:
-          data.systemCalendar === true
+          data.user_id === 'system'
             ? `#${systemColors[systemCalendarsCount & systemColors.length]}`
             : `#${userColors[userCalendarsCount % userColors.length]}`,
         visibility: data.visibility || true

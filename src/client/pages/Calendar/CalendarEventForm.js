@@ -26,13 +26,14 @@ const CalendarEventForm = () => {
   const dispatch = useDispatch();
 
   // Redux selectors
-  const calendars = useSelector((state) => state.calendars.all);
+  const calendars = useSelector((state) => state.calendars.byId);
+  const calendarIds = useSelector((state) => state.calendars.allIds);
   const viewSelection = useSelector((state) => state.user.viewSelection);
   const currentSelection = useSelector(deserializedRbcSelectionSelector);
 
   // Derived states
-  const defaultCalId = Object.keys(calendars).find((k) => calendars[k].userDefault === true);
-  const isSystemEventSelected = calendars[currentSelection.event?.calendar]?.systemCalendar === true;
+  const defaultCalId = calendarIds.find((k) => calendars[k].userDefault === true);
+  const isSystemEventSelected = calendars[currentSelection.event?.calendar]?.user_id === 'system';
   const isSlotSelected = !!currentSelection.slot;
   const isEventSelected = !!currentSelection.event;
 

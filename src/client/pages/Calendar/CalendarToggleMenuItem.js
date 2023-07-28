@@ -6,7 +6,7 @@ import { calendarUpdated, updateCalendar } from 'client/store/calendarsSlice';
 
 import './CalendarToggleMenu.css';
 
-const CalendarToggleMenuItem = ({ id, visibility, name, color, userDefault, systemCalendar }) => {
+const CalendarToggleMenuItem = ({ id, visibility, name, color, userDefault, isSystemCalendar }) => {
   const dispatch = useDispatch();
 
   const handleVisibilityChange = async (event) => {
@@ -20,7 +20,7 @@ const CalendarToggleMenuItem = ({ id, visibility, name, color, userDefault, syst
 
     // manage system calendar visibility state in redux only, not DB
     try {
-      if (systemCalendar === true) {
+      if (isSystemCalendar) {
         dispatch(calendarUpdated(payload));
       } else {
         dispatch(updateCalendar(payload));
@@ -45,7 +45,7 @@ const CalendarToggleMenuItem = ({ id, visibility, name, color, userDefault, syst
               Default
             </Badge>
           )}
-          {systemCalendar && (
+          {isSystemCalendar && (
             <Badge pill variant="light">
               System
             </Badge>

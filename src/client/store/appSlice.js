@@ -25,14 +25,14 @@ export const { rbcSelectionUpdated, rbcViewUpdated } = appSlice.actions;
 export default appSlice.reducer;
 
 // Takes entire redux state as input (not just a state slice)
-const rbcSelectionSelector = (state) => state.app.rbcSelection;
+const selectRbcSelection = (state) => state.app.rbcSelection;
 
 //
 // Memoized selectors
 //
 
 // returns times as Date objects
-export const deserializedRbcSelectionSelector = createSelector([rbcSelectionSelector], (rbcSelection) => {
+export const deserializedRbcSelectionSelector = createSelector([selectRbcSelection], (rbcSelection) => {
   const selectedSlot = rbcSelection.slot;
   const selectedEvent = rbcSelection.event;
 

@@ -4,7 +4,8 @@ import { userApi } from 'client/utils/axios';
 import { getCurrentDaySlot } from 'client/utils/rbc';
 
 export const initialState = {
-  all: {}
+  byId: {},
+  allIds: []
 };
 
 const eventsSlice = createSlice({
@@ -12,29 +13,33 @@ const eventsSlice = createSlice({
   initialState,
   reducers: {
     eventsUpdated(state, action) {
-      // convert array of objects to POJO
-      const newState = {};
+      const byId = {}; // convert array of objects to POJO
+      const allIds = [];
 
       action.payload.forEach((element) => {
-        newState[element.id] = element;
+        byId[element.id] = element;
+        allIds.push(element.id);
       });
 
-      state.all = newState;
+      state.byId = byId;
+      state.allIds = allIds;
     },
     eventAdded(state, action) {
-      state.all = {
-        ...state.all,
+      state.byId = {
+        ...state.byId,
         [action.payload.id]: action.payload
       };
+      state.allIds = [...state.allIds, action.payload.id];
     },
     eventUpdated(state, action) {
-      state.all = {
-        ...state.all,
+      state.byId = {
+        ...state.byId,
         [action.payload.id]: action.payload
       };
     },
     eventDeleted(state, action) {
-      state.all = _.omit(state.all, [action.payload]);
+      state.byId = _.omit(state.byId, [action.payload]);
+      state.allIds = state.allIds.filter((id) => id !== action.payload);
     }
   }
 });
@@ -43,42 +48,29 @@ export const { eventsUpdated, eventAdded, eventUpdated, eventDeleted } = eventsS
 
 export default eventsSlice.reducer;
 
-const eventsSelector = (state) => state.events.all;
+const selectEvents = (state) => state.events.byId;
+const selectEventIds = (state) => state.events.allIds;
 
 //
 // Memoized selectors
 //
 
-// returns events with times as Date type
-export const deserializedEventsSelector = createSelector([eventsSelector], (events) => {
-  const newState = {};
-
-  Object.keys(events).forEach((key) => {
-    newState[key] = {
-      ...events[key],
-      start: new Date(events[key].start),
-      end: new Date(events[key].end)
+// returns array of events with start/end as Date type
+export const rbcEventsSelector = createSelector([selectEvents, selectEventIds], (events, eventIds) => {
+  const result = eventIds.map((eventId) => {
+    return {
+      ...events[eventId],
+      start: new Date(events[eventId].start),
+      end: new Date(events[eventId].end)
     };
   });
 
-  return newState;
+  return result;
 });
 
 //
 // Bound action creators
 //
-
-export const fetchEvents = () => async (dispatch) => {
-  try {
-    const res = await userApi.get('/event/all');
-
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(eventsUpdated(data));
-    });
-  } catch (e) {
-    return Promise.reject(e);
-  }
-};
 
 export const createEvent = (data) => async (dispatch) => {
   try {

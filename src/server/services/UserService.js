@@ -34,12 +34,12 @@ class UserService {
     } else {
       // Process Login
       try {
-        await user.populate(['roles', 'calendars.calendar']).execPopulate();
+        await user.populate(['roles', 'calendarSettings.calendar']).execPopulate();
 
         const validated = await user.validatePassword(password);
 
         if (!validated) {
-          throw new AuthorizationError('Invalid ßpassword', {
+          throw new AuthorizationError('Invalid password', {
             errorCode: 'password',
             accessToken: null
           });
@@ -50,32 +50,36 @@ class UserService {
           expiresIn: Number(process.env.JWT_EXPIRATION)
         });
 
-        // Extract role names
-        const roleNames = user.roles.map((role) => role.name);
+        // Create refresh token
+        const refreshToken = await this.refreshTokenService.create(user.id);
 
-        // Prepare calendar data
-        const calendars = {};
+        // Retrieve calendars
+        const calendarsHttpResponse = await this.calendarService.getAll(user.id);
 
-        user.calendars.forEach((entry) => {
-          calendars[entry.calendar._id] = {
-            name: entry.calendar.name,
-            systemCalendar: entry.calendar.user_id === 'system',
-            userDefault: entry.userDefault,
-            visibility: entry.visibility,
-            color: entry.color
+        // Merge calendar settings with calendars data
+        const calendars = calendarsHttpResponse.data.map((calendar) => {
+          const calendarSettings = user.calendarSettings.find((settings) => settings.calendar._id == calendar.id);
+
+          return {
+            ...calendar,
+            userDefault: calendarSettings.userDefault,
+            visibility: calendarSettings.visibility,
+            color: calendarSettings.color
           };
         });
+
+        // Retrieve events
+        const calendarIds = calendars.map((calendar) => calendar.id);
+        const events = await this.eventService.getAll(calendarIds);
 
         const response = {
           username,
           accessToken,
+          refreshToken,
           calendars,
-          roles: roleNames
+          events: events.data,
+          roles: user.roles.map((role) => role.name)
         };
-
-        await this.refreshTokenService.create(user.id).then((refreshToken) => {
-          response.refreshToken = refreshToken.token;
-        });
 
         return new HttpResponse(response);
       } catch (e) {

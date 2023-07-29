@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Form } from 'react-bootstrap';
 import _ from 'lodash';
+import { Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation';
 import { createCalendar, updateCalendar, deleteCalendar } from 'client/store/calendarsSlice';
 import AccountCalendarSettingsItem from './AccountCalendarSettingsItem';
@@ -19,9 +19,9 @@ const initialState = {
 const getCalendarsState = (calendars) => {
   const newState = {};
 
-  calendarIds.forEach((id) => {
+  Object.keys(calendars).forEach((key) => {
     const calendarState = {
-      value: calendars[id].name,
+      value: calendars[key].name,
       validateOnChange: false,
       error: null,
       editMode: false
@@ -76,7 +76,6 @@ const AccountCalendarSettings = () => {
       target: { id, value }
     } = event;
 
-    // update new calendar settings
     if (id === 'newCalendar') {
       setNewCalendarSettings((data) => {
         const newState = {
@@ -88,7 +87,6 @@ const AccountCalendarSettings = () => {
         return newState;
       });
     } else {
-      // update calendar settings
       if (!calendarsSettings[id]) return;
 
       setCalendarsSettings((data) => {

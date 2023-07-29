@@ -33,7 +33,10 @@ const calendarsSlice = createSlice({
     calendarUpdated(state, action) {
       state.byId = {
         ...state.byId,
-        [action.payload.id]: action.payload
+        [action.payload.id]: {
+          ...state.byId[action.payload.id],
+          ...action.payload
+        }
       };
     },
     calendarDeleted(state, action) {

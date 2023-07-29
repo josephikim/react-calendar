@@ -18,17 +18,21 @@ const CalendarToggleMenuItem = ({ id, visibility, name, color, userDefault, isSy
       visibility: checked
     };
 
-    // manage system calendar visibility state in redux only, not DB
-    try {
-      if (isSystemCalendar) {
-        dispatch(calendarUpdated(payload));
-      } else {
-        dispatch(updateCalendar(payload));
-      }
-    } catch (e) {
+    // try {
+    //   if (isSystemCalendar) {
+    //     dispatch(calendarUpdated(payload));
+    //   } else {
+    //     dispatch(updateCalendar(payload));
+    //   }
+    // } catch (e) {
+    //   const error = e.response?.data ?? e;
+    //   alert(`Error updating event: ${error}`);
+    // }
+
+    dispatch(updateCalendar(payload)).catch((e) => {
       const error = e.response?.data ?? e;
-      alert(`Error updating event: ${error}`);
-    }
+      alert(`Error updating visibility: ${error}`);
+    });
   };
 
   return (

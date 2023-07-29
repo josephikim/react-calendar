@@ -1,318 +1,341 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { connect } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation';
 import { updateUser } from 'client/store/userSlice';
-
 import AccountUserSettingsItem from './AccountUserSettingsItem';
-
 import './AccountUserSettings.css';
 
-class AccountUserSettings extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {};
+const initialState = {
+  usernameInput: {
+    value: '',
+    validateOnChange: false,
+    error: null,
+    editMode: false
+  },
+  passwordInput: {
+    value: '****',
+    validateOnChange: false,
+    editMode: false,
+    error: null
+  },
+  newPasswordInput: {
+    value: null,
+    validateOnChange: false,
+    error: null
   }
+};
 
-  componentDidMount = () => {
-    const newState = {
-      username: {
-        value: this.props.username,
-        validateOnChange: false,
-        error: null,
-        editMode: false
-      },
-      password: {
-        value: '****',
-        validateOnChange: false,
-        editMode: false,
-        error: null
-      },
-      newPassword: {
-        value: undefined,
-        validateOnChange: false,
-        error: null
-      }
-    };
+const AccountUserSettings = () => {
+  const dispatch = useDispatch();
+  const username = useSelector((state) => state.user.username);
+  const [usernameInput, setUsernameInput] = useState(initialState.usernameInput);
+  const [passwordInput, setPasswordInput] = useState(initialState.passwordInput);
+  const [newPasswordInput, setNewPasswordInput] = useState(initialState.newPasswordInput);
 
-    this.setState(newState);
-  };
+  // update component state based on app state
+  useEffect(() => {
+    setUsernameInput((data) => {
+      return {
+        ...data,
+        value: username
+      };
+    });
+    setPasswordInput((data) => {
+      return {
+        ...initialState.passwordInput
+      };
+    });
+    setUsernameInput((data) => {
+      return {
+        ...data,
+        value: username
+      };
+    });
+  }, [username]);
 
-  handleBlur = (validationFunc, event) => {
+  const handleBlur = (validationFunc, event) => {
     const {
       target: { name }
     } = event;
 
-    if (this.state[name]['validateOnChange'] === false) {
-      this.setState((state) => ({
-        [name]: {
-          ...state[name],
-          validateOnChange: true,
-          error: validationFunc(state[name].value)
+    switch (name) {
+      case 'username':
+        if (usernameInput.validateOnChange === false) {
+          setUsernameInput((data) => {
+            const newState = {
+              ...data,
+              validateOnChange: true,
+              error: validationFunc(usernameInput.value)
+            };
+
+            return newState;
+          });
         }
-      }));
+        break;
+      case 'newPassword':
+        if (newPasswordInput.validateOnChange === false) {
+          setNewPasswordInput((data) => {
+            const newState = {
+              ...data,
+              validateOnChange: true,
+              error: validationFunc(newPasswordInput.value)
+            };
+
+            return newState;
+          });
+        }
+        break;
+      default:
+        break;
     }
-    return;
   };
 
-  handleChange = (validationFunc, event) => {
+  const handleChange = (validationFunc, event) => {
     const {
       target: { name, value }
     } = event;
 
-    if (validationFunc === null) {
-      // handle fields without validation
-      this.setState((state) => ({
-        [name]: {
-          ...state[name],
-          value: value
+    switch (name) {
+      case 'username':
+        if (usernameInput.validateOnChange === false) {
+          setUsernameInput((data) => {
+            const newState = {
+              ...data,
+              value,
+              error: data.validateOnChange ? validationFunc(value) : null
+            };
+
+            return newState;
+          });
         }
-      }));
-    } else {
-      // handle fields with validation
-      this.setState((state) => ({
-        [name]: {
-          ...state[name],
-          value: value,
-          error: state[name]['validateOnChange'] ? validationFunc(value) : null
+        break;
+      case 'password':
+        if (passwordInput.validateOnChange === false) {
+          setPasswordInput((data) => {
+            const newState = {
+              ...data,
+              value,
+              error: data.validateOnChange ? validationFunc(value) : null
+            };
+
+            return newState;
+          });
         }
-      }));
+        break;
+      case 'newPassword':
+        if (newPasswordInput.validateOnChange === false) {
+          setNewPasswordInput((data) => {
+            const newState = {
+              ...data,
+              value,
+              error: data.validateOnChange ? validationFunc(value) : null
+            };
+
+            return newState;
+          });
+        }
+        break;
+      default:
+        break;
     }
   };
 
-  handleSubmitUsername = (event) => {
+  const handleEdit = (id) => {
+    const newState = {};
+
+    switch (name) {
+      case 'username':
+        setUsernameInput((data) => {
+          const newState = {
+            ...data,
+            editMode: true
+          };
+
+          return newState;
+        });
+        break;
+      case 'password':
+        setPasswordInput((data) => {
+          const newState = {
+            ...data,
+            editMode: true
+          };
+
+          return newState;
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleCancelEdit = (id) => {
+    switch (name) {
+      case 'username':
+        setUsernameInput((data) => {
+          return {
+            ...initialState.usernameInput,
+            value: usernameInput.value
+          };
+        });
+        break;
+      case 'password':
+        setPasswordInput((data) => {
+          return {
+            ...initialState.passwordInput
+          };
+        });
+        setNewPasswordInput((data) => {
+          return {
+            ...initialState.newPasswordInput
+          };
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSubmitUsername = (event) => {
     event.preventDefault();
 
-    const { username } = this.state;
-    const usernameError = validateFields.validateUsername(username.value);
+    const usernameError = validateFields.validateUsername(usernameInput.value);
 
     if (usernameError === false) {
       // no input errors, submit the form
       const data = {
-        username: username.value
+        username: usernameInput.value
       };
 
-      this.props
-        .updateUser(data)
-        .then(() => {
-          this.setState({
-            username: {
-              value: data.username,
-              validateOnChange: false,
-              error: null,
-              editMode: false
-            }
-          });
-          alert('Username updated!');
+      dispatch(updateUser(data))
+        .then((res) => {
+          alert(`Successfully updated username`);
         })
         .catch((e) => {
           const error = e.response?.data ?? e;
           const errorCode = error?.errorCode ?? null;
           alert(`Error updating username: ${error.message ?? error.statusText}`);
-
-          // Update state to reflect response errors
-          if (errorCode && ['username'].includes(errorCode)) {
-            this.setState((state) => ({
-              username: {
-                ...state.username,
-                error: error.message
-              }
-            }));
-          }
+          setUsernameInput((data) => {
+            return {
+              ...data,
+              error: error.message
+            };
+          });
         });
     } else {
       // update state with input error
-      this.setState((state) => ({
-        username: {
-          ...state.username,
+      setUsernameInput((data) => {
+        return {
+          ...data,
           validateOnChange: true,
           error: usernameError
-        }
-      }));
+        };
+      });
     }
   };
 
-  handleSubmitPassword = (event) => {
+  const handleSubmitPassword = (event) => {
     event.preventDefault();
 
-    const { password, newPassword } = this.state;
     let passwordError = false;
 
-    if (password.value === newPassword.value) {
-      passwordError = 'New password cannot match current password.';
+    if (passwordInput.value === newPasswordInput.value) {
+      passwordError = 'New passwordInput cannot match current passwordInput.';
     } else {
-      passwordError = validateFields.validatePassword(newPassword.value);
+      passwordError = validateFields.validatePassword(newPasswordInput.value);
     }
 
     if (passwordError === false) {
       // no input errors, submit the form
       const data = {
-        password: password.value,
-        newPassword: newPassword.value
+        password: passwordInput.value,
+        newPassword: newPasswordInput.value
       };
 
-      this.props
-        .updateUser(data)
-        .then(() => {
-          this.setState({
-            password: {
-              value: '****',
-              validateOnChange: false,
-              editMode: false,
-              error: null
-            },
-            newPassword: {
-              value: undefined,
-              validateOnChange: false,
-              error: null
-            }
+      dispatch(updateUser(data))
+        .then((res) => {
+          alert(`Successfully updated password`);
+          setPasswordInput((data) => {
+            return {
+              ...initialState.passwordInput
+            };
           });
-          alert('Password updated!');
+          setNewPasswordInput((data) => {
+            return {
+              ...initialState.newPasswordInput
+            };
+          });
         })
         .catch((e) => {
           const error = e.response?.data ?? e;
           const errorCode = error?.errorCode ?? null;
           alert(`Error updating password: ${error.message ?? error.statusText}`);
-
-          // Update state to reflect response errors
-          if (errorCode && ['password'].includes(errorCode)) {
-            this.setState((state) => ({
-              password: {
-                ...state.password,
-                error: error.message
-              }
-            }));
-          }
+          setPasswordInput((data) => {
+            return {
+              ...data,
+              error: error.message
+            };
+          });
         });
     } else {
       // update state with input error
-      this.setState((state) => ({
-        newPassword: {
-          ...state.newPassword,
+      setPasswordInput((data) => {
+        return {
+          ...data,
           validateOnChange: true,
           error: passwordError
-        }
-      }));
+        };
+      });
     }
   };
 
-  handleEdit = (id) => {
-    const newState = {};
+  return (
+    <div className="AccountUserSettings">
+      <Form>
+        <AccountUserSettingsItem
+          id="username"
+          type="text"
+          label="Username"
+          value={usernameInput.value}
+          error={usernameInput.error}
+          editMode={usernameInput.editMode}
+          onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
+          onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
+          onSubmit={(event) => this.handleSubmitUsername(event)}
+          onEdit={(event, id) => this.handleEdit(event, id)}
+          onCancel={(event, id) => this.handleCancelEdit(event, id)}
+        />
 
-    if (id === 'password') {
-      newState.password = {
-        value: '',
-        validateOnChange: false,
-        editMode: true,
-        error: null
-      };
-    }
+        <AccountUserSettingsItem
+          id="password"
+          type="password"
+          label={passwordInput.editMode === true ? 'Confirm Current Password' : 'Password'}
+          value={passwordInput.value}
+          error={passwordInput.error}
+          editMode={passwordInput.editMode}
+          onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
+          onSubmit={(event) => this.handleSubmitPassword(event)}
+          onEdit={(event, id) => this.handleEdit(event, id)}
+          onCancel={(event, id) => this.handleCancelEdit(event, id)}
+        />
 
-    if (id === 'username') {
-      newState.username = {
-        value: this.state.username.value,
-        validateOnChange: false,
-        editMode: true,
-        error: null
-      };
-    }
-
-    this.setState(newState);
-  };
-
-  handleCancel = (id) => {
-    const newState = {};
-
-    if (id === 'username') {
-      newState.username = {
-        value: this.props.username,
-        validateOnChange: false,
-        editMode: false,
-        error: null
-      };
-    }
-
-    if (id === 'password') {
-      newState.password = {
-        value: '****',
-        validateOnChange: false,
-        editMode: false,
-        error: null
-      };
-
-      newState.newPassword = {
-        value: undefined,
-        validateOnChange: false,
-        error: null
-      };
-    }
-
-    this.setState(newState);
-  };
-
-  render() {
-    const usernameError = this.state.username?.error ?? null;
-    const passwordError = this.state.password?.error ?? null;
-    const newPasswordError = this.state.newPassword?.error ?? null;
-    const passwordEditMode = this.state.password?.editMode ?? false;
-
-    return (
-      <div className="AccountUserSettings">
-        <Form>
+        {passwordInput.editMode === true && (
           <AccountUserSettingsItem
-            id="username"
-            type="text"
-            label="Username"
-            value={this.state.username?.value ?? this.props.username}
-            error={usernameError}
-            editMode={this.state.username?.editMode ?? false}
-            onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
-            onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
-            onSubmit={(event) => this.handleSubmitUsername(event)}
-            onEdit={(event, id) => this.handleEdit(event, id)}
-            onCancel={(event, id) => this.handleCancel(event, id)}
-          />
-
-          <AccountUserSettingsItem
-            id="password"
+            id="newPassword"
             type="password"
-            label={passwordEditMode ? 'Confirm Current Password' : 'Password'}
-            value={this.state.password?.value ?? '****'}
-            error={passwordError}
-            editMode={passwordEditMode}
+            label="Enter New Password"
+            value={newPasswordInput.value}
+            error={newPasswordInput.error}
+            editMode="true"
             onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
-            onSubmit={(event) => this.handleSubmitPassword(event)}
-            onEdit={(event, id) => this.handleEdit(event, id)}
-            onCancel={(event, id) => this.handleCancel(event, id)}
+            onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
           />
-
-          {passwordEditMode && (
-            <AccountUserSettingsItem
-              id="newPassword"
-              type="password"
-              label="Enter New Password"
-              value={this.state.newPassword?.value ?? ''}
-              error={newPasswordError}
-              editMode="true"
-              onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
-              onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
-            />
-          )}
-        </Form>
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  return {
-    username: state.user.username
-  };
+        )}
+      </Form>
+    </div>
+  );
 };
 
-const mapActionsToProps = {
-  updateUser
-};
-
-export default connect(mapStateToProps, mapActionsToProps)(AccountUserSettings);
+export default AccountUserSettings;

@@ -1,7 +1,7 @@
 import CalendarService from 'server/services/CalendarService';
 import db from 'server/models';
 
-const calendarService = new CalendarService(db.Calendar);
+const calendarService = new CalendarService(db.Calendar, db.User);
 
 class CalendarController {
   constructor(service) {
@@ -35,7 +35,7 @@ class CalendarController {
 
   update = async (req, res, next) => {
     try {
-      const response = await this.service.update(req.params.id, req.body);
+      const response = await this.service.update(req.id, req.params.id, req.body);
 
       await res.status(response.statusCode).send(response.data);
     } catch (e) {

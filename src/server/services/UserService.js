@@ -73,6 +73,7 @@ class UserService {
         const events = await this.eventService.getAll(calendarIds);
 
         const response = {
+          id: user.id,
           username,
           accessToken,
           refreshToken,

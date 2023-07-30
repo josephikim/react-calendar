@@ -4,6 +4,7 @@ import { eventsUpdated } from './eventsSlice';
 import { userApi } from 'client/utils/axios';
 
 export const initialState = {
+  id: 'guest',
   username: null,
   accessToken: null,
   refreshToken: null,
@@ -14,6 +15,9 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    idUpdated(state, action) {
+      state.id = action.payload;
+    },
     usernameUpdated(state, action) {
       state.username = action.payload;
     },
@@ -29,7 +33,7 @@ const userSlice = createSlice({
   }
 });
 
-export const { usernameUpdated, accessTokenUpdated, refreshTokenUpdated, rolesUpdated } = userSlice.actions;
+export const { idUpdated, usernameUpdated, accessTokenUpdated, refreshTokenUpdated, rolesUpdated } = userSlice.actions;
 
 export default userSlice.reducer;
 
@@ -47,6 +51,7 @@ export const loginUser = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/user/login', data);
 
+    dispatch(idUpdated(res.data.id));
     dispatch(usernameUpdated(res.data.username));
     dispatch(accessTokenUpdated(res.data.accessToken));
     dispatch(refreshTokenUpdated(res.data.refreshToken));

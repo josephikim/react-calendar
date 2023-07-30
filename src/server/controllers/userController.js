@@ -1,4 +1,4 @@
-import UserService from 'server/services/userService';
+import UserService from 'server/services/UserService';
 import db from 'server/models';
 import { AuthorizationError } from '../utils/userFacingErrors';
 

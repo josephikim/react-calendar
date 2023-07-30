@@ -1,7 +1,7 @@
 import CalendarService from 'server/services/CalendarService';
 import db from 'server/models';
 
-const calendarService = new CalendarService(db.Calendar, db.User);
+const calendarService = new CalendarService(db.Calendar);
 
 class CalendarController {
   constructor(service) {

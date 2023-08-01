@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(BUILD_DIR));
 
 // Use API routes
-app.use('/api', router);
+app.use('/api/v1', router);
 
 app.get('*', (req, res) => {
   res.sendFile(HTML_FILE);

@@ -78,7 +78,7 @@ const getLocalRefreshToken = () => {
 };
 
 const refreshToken = () => {
-  return userApi.post('user/refreshtoken', {
+  return userApi.post('users/refreshtoken', {
     refreshToken: getLocalRefreshToken()
   });
 };

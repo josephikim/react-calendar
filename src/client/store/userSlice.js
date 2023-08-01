@@ -49,7 +49,7 @@ export const logoutUser = () => (dispatch) => {
 
 export const loginUser = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post('/user/login', data);
+    const res = await userApi.post('/users/login', data);
 
     dispatch(idUpdated(res.data.user.id));
     dispatch(usernameUpdated(res.data.user.username));
@@ -68,7 +68,7 @@ export const loginUser = (data) => async (dispatch) => {
 
 export const registerUser = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post('/user/register', data);
+    const res = await userApi.post('/users/register', data);
 
     dispatch(usernameUpdated(res.data.username));
     dispatch(accessTokenUpdated(res.data.accessToken));
@@ -81,7 +81,7 @@ export const registerUser = (data) => async (dispatch) => {
 
 export const updateUser = (data) => async (dispatch) => {
   try {
-    const res = await userApi.put(`/user`, data);
+    const res = await userApi.put(`/users`, data);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(usernameUpdated(data.username));

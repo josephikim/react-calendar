@@ -12,7 +12,7 @@ import {
   deserializedRbcSelectionSelector,
   initCalendar
 } from 'client/store/appSlice';
-import { rbcEventsSelector } from 'client/store/eventsSlice';
+import { getEvents, rbcEventsSelector } from 'client/store/eventsSlice';
 import ContentWrapper from 'client/components/ContentWrapper';
 import CalendarToggleMenu from './CalendarToggleMenu';
 import CalendarEventForm from './CalendarEventForm';
@@ -34,14 +34,13 @@ const Calendar = () => {
   const currentSelection = useSelector(deserializedRbcSelectionSelector);
 
   // Derived states
-  const visibleCalendarIds = calendarIds.map((id) => {
-    return calendars[id].visibility === true;
-  });
+  const visibleCalendarIds = calendarIds.filter((id) => calendars[id].visibility === true);
 
-  // Initialize calendar
+  // Initialize calendar and fetch events
   useEffect(() => {
     if (shouldInitData.current) {
       dispatch(initCalendar());
+      dispatch(getEvents());
       shouldInitData.current = false;
     }
   }, []);
@@ -117,22 +116,11 @@ const Calendar = () => {
     dispatch(onSelectView(view));
   };
 
-  // const getVisibleEvents = () => {
-  //   return events.filter((event) => visibleCalendarIds.includes(event.calendar));
-  // };
-
-  // const isDefaultCalEvent = (value, key) => {
-  //   return visibleCalendarIds.includes(value.calendar);
-  // };
-
   const render = () => {
-    // check for calendar data
-    const isCurrentSelectionSet = currentSelection.slot || currentSelection.event;
+    const isCalendarInitialized = currentSelection.slot || currentSelection.event;
     const isDefaultCalLoaded = _.some(calendars, ['userDefault', true]);
 
-    if (isCurrentSelectionSet && isDefaultCalLoaded) {
-      // const events = getVisibleEvents();
-
+    if (isCalendarInitialized && isDefaultCalLoaded) {
       return (
         <Row>
           <Col xs={12} lg={2}>

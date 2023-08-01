@@ -17,8 +17,8 @@ const calendarsSlice = createSlice({
       const allIds = [];
 
       action.payload.forEach((element) => {
-        byId[element.id] = {
-          id: element.id,
+        byId[element.calendar.id] = {
+          id: element.calendar.id,
           color: element.color,
           visibility: element.visibility,
           userDefault: element.userDefault,
@@ -26,7 +26,7 @@ const calendarsSlice = createSlice({
           user_id: element.calendar.user_id
         };
 
-        allIds.push(element.id);
+        allIds.push(element.calendar.id);
       });
 
       state.byId = byId;
@@ -65,7 +65,7 @@ export default calendarsSlice.reducer;
 
 export const createCalendar = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post('/calendar', data);
+    const res = await userApi.post('/calendars', data);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(calendarAdded(data));
@@ -78,7 +78,7 @@ export const createCalendar = (data) => async (dispatch) => {
 export const updateCalendar = (data) => async (dispatch) => {
   try {
     const payload = _.omit(data, ['id']);
-    const res = await userApi.put(`/calendar/${data.id}`, payload);
+    const res = await userApi.put(`/calendars/${data.id}`, payload);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(calendarUpdated(data));
@@ -90,7 +90,7 @@ export const updateCalendar = (data) => async (dispatch) => {
 
 export const deleteCalendar = (id) => async (dispatch) => {
   try {
-    const res = await userApi.delete(`/calendar/${id}`);
+    const res = await userApi.delete(`/calendars/${id}`);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(calendarDeleted(data.id));

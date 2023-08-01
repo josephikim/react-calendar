@@ -8,26 +8,22 @@ class EventService {
     this.calendarService = new CalendarService(calendarModel);
   }
 
-  create = async (data) => {
+  getAll = async (calendarIds) => {
     try {
-      const result = await this.model.create(data);
+      // Mongoose returns [] for .find query with no matches
+      const events = await this.model.find({ calendar: { $in: calendarIds } });
 
-      return new HttpResponse(result);
+      return new HttpResponse(events);
     } catch (e) {
       throw e;
     }
   };
 
-  getAll = async (calendarIds) => {
+  create = async (data) => {
     try {
-      if (!calendarIds || calendarIds.length < 1) {
-        throw new NotFoundError('No matching calendar(s) found', { errorCode: 'calendar' });
-      }
+      const result = await this.model.create(data);
 
-      // Mongoose returns [] for .find query with no matches
-      const events = await this.model.find({ calendar: { $in: calendarIds } });
-
-      return new HttpResponse(events);
+      return new HttpResponse(result);
     } catch (e) {
       throw e;
     }

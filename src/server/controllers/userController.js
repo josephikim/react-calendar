@@ -29,7 +29,7 @@ class UserController {
     try {
       const response = await this.service.login(req.body.username, req.body.password);
 
-      await res.status(200).send(response);
+      return res.status(200).send(response);
     } catch (e) {
       return next(e);
     }
@@ -46,7 +46,7 @@ class UserController {
     try {
       const response = await this.service.refreshToken(requestToken);
 
-      await res.status(response.statusCode).send(response.data);
+      return res.status(response.statusCode).send(response.data);
     } catch (e) {
       return next(e);
     }
@@ -63,7 +63,7 @@ class UserController {
       // get user calendars and events
       const response = await this.service.getData(userId);
 
-      await res.status(200).send(response);
+      return res.status(200).send(response);
     } catch (err) {
       return next(err);
     }
@@ -73,7 +73,7 @@ class UserController {
     try {
       const response = await this.service.update(req.id, req.body);
 
-      await res.status(response.statusCode).send(response.data);
+      return res.status(response.statusCode).send(response.data);
     } catch (e) {
       return next(e);
     }

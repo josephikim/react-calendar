@@ -5,8 +5,8 @@ import eventRouter from './eventRouter';
 
 const router = express.Router();
 
-router.use('/user', userRouter);
-router.use('/calendar', calendarRouter);
-router.use('/event', eventRouter);
+router.use('/users', userRouter);
+router.use('/calendars', calendarRouter);
+router.use('/events', eventRouter);
 
 export default router;

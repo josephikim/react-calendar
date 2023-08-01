@@ -72,9 +72,21 @@ export const rbcEventsSelector = createSelector([selectEvents, selectEventIds], 
 // Bound action creators
 //
 
+export const getEvents = () => async (dispatch) => {
+  try {
+    const res = await userApi.get('/events');
+
+    return Promise.resolve(res.data).then((data) => {
+      dispatch(eventsUpdated(data));
+    });
+  } catch (e) {
+    return Promise.reject(e);
+  }
+};
+
 export const createEvent = (data) => async (dispatch) => {
   try {
-    const res = await userApi.post('/event', data);
+    const res = await userApi.post('/events', data);
 
     return Promise.resolve(res.data).then((data) => {
       const newState = {
@@ -92,7 +104,7 @@ export const createEvent = (data) => async (dispatch) => {
 
 export const updateEvent = (data) => async (dispatch) => {
   try {
-    const res = await userApi.put(`/event/${data.id}`, data);
+    const res = await userApi.put(`/events/${data.id}`, data);
 
     return Promise.resolve(res.data).then((data) => {
       dispatch(eventUpdated(data));
@@ -104,7 +116,7 @@ export const updateEvent = (data) => async (dispatch) => {
 
 export const deleteEvent = (id) => async (dispatch) => {
   try {
-    userApi.delete(`/event/${id}`).then((res) => {
+    userApi.delete(`/events/${id}`).then((res) => {
       const newState = {
         slot: getCurrentDaySlot(),
         event: null

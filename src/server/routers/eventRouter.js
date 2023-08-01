@@ -4,11 +4,11 @@ import EventController from 'server/controllers/EventController';
 
 const router = express.Router();
 
+// GET request to get events
+router.get('/', [authJwt.verifyToken], EventController.getAll);
+
 // POST request to create event
 router.post('/', [authJwt.verifyToken], EventController.create);
-
-// GET request to get events
-router.get('/all', [authJwt.verifyToken], EventController.getAll);
 
 // PUT request to update event
 router.put('/:id', [authJwt.verifyToken], EventController.update);

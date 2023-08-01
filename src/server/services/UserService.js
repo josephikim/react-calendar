@@ -53,36 +53,16 @@ class UserService {
         // Create refresh token
         const refreshToken = await this.refreshTokenService.create(user.id);
 
-        // Retrieve calendars
-        const calendarsHttpResponse = await this.calendarService.getAll(user.id);
-
-        // Merge calendar settings with calendars data
-        const calendars = calendarsHttpResponse.data.map((calendar) => {
-          const calendarSettings = user.calendarSettings.find((settings) => settings.calendar._id == calendar.id);
-
-          return {
-            ...calendar,
-            userDefault: calendarSettings.userDefault,
-            visibility: calendarSettings.visibility,
-            color: calendarSettings.color
-          };
-        });
-
-        // Retrieve events
-        const calendarIds = calendars.map((calendar) => calendar.id);
-        const events = await this.eventService.getAll(calendarIds);
+        const userResponse = new HttpResponse(user);
+        const refreshTokenResponse = new HttpResponse(refreshToken);
 
         const response = {
-          id: user.id,
-          username,
           accessToken,
-          refreshToken,
-          calendars,
-          events: events.data,
-          roles: user.roles.map((role) => role.name)
+          user: userResponse.data,
+          refreshToken: refreshTokenResponse.data
         };
 
-        return new HttpResponse(response);
+        return response;
       } catch (e) {
         throw e;
       }

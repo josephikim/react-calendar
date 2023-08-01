@@ -32,6 +32,9 @@ class HttpResponse {
             data[index]['id'] = data[index][key];
             delete data[index][key];
           }
+          if (key === 'calendarSettings' || key === 'calendar' || key === 'roles') {
+            data[index][key] = this.filterData(data[index][key]);
+          }
         });
       });
     } else if (typeof data === 'object') {
@@ -42,6 +45,9 @@ class HttpResponse {
         if (key === '_id') {
           data['id'] = data[key];
           delete data[key];
+        }
+        if (key === 'calendarSettings' || key === 'calendar' || key === 'roles') {
+          data[key] = this.filterData(data[key]);
         }
       });
     }

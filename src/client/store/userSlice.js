@@ -28,7 +28,7 @@ const userSlice = createSlice({
       state.refreshToken = action.payload;
     },
     rolesUpdated(state, action) {
-      state.roles = action.payload;
+      state.roles = action.payload.map((item) => item.name);
     }
   }
 });
@@ -51,13 +51,12 @@ export const loginUser = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/user/login', data);
 
-    dispatch(idUpdated(res.data.id));
-    dispatch(usernameUpdated(res.data.username));
+    dispatch(idUpdated(res.data.user.id));
+    dispatch(usernameUpdated(res.data.user.username));
+    dispatch(rolesUpdated(res.data.user.roles));
+    dispatch(calendarsUpdated(res.data.user.calendarSettings));
     dispatch(accessTokenUpdated(res.data.accessToken));
     dispatch(refreshTokenUpdated(res.data.refreshToken));
-    dispatch(rolesUpdated(res.data.roles));
-    dispatch(calendarsUpdated(res.data.calendars));
-    dispatch(eventsUpdated(res.data.events));
   } catch (e) {
     if (e.response && e.response.data.name === 'AuthorizationError') {
       // unauthorize user

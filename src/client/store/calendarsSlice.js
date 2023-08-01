@@ -12,11 +12,20 @@ const calendarsSlice = createSlice({
   initialState,
   reducers: {
     calendarsUpdated(state, action) {
-      const byId = {}; // convert array of objects to POJO
+      // accepts array of objects
+      const byId = {};
       const allIds = [];
 
       action.payload.forEach((element) => {
-        byId[element.id] = element;
+        byId[element.id] = {
+          id: element.id,
+          color: element.color,
+          visibility: element.visibility,
+          userDefault: element.userDefault,
+          name: element.calendar.name,
+          user_id: element.calendar.user_id
+        };
+
         allIds.push(element.id);
       });
 

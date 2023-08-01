@@ -29,7 +29,7 @@ class UserController {
     try {
       const response = await this.service.login(req.body.username, req.body.password);
 
-      await res.status(response.statusCode).send(response.data);
+      await res.status(200).send(response);
     } catch (e) {
       return next(e);
     }

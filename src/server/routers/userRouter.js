@@ -11,14 +11,11 @@ router.post(
   [UserController.register, UserController.login]
 );
 
-// POST request to login user
+// POST request to login user (returns user object)
 router.post('/login', UserController.login);
 
 // POST request to refresh token
 router.post('/refreshtoken', UserController.refreshToken);
-
-// GET request to retrieve user data
-router.get('/data', [authJwt.verifyToken], UserController.getData);
 
 // PUT request to update user
 router.put('/', [authJwt.verifyToken], UserController.update);

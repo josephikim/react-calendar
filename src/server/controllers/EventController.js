@@ -20,6 +20,7 @@ class EventController {
       }
 
       const calendarIds = calendars.data.map((calendar) => calendar.id);
+
       const response = await this.service.getAll(calendarIds);
 
       return res.status(response.statusCode).send(response.data);

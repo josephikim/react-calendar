@@ -57,9 +57,9 @@ class UserService {
         const refreshTokenResponse = new HttpResponse(refreshToken);
 
         const response = {
-          accessToken,
           user: userResponse.data,
-          refreshToken: refreshTokenResponse.data
+          refreshToken: refreshTokenResponse.data,
+          accessToken
         };
 
         return response;
@@ -108,34 +108,6 @@ class UserService {
       const result = await user.save();
 
       return result;
-    } catch (e) {
-      throw e;
-    }
-  };
-
-  getData = async (userId) => {
-    try {
-      // Get system and user calendars
-      const calendars = await this.calendarService.getAll(userId);
-
-      if (!calendars.data || calendars.data.length < 1) {
-        throw new NotFoundError('No matching calendar(s) found', { errorCode: 'calendar' });
-      }
-
-      // Extract calendar ids
-      const calendarIds = calendars.data.map((calendar) => {
-        return calendar.id;
-      });
-
-      // Get user events
-      const events = await this.eventService.getAll(calendarIds);
-
-      const response = {
-        calendars: calendars.data,
-        events: events.data
-      };
-
-      return response;
     } catch (e) {
       throw e;
     }

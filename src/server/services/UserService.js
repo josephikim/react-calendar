@@ -97,19 +97,17 @@ class UserService {
     }
   };
 
-  assignRoles = async (user, rolesArr) => {
+  assignRoles = async (user, roleNames) => {
     try {
-      const roles = await this.roleService.get(rolesArr);
+      const roles = await this.roleService.get(roleNames);
 
-      if (!roles) {
+      if (!roles.data || roles.data.length < 1) {
         throw new NotFoundError('Role(s) not found', { errorCode: 'role' });
       }
 
-      user.roles = roles.map((role) => role.id);
+      user.roles = roles.data.map((role) => role.id);
 
-      const result = await user.save();
-
-      return result;
+      return await user.save();
     } catch (e) {
       throw e;
     }

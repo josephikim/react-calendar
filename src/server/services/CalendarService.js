@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import HttpResponse from 'server/utils/httpResponse';
 import { systemColors, userColors } from 'config/appConfig';
 

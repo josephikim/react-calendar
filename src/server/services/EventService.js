@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import CalendarService from './CalendarService';
 import HttpResponse from 'server/utils/httpResponse';
 

@@ -70,10 +70,12 @@ export const registerUser = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/users/register', data);
 
-    dispatch(usernameUpdated(res.data.username));
+    dispatch(idUpdated(res.data.user.id));
+    dispatch(usernameUpdated(res.data.user.username));
+    dispatch(rolesUpdated(res.data.user.roles));
+    dispatch(calendarsUpdated(res.data.user.calendarSettings));
     dispatch(accessTokenUpdated(res.data.accessToken));
     dispatch(refreshTokenUpdated(res.data.refreshToken));
-    dispatch(rolesUpdated(res.data.roles));
   } catch (e) {
     return Promise.reject(e);
   }

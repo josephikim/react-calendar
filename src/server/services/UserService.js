@@ -79,6 +79,7 @@ class UserService {
         throw new NotFoundError('Invalid request token', { errorCode: 'refreshToken' });
       }
 
+      // Throws error on expired refresh token
       await this.refreshTokenService.verify(refreshToken);
 
       // create new JWT token
@@ -89,6 +90,7 @@ class UserService {
       const response = {
         accessToken
       };
+
       return new HttpResponse(response);
     } catch (e) {
       throw e;

@@ -73,7 +73,7 @@ const getLocalAccessToken = () => {
 };
 
 const getLocalRefreshToken = () => {
-  const refreshToken = store.getState().user.refreshToken;
+  const refreshToken = store.getState().user.refreshToken.token;
   return refreshToken;
 };
 

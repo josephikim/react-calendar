@@ -18,20 +18,9 @@ const CalendarToggleMenuItem = ({ id, visibility, name, color, userDefault, isSy
       visibility: checked
     };
 
-    // try {
-    //   if (isSystemCalendar) {
-    //     dispatch(calendarUpdated(payload));
-    //   } else {
-    //     dispatch(updateCalendar(payload));
-    //   }
-    // } catch (e) {
-    //   const error = e.response?.data ?? e;
-    //   alert(`Error updating event: ${error}`);
-    // }
-
     dispatch(updateCalendar(payload)).catch((e) => {
       const error = e.response?.data ?? e;
-      alert(`Error updating visibility: ${error}`);
+      alert(`Error updating visibility: ${error.message ?? error.statusText}`);
     });
   };
 

@@ -86,47 +86,58 @@ schema.post('findOneAndUpdate', handleE11000);
 // Create default cal on user creation
 schema.post('save', async function () {
   if (this.id && this.wasNew) {
-    // check for existing user default cal
-    const calendars = await Calendar.find({
-      user_id: this.id
-    });
-
-    if (calendars.length > 0) {
-      throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
-        errorCode: 'calendar'
+    try {
+      // check for existing user default cal
+      const calendars = await Calendar.find({
+        user_id: this.id
       });
-    }
 
-    // Create user default cal
-    const doc = new Calendar({
-      name: this.username,
-      user_id: this.id
-    });
-
-    const defaultCal = await doc.save();
-
-    // Lookup system cals
-    const systemCal = await Calendar.find({
-      user_id: 'system'
-    });
-
-    // embed calendar settings in user doc
-    this.calendarSettings.push(
-      {
-        calendar: systemCal[0].id,
-        userDefault: false,
-        visibility: true,
-        color: `#${systemColors[0]}`
-      },
-      {
-        calendar: defaultCal.id,
-        userDefault: true,
-        visibility: true,
-        color: `#${userColors[0]}`
+      if (calendars.length > 0) {
+        throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
+          errorCode: 'calendar'
+        });
       }
-    );
 
-    await this.save();
+      // Create user default cal
+      const doc = new Calendar({
+        name: this.username,
+        user_id: this.id
+      });
+
+      const defaultCal = await doc.save();
+
+      // Lookup system cals
+      const systemCals = await Calendar.find({
+        user_id: 'system'
+      });
+
+      const settings = [
+        {
+          calendar: defaultCal.id,
+          userDefault: true,
+          visibility: true,
+          color: `#${userColors[0]}`
+        }
+      ];
+
+      systemCals.forEach((cal, idx) => {
+        settings.push({
+          calendar: cal.id,
+          userDefault: false,
+          visibility: true,
+          color: `#${systemColors[idx]}`
+        });
+      });
+
+      // embed calendar settings in user doc
+      settings.forEach((entry) => {
+        this.calendarSettings.push(entry);
+      });
+
+      await this.save();
+    } catch (e) {
+      return next(e);
+    }
   }
 });
 

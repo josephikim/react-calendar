@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import CalendarToggleMenuItem from './CalendarToggleMenuItem';
-import { calendarsUpdated } from 'client/store/calendarsSlice';
+import { updateCalendar } from 'client/store/calendarsSlice';
 
 import './CalendarToggleMenu.css';
 
@@ -27,7 +27,10 @@ const CalendarToggleMenu = () => {
       newState[id] = calendarState;
     });
 
-    dispatch(calendarsUpdated(newState));
+    dispatch(updateCalendar(newState)).catch((e) => {
+      const error = e.response?.data ?? e;
+      alert(`Error updating visibility: ${error.message ?? error.statusText}`);
+    });
   };
 
   // prepare data for render

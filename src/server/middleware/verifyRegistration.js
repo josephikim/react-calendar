@@ -21,15 +21,13 @@ const checkRolesExist = (req, res, next) => {
   if (!req.body.roles || req.body.roles?.length < 1) return next();
 
   // Check attached roles
-  try {
-    for (let i = 0; i < req.body.roles.length; i++) {
-      if (!roles.includes(req.body.roles[i])) {
-        throw new BadRequestError(`Role ${req.body.roles[i]} does not exist!`, { errorCode: 'role' });
-      }
+  for (let i = 0; i < req.body.roles.length; i++) {
+    if (!roles.includes(req.body.roles[i])) {
+      throw new BadRequestError(`Role ${req.body.roles[i]} does not exist!`, { errorCode: 'role' });
     }
-  } catch (e) {
-    return next(e);
   }
+
+  return next();
 };
 
 const verifyRegistration = {

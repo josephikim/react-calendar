@@ -76,11 +76,9 @@ export const getEvents = () => async (dispatch) => {
   try {
     const res = await userApi.get('/events');
 
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(eventsUpdated(data));
-    });
+    dispatch(eventsUpdated(res.data));
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 };
 
@@ -88,17 +86,15 @@ export const createEvent = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/events', data);
 
-    return Promise.resolve(res.data).then((data) => {
-      const newState = {
-        slot: null,
-        event: data
-      };
+    const newState = {
+      slot: null,
+      event: res.data
+    };
 
-      dispatch(eventAdded(data));
-      dispatch(rbcSelectionUpdated(newState)); // set selection to newly created event
-    });
+    dispatch(eventAdded(res.data));
+    dispatch(rbcSelectionUpdated(newState)); // set selection to newly created event
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 };
 
@@ -106,26 +102,24 @@ export const updateEvent = (data) => async (dispatch) => {
   try {
     const res = await userApi.put(`/events/${data.id}`, data);
 
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(eventUpdated(data));
-    });
+    dispatch(eventUpdated(res.data));
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 };
 
 export const deleteEvent = (id) => async (dispatch) => {
   try {
-    userApi.delete(`/events/${id}`).then((res) => {
-      const newState = {
-        slot: getCurrentDaySlot(),
-        event: null
-      };
+    const res = await userApi.delete(`/events/${id}`);
 
-      dispatch(eventDeleted(res.data.id));
-      dispatch(rbcSelectionUpdated(newState)); // Reset initial calendar slot
-    });
+    const newState = {
+      slot: getCurrentDaySlot(),
+      event: null
+    };
+
+    dispatch(eventDeleted(res.data.id));
+    dispatch(rbcSelectionUpdated(newState)); // Reset initial calendar slot
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 };

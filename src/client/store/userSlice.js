@@ -62,7 +62,7 @@ export const loginUser = (data) => async (dispatch) => {
       // unauthorize user
       dispatch(accessTokenUpdated(null));
     }
-    return Promise.reject(e);
+    throw e;
   }
 };
 
@@ -77,7 +77,7 @@ export const registerUser = (data) => async (dispatch) => {
     dispatch(accessTokenUpdated(res.data.accessToken));
     dispatch(refreshTokenUpdated(res.data.refreshToken));
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 };
 
@@ -85,10 +85,8 @@ export const updateUser = (data) => async (dispatch) => {
   try {
     const res = await userApi.put(`/users`, data);
 
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(usernameUpdated(data.username));
-    });
+    dispatch(usernameUpdated(res.data.username));
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 };

@@ -83,17 +83,13 @@ export const onSelectView = (view) => (dispatch) => {
   dispatch(rbcViewUpdated(view));
 };
 
-export const initCalendar = () => async (dispatch) => {
-  try {
-    // Set initial calendar slot
-    const newState = {
-      slot: getCurrentDaySlot(),
-      event: null
-    };
+export const initCalendar = () => (dispatch) => {
+  // Set initial calendar slot
+  const newState = {
+    slot: getCurrentDaySlot(),
+    event: null
+  };
 
-    dispatch(rbcSelectionUpdated(newState));
-    dispatch(rbcViewUpdated(defaultView));
-  } catch (e) {
-    return Promise.reject(e);
-  }
+  dispatch(rbcSelectionUpdated(newState));
+  dispatch(rbcViewUpdated(defaultView));
 };

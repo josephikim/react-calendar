@@ -24,8 +24,9 @@ const getHolidays = () => {
         type: 'national'
       }
     });
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    console.error(e);
+    throw e;
   }
 };
 
@@ -80,6 +81,7 @@ const seedDB = async () => {
     });
   } catch (e) {
     console.log(e.stack);
+    throw e;
   }
 };
 

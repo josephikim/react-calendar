@@ -54,16 +54,14 @@ userApi.interceptors.response.use(
               // see https://github.com/axios/axios/issues/715
               return new Promise(() => {});
             } else {
-              return Promise.reject(_error.response.data);
+              throw _error;
             }
           }
-
-          return Promise.reject(_error);
+          throw _error;
         }
       }
     }
-
-    return Promise.reject(e);
+    throw e;
   }
 );
 

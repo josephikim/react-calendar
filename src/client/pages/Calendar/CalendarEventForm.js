@@ -187,7 +187,7 @@ const CalendarEventForm = () => {
           })
           .catch((e) => {
             const error = e.response?.data ?? e;
-            alert(`Error creating event: ${error}`);
+            alert(`Error creating event: ${error.message ?? error.statusText}`);
             setError(error.message);
           });
       }
@@ -212,7 +212,7 @@ const CalendarEventForm = () => {
           })
           .catch((e) => {
             const error = e.response?.data ?? e;
-            alert(`Error updating event: ${error}`);
+            alert(`Error updating event: ${error.message ?? error.statusText}`);
             setError(error.message);
           });
       }
@@ -242,7 +242,7 @@ const CalendarEventForm = () => {
 
     dispatch(deleteEvent(id)).catch((e) => {
       const error = e.response?.data ?? e;
-      alert(`Error deleting event: ${error}`);
+      alert(`Error deleting event: ${error.message ?? error.statusText}`);
       setError(error.message);
     });
   };

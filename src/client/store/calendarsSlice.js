@@ -67,11 +67,9 @@ export const createCalendar = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/calendars', data);
 
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(calendarAdded(data));
-    });
+    dispatch(calendarAdded(res.data));
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 };
 
@@ -80,11 +78,9 @@ export const updateCalendar = (data) => async (dispatch) => {
     const payload = _.omit(data, ['id']);
     const res = await userApi.put(`/calendars/${data.id}`, payload);
 
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(calendarUpdated(data));
-    });
+    dispatch(calendarUpdated(res.data));
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 };
 
@@ -92,10 +88,8 @@ export const deleteCalendar = (id) => async (dispatch) => {
   try {
     const res = await userApi.delete(`/calendars/${id}`);
 
-    return Promise.resolve(res.data).then((data) => {
-      dispatch(calendarDeleted(data.id));
-    });
+    dispatch(calendarDeleted(res.data.id));
   } catch (e) {
-    return Promise.reject(e);
+    throw e;
   }
 };

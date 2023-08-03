@@ -1,6 +1,5 @@
 import UserService from 'server/services/UserService';
 import db from 'server/models';
-import { AuthorizationError } from '../utils/userFacingErrors';
 
 const userService = new UserService(db.User, db.RefreshToken, db.Role, db.Calendar, db.Event);
 
@@ -54,7 +53,7 @@ class UserController {
 
   update = async (req, res, next) => {
     try {
-      const response = await this.service.update(req.id, req.body);
+      const response = await this.service.update(req.auth.user, req.body);
 
       return res.status(response.statusCode).send(response.data);
     } catch (e) {

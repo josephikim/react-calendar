@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { connect } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation';
 import { updateUser } from 'client/store/userSlice';
@@ -29,6 +28,7 @@ const initialState = {
 
 const AccountUserSettings = () => {
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.user.id);
   const username = useSelector((state) => state.user.username);
   const [usernameInput, setUsernameInput] = useState(initialState.usernameInput);
   const [passwordInput, setPasswordInput] = useState(initialState.passwordInput);
@@ -99,43 +99,37 @@ const AccountUserSettings = () => {
 
     switch (name) {
       case 'username':
-        if (usernameInput.validateOnChange === false) {
-          setUsernameInput((data) => {
-            const newState = {
-              ...data,
-              value,
-              error: data.validateOnChange ? validationFunc(value) : null
-            };
+        setUsernameInput((data) => {
+          const newState = {
+            ...data,
+            value,
+            error: data.validateOnChange ? validationFunc(value) : null
+          };
 
-            return newState;
-          });
-        }
+          return newState;
+        });
         break;
       case 'password':
-        if (passwordInput.validateOnChange === false) {
-          setPasswordInput((data) => {
-            const newState = {
-              ...data,
-              value,
-              error: data.validateOnChange ? validationFunc(value) : null
-            };
+        setPasswordInput((data) => {
+          const newState = {
+            ...data,
+            value,
+            error: data.validateOnChange ? validationFunc(value) : null
+          };
 
-            return newState;
-          });
-        }
+          return newState;
+        });
         break;
       case 'newPassword':
-        if (newPasswordInput.validateOnChange === false) {
-          setNewPasswordInput((data) => {
-            const newState = {
-              ...data,
-              value,
-              error: data.validateOnChange ? validationFunc(value) : null
-            };
+        setNewPasswordInput((data) => {
+          const newState = {
+            ...data,
+            value,
+            error: data.validateOnChange ? validationFunc(value) : null
+          };
 
-            return newState;
-          });
-        }
+          return newState;
+        });
         break;
       default:
         break;
@@ -145,7 +139,7 @@ const AccountUserSettings = () => {
   const handleEdit = (id) => {
     const newState = {};
 
-    switch (name) {
+    switch (id) {
       case 'username':
         setUsernameInput((data) => {
           const newState = {
@@ -172,7 +166,7 @@ const AccountUserSettings = () => {
   };
 
   const handleCancelEdit = (id) => {
-    switch (name) {
+    switch (id) {
       case 'username':
         setUsernameInput((data) => {
           return {
@@ -206,6 +200,7 @@ const AccountUserSettings = () => {
     if (usernameError === false) {
       // no input errors, submit the form
       const data = {
+        userId,
         username: usernameInput.value
       };
 
@@ -250,6 +245,7 @@ const AccountUserSettings = () => {
     if (passwordError === false) {
       // no input errors, submit the form
       const data = {
+        userId,
         password: passwordInput.value,
         newPassword: newPasswordInput.value
       };
@@ -301,11 +297,11 @@ const AccountUserSettings = () => {
           value={usernameInput.value}
           error={usernameInput.error}
           editMode={usernameInput.editMode}
-          onChange={(event) => this.handleChange(validateFields.validateUsername, event)}
-          onBlur={(event) => this.handleBlur(validateFields.validateUsername, event)}
-          onSubmit={(event) => this.handleSubmitUsername(event)}
-          onEdit={(event, id) => this.handleEdit(event, id)}
-          onCancel={(event, id) => this.handleCancelEdit(event, id)}
+          onChange={(event) => handleChange(validateFields.validateUsername, event)}
+          onBlur={(event) => handleBlur(validateFields.validateUsername, event)}
+          onSubmit={(event) => handleSubmitUsername(event)}
+          onEdit={(id) => handleEdit(id)}
+          onCancel={(event, id) => handleCancelEdit(event, id)}
         />
 
         <AccountUserSettingsItem
@@ -315,10 +311,10 @@ const AccountUserSettings = () => {
           value={passwordInput.value}
           error={passwordInput.error}
           editMode={passwordInput.editMode}
-          onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
-          onSubmit={(event) => this.handleSubmitPassword(event)}
-          onEdit={(event, id) => this.handleEdit(event, id)}
-          onCancel={(event, id) => this.handleCancelEdit(event, id)}
+          onChange={(event) => handleChange(validateFields.validatePassword, event)}
+          onSubmit={(event) => handleSubmitPassword(event)}
+          onEdit={(event, id) => handleEdit(event, id)}
+          onCancel={(event, id) => handleCancelEdit(event, id)}
         />
 
         {passwordInput.editMode === true && (
@@ -329,8 +325,8 @@ const AccountUserSettings = () => {
             value={newPasswordInput.value}
             error={newPasswordInput.error}
             editMode="true"
-            onChange={(event) => this.handleChange(validateFields.validatePassword, event)}
-            onBlur={(event) => this.handleBlur(validateFields.validatePassword, event)}
+            onChange={(event) => handleChange(validateFields.validatePassword, event)}
+            onBlur={(event) => handleBlur(validateFields.validatePassword, event)}
           />
         )}
       </Form>

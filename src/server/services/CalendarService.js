@@ -6,18 +6,6 @@ class CalendarService {
     this.model = model;
   }
 
-  // Get user and system calendars
-  getAll = async (userId) => {
-    try {
-      // Mongoose returns [] for .find query with no matches
-      const result = await this.model.find({ user_id: { $in: [userId, 'system'] } });
-
-      return new HttpResponse(result);
-    } catch (e) {
-      throw e;
-    }
-  };
-
   create = async (data) => {
     try {
       const user = data.user;
@@ -44,10 +32,10 @@ class CalendarService {
     }
   };
 
-  update = async (id, data) => {
+  getOne = async (calendarId) => {
     try {
-      // Mongoose returns the modified document (or null) for .findOneAndUpdate query with option 'new: true'
-      const result = await this.model.findOneAndUpdate({ id }, { $set: data }, { new: true });
+      // Mongoose returns [] for .find query with no matches
+      const result = await this.model.findOne({ id: calendarId });
 
       return new HttpResponse(result);
     } catch (e) {
@@ -55,7 +43,30 @@ class CalendarService {
     }
   };
 
-  delete = async (id) => {
+  // Get user and system calendars
+  getUserCalendars = async (userId) => {
+    try {
+      // Mongoose returns [] for .find query with no matches
+      const result = await this.model.find({ user_id: { $in: [userId, 'system'] } });
+
+      return new HttpResponse(result);
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  update = async (calendarId, data) => {
+    try {
+      // Mongoose returns the modified document (or null) for .findOneAndUpdate query with option 'new: true'
+      const result = await this.model.findOneAndUpdate({ id: calendarId }, { $set: data }, { new: true });
+
+      return new HttpResponse(result);
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  delete = async (calendarId) => {
     try {
       // Mongoose returns the matching document (or null) for .findByIdAndDelete query
       const result = await this.model.findByIdAndDelete(id);

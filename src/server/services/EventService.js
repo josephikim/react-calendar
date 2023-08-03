@@ -7,22 +7,22 @@ class EventService {
     this.calendarService = new CalendarService(calendarModel);
   }
 
-  getAll = async (calendarIds) => {
-    try {
-      // Mongoose returns [] for .find query with no matches
-      const events = await this.model.find({ calendar: { $in: calendarIds } });
-
-      return new HttpResponse(events);
-    } catch (e) {
-      throw e;
-    }
-  };
-
   create = async (data) => {
     try {
       const result = await this.model.create(data);
 
       return new HttpResponse(result);
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  getUserEvents = async (calendarIds) => {
+    try {
+      // Mongoose returns [] for .find query with no matches
+      const events = await this.model.find({ calendar: { $in: calendarIds } });
+
+      return new HttpResponse(events);
     } catch (e) {
       throw e;
     }

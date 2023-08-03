@@ -126,6 +126,7 @@ class UserService {
       // update password
       if (data.password) {
         const validated = await user.validatePassword(data.password);
+
         if (!validated) {
           throw new AuthorizationError('Invalid password. Please try again.', { errorCode: 'password' });
         }

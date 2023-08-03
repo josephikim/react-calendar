@@ -32,6 +32,7 @@ class HttpResponse {
             data[index]['id'] = data[index][key];
             delete data[index][key];
           }
+          // handle nested properties recursively
           if (key === 'calendarSettings' || key === 'calendar' || key === 'roles') {
             data[index][key] = this.filterData(data[index][key]);
           }
@@ -46,6 +47,7 @@ class HttpResponse {
           data['id'] = data[key];
           delete data[key];
         }
+        // handle nested properties recursively
         if (key === 'calendarSettings' || key === 'calendar' || key === 'roles') {
           data[key] = this.filterData(data[key]);
         }

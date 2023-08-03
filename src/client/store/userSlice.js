@@ -83,7 +83,7 @@ export const registerUser = (data) => async (dispatch) => {
 
 export const updateUser = (data) => async (dispatch) => {
   try {
-    const res = await userApi.put(`/users`, data);
+    const res = await userApi.put(`/users/${data.userId}`, data);
 
     dispatch(usernameUpdated(res.data.username));
   } catch (e) {

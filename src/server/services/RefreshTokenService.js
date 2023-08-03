@@ -6,17 +6,6 @@ class RefreshTokenService {
     this.model = model;
   }
 
-  get = async (requestToken) => {
-    try {
-      // Mongoose returns null for .findOne query with no matches
-      const result = await this.model.findOne({ token: requestToken });
-
-      return result;
-    } catch (e) {
-      throw e;
-    }
-  };
-
   create = async (userId) => {
     try {
       const expiredAt = new Date();
@@ -32,6 +21,17 @@ class RefreshTokenService {
       };
 
       const result = await this.model.create(data);
+
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  get = async (requestToken) => {
+    try {
+      // Mongoose returns null for .findOne query with no matches
+      const result = await this.model.findOne({ token: requestToken });
 
       return result;
     } catch (e) {

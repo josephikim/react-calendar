@@ -18,6 +18,6 @@ router.post('/login', UserController.login);
 router.post('/refreshtoken', UserController.refreshToken);
 
 // PUT request to update user
-router.put('/', [authJwt.verifyToken], UserController.update);
+router.put('/:userId', [authJwt.verifyToken, authJwt.verifyURIAuth], UserController.update);
 
 export default router;

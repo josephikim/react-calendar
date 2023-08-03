@@ -12,7 +12,7 @@ import {
   deserializedRbcSelectionSelector,
   initCalendar
 } from 'client/store/appSlice';
-import { getEvents, rbcEventsSelector } from 'client/store/eventsSlice';
+import { getUserEvents, rbcEventsSelector } from 'client/store/eventsSlice';
 import ContentWrapper from 'client/components/ContentWrapper';
 import CalendarToggleMenu from './CalendarToggleMenu';
 import CalendarEventForm from './CalendarEventForm';
@@ -40,7 +40,7 @@ const Calendar = () => {
   useEffect(() => {
     if (shouldInitData.current) {
       dispatch(initCalendar());
-      dispatch(getEvents());
+      dispatch(getUserEvents());
       shouldInitData.current = false;
     }
   }, []);

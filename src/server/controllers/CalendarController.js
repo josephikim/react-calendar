@@ -12,7 +12,7 @@ class CalendarController {
     try {
       const data = {
         ...req.body,
-        user: req.id
+        user: req.auth.user
       };
 
       const response = await this.service.create(data);
@@ -23,9 +23,9 @@ class CalendarController {
     }
   };
 
-  getAll = async (req, res, next) => {
+  getUserCalendars = async (req, res, next) => {
     try {
-      const response = await this.service.getAll(req.id);
+      const response = await this.service.getUserCalendars(req.auth.user);
 
       return res.status(response.statusCode).send(response.data);
     } catch (e) {
@@ -35,7 +35,7 @@ class CalendarController {
 
   update = async (req, res, next) => {
     try {
-      const response = await this.service.update(req.id, req.params.id, req.body);
+      const response = await this.service.update(req.params.calendarId, req.body);
 
       return res.status(response.statusCode).send(response.data);
     } catch (e) {
@@ -45,7 +45,7 @@ class CalendarController {
 
   delete = async (req, res, next) => {
     try {
-      const response = await this.service.delete(req.params.id);
+      const response = await this.service.delete(req.params.calendarId);
 
       return res.status(response.statusCode).send(response.data);
     } catch (e) {

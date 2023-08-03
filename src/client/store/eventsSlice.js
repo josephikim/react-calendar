@@ -72,9 +72,9 @@ export const rbcEventsSelector = createSelector([selectEvents, selectEventIds], 
 // Bound action creators
 //
 
-export const getEvents = () => async (dispatch) => {
+export const getUserEvents = () => async (dispatch) => {
   try {
-    const res = await userApi.get('/events');
+    const res = await userApi.get('/events/user');
 
     dispatch(eventsUpdated(res.data));
   } catch (e) {

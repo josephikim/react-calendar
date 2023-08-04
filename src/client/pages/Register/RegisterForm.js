@@ -112,15 +112,15 @@ const RegisterForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const usernameError = validateFields.validateUsername(username.value);
-    const passwordError = validateFields.validatePassword(password.value);
-    const passwordConfirmError = validateFields.validatePasswordConfirm(passwordConfirm.value, password.value);
+    const usernameError = validateFields.validateUsername(username.value.trim());
+    const passwordError = validateFields.validatePassword(password.value.trim());
+    const passwordConfirmError = validateFields.validatePasswordConfirm(password.value, passwordConfirm.value.trim());
 
     if ([usernameError, passwordError, passwordConfirmError].every((e) => e === false)) {
       // no input errors, submit the form
       const data = {
-        username: username.value,
-        password: password.value
+        username: username.value.trim(),
+        password: password.value.trim()
       };
 
       dispatch(registerUser(data)).catch((e) => {

@@ -35,6 +35,7 @@ const getCalendarsState = (calendars) => {
 
 const AccountCalendarSettings = () => {
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.user.id);
   const calendars = useSelector((state) => state.calendars.byId);
   const calendarIds = useSelector((state) => state.calendars.allIds);
   const [calendarsSettings, setCalendarsSettings] = useState(getCalendarsState(calendars));
@@ -147,13 +148,23 @@ const AccountCalendarSettings = () => {
   };
 
   const handleDeleteCalendar = (id) => {
-    // check app state for calendar
-    const calendar = calendars[id];
-    if (!calendar) return;
+    event.preventDefault();
 
-    // Check for valid deletion
-    const isValidDelete = !calendar.userDefault && !calendar.user_id === 'system';
-    if (!isValidDelete) return;
+    // Retrieve target calendar
+    const calendar = calendars[id];
+
+    // Check for valid target
+    if (!calendar) {
+      alert('Calendar not found!');
+      return;
+    }
+
+    const isValidTarget = calendar.user_id === userId && calendar.userDefault === false;
+
+    if (!isValidTarget) {
+      alert('Deletion not allowed!');
+      return;
+    }
 
     dispatch(deleteCalendar(id))
       .then(() => {
@@ -168,12 +179,14 @@ const AccountCalendarSettings = () => {
   const handleAddCalendar = (event) => {
     event.preventDefault();
 
+    const trimmedCalendarName = newCalendarSettings.value.trim();
+
     const inputError = validateFields.validateCalendarName(newCalendarSettings.value.trim());
 
     if (inputError === false) {
       // no input errors, submit the form
       const data = {
-        name: newCalendarSettings.value.trim(),
+        name: trimmedCalendarName,
         visibility: true
       };
 
@@ -202,25 +215,29 @@ const AccountCalendarSettings = () => {
   const handleUpdateCalendar = (event, id) => {
     event.preventDefault();
 
-    // Check app state for calendar
-    const calendar = calendars[id];
-    if (!calendar) return;
+    // Check app state for target calendar
+    if (!calendars[id]) {
+      alert('Calendar not found!');
+      return;
+    }
 
-    // Check for valid update
-    const newName = calendarsSettings[id]?.value;
-    if (newName.trim() === calendar.name.trim()) {
+    const calendarName = calendars[id].name;
+    const trimmedNewCalendarName = calendarsSettings[id]?.value.trim();
+
+    // Check for no change in calendar name
+    if (trimmedNewCalendarName === calendarName) {
       alert('No change detected!');
       return;
     }
 
-    // Check for input errors
-    const inputError = validateFields.validateCalendarName(newName.trim());
+    // Check for calendar name input errors
+    const calendarNameInputError = validateFields.validateCalendarName(trimmedNewCalendarName);
 
-    if (!inputError) {
+    if (!calendarNameInputError) {
       // no input errors, submit the form
       const data = {
         id,
-        name: newName.trim()
+        name: trimmedNewCalendarName
       };
 
       dispatch(updateCalendar(data))
@@ -253,7 +270,7 @@ const AccountCalendarSettings = () => {
           [id]: {
             ...data[id],
             validateOnChange: true,
-            error: inputError
+            error: calendarNameInputError
           }
         };
 
@@ -300,7 +317,7 @@ const AccountCalendarSettings = () => {
           onChange={(event) => handleChange(validateFields.validateCalendarName, event)}
           onBlur={(event) => handleBlur(validateFields.validateCalendarName, event)}
           onSubmit={(event, id) => handleUpdateCalendar(event, id)}
-          onDelete={(id) => handleDeleteCalendar(id)}
+          onDelete={(event, id) => handleDeleteCalendar(event, id)}
           onEdit={(id) => handleEdit(id)}
           onCancel={(id) => handleCancelEdit(id)}
         />

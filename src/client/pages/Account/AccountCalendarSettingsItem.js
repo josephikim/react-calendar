@@ -50,7 +50,7 @@ const AccountCalendarSettingsItem = (props) => {
           <div className="btnGroup">
             {!props.editMode && (
               <Button
-                type="button"
+                type="submit"
                 name="editBtn"
                 variant="primary"
                 disabled={props.isSystemCalendar && isAdminUser === false}
@@ -63,22 +63,17 @@ const AccountCalendarSettingsItem = (props) => {
               !props.isDefaultCalendar &&
               props.id !== 'newCalendar' &&
               !(props.isSystemCalendar && isAdminUser === false) && (
-                <Button type="button" name="deleteBtn" variant="danger" onClick={() => props.onDelete(props.id)}>
+                <Button type="submit" name="deleteBtn" variant="danger" onClick={() => props.onDelete(props.id)}>
                   Delete
                 </Button>
               )}
             {props.editMode && (
-              <Button
-                type="submit"
-                name="saveBtn"
-                variant="success"
-                onClick={(event) => props.onSubmit(event, props.id)}
-              >
+              <Button type="submit" name="saveBtn" variant="success" onClick={(event) => props.onSubmit(event, props.id)}>
                 Save
               </Button>
             )}
             {props.editMode && props.id !== 'newCalendar' && (
-              <Button type="button" name="cancelBtn" variant="secondary" onClick={() => props.onCancel(props.id)}>
+              <Button type="submit" name="cancelBtn" variant="secondary" onClick={() => props.onCancel(props.id)}>
                 Cancel
               </Button>
             )}

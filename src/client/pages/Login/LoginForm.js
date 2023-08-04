@@ -97,13 +97,13 @@ const LoginForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const usernameError = validateFields.validateUsername(username.value);
+    const usernameError = validateFields.validateUsername(username.value.trim());
     const passwordError = validateFields.validatePassword(password.value);
 
     if ([usernameError, passwordError].every((e) => e === false)) {
       // no errors submit the form
       const data = {
-        username: username.value,
+        username: username.value.trim(),
         password: password.value
       };
 

@@ -34,7 +34,7 @@ const AccountUserSettingsItem = (props) => {
           {!newPasswordComponent && (
             <div className="btnGroup">
               {!props.editMode && (
-                <Button type="button" name="editBtn" variant="primary" onClick={() => props.onEdit(props.id)}>
+                <Button type="submit" name="editBtn" variant="primary" onClick={() => props.onEdit(props.id)}>
                   Edit
                 </Button>
               )}
@@ -44,7 +44,7 @@ const AccountUserSettingsItem = (props) => {
                 </Button>
               )}
               {props.editMode && (
-                <Button type="button" name="cancelBtn" variant="secondary" onClick={() => props.onCancel(props.id)}>
+                <Button type="submit" name="cancelBtn" variant="secondary" onClick={() => props.onCancel(props.id)}>
                   Cancel
                 </Button>
               )}

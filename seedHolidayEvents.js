@@ -35,10 +35,7 @@ const makeEvents = async () => {
   const events = [];
 
   // check if 'US Holidays' calendar exists in db
-  const calendar = await client
-    .db(MONGO_DB)
-    .collection('calendars')
-    .findOne({ name: 'US Holidays', user_id: 'system' });
+  const calendar = await client.db(MONGO_DB).collection('calendars').findOne({ name: 'US Holidays', user_id: 'system' });
 
   if (!calendar || !Object.keys(calendar).includes('_id')) return;
 

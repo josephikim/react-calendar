@@ -20,7 +20,7 @@ const initialState = {
     error: null
   },
   newPasswordInput: {
-    value: null,
+    value: '',
     validateOnChange: false,
     error: null
   }
@@ -39,7 +39,8 @@ const AccountUserSettings = () => {
     setUsernameInput((data) => {
       return {
         ...data,
-        value: username
+        value: username,
+        editMode: false
       };
     });
     setPasswordInput((data) => {
@@ -47,10 +48,9 @@ const AccountUserSettings = () => {
         ...initialState.passwordInput
       };
     });
-    setUsernameInput((data) => {
+    setNewPasswordInput((data) => {
       return {
-        ...data,
-        value: username
+        ...initialState.newPasswordInput
       };
     });
   }, [username]);
@@ -195,13 +195,22 @@ const AccountUserSettings = () => {
   const handleSubmitUsername = (event) => {
     event.preventDefault();
 
-    const usernameError = validateFields.validateUsername(usernameInput.value);
+    const trimmedUsername = usernameInput.value.trim();
 
-    if (usernameError === false) {
+    // Check for no change in username
+    if (trimmedUsername === username) {
+      alert('New username cannot match previous username.');
+      return;
+    }
+
+    // Check for username input errors
+    const usernameInputError = validateFields.validateUsername(trimmedUsername);
+
+    if (!usernameInputError) {
       // no input errors, submit the form
       const data = {
         userId,
-        username: usernameInput.value
+        username: trimmedUsername
       };
 
       dispatch(updateUser(data))
@@ -225,7 +234,7 @@ const AccountUserSettings = () => {
         return {
           ...data,
           validateOnChange: true,
-          error: usernameError
+          error: usernameInputError
         };
       });
     }
@@ -234,20 +243,24 @@ const AccountUserSettings = () => {
   const handleSubmitPassword = (event) => {
     event.preventDefault();
 
-    let passwordError = false;
+    const trimmedPassword = passwordInput.value.trim();
+    const trimmedNewPassword = newPasswordInput.value.trim();
 
-    if (passwordInput.value === newPasswordInput.value) {
-      passwordError = 'New passwordInput cannot match current passwordInput.';
-    } else {
-      passwordError = validateFields.validatePassword(newPasswordInput.value);
+    // Check for no change in password
+    if (trimmedPassword === trimmedNewPassword) {
+      alert('New password cannot match current password.');
+      return;
     }
+
+    // check for password input errors
+    const passwordError = validateFields.validatePassword(trimmedNewPassword);
 
     if (passwordError === false) {
       // no input errors, submit the form
       const data = {
         userId,
-        password: passwordInput.value,
-        newPassword: newPasswordInput.value
+        password: trimmedPassword,
+        newPassword: trimmedNewPassword
       };
 
       dispatch(updateUser(data))

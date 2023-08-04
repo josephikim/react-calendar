@@ -50,29 +50,33 @@ const verifyURIAuth = async (req, res, next) => {
         if (req.auth.user === req.params.userId) {
           return next();
         }
+
         return res.status(403).send({ message: 'Requires admin role!', errorCode: 'role' });
       }
+
       case 'calendarId': {
-        // const calendar = Calendar.findOne({ id: req.params.calendarId });
+        // fetch target calendar
         const calendar = await calendarService.getOne(req.params.calendarId);
 
         if (req.auth.user === calendar.user_id) {
           return next();
         }
+
         return res.status(403).send({ message: 'Requires admin role!', errorCode: 'role' });
       }
+
       case 'eventId': {
         // fetch user calendars
         const calendars = await calendarService.getUserCalendars(req.auth.user);
-        const userCalendars = calendars
-          .filter((calendar) => calendar.user_id === req.auth.user)
-          .map((calendar) => calendar.user_id);
+        const userCalendars = calendars.filter((calendar) => calendar.user_id === req.auth.user).map((calendar) => calendar.user_id);
 
         if (userCalendars.includes(event.calendar)) {
           return next();
         }
+
         return res.status(403).send({ message: 'Requires admin role!', errorCode: 'role' });
       }
+
       default:
         return next();
     }

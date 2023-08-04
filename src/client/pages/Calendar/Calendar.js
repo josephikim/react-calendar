@@ -5,13 +5,7 @@ import timezone from 'dayjs/plugin/timezone';
 import _ from 'lodash';
 import { Calendar as ReactBigCalendar, dayjsLocalizer } from 'react-big-calendar';
 import { Container, Row, Col } from 'react-bootstrap';
-import {
-  onSelectSlot,
-  onSelectEvent,
-  onSelectView,
-  deserializedRbcSelectionSelector,
-  initCalendar
-} from 'client/store/appSlice';
+import { onSelectSlot, onSelectEvent, onSelectView, deserializedRbcSelectionSelector, initCalendar } from 'client/store/appSlice';
 import { getUserEvents, rbcEventsSelector } from 'client/store/eventsSlice';
 import ContentWrapper from 'client/components/ContentWrapper';
 import CalendarToggleMenu from './CalendarToggleMenu';
@@ -104,8 +98,7 @@ const Calendar = () => {
     if (!currentSlot) return true;
 
     const isUnique =
-      candidateSlot.start.getTime() !== currentSlot.start.getTime() ||
-      candidateSlot.end.getTime() !== currentSlot.end.getTime();
+      candidateSlot.start.getTime() !== currentSlot.start.getTime() || candidateSlot.end.getTime() !== currentSlot.end.getTime();
 
     if (isUnique) return true;
 

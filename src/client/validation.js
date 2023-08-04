@@ -28,8 +28,8 @@ class ValidateFields {
     return false;
   }
 
-  validatePasswordConfirm(candidatePassword, password) {
-    if (candidatePassword !== password) {
+  validatePasswordConfirm(password, candidatePassword) {
+    if (password !== candidatePassword) {
       return "Passwords don't match";
     }
     return false;

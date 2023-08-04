@@ -12,7 +12,7 @@ class CalendarController {
     try {
       const data = {
         ...req.body,
-        user: req.auth.user
+        user_id: req.auth.user
       };
 
       const response = await this.service.create(data);

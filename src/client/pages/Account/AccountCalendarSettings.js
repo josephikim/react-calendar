@@ -186,8 +186,7 @@ const AccountCalendarSettings = () => {
     if (inputError === false) {
       // no input errors, submit the form
       const data = {
-        name: trimmedCalendarName,
-        visibility: true
+        name: trimmedCalendarName
       };
 
       dispatch(createCalendar(data))

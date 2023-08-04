@@ -82,7 +82,7 @@ const handleE11000 = (error, res, next) => {
 
 schema.post('save', handleE11000);
 
-// Create default cal on user creation
+// Create user default cal and embed calendar settings
 schema.post('save', async function () {
   if (this.id && this.wasNew) {
     try {

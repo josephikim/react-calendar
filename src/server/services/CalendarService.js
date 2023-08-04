@@ -8,20 +8,9 @@ class CalendarService {
 
   create = async (data) => {
     try {
-      const user = data.user;
-      const userCalendarsCount = await this.model.countDocuments({ user });
-      const systemCalendarsCount = await this.model.countDocuments({ user_id: 'system' });
-
       const _obj = {
-        user,
         name: data.name,
-        userDefault: !user ? false : userCalendarsCount === 0 ? true : false,
-        systemCalendar: data.user_id === 'system',
-        color:
-          data.user_id === 'system'
-            ? `#${systemColors[systemCalendarsCount & systemColors.length]}`
-            : `#${userColors[userCalendarsCount % userColors.length]}`,
-        visibility: data.visibility || true
+        user_id: data.user_id
       };
 
       const result = await this.model.create(_obj);

@@ -81,7 +81,6 @@ const handleE11000 = (error, res, next) => {
 };
 
 schema.post('save', handleE11000);
-schema.post('findOneAndUpdate', handleE11000);
 
 // Create default cal on user creation
 schema.post('save', async function () {

@@ -34,8 +34,8 @@ class CalendarService {
 
   getOne = async (calendarId) => {
     try {
-      // Mongoose returns [] for .find query with no matches
-      const result = await this.model.findOne({ id: calendarId });
+      // Mongoose returns null for .findById query with no matches
+      const result = await this.model.findById(calendarId);
 
       return new HttpResponse(result);
     } catch (e) {
@@ -57,8 +57,8 @@ class CalendarService {
 
   update = async (calendarId, data) => {
     try {
-      // Mongoose returns the modified document (or null) for .findOneAndUpdate query with option 'new: true'
-      const result = await this.model.findOneAndUpdate({ id: calendarId }, { $set: data }, { new: true });
+      // Mongoose returns the modified document (or null) for .findByIdAndUpdate query with option 'new: true'
+      const result = await this.model.findByIdAndUpdate(calendarId, data, { new: true });
 
       return new HttpResponse(result);
     } catch (e) {

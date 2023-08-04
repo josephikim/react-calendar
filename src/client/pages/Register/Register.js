@@ -35,7 +35,12 @@ const Register = () => {
               <img className="register-img" src={mockup} alt="Calendar Mockup" onClick={handleShowDialog} />
               {isOpen && (
                 <dialog className="dialog" open onClick={handleShowDialog}>
-                  <img className="register-img-mockup" src={mockup} onClick={handleShowDialog} alt="React Calendar Mockup" />
+                  <img
+                    className="register-img-mockup"
+                    src={mockup}
+                    onClick={handleShowDialog}
+                    alt="React Calendar Mockup"
+                  />
                 </dialog>
               )}
             </ContentWrapper>

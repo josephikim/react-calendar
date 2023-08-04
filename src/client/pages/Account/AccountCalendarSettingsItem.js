@@ -68,7 +68,12 @@ const AccountCalendarSettingsItem = (props) => {
                 </Button>
               )}
             {props.editMode && (
-              <Button type="submit" name="saveBtn" variant="success" onClick={(event) => props.onSubmit(event, props.id)}>
+              <Button
+                type="submit"
+                name="saveBtn"
+                variant="success"
+                onClick={(event) => props.onSubmit(event, props.id)}
+              >
                 Save
               </Button>
             )}

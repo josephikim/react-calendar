@@ -26,7 +26,7 @@ const handleE11000 = (error, res, next) => {
 };
 
 schema.post('save', handleE11000);
-schema.post('findOneAndUpdate', handleE11000);
+schema.post('findByIdAndUpdate', handleE11000);
 
 // schema index
 schema.index({ name: 1, user_id: 1 }, { unique: true });

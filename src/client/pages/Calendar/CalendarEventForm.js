@@ -48,20 +48,26 @@ const CalendarEventForm = () => {
   const [desc, setDesc] = useState(currentSelection.event?.desc || '');
   const [timeFormat, setTimeFormat] = useState('h:mm a');
   const [dateFormat, setDateFormat] = useState('y-MM-dd');
-  const [selectedCalendarId, setSelectedCalendarId] = useState(Object.keys(calendars).find((k) => calendars[k].userDefault === true));
+  const [selectedCalendarId, setSelectedCalendarId] = useState(
+    Object.keys(calendars).find((k) => calendars[k].userDefault === true)
+  );
   const [lastSelectedType, setLastSelectedType] = useState(isEventSelected ? 'event' : 'slot');
   const [error, setError] = useState(null);
 
   // stores booleans
   const [isAllDay, setIsAllDay] = useState(
-    isEventSelected ? currentSelection.event.allDay : isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end)
+    isEventSelected
+      ? currentSelection.event.allDay
+      : isAllDaySpan(currentSelection.slot.start, currentSelection.slot.end)
   );
   const [isSubmitCalled, setIsSubmitCalled] = useState(false);
 
   // stores Date objects
   const [start, setStart] = useState(currentSelection.event?.start ?? currentSelection.slot.start);
   const [end, setEnd] = useState(currentSelection.event?.end ?? currentSelection.slot.end);
-  const [allDayStart, setAllDayStart] = useState(getDayStart(currentSelection.slot?.start || currentSelection.event.start));
+  const [allDayStart, setAllDayStart] = useState(
+    getDayStart(currentSelection.slot?.start || currentSelection.event.start)
+  );
   const [allDayEnd, setAllDayEnd] = useState(getDayEnd(currentSelection.slot?.end || currentSelection.event.end));
 
   // Hook for updating state based on currentSelection change (allDay fields will be updated via another hook)
@@ -82,7 +88,9 @@ const CalendarEventForm = () => {
     if (isSlotSelected) {
       const isSingleDayAllDaySlot = isSingleDayAllDaySpan(currentSelection.slot.start, currentSelection.slot.end);
 
-      const newStartState = isSingleDayAllDaySlot ? getSmartStart(currentSelection.slot.start) : currentSelection.slot.start;
+      const newStartState = isSingleDayAllDaySlot
+        ? getSmartStart(currentSelection.slot.start)
+        : currentSelection.slot.start;
       const newEndState = isSingleDayAllDaySlot ? getSmartEnd(currentSelection.slot.end) : currentSelection.slot.end;
 
       setStart(newStartState);
@@ -235,7 +243,8 @@ const CalendarEventForm = () => {
     const deleteConfirmation = confirm('Are you sure you want to delete this event?');
     if (deleteConfirmation === false) return;
 
-    const isValidTarget = calendars[targetEvent.calendar].user_id === userId && calendars[targetEvent.calendar].userDefault === false;
+    const isValidTarget =
+      calendars[targetEvent.calendar].user_id === userId && calendars[targetEvent.calendar].userDefault === false;
 
     if (!isValidTarget) {
       alert('Deletion not allowed!');
@@ -441,7 +450,11 @@ const CalendarEventForm = () => {
 
       <Row>
         <Col>
-          <CalendarSelectMenu selected={[calendars[selectedCalendarId]]} disabled={isSystemEventSelected} onChange={handleCalendarChange} />
+          <CalendarSelectMenu
+            selected={[calendars[selectedCalendarId]]}
+            disabled={isSystemEventSelected}
+            onChange={handleCalendarChange}
+          />
         </Col>
       </Row>
 

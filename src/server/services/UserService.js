@@ -27,6 +27,7 @@ class UserService {
 
   login = async (username, password) => {
     try {
+      // Mongoose returns null for .findOne query with no matches
       const user = await this.model.findOne({ username });
 
       if (!user) {
@@ -73,7 +74,6 @@ class UserService {
     try {
       const refreshToken = await this.refreshTokenService.get(requestToken);
 
-      // Mongoose returns null for Model.findOne query with no matches
       if (!refreshToken) {
         // Refresh token not found
         throw new NotFoundError('Invalid request token', { errorCode: 'refreshToken' });
@@ -115,7 +115,6 @@ class UserService {
 
   update = async (userId, data) => {
     try {
-      // Use find doc, modify doc, save doc pattern - hooks into 'save' pre middleware
       // Mongoose returns the modified document (or null) for .findById query
       const user = await this.model.findById(userId);
 
@@ -149,7 +148,6 @@ class UserService {
 
   updateCalendarSettings = async (userId, data) => {
     try {
-      // Use find doc, modify doc, save doc pattern - hooks into 'save' pre middleware
       // Mongoose returns the modified document (or null) for .findById query
       const user = await this.model.findById(userId);
 

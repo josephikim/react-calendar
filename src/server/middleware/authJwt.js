@@ -58,7 +58,7 @@ const verifyURIAuth = async (req, res, next) => {
         // fetch target calendar
         const calendar = await calendarService.getOne(req.params.calendarId);
 
-        if (req.auth.user === calendar.user_id) {
+        if (req.auth.user === calendar.data.user_id) {
           return next();
         }
 
@@ -68,7 +68,9 @@ const verifyURIAuth = async (req, res, next) => {
       case 'eventId': {
         // fetch user calendars
         const calendars = await calendarService.getUserCalendars(req.auth.user);
-        const userCalendars = calendars.filter((calendar) => calendar.user_id === req.auth.user).map((calendar) => calendar.user_id);
+        const userCalendars = calendars
+          .filter((calendar) => calendar.user_id === req.auth.user)
+          .map((calendar) => calendar.user_id);
 
         if (userCalendars.includes(event.calendar)) {
           return next();

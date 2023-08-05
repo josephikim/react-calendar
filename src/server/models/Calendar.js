@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
 import User from './User';
-import { systemColors } from 'config/appConfig';
-
 import { DuplicateKeyError } from 'server/utils/databaseErrors';
+import { userColors, systemColors } from 'config/appConfig';
 
 const schema = new mongoose.Schema({
   name: {
@@ -40,7 +39,7 @@ schema.post('findOneAndUpdate', handleE11000);
 schema.post('save', async function () {
   if (this.id && this.wasNew) {
     try {
-      // on create system calendar
+      // system calendar created
       if (this.user_id === 'system') {
         // count system cals
         const systemCalendarsCount = await Calendar.countDocuments({ user_id: 'system' });
@@ -55,6 +54,34 @@ schema.post('save', async function () {
 
         // embed in all user docs
         await User.updateMany({}, { $push: { calendarSettings: settings } });
+      } else {
+        // user calendar created
+
+        // count user calendars
+        const userCalendarsCount = await Calendar.countDocuments({ user_id: this.user_id });
+
+        if (userCalendarsCount < 1) {
+          throw new DatabaseError('Matching calendar(s) not found', {
+            errorCode: 'calendar'
+          });
+        }
+
+        // if user calendar(s) found, process calendar settings
+        const settings = {
+          calendar: this.id,
+          visibility: true,
+          color: `#${userColors[(userCalendarsCount - 1) % userColors.length]}`
+        };
+
+        // set userDefault property
+        if (userCalendarsCount === 1) {
+          settings.userDefault = true;
+        } else {
+          settings.userDefault = false;
+        }
+
+        // embed calendar settings in user doc
+        await User.findByIdAndUpdate(this.user_id, { $push: { calendarSettings: settings } });
       }
     } catch (e) {
       throw new Error(e);

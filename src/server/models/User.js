@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import Calendar from './Calendar';
 import { DuplicateKeyError } from 'server/utils/databaseErrors';
-import { systemColors, userColors } from '../../config/appConfig';
+import { userColors, systemColors } from 'config/appConfig';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -82,60 +82,56 @@ const handleE11000 = (error, res, next) => {
 
 schema.post('save', handleE11000);
 
-// Create user default cal and embed calendar settings
+// for new users: embed system cal settings and create user default calendar
 schema.post('save', async function () {
   if (this.id && this.wasNew) {
     try {
-      // check for existing user default cal
-      const calendars = await Calendar.find({
-        user_id: this.id
-      });
-
-      if (calendars.length > 0) {
-        throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
-          errorCode: 'calendar'
-        });
-      }
-
-      // Create user default cal
-      const doc = new Calendar({
-        name: this.username,
-        user_id: this.id
-      });
-
-      const defaultCal = await doc.save();
-
       // Lookup system cals
       const systemCals = await Calendar.find({
         user_id: 'system'
       });
 
-      const settings = [
-        {
-          calendar: defaultCal.id,
-          userDefault: true,
-          visibility: true,
-          color: `#${userColors[0]}`
-        }
-      ];
+      if (systemCals.length > 0) {
+        const settings = [];
 
-      systemCals.forEach((cal, idx) => {
-        settings.push({
-          calendar: cal.id,
-          userDefault: false,
-          visibility: true,
-          color: `#${systemColors[idx]}`
+        systemCals.forEach((cal, idx) => {
+          settings.push({
+            calendar: cal.id,
+            userDefault: false,
+            visibility: true,
+            color: `#${systemColors[idx]}`
+          });
         });
+
+        settings.forEach((entry) => {
+          this.calendarSettings.push(entry);
+        });
+
+        // embed calendar settings in user doc
+        await this.save();
+      }
+
+      // check for existing user default cal
+      const defaultCal = await Calendar.findOne({
+        name: this.username,
+        user_id: this.id
       });
 
-      // embed calendar settings in user doc
-      settings.forEach((entry) => {
-        this.calendarSettings.push(entry);
+      if (defaultCal) {
+        throw new DuplicateKeyError('There was a conflict with an existing entry. Please try again.', {
+          errorCode: 'user'
+        });
+      }
+
+      const newDefaultCal = new Calendar({
+        name: this.username,
+        user_id: this.id
       });
 
-      await this.save();
+      // Create default calendar
+      await newDefaultCal.save();
     } catch (e) {
-      return next(e);
+      throw new Error(e);
     }
   }
 });

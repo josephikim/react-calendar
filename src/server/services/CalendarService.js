@@ -13,9 +13,7 @@ class CalendarService {
         user_id: data.user_id
       };
 
-      const result = await this.model.create(_obj);
-
-      return new HttpResponse(result);
+      return await this.model.create(_obj);
     } catch (e) {
       throw e;
     }

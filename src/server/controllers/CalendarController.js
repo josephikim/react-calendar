@@ -1,11 +1,14 @@
 import CalendarService from 'server/services/CalendarService';
+import UserService from 'server/services/UserService';
 import db from 'server/models';
 
 const calendarService = new CalendarService(db.Calendar);
+const userService = new UserService(db.User);
 
 class CalendarController {
   constructor(service) {
     this.service = service;
+    this.userService = userService;
   }
 
   create = async (req, res, next) => {
@@ -15,9 +18,11 @@ class CalendarController {
         user_id: req.auth.user
       };
 
-      const response = await this.service.create(data);
+      await this.service.create(data);
 
-      return res.status(response.statusCode).send(response.data);
+      const userResponse = await this.userService.getOne(req.auth.user);
+
+      return res.status(userResponse.statusCode).send(userResponse.data.calendarSettings);
     } catch (e) {
       return next(e);
     }
@@ -54,4 +59,4 @@ class CalendarController {
   };
 }
 
-export default new CalendarController(calendarService);
+export default new CalendarController(calendarService, userService);

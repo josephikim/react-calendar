@@ -67,7 +67,7 @@ export const createCalendar = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/calendars', data);
 
-    dispatch(calendarAdded(res.data));
+    dispatch(calendarsUpdated(res.data));
   } catch (e) {
     throw e;
   }

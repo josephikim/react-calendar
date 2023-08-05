@@ -1,5 +1,7 @@
-import UserService from 'server/services/UserService';
+import jwt from 'jsonwebtoken';
 import db from 'server/models';
+import UserService from 'server/services/UserService';
+import authJwt from 'server/middleware/authJwt';
 
 const userService = new UserService(db.User, db.RefreshToken, db.Role, db.Calendar, db.Event);
 
@@ -23,12 +25,29 @@ class UserController {
     }
   };
 
-  // Look up user, validate pw, create refresh token
   login = async (req, res, next) => {
     try {
-      const response = await this.service.login(req.body.username, req.body.password);
+      const loginResponse = await this.service.login(req.body.username, req.body.password);
 
-      return res.status(200).send(response);
+      if (!loginResponse.accessToken) {
+        return res.status(403).send({ message: 'No token found!', errorCode: 'user' });
+      }
+
+      // Decode token and lookup full user doc
+      jwt.verify(loginResponse.accessToken, process.env.JWT_SECRET_KEY, async (e, decoded) => {
+        if (e) {
+          return authJwt.catchTokenError(e, res);
+        }
+
+        const userResponse = await this.service.getOne(decoded.id);
+
+        const response = {
+          ...loginResponse,
+          ...userResponse.data
+        };
+
+        return res.status(200).send(response);
+      });
     } catch (e) {
       return next(e);
     }

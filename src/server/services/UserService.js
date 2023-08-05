@@ -25,6 +25,7 @@ class UserService {
     }
   };
 
+  // Look up user, validate pw, create refresh token
   login = async (username, password) => {
     try {
       // Mongoose returns null for .findOne query with no matches
@@ -36,8 +37,6 @@ class UserService {
       }
 
       // process login
-      await user.populate(['roles', 'calendarSettings.calendar']).execPopulate();
-
       const validated = await user.validatePassword(password);
 
       if (!validated) {
@@ -48,26 +47,32 @@ class UserService {
       }
 
       // If password is valid, create JWT token
-      const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY, {
+      const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
         expiresIn: Number(process.env.JWT_EXPIRATION)
       });
 
       // Create refresh token
       const refreshToken = await this.refreshTokenService.create(user.id);
 
-      const userResponse = new HttpResponse(user);
       const refreshTokenResponse = new HttpResponse(refreshToken);
 
       const response = {
-        user: userResponse.data,
-        refreshToken: refreshTokenResponse.data,
-        accessToken
+        accessToken,
+        refreshToken: refreshTokenResponse.data
       };
 
       return response;
     } catch (e) {
       throw e;
     }
+  };
+
+  getOne = async (userId) => {
+    // Retrieve user doc and populate referenced fields
+    // Mongoose returns null for .findById query with no matches
+    const response = await this.model.findById(userId).populate(['roles', 'calendarSettings.calendar']);
+
+    return new HttpResponse(response);
   };
 
   refreshToken = async (requestToken) => {

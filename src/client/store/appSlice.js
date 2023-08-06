@@ -49,12 +49,10 @@ export const deserializedRbcSelectionSelector = createSelector([selectRbcSelecti
     ? { ...selectedEvent, start: new Date(selectedEvent.start), end: new Date(selectedEvent.end) }
     : null;
 
-  const result = {
+  return {
     slot: deserializedSlot,
     event: deserializedEvent
   };
-
-  return result;
 });
 
 //
@@ -62,21 +60,21 @@ export const deserializedRbcSelectionSelector = createSelector([selectRbcSelecti
 //
 
 export const onSelectSlot = (serializedSlot) => (dispatch) => {
-  const newState = {
-    slot: serializedSlot,
-    event: null
-  };
-
-  dispatch(rbcSelectionUpdated(newState));
+  dispatch(
+    rbcSelectionUpdated({
+      slot: serializedSlot,
+      event: null
+    })
+  );
 };
 
 export const onSelectEvent = (serializedEvent) => (dispatch) => {
-  const newState = {
-    slot: null,
-    event: serializedEvent
-  };
-
-  dispatch(rbcSelectionUpdated(newState));
+  dispatch(
+    rbcSelectionUpdated({
+      slot: null,
+      event: serializedEvent
+    })
+  );
 };
 
 export const onSelectView = (view) => (dispatch) => {
@@ -84,12 +82,13 @@ export const onSelectView = (view) => (dispatch) => {
 };
 
 export const initCalendar = () => (dispatch) => {
-  // Set initial calendar slot
-  const newState = {
-    slot: getCurrentDaySlot(),
-    event: null
-  };
-
-  dispatch(rbcSelectionUpdated(newState));
   dispatch(rbcViewUpdated(defaultView));
+
+  // Set initial calendar slot
+  dispatch(
+    rbcSelectionUpdated({
+      slot: getCurrentDaySlot(),
+      event: null
+    })
+  );
 };

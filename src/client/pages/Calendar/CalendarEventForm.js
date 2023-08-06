@@ -142,39 +142,39 @@ const CalendarEventForm = () => {
 
   const onTitleBlur = (validationFunc, e) => {
     if (title['validateOnChange'] === false && isSubmitCalled === false) {
-      const newState = {
-        ...title,
-        validateOnChange: true,
-        error: validationFunc(title.value)
-      };
-
-      setTitle(newState);
+      setTitle((data) => {
+        return {
+          ...data,
+          validateOnChange: true,
+          error: validationFunc(data.value)
+        };
+      });
     }
     return;
   };
 
   const handleTitleChange = (validationFunc, e) => {
-    const newState = {
-      ...title,
-      value: e.target.value,
-      error: title['validateOnChange'] ? validationFunc(e.target.value) : ''
-    };
-
-    setTitle(newState);
+    setTitle((data) => {
+      return {
+        ...data,
+        value: e.target.value,
+        error: data['validateOnChange'] ? validationFunc(e.target.value) : ''
+      };
+    });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const clickedButtonId = event.target.id;
-    const titleError = validateFields.validateTitle(title.value);
+    const titleError = validateFields.validateTitle(title.value.trim());
 
-    if (titleError === false) {
-      // if no error, submit form
+    if (!titleError) {
+      // if no input errors, submit form
 
       // Check for valid end time
       if (!isValidEndTime(start, end)) {
-        alert('Input error: End time should be after start time!');
+        alert('Input error: End time cannot be before start time. Please try again.');
         return;
       }
 

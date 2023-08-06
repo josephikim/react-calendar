@@ -58,7 +58,7 @@ const AccountCalendarSettings = () => {
 
     if (settings.editMode === true && settings.validateOnChange === false) {
       setCalendarsSettings((data) => {
-        const newState = {
+        return {
           ...data,
           [id]: {
             ...data[id],
@@ -66,8 +66,6 @@ const AccountCalendarSettings = () => {
             error: validationFunc(data[id].value)
           }
         };
-
-        return newState;
       });
     }
   };
@@ -79,19 +77,17 @@ const AccountCalendarSettings = () => {
 
     if (id === 'newCalendar') {
       setNewCalendarSettings((data) => {
-        const newState = {
+        return {
           ...data,
           value,
           error: data.validateOnChange ? validationFunc(value) : null
         };
-
-        return newState;
       });
     } else {
       if (!calendarsSettings[id]) return;
 
       setCalendarsSettings((data) => {
-        const newState = {
+        return {
           ...data,
           [id]: {
             ...data[id],
@@ -99,8 +95,6 @@ const AccountCalendarSettings = () => {
             error: data[id].validateOnChange ? validationFunc(value) : null
           }
         };
-
-        return newState;
       });
     }
   };
@@ -110,15 +104,13 @@ const AccountCalendarSettings = () => {
     if (!calendarsSettings[id]) return;
 
     setCalendarsSettings((data) => {
-      const newState = {
+      return {
         ...data,
         [id]: {
           ...data[id],
           editMode: true
         }
       };
-
-      return newState;
     });
   };
 
@@ -132,7 +124,7 @@ const AccountCalendarSettings = () => {
     if (!calendarsSettings[id]) return;
 
     setCalendarsSettings((data) => {
-      const newState = {
+      return {
         ...data,
         [id]: {
           ...data[id],
@@ -142,8 +134,6 @@ const AccountCalendarSettings = () => {
           editMode: false
         }
       };
-
-      return newState;
     });
   };
 
@@ -181,7 +171,7 @@ const AccountCalendarSettings = () => {
 
     const trimmedCalendarName = newCalendarSettings.value.trim();
 
-    const inputError = validateFields.validateCalendarName(newCalendarSettings.value.trim());
+    const inputError = validateFields.validateCalendarName(trimmedCalendarName);
 
     if (inputError === false) {
       // no input errors, submit the form
@@ -200,13 +190,11 @@ const AccountCalendarSettings = () => {
     } else {
       // update state with input error
       setNewCalendarSettings((data) => {
-        const newState = {
+        return {
           ...data,
           validateOnChange: true,
           error: inputError
         };
-
-        return newState;
       });
     }
   };
@@ -230,9 +218,9 @@ const AccountCalendarSettings = () => {
     }
 
     // Check for calendar name input errors
-    const calendarNameInputError = validateFields.validateCalendarName(trimmedNewCalendarName);
+    const inputError = validateFields.validateCalendarName(trimmedNewCalendarName);
 
-    if (!calendarNameInputError) {
+    if (!inputError) {
       // no input errors, submit the form
       const data = {
         id,
@@ -249,31 +237,27 @@ const AccountCalendarSettings = () => {
           alert(`Error updating calendar: ${error.message ?? error.statusText}`);
           if (errorCode === 'calendar') {
             setCalendarsSettings((data) => {
-              const newState = {
+              return {
                 ...data,
                 [id]: {
                   ...data[id],
                   error: error.message
                 }
               };
-
-              return newState;
             });
           }
         });
     } else {
       // update state with input error
       setCalendarsSettings((data) => {
-        const newState = {
+        return {
           ...data,
           [id]: {
             ...data[id],
             validateOnChange: true,
-            error: calendarNameInputError
+            error: inputError
           }
         };
-
-        return newState;
       });
     }
   };

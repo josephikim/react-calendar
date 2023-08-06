@@ -64,26 +64,22 @@ const AccountUserSettings = () => {
       case 'username':
         if (usernameInput.validateOnChange === false) {
           setUsernameInput((data) => {
-            const newState = {
+            return {
               ...data,
               validateOnChange: true,
-              error: validationFunc(usernameInput.value)
+              error: validationFunc(data.value)
             };
-
-            return newState;
           });
         }
         break;
       case 'newPassword':
         if (newPasswordInput.validateOnChange === false) {
           setNewPasswordInput((data) => {
-            const newState = {
+            return {
               ...data,
               validateOnChange: true,
-              error: validationFunc(newPasswordInput.value)
+              error: validationFunc(data.value)
             };
-
-            return newState;
           });
         }
         break;
@@ -100,35 +96,29 @@ const AccountUserSettings = () => {
     switch (name) {
       case 'username':
         setUsernameInput((data) => {
-          const newState = {
+          return {
             ...data,
             value,
             error: data.validateOnChange ? validationFunc(value) : null
           };
-
-          return newState;
         });
         break;
       case 'password':
         setPasswordInput((data) => {
-          const newState = {
+          return {
             ...data,
             value,
             error: data.validateOnChange ? validationFunc(value) : null
           };
-
-          return newState;
         });
         break;
       case 'newPassword':
         setNewPasswordInput((data) => {
-          const newState = {
+          return {
             ...data,
             value,
             error: data.validateOnChange ? validationFunc(value) : null
           };
-
-          return newState;
         });
         break;
       default:
@@ -137,27 +127,21 @@ const AccountUserSettings = () => {
   };
 
   const handleEdit = (id) => {
-    const newState = {};
-
     switch (id) {
       case 'username':
         setUsernameInput((data) => {
-          const newState = {
+          return {
             ...data,
             editMode: true
           };
-
-          return newState;
         });
         break;
       case 'password':
         setPasswordInput((data) => {
-          const newState = {
+          return {
             ...data,
             editMode: true
           };
-
-          return newState;
         });
         break;
       default:
@@ -171,7 +155,7 @@ const AccountUserSettings = () => {
         setUsernameInput((data) => {
           return {
             ...initialState.usernameInput,
-            value: usernameInput.value
+            value: username
           };
         });
         break;
@@ -195,22 +179,22 @@ const AccountUserSettings = () => {
   const handleSubmitUsername = (event) => {
     event.preventDefault();
 
-    const trimmedUsername = usernameInput.value.trim();
+    const newUsername = usernameInput.value;
 
     // Check for no change in username
-    if (trimmedUsername === username) {
+    if (newUsername === username) {
       alert('New username cannot match previous username.');
       return;
     }
 
     // Check for username input errors
-    const usernameInputError = validateFields.validateUsername(trimmedUsername);
+    const inputError = validateFields.validateUsername(newUsername);
 
-    if (!usernameInputError) {
+    if (!inputError) {
       // no input errors, submit the form
       const data = {
         userId,
-        username: trimmedUsername
+        username: newUsername
       };
 
       dispatch(updateUser(data))
@@ -234,7 +218,7 @@ const AccountUserSettings = () => {
         return {
           ...data,
           validateOnChange: true,
-          error: usernameInputError
+          error: inputError
         };
       });
     }
@@ -243,38 +227,31 @@ const AccountUserSettings = () => {
   const handleSubmitPassword = (event) => {
     event.preventDefault();
 
-    const trimmedPassword = passwordInput.value.trim();
-    const trimmedNewPassword = newPasswordInput.value.trim();
-
     // Check for no change in password
-    if (trimmedPassword === trimmedNewPassword) {
+    if (passwordInput.value === newPasswordInput.value) {
       alert('New password cannot match current password.');
       return;
     }
 
     // check for password input errors
-    const passwordError = validateFields.validatePassword(trimmedNewPassword);
+    const inputError = validateFields.validatePassword(newPasswordInput.value);
 
-    if (passwordError === false) {
+    if (!inputError) {
       // no input errors, submit the form
       const data = {
         userId,
-        password: trimmedPassword,
-        newPassword: trimmedNewPassword
+        password: passwordInput.value,
+        newPassword: newPasswordInput.value
       };
 
       dispatch(updateUser(data))
         .then((res) => {
           alert(`Successfully updated password`);
-          setPasswordInput((data) => {
-            return {
-              ...initialState.passwordInput
-            };
+          setPasswordInput({
+            ...initialState.passwordInput
           });
-          setNewPasswordInput((data) => {
-            return {
-              ...initialState.newPasswordInput
-            };
+          setNewPasswordInput({
+            ...initialState.newPasswordInput
           });
         })
         .catch((e) => {
@@ -294,7 +271,7 @@ const AccountUserSettings = () => {
         return {
           ...data,
           validateOnChange: true,
-          error: passwordError
+          error: inputError
         };
       });
     }

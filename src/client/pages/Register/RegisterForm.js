@@ -38,26 +38,22 @@ const RegisterForm = () => {
       case 'username':
         if (username.validateOnChange === false) {
           setUsername((data) => {
-            const newState = {
+            return {
               ...data,
               validateOnChange: true,
-              error: validationFunc(username.value)
+              error: validationFunc(data.value)
             };
-
-            return newState;
           });
         }
         break;
       case 'password':
         if (password.validateOnChange === false) {
           setPassword((data) => {
-            const newState = {
+            return {
               ...data,
               validateOnChange: true,
-              error: validationFunc(password.value)
+              error: validationFunc(data.value)
             };
-
-            return newState;
           });
         }
         break;
@@ -74,34 +70,28 @@ const RegisterForm = () => {
     switch (name) {
       case 'username':
         setUsername((data) => {
-          const newState = {
+          return {
             ...data,
             value,
             error: data.validateOnChange ? validationFunc(value) : null
           };
-
-          return newState;
         });
         break;
       case 'password':
         setPassword((data) => {
-          const newState = {
+          return {
             ...data,
             value,
             error: data.validateOnChange ? validationFunc(value) : null
           };
-
-          return newState;
         });
         break;
       case 'passwordConfirm':
         setPasswordConfirm((data) => {
-          const newState = {
+          return {
             ...data,
             value
           };
-
-          return newState;
         });
         break;
       default:
@@ -112,15 +102,15 @@ const RegisterForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const usernameError = validateFields.validateUsername(username.value.trim());
-    const passwordError = validateFields.validatePassword(password.value.trim());
-    const passwordConfirmError = validateFields.validatePasswordConfirm(password.value, passwordConfirm.value.trim());
+    const usernameError = validateFields.validateUsername(username.value);
+    const passwordError = validateFields.validatePassword(password.value);
+    const passwordConfirmError = validateFields.validatePasswordConfirm(password.value, passwordConfirm.value);
 
     if ([usernameError, passwordError, passwordConfirmError].every((e) => e === false)) {
       // no input errors, submit the form
       const data = {
-        username: username.value.trim(),
-        password: password.value.trim()
+        username: username.value,
+        password: password.value
       };
 
       dispatch(registerUser(data)).catch((e) => {
@@ -133,22 +123,18 @@ const RegisterForm = () => {
           switch (errorCode) {
             case 'username':
               setUsername((data) => {
-                const newState = {
+                return {
                   ...data,
                   error: error.message
                 };
-
-                return newState;
               });
               break;
             case 'password':
               setPassword((data) => {
-                const newState = {
+                return {
                   ...data,
                   error: error.message
                 };
-
-                return newState;
               });
               break;
             default:
@@ -160,36 +146,30 @@ const RegisterForm = () => {
       // update state with input errors
       if (usernameError) {
         setUsername((data) => {
-          const newState = {
+          return {
             ...data,
             validateOnChange: true,
             error: usernameError
           };
-
-          return newState;
         });
       }
 
       if (passwordError) {
         setPassword((data) => {
-          const newState = {
+          return {
             ...data,
             validateOnChange: true,
             error: passwordError
           };
-
-          return newState;
         });
       }
 
       if (passwordConfirmError) {
         setPasswordConfirm((data) => {
-          const newState = {
+          return {
             ...data,
             error: passwordConfirmError
           };
-
-          return newState;
         });
       }
     }

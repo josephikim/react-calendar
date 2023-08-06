@@ -41,8 +41,7 @@ class UserService {
 
       if (!validated) {
         throw new AuthorizationError('Invalid password', {
-          errorCode: 'password',
-          accessToken: null
+          errorCode: 'password'
         });
       }
 
@@ -56,12 +55,10 @@ class UserService {
 
       const refreshTokenResponse = new HttpResponse(refreshToken);
 
-      const response = {
+      return {
         accessToken,
         refreshToken: refreshTokenResponse.data
       };
-
-      return response;
     } catch (e) {
       throw e;
     }

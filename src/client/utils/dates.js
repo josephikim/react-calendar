@@ -18,20 +18,20 @@ export const getDayEnd = (date) => {
   return end;
 };
 
-// returns given date with time at first hour following current hour
+// returns new date with time at current hour
 export const getSmartStart = (date) => {
   const start = new Date(date);
   const current = new Date();
-  start.setHours(current.getHours() + 1, 0, 0, 0);
+  start.setHours(current.getHours(), 0, 0, 0);
   return start;
 };
 
-// returns given date with time at second hour following current hour
+// returns new date with time at one hour following current hour
 export const getSmartEnd = (date) => {
   const end = new Date(date);
   const current = new Date();
   end.setDate(end.getDate() - 1);
-  end.setHours(current.getHours() + 2, 0, 0, 0);
+  end.setHours(current.getHours() + 1, 0, 0, 0);
   return end;
 };
 

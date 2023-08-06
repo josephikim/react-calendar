@@ -295,9 +295,7 @@ const CalendarEventForm = () => {
   const handleAllDayChange = (event) => {
     const isChecked = event.target.checked;
 
-    if (!isChecked) {
-      setIsAllDay(isChecked);
-    }
+    setIsAllDay(isChecked);
   };
 
   const handleTimeChange = (id, timeStr) => {

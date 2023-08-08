@@ -1,10 +1,8 @@
-import CalendarService from './CalendarService';
 import HttpResponse from 'server/utils/httpResponse';
 
 class EventService {
-  constructor(model, calendarModel) {
+  constructor(model) {
     this.model = model;
-    this.calendarService = new CalendarService(calendarModel);
   }
 
   create = async (data) => {
@@ -28,14 +26,16 @@ class EventService {
     }
   };
 
-  update = async (id, data) => {
+  update = async (data) => {
     try {
-      const _obj = {
+      const update = {
         ...data
       };
 
+      delete update.id;
+
       // Mongoose returns the modified document (or null) for .findByIdAndUpdate query with option 'new: true'
-      const result = await this.model.findByIdAndUpdate(id, _obj, { new: true });
+      const result = await this.model.findByIdAndUpdate(data.id, update, { new: true });
 
       return new HttpResponse(result);
     } catch (e) {

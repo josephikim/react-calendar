@@ -41,7 +41,7 @@ class EventController {
 
   update = async (req, res, next) => {
     try {
-      const response = await this.service.update(req.params.id, req.body);
+      const response = await this.service.update(req.body);
 
       return res.status(response.statusCode).send(response.data);
     } catch (e) {

@@ -1,16 +1,12 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Row, Col, Button } from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
+import { updateCalendarSettings } from 'client/store/calendarsSlice';
 import CalendarToggleMenuItem from './CalendarToggleMenuItem';
-import { updateCalendar } from 'client/store/calendarsSlice';
-
 import './CalendarToggleMenu.css';
 
-const CalendarToggleMenu = () => {
+const CalendarToggleMenu = ({ calendars, calendarIds }) => {
   const dispatch = useDispatch();
-
-  const calendars = useSelector((state) => state.calendars.byId);
-  const calendarIds = useSelector((state) => state.calendars.allIds);
 
   // Set visibility=true for all calendars
   const handleSelectAll = (event) => {
@@ -23,8 +19,6 @@ const CalendarToggleMenu = () => {
         ...calendars[id],
         visibility: true
       };
-
-      newState[id] = calendarState;
     });
 
     dispatch(updateCalendar(newState)).catch((e) => {
@@ -33,8 +27,11 @@ const CalendarToggleMenu = () => {
     });
   };
 
-  // prepare data for render
-  const orderedCalendarIds = [...calendarIds]
+  // order calendars for render:
+  // 1. system cals
+  // 2. user default cal
+  // 3. remaining user cals
+  const orderedCalendarIds = Object.keys(calendars)
     .sort((a, b) => calendars[b].userDefault - calendars[a].userDefault)
     .sort((a, b) => (calendars[b].user_id === 'system') - (calendars[a].user_id === 'system'));
 
@@ -46,21 +43,13 @@ const CalendarToggleMenu = () => {
         </Col>
       </Row>
 
-      {orderedCalendarIds.map((id) => (
-        <CalendarToggleMenuItem
-          id={id}
-          key={id}
-          visibility={calendars[id].visibility}
-          name={calendars[id].name}
-          color={calendars[id].color}
-          userDefault={calendars[id].userDefault}
-          isSystemCalendar={calendars[id].user_id === 'system'}
-        />
+      {orderedCalendarIds.map((calendarId) => (
+        <CalendarToggleMenuItem id={calendarId} key={calendarId} calendar={calendars[calendarId]} />
       ))}
 
       <Row>
         <Col>
-          <Button type="button" id="select-all-btn" variant="primary" onClick={(e) => handleSelectAll(e)}>
+          <Button type="button" id="select-all-btn" variant="primary" onClick={(e) => handleToggleAll(e)}>
             Select All
           </Button>
         </Col>

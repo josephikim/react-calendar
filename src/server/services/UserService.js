@@ -1,18 +1,14 @@
 import jwt from 'jsonwebtoken';
 import RefreshTokenService from './RefreshTokenService';
 import RoleService from './RoleService';
-import CalendarService from './CalendarService';
-import EventService from './EventService';
 import { AuthorizationError, NotFoundError } from 'server/utils/userFacingErrors';
 import HttpResponse from 'server/utils/httpResponse';
 
 class UserService {
-  constructor(model, refreshTokenModel, roleModel, calendarModel, eventModel) {
+  constructor(model, refreshTokenModel, roleModel) {
     this.model = model;
     this.refreshTokenService = new RefreshTokenService(refreshTokenModel);
     this.roleService = new RoleService(roleModel);
-    this.calendarService = new CalendarService(calendarModel);
-    this.eventService = new EventService(eventModel);
   }
 
   create = async (data) => {
@@ -69,7 +65,22 @@ class UserService {
     // Mongoose returns null for .findById query with no matches
     const response = await this.model.findById(userId).populate(['roles', 'calendarSettings.calendar']);
 
-    return new HttpResponse(response);
+    const httpResponse = new HttpResponse(response);
+
+    const flattenedCalendarSettings = httpResponse.data.calendarSettings.map((entry) => {
+      return {
+        id: entry.calendar.id,
+        name: entry.calendar.name,
+        user_id: entry.calendar.user_id,
+        userDefault: entry.userDefault,
+        visibility: entry.visibility,
+        color: entry.color
+      };
+    });
+
+    httpResponse.data.calendarSettings = flattenedCalendarSettings;
+
+    return httpResponse.data;
   };
 
   refreshToken = async (requestToken) => {
@@ -150,31 +161,51 @@ class UserService {
 
   updateCalendarSettings = async (userId, data) => {
     try {
-      // Mongoose returns the modified document (or null) for .findById query
-      const user = await this.model.findById(userId);
+      const calendarSettingsKeys = Object.keys(this.model.schema.tree.calendarSettings[0]);
+
+      const diffedData = {};
+
+      calendarSettingsKeys.forEach((key) => {
+        diffedData[key] = data[key];
+      });
+
+      Object.keys(diffedData).forEach((key) => {
+        if (diffedData[key] === undefined) {
+          delete diffedData[key];
+        }
+      });
+
+      const update = {};
+
+      Object.keys(diffedData).forEach((key) => {
+        update[`calendarSettings.$[i].${key}`] = diffedData[key];
+      });
+
+      const user = await this.model.findOneAndUpdate(
+        { _id: userId },
+        { $set: update },
+        { arrayFilters: [{ 'i.calendar': data.id }], new: true }
+      );
 
       if (!user) {
-        throw new NotFoundError('No matching user found');
+        // User not found
+        throw new NotFoundError('Invalid user id');
       }
 
-      // update password
-      if (data.password) {
-        const validated = await user.validatePassword(data.password);
-        if (!validated) {
-          throw new AuthorizationError('Invalid password. Please try again.', { errorCode: 'password' });
-        }
+      const httpResponse = new HttpResponse(user.calendarSettings);
 
-        user.password = data.newPassword || '';
-      }
+      const flattenedCalendarSettings = httpResponse.data.map((entry) => {
+        return {
+          id: entry.calendar,
+          userDefault: entry.userDefault,
+          visibility: entry.visibility,
+          color: entry.color
+        };
+      });
 
-      // update username
-      if (data.username) {
-        user.username = data.username;
-      }
+      httpResponse.data = flattenedCalendarSettings;
 
-      const result = await user.save();
-
-      return new HttpResponse(result);
+      return httpResponse;
     } catch (e) {
       throw e;
     }

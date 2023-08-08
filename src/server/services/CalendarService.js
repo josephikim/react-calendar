@@ -44,8 +44,12 @@ class CalendarService {
 
   update = async (calendarId, data) => {
     try {
+      const update = {
+        name: data.name
+      };
+
       // Mongoose returns the modified document (or null) for .findByIdAndUpdate query with option 'new: true'
-      const result = await this.model.findByIdAndUpdate(calendarId, data, { new: true });
+      const result = await this.model.findByIdAndUpdate(calendarId, update, { new: true });
 
       return new HttpResponse(result);
     } catch (e) {

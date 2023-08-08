@@ -43,7 +43,7 @@ class UserController {
 
         const response = {
           ...loginResponse,
-          ...userResponse.data
+          ...userResponse
         };
 
         return res.status(200).send(response);

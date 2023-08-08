@@ -13,8 +13,9 @@ const eventsSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
+    // accepts array of objects as payload
     eventsUpdated(state, action) {
-      const byId = {}; // convert array of objects to POJO
+      const byId = {};
       const allIds = [];
 
       action.payload.forEach((element) => {
@@ -25,6 +26,7 @@ const eventsSlice = createSlice({
       state.byId = byId;
       state.allIds = allIds;
     },
+    // accepts object as payload
     eventAdded(state, action) {
       state.byId = {
         ...state.byId,
@@ -32,6 +34,7 @@ const eventsSlice = createSlice({
       };
       state.allIds = [...state.allIds, action.payload.id];
     },
+    // accepts object as payload
     eventUpdated(state, action) {
       state.byId = {
         ...state.byId,

@@ -11,22 +11,18 @@ const calendarsSlice = createSlice({
   name: 'calendars',
   initialState,
   reducers: {
+    // accepts array of objects as payload
     calendarsUpdated(state, action) {
-      // accepts array of objects
       const byId = {};
       const allIds = [];
 
       action.payload.forEach((element) => {
-        byId[element.calendar.id] = {
-          id: element.calendar.id,
-          color: element.color,
-          visibility: element.visibility,
-          userDefault: element.userDefault,
-          name: element.calendar.name,
-          user_id: element.calendar.user_id
+        byId[element.id] = {
+          ...state.byId[element.id],
+          ...element
         };
 
-        allIds.push(element.calendar.id);
+        allIds.push(element.id);
       });
 
       state.byId = byId;
@@ -75,10 +71,19 @@ export const createCalendar = (data) => async (dispatch) => {
 
 export const updateCalendar = (data) => async (dispatch) => {
   try {
-    const payload = _.omit(data, ['id']);
     const res = await userApi.put(`/calendars/${data.id}`, payload);
 
     dispatch(calendarUpdated(res.data));
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const updateCalendarSettings = (data) => async (dispatch) => {
+  try {
+    const res = await userApi.put(`/calendars/${data.id}/settings`, data);
+
+    dispatch(calendarsUpdated(res.data));
   } catch (e) {
     throw e;
   }

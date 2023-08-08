@@ -2,9 +2,9 @@ import React from 'react';
 
 import 'client/styles/Checkbox.css';
 
-const Checkbox = (props) => (
+const Checkbox = ({ id, checked, handleChange }) => (
   <div className="Checkbox">
-    <input type="checkbox" id={props.id} checked={props.checked} onChange={(event) => props.handleChange(event)} />
+    <input type="checkbox" id={id} checked={checked} onChange={(event) => handleChange(event)} />
   </div>
 );
 

@@ -124,7 +124,7 @@ const Calendar = () => {
       return (
         <Row>
           <Col xs={12} lg={2}>
-            <CalendarToggleMenu />
+            <CalendarToggleMenu calendars={calendars} />
           </Col>
           <Col xs={12} lg={7}>
             <ReactBigCalendar

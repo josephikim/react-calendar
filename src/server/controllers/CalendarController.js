@@ -48,6 +48,16 @@ class CalendarController {
     }
   };
 
+  updateSettings = async (req, res, next) => {
+    try {
+      const response = await this.userService.updateCalendarSettings(req.auth.user, req.body);
+
+      return res.status(response.statusCode).send(response.data);
+    } catch (e) {
+      return next(e);
+    }
+  };
+
   delete = async (req, res, next) => {
     try {
       const response = await this.service.delete(req.params.calendarId);

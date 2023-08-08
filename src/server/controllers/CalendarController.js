@@ -22,7 +22,7 @@ class CalendarController {
 
       const userResponse = await this.userService.getOne(req.auth.user);
 
-      return res.status(userResponse.statusCode).send(userResponse.data.calendarSettings);
+      return res.status(200).send(userResponse.calendarSettings);
     } catch (e) {
       return next(e);
     }

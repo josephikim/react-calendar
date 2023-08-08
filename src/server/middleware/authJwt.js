@@ -54,7 +54,7 @@ const verifyURIAuth = async (req, res, next) => {
       return next();
     }
 
-    case '/api/v1/calendars/:calendarId/': {
+    case '/api/v1/calendars/:calendarId': {
       // fetch target calendar
       const calendar = await calendarService.getOne(req.params.calendarId);
 

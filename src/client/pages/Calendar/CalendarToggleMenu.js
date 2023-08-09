@@ -8,25 +8,6 @@ import './CalendarToggleMenu.css';
 const CalendarToggleMenu = ({ calendars, calendarIds }) => {
   const dispatch = useDispatch();
 
-  // Set visibility=true for all calendars
-  const handleSelectAll = (event) => {
-    event.preventDefault();
-
-    const newState = {};
-
-    calendarIds.forEach((id) => {
-      const calendarState = {
-        ...calendars[id],
-        visibility: true
-      };
-    });
-
-    dispatch(updateCalendar(newState)).catch((e) => {
-      const error = e.response?.data ?? e;
-      alert(`Error updating visibility: ${error.message ?? error.statusText}`);
-    });
-  };
-
   // order calendars for render:
   // 1. system cals
   // 2. user default cal
@@ -46,14 +27,6 @@ const CalendarToggleMenu = ({ calendars, calendarIds }) => {
       {orderedCalendarIds.map((calendarId) => (
         <CalendarToggleMenuItem id={calendarId} key={calendarId} calendar={calendars[calendarId]} />
       ))}
-
-      <Row>
-        <Col>
-          <Button type="button" id="select-all-btn" variant="primary" onClick={(e) => handleToggleAll(e)}>
-            Select All
-          </Button>
-        </Col>
-      </Row>
     </div>
   );
 };

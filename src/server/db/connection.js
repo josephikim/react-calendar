@@ -21,7 +21,7 @@ mongoose
     useFindAndModify: false
   })
   .then(() => {
-    console.log('Successfully connected to MongoDB');
+    console.log('Connected to MongoDB');
     // initialize roles
     Role.countDocuments((err, count) => {
       if (count === 0) {

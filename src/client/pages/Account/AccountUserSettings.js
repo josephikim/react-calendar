@@ -199,7 +199,7 @@ const AccountUserSettings = () => {
 
       dispatch(updateUser(data))
         .then((res) => {
-          alert(`Successfully updated username`);
+          alert(`Updated username: ${data.username}`);
         })
         .catch((e) => {
           const error = e.response?.data ?? e;
@@ -246,7 +246,7 @@ const AccountUserSettings = () => {
 
       dispatch(updateUser(data))
         .then((res) => {
-          alert(`Successfully updated password`);
+          alert(`Updated password`);
           setPasswordInput({
             ...initialState.passwordInput
           });

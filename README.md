@@ -108,7 +108,7 @@ NOTE: Make sure you've created a `.env.development` file at the project root wit
 Once the workflow is complete, the following messages will appear in the terminal:
 
 ```text
-  Successfully connected to MongoDB
+  Connected to MongoDB
   added "user" to roles collection
   added "moderator" to roles collection
   added "admin" to roles collection

@@ -229,7 +229,7 @@ const AccountCalendarSettings = () => {
 
       dispatch(updateCalendar(data))
         .then(() => {
-          alert(`Successfully updated calendar: "${data.name}"`);
+          alert(`Updated calendar: "${data.name}"`);
         })
         .catch((e) => {
           const error = e.response?.data ?? e;

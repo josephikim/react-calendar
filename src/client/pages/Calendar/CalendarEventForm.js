@@ -192,7 +192,7 @@ const CalendarEventForm = () => {
         // Dispatch createEvent action
         dispatch(createEvent(update))
           .then(() => {
-            alert(`Successfully added new event: "${update.title}"`);
+            alert(`Added new event: "${update.title}"`);
           })
           .catch((e) => {
             const error = e.response?.data ?? e;
@@ -217,7 +217,7 @@ const CalendarEventForm = () => {
 
         dispatch(updateEvent(update))
           .then(() => {
-            alert(`Successfully updated event: "${update.title}"`);
+            alert(`Updated event: "${update.title}"`);
           })
           .catch((e) => {
             const error = e.response?.data ?? e;

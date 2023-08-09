@@ -71,7 +71,7 @@ export const createCalendar = (data) => async (dispatch) => {
 
 export const updateCalendar = (data) => async (dispatch) => {
   try {
-    const res = await userApi.put(`/calendars/${data.id}`, payload);
+    const res = await userApi.put(`/calendars/${data.id}`, data);
 
     dispatch(calendarUpdated(res.data));
   } catch (e) {

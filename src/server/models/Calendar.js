@@ -89,6 +89,23 @@ schema.post('save', async function () {
   }
 });
 
+// Delete calendar settings in corresponding user doc(s)
+schema.post('findOneAndDelete', async function (doc) {
+  try {
+    // system calendar deleted
+    if (doc.user_id === 'system') {
+      // delete calendar settings for all users
+      await User.updateMany({}, { $pull: { calendarSettings: { calendar: doc._id } } });
+    } else {
+      // user calendar deleted
+      // delete calendar settings for matching user
+      await User.updateOne({ _id: doc.user_id }, { $pull: { calendarSettings: { calendar: doc._id } } });
+    }
+  } catch (e) {
+    throw new Error(e);
+  }
+});
+
 // schema index
 schema.index({ name: 1, user_id: 1 }, { unique: true });
 

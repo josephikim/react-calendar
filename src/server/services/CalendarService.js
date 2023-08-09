@@ -60,7 +60,7 @@ class CalendarService {
   delete = async (calendarId) => {
     try {
       // Mongoose returns the matching document (or null) for .findByIdAndDelete query
-      const result = await this.model.findByIdAndDelete(id);
+      const result = await this.model.findByIdAndDelete(calendarId);
 
       if (!result) {
         const error = new Error('Calendar not found');

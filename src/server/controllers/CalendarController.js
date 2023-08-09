@@ -2,7 +2,7 @@ import CalendarService from 'server/services/CalendarService';
 import UserService from 'server/services/UserService';
 import db from 'server/models';
 
-const calendarService = new CalendarService(db.Calendar);
+const calendarService = new CalendarService(db.Calendar, db.User);
 const userService = new UserService(db.User);
 
 class CalendarController {
@@ -60,6 +60,18 @@ class CalendarController {
 
   delete = async (req, res, next) => {
     try {
+      const userResponse = await this.userService.getOne(req.auth.user);
+
+      const targetCalendarSettings = userResponse.calendarSettings.filter(
+        (entry) => entry.id === req.params.calendarId
+      );
+
+      if (targetCalendarSettings.userDefault === true) {
+        return res
+          .status(403)
+          .send({ message: 'Cannot delete default calendar. Please try again.', errorCode: 'calendar' });
+      }
+
       const response = await this.service.delete(req.params.calendarId);
 
       return res.status(response.statusCode).send(response.data);

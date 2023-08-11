@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, getState } from '@reduxjs/toolkit';
 import { calendarsUpdated } from './calendarsSlice';
 import { eventsUpdated } from './eventsSlice';
 import { userApi } from 'client/utils/axios';
@@ -36,6 +36,10 @@ const userSlice = createSlice({
 export const { idUpdated, usernameUpdated, accessTokenUpdated, refreshTokenUpdated, rolesUpdated } = userSlice.actions;
 
 export default userSlice.reducer;
+
+// State selectors
+const selectUserId = (state) => state.user.id;
+const selectUsername = (state) => state.user.username;
 
 //
 // Bound action creators
@@ -81,11 +85,15 @@ export const registerUser = (data) => async (dispatch) => {
   }
 };
 
-export const updateUser = (data) => async (dispatch) => {
+export const updateUser = (data) => async (dispatch, getState) => {
   try {
-    const res = await userApi.put(`/users/${data.userId}`, data);
+    const userId = selectUserId(getState());
+
+    const res = await userApi.put(`/users/${userId}`, data);
 
     dispatch(usernameUpdated(res.data.username));
+
+    return res.data;
   } catch (e) {
     throw e;
   }

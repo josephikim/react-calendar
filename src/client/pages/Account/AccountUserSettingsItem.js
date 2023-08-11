@@ -1,68 +1,212 @@
-import React from 'react';
-import { Row, Col, Form, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Row, Col, Button, Form } from 'react-bootstrap';
+import { getErrorMessage } from 'client/utils/errors';
 
 import './AccountUserSettingsItem.css';
 
-const AccountUserSettingsItem = (props) => {
-  const newPasswordComponent = props.id === 'newPassword';
-  const onBlur = props.onBlur ?? null;
+const AccountUserSettingsItem = ({ id, type, label, value, action, validation, confirmationRequired }) => {
+  const dispatch = useDispatch();
+  const [inputValue, setInputValue] = useState(value);
+  const [labelValue, setLabelValue] = useState(label);
+  const [editMode, setEditMode] = useState(false);
+  const [inputError, setInputError] = useState('');
+  const [validateOnChange, setValidateOnChange] = useState(false);
+  const [newInputValue, setNewInputValue] = useState('');
+  const [newEditMode, setNewEditMode] = useState(false);
+  const [newInputError, setNewInputError] = useState('');
+  const [newValidateOnChange, setNewValidateOnChange] = useState(false);
+
+  const handleChange = (e) => {
+    const targetName = e.target.name;
+    const targetValue = e.target.value;
+
+    if (targetName.startsWith('new-')) {
+      if (newValidateOnChange) {
+        setNewInputError(validation(targetValue));
+      }
+      setNewInputValue(targetValue);
+    } else {
+      if (validateOnChange) {
+        setInputError(validation(targetValue));
+      }
+      setInputValue(targetValue);
+    }
+  };
+
+  const handleSave = () => {
+    if (!confirmationRequired) {
+      if (inputValue === value) {
+        // no change in input
+        alert('No change detected. Please try again.');
+        return;
+      }
+      // check for input errors
+      const inputErrorFound = validation(inputValue);
+
+      if (inputErrorFound) {
+        setInputError(inputErrorFound);
+        setValidateOnChange(true);
+        return;
+      }
+    } else {
+      if (inputValue === newInputValue) {
+        // identical input and newInput
+        alert(`${id}s cannot match`);
+        return;
+      }
+
+      // check for input errors
+      const newInputErrorFound = validation(newInputValue);
+
+      if (newInputErrorFound) {
+        setNewInputError(newInputErrorFound);
+        setNewValidateOnChange(true);
+        return;
+      }
+    }
+
+    // no input errors, dispatch action
+    const data = {
+      [id]: inputValue
+    };
+
+    if (confirmationRequired) {
+      // format property name with camelcase
+      const newInputProperty = 'new' + id.charAt(0).toUpperCase() + id.slice(1);
+      data[newInputProperty] = newInputValue;
+    }
+
+    dispatch(action(data))
+      .then((res) => {
+        alert(`Updated ${id}`);
+
+        if (confirmationRequired) {
+          setNewEditMode(false);
+          setNewInputValue('');
+          setNewInputError('');
+          setNewValidateOnChange(false);
+          setLabelValue(label);
+        }
+        setEditMode(false);
+        setInputError('');
+        setValidateOnChange(false);
+      })
+      .catch((e) => {
+        const msg = getErrorMessage(e);
+        alert(`Error updating user: ${msg}`);
+        setInputError(msg);
+      });
+  };
+
+  const handleBlur = (e) => {
+    const targetName = e.target.name;
+
+    if (confirmationRequired && ['password'].includes(targetName)) return;
+
+    if (targetName.startsWith('new-')) {
+      if (!newValidateOnChange) {
+        setInputError(validation(newInputValue));
+        setNewValidateOnChange(true);
+      }
+    } else {
+      if (!validateOnChange) {
+        setInputError(validation(inputValue));
+        setValidateOnChange(true);
+      }
+    }
+  };
+
+  const handleEdit = () => {
+    if (confirmationRequired) {
+      setNewEditMode(true);
+      setLabelValue(`Confirm current ${id}`);
+      if (['password'].includes(id)) {
+        setInputValue('');
+      }
+    }
+    setEditMode(true);
+  };
+
+  const handleCancelEdit = () => {
+    if (confirmationRequired) {
+      setNewEditMode(false);
+      setLabelValue(label);
+      setNewInputValue('');
+      setNewInputError('');
+      setNewValidateOnChange(false);
+    }
+    setEditMode(false);
+    setInputValue(value);
+    setInputError('');
+    setValidateOnChange(false);
+  };
 
   return (
-    <div className="AccountUserSettingsItem">
+    <div className="user-settings-item">
       <Row>
-        <Col xs={12} md={2}></Col>
+        <Col md={2}></Col>
         <Col xs={12} md={10}>
-          <Form.Label htmlFor={props.id}>{props.label}</Form.Label>
+          <Row>
+            <Col xs={12}>
+              <label htmlFor={id}>{labelValue}</label>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12} md={7}>
+              <Form.Control
+                name={id}
+                type={type}
+                value={inputValue}
+                readOnly={!editMode}
+                onChange={(e) => handleChange(e)}
+                onBlur={(e) => handleBlur(e)}
+              />
+              {inputError && (
+                <div className="input-error text-danger">
+                  <small>{inputError}</small>
+                </div>
+              )}
+              {newEditMode && (
+                <>
+                  <label htmlFor={`new-${id}`}>{`New ${id}`}</label>
+                  <Form.Control
+                    name={`new-${id}`}
+                    type={type}
+                    value={newInputValue}
+                    onChange={(e) => handleChange(e)}
+                    onBlur={(e) => handleBlur(e)}
+                  />
+                  {newInputError && (
+                    <div className="new-input-error text-danger">
+                      <small>{newInputError}</small>
+                    </div>
+                  )}
+                </>
+              )}
+            </Col>
+            <Col xs={12} md={5}>
+              <div className="buttons-wrapper">
+                {!editMode && (
+                  <Button type="button" variant="primary" disabled={editMode} onClick={handleEdit}>
+                    Edit
+                  </Button>
+                )}
+                {editMode && (
+                  <>
+                    <Button type="button" variant="success" onClick={handleSave}>
+                      Save
+                    </Button>
+                    <Button type="button" variant="secondary" onClick={handleCancelEdit}>
+                      Cancel
+                    </Button>
+                  </>
+                )}
+              </div>
+            </Col>
+          </Row>
         </Col>
       </Row>
-
-      <Row className="threeColumn">
-        <Col xs={12} md={2} className="badges"></Col>
-        <Col xs={12} md={5}>
-          <Form.Group controlId={props.id}>
-            <Form.Control
-              name={props.id}
-              type={props.type}
-              value={props.value}
-              readOnly={!props.editMode}
-              onChange={(event) => props.onChange(event)}
-              onBlur={(event) => (props.id === 'password' ? undefined : onBlur(event))}
-            />
-          </Form.Group>
-        </Col>
-        <Col xs={12} md={5}>
-          {!newPasswordComponent && (
-            <div className="btnGroup">
-              {!props.editMode && (
-                <Button type="submit" name="editBtn" variant="primary" onClick={() => props.onEdit(props.id)}>
-                  Edit
-                </Button>
-              )}
-              {props.editMode && (
-                <Button type="submit" name="saveBtn" variant="success" onClick={(event) => props.onSubmit(event)}>
-                  Save
-                </Button>
-              )}
-              {props.editMode && (
-                <Button type="submit" name="cancelBtn" variant="secondary" onClick={() => props.onCancel(props.id)}>
-                  Cancel
-                </Button>
-              )}
-            </div>
-          )}
-        </Col>
-      </Row>
-
-      {props.error && (
-        <Row>
-          <Col xs={12} md={2}></Col>
-          <Col xs={12} md={10}>
-            <div className="error text-danger">
-              <small>{props.error}</small>
-            </div>
-          </Col>
-        </Row>
-      )}
     </div>
   );
 };

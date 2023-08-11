@@ -1,23 +1,28 @@
-.AccountUserSettingsItem label {
-  color: dodgerblue;
-}
-
-.AccountUserSettingsItem .threeColumn {
-  align-items: center;
+.user-settings-item {
   margin-bottom: 14px;
 }
 
-.AccountUserSettingsItem .threeColumn .form-group {
-  margin-bottom: 0;
+.user-settings-item label {
+  color: dodgerblue;
 }
 
-.AccountUserSettingsItem .btnGroup .btn {
-  width: 85px;
-  margin-right: 18px;
+.user-settings-item .form-control {
+  margin-bottom: 14px;
+}
+
+.user-settings-item .input-error,
+.user-settings-item .new-input-error {
+  margin: 8px 0;
+}
+
+.user-settings-item .buttons-wrapper .btn {
+  display: inline;
+  width: 75px;
+  margin-right: 10px;
 }
 
 @media screen and (max-width: 768px) {
-  .AccountUserSettingsItem .btnGroup {
-    margin-top: 24px;
+  .user-settings-item .buttons-wrapper {
+    margin-top: 10px;
   }
 }

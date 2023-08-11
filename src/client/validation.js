@@ -9,6 +9,9 @@ class ValidateFields {
   }
 
   validateUsername(username) {
+    if (validator.isEmpty(username)) {
+      return 'Username is required';
+    }
     if (!validator.isAlphanumeric(username)) {
       return 'Username should only contain letters and numbers';
     }
@@ -19,6 +22,9 @@ class ValidateFields {
   }
 
   validatePassword(password) {
+    if (validator.isEmpty(password)) {
+      return 'Password is required';
+    }
     if (!validator.isAlphanumeric(password)) {
       return 'Password should only contain letters and numbers';
     }
@@ -29,6 +35,9 @@ class ValidateFields {
   }
 
   validatePasswordConfirm(password, candidatePassword) {
+    if (validator.isEmpty(candidatePassword)) {
+      return 'Password confirmation is required';
+    }
     if (password !== candidatePassword) {
       return "Passwords don't match";
     }
@@ -36,6 +45,9 @@ class ValidateFields {
   }
 
   validateCalendarName(calendarName) {
+    if (validator.isEmpty(calendarName)) {
+      return 'Calendar name is required';
+    }
     if (!validator.matches(calendarName, /^[\w\-\s]*$/)) {
       return 'Calendar name should include letters, numbers and spaces only';
     }

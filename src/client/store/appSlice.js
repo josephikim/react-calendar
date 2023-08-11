@@ -24,7 +24,7 @@ export const { rbcSelectionUpdated, rbcViewUpdated } = appSlice.actions;
 
 export default appSlice.reducer;
 
-// Takes entire redux state as input (not just a state slice)
+// State selectors
 const selectRbcSelection = (state) => state.app.rbcSelection;
 
 //

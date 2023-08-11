@@ -44,6 +44,7 @@ app.use(function (err, req, res, next) {
       response[key] = value;
     }
   }
+  console.log({ response });
   res.status(status).send(response);
 });
 

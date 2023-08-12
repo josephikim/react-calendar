@@ -6,11 +6,12 @@ import { getErrorMessage } from 'client/utils/errors';
 import './AccountUserSettingsItem.css';
 
 const AccountUserSettingsItem = ({
+  userId,
   inputType,
   settingType,
   label,
   value,
-  action,
+  updateAction,
   validation,
   confirmationRequired
 }) => {
@@ -77,6 +78,7 @@ const AccountUserSettingsItem = ({
 
     // no input errors, dispatch action
     const data = {
+      userId,
       [settingType]: inputValue
     };
 
@@ -86,7 +88,7 @@ const AccountUserSettingsItem = ({
       data[newInputProperty] = newInputValue;
     }
 
-    dispatch(action(data))
+    dispatch(updateAction(data))
       .then(() => {
         alert(`Updated ${settingType}`);
 

@@ -6,27 +6,30 @@ import AccountUserSettingsItem from './AccountUserSettingsItem';
 import './AccountUserSettings.css';
 
 const AccountUserSettings = () => {
+  const userId = useSelector((state) => state.user.id);
   const username = useSelector((state) => state.user.username);
 
   return (
     <div className="user-settings">
       <AccountUserSettingsItem
+        userId={userId}
         inputType="text"
         settingType="username"
         label="Username"
         value={username}
         validation={validateFields.validateUsername}
-        action={updateUser}
+        updateAction={updateUser}
         confirmationRequired={false}
       />
 
       <AccountUserSettingsItem
+        userId={userId}
         inputType="password"
         settingType="password"
         label="Password"
         value="****"
         validation={validateFields.validatePassword}
-        action={updateUser}
+        updateAction={updateUser}
         confirmationRequired={true}
       />
     </div>

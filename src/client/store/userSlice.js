@@ -1,4 +1,4 @@
-import { createSlice, getState } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { calendarsUpdated } from './calendarsSlice';
 import { eventsUpdated } from './eventsSlice';
 import { userApi } from 'client/utils/axios';
@@ -85,11 +85,9 @@ export const registerUser = (data) => async (dispatch) => {
   }
 };
 
-export const updateUser = (data) => async (dispatch, getState) => {
+export const updateUser = (data) => async (dispatch) => {
   try {
-    const userId = selectUserId(getState());
-
-    const res = await userApi.put(`/users/${userId}`, data);
+    const res = await userApi.put(`/users/${data.userId}`, data);
 
     dispatch(usernameUpdated(res.data.username));
   } catch (e) {

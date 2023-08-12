@@ -61,7 +61,7 @@ const AccountCalendarSettingsItem = ({
       // create calendar
       dispatch(createAction(data))
         .then(() => {
-          alert(`Created ${data[settingType]}`);
+          alert(`Created calendar: ${data[settingType]}`);
           setInputValue('');
           setInputError('');
           setValidateOnChange(false);
@@ -79,7 +79,7 @@ const AccountCalendarSettingsItem = ({
 
       dispatch(updateAction(data))
         .then(() => {
-          alert(`Updated ${data[settingType]}`);
+          alert(`Updated calendar: ${data[settingType]}`);
 
           if (fixedEditMode == null) {
             setEditMode(false);
@@ -102,11 +102,11 @@ const AccountCalendarSettingsItem = ({
 
     dispatch(deleteAction(calendar.id))
       .then(() => {
-        alert(`Deleted ${calendar.name}`);
+        alert(`Deleted calendar: ${calendar.name}`);
       })
       .catch((e) => {
         const msg = getErrorMessage(e);
-        alert(`Error deleting ${calendar?.name}: ${msg}`);
+        alert(`Error deleting calendar: ${calendar?.name}: ${msg}`);
         setInputError(msg);
       });
   };

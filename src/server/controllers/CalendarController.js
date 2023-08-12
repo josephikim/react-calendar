@@ -28,16 +28,6 @@ class CalendarController {
     }
   };
 
-  getUserCalendars = async (req, res, next) => {
-    try {
-      const response = await this.service.getUserCalendars(req.auth.user);
-
-      return res.status(response.statusCode).send(response.data);
-    } catch (e) {
-      return next(e);
-    }
-  };
-
   update = async (req, res, next) => {
     try {
       const response = await this.service.update(req.params.calendarId, req.body);

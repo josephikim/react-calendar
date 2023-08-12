@@ -1,101 +1,213 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Row, Col, Form, Badge, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Row, Col, Button, Form, Badge } from 'react-bootstrap';
+import { getErrorMessage } from 'client/utils/errors';
 
 import './AccountCalendarSettingsItem.css';
 
-const AccountCalendarSettingsItem = (props) => {
-  const roles = useSelector((state) => state.user.roles);
+const AccountCalendarSettingsItem = ({
+  inputType,
+  settingType,
+  label,
+  placeholder,
+  calendar,
+  createAction,
+  updateAction,
+  deleteAction,
+  validation,
+  fixedEditMode
+}) => {
+  const dispatch = useDispatch();
+  const [inputValue, setInputValue] = useState(calendar ? calendar[settingType] : '');
+  const [labelValue, setLabelValue] = useState(label || '');
+  const [editMode, setEditMode] = useState(fixedEditMode ?? false);
+  const [inputError, setInputError] = useState('');
+  const [validateOnChange, setValidateOnChange] = useState(false);
 
-  const isAdminUser = roles.some((role) => role === 'admin');
-  const error = props.error;
-  const onBlur = props.onBlur;
-  const readOnly = !props.editMode;
+  const isValidEditTarget = calendar && calendar.user_id !== 'system';
+  const isValidDeleteTarget = calendar && calendar.user_id !== 'system' && calendar.userDefault === false;
+
+  const handleChange = (e) => {
+    const targetValue = e.target.value;
+
+    if (validateOnChange) {
+      setInputError(validation(targetValue));
+    }
+    setInputValue(targetValue);
+  };
+
+  const handleSave = () => {
+    // check for input errors
+    const inputErrorFound = validation(inputValue);
+
+    if (inputErrorFound) {
+      setInputError(inputErrorFound);
+      setValidateOnChange(true);
+      return;
+    }
+
+    if (calendar && calendar[settingType] === inputValue) {
+      // no change in input
+      alert('No change detected. Please try again.');
+      return;
+    }
+
+    // no input errors, dispatch action
+    const data = {
+      [settingType]: inputValue
+    };
+
+    if (calendar == null) {
+      // create calendar
+      dispatch(createAction(data))
+        .then((res) => {
+          alert(`Created ${res.data}`);
+
+          setInputError('');
+          setValidateOnChange(false);
+        })
+        .catch((e) => {
+          const msg = getErrorMessage(e);
+          alert(`Error creating calendar: ${msg}`);
+          setInputError(msg);
+        });
+    } else {
+      // update calendar
+      dispatch(updateAction(data))
+        .then((res) => {
+          alert(`Updated ${res.data}`);
+
+          if (fixedEditMode == null) {
+            setEditMode(false);
+          }
+          setInputError('');
+          setValidateOnChange(false);
+        })
+        .catch((e) => {
+          const msg = getErrorMessage(e);
+          alert(`Error updating calendar: ${msg}`);
+          setInputError(msg);
+        });
+    }
+  };
+
+  const handleDelete = () => {
+    if (!isValidDeleteTarget) return;
+
+    if (confirm(`Are you sure you want to delete ${calendar.name}?`) == false) {
+      return;
+    }
+
+    dispatch(deleteAction(calendar.id))
+      .then((res) => {
+        alert(`Deleted ${res.name}`);
+
+        setEditMode(false);
+        setInputError('');
+        setValidateOnChange(false);
+      })
+      .catch((e) => {
+        const msg = getErrorMessage(e);
+        alert(`Error deleting ${calendar?.name}: ${msg}`);
+        setInputError(msg);
+      });
+  };
+
+  const handleBlur = (e) => {
+    const targetName = e.target.name;
+
+    if (!validateOnChange) {
+      setInputError(validation(inputValue));
+      setValidateOnChange(true);
+    }
+  };
+
+  const handleEdit = () => {
+    setEditMode(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditMode(false);
+    setInputValue(calendar ? calendar[settingType] : '');
+    setInputError('');
+    setValidateOnChange(false);
+  };
 
   return (
-    <div className="AccountCalendarSettingsItem">
+    <div className="calendar-settings-item">
       <Row>
-        <Col xs={12} md={2}></Col>
-        <Col xs={12} md={10}>
-          <Form.Label htmlFor={props.id}>{props.label}</Form.Label>
-        </Col>
-      </Row>
-
-      <Row className="threeColumn">
-        <Col xs={12} md={2} className="badges">
-          {props.isDefaultCalendar && (
-            <Badge pill variant="secondary">
-              Default
-            </Badge>
-          )}
-          {props.isSystemCalendar && (
-            <Badge pill variant="secondary">
-              System
-            </Badge>
-          )}
-        </Col>
-        <Col xs={12} md={5}>
-          <Form.Group controlId={props.id}>
-            <Form.Control
-              type={props.type}
-              placeholder={props.placeholder}
-              value={props.value}
-              readOnly={readOnly}
-              onBlur={onBlur}
-              onChange={(event) => props.onChange(event)}
-            />
-          </Form.Group>
-        </Col>
-        <Col xs={12} md={5}>
-          <div className="btnGroup">
-            {!props.editMode && (
-              <Button
-                type="submit"
-                name="editBtn"
-                variant="primary"
-                disabled={props.isSystemCalendar && isAdminUser === false}
-                onClick={() => props.onEdit(props.id)}
-              >
-                Edit
-              </Button>
-            )}
-            {!props.editMode &&
-              !props.isDefaultCalendar &&
-              props.id !== 'newCalendar' &&
-              !(props.isSystemCalendar && isAdminUser === false) && (
-                <Button type="submit" name="deleteBtn" variant="danger" onClick={() => props.onDelete(props.id)}>
-                  Delete
-                </Button>
+        <Col md={2}>
+          {calendar && (
+            <div className="badges-container">
+              {calendar.userDefault === true && (
+                <Badge pill variant="primary">
+                  Default
+                </Badge>
               )}
-            {props.editMode && (
-              <Button
-                type="submit"
-                name="saveBtn"
-                variant="success"
-                onClick={(event) => props.onSubmit(event, props.id)}
-              >
-                Save
-              </Button>
-            )}
-            {props.editMode && props.id !== 'newCalendar' && (
-              <Button type="submit" name="cancelBtn" variant="secondary" onClick={() => props.onCancel(props.id)}>
-                Cancel
-              </Button>
-            )}
-          </div>
+              {calendar.user_id === 'system' && (
+                <Badge pill variant="secondary">
+                  System
+                </Badge>
+              )}
+            </div>
+          )}
+        </Col>
+        <Col xs={12} md={10}>
+          {label && (
+            <Row>
+              <Col xs={12}>
+                <label htmlFor={settingType}>{labelValue}</label>
+              </Col>
+            </Row>
+          )}
+          <Row>
+            <Col xs={12} md={7}>
+              <Form.Control
+                name={settingType}
+                type={inputType}
+                value={inputValue}
+                readOnly={!editMode}
+                onChange={(e) => handleChange(e)}
+                onBlur={(e) => handleBlur(e)}
+              />
+              {inputError && (
+                <div className="input-error text-danger">
+                  <small>{inputError}</small>
+                </div>
+              )}
+            </Col>
+            <Col xs={12} md={5}>
+              <div className="buttons-container">
+                {!editMode && isValidEditTarget && (
+                  <Button type="button" variant="primary" disabled={editMode} onClick={handleEdit}>
+                    Edit
+                  </Button>
+                )}
+                {editMode && (
+                  <>
+                    <Button type="button" variant="success" onClick={handleSave}>
+                      Save
+                    </Button>
+
+                    {fixedEditMode == null && (
+                      <>
+                        {isValidDeleteTarget && (
+                          <Button type="button" variant="danger" onClick={handleDelete}>
+                            Delete
+                          </Button>
+                        )}
+                        <Button type="button" variant="secondary" onClick={handleCancelEdit}>
+                          Cancel
+                        </Button>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            </Col>
+          </Row>
         </Col>
       </Row>
-
-      {error && (
-        <Row>
-          <Col xs={12} md={2}></Col>
-          <Col xs={12} md={10}>
-            <div className="error text-danger">
-              <small>{error}</small>
-            </div>
-          </Col>
-        </Row>
-      )}
     </div>
   );
 };

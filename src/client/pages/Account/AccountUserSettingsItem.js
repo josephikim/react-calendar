@@ -5,7 +5,15 @@ import { getErrorMessage } from 'client/utils/errors';
 
 import './AccountUserSettingsItem.css';
 
-const AccountUserSettingsItem = ({ id, type, label, value, action, validation, confirmationRequired }) => {
+const AccountUserSettingsItem = ({
+  inputType,
+  settingType,
+  label,
+  value,
+  action,
+  validation,
+  confirmationRequired
+}) => {
   const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState(value);
   const [labelValue, setLabelValue] = useState(label);
@@ -36,11 +44,6 @@ const AccountUserSettingsItem = ({ id, type, label, value, action, validation, c
 
   const handleSave = () => {
     if (!confirmationRequired) {
-      if (inputValue === value) {
-        // no change in input
-        alert('No change detected. Please try again.');
-        return;
-      }
       // check for input errors
       const inputErrorFound = validation(inputValue);
 
@@ -49,13 +52,13 @@ const AccountUserSettingsItem = ({ id, type, label, value, action, validation, c
         setValidateOnChange(true);
         return;
       }
-    } else {
-      if (inputValue === newInputValue) {
-        // identical input and newInput
-        alert(`${id}s cannot match`);
+
+      if (inputValue === value) {
+        // no change in input
+        alert('No change detected. Please try again.');
         return;
       }
-
+    } else {
       // check for input errors
       const newInputErrorFound = validation(newInputValue);
 
@@ -64,22 +67,28 @@ const AccountUserSettingsItem = ({ id, type, label, value, action, validation, c
         setNewValidateOnChange(true);
         return;
       }
+
+      if (inputValue === newInputValue) {
+        // identical input and newInput
+        alert(`${settingType}s cannot match`);
+        return;
+      }
     }
 
     // no input errors, dispatch action
     const data = {
-      [id]: inputValue
+      [settingType]: inputValue
     };
 
     if (confirmationRequired) {
       // format property name with camelcase
-      const newInputProperty = 'new' + id.charAt(0).toUpperCase() + id.slice(1);
+      const newInputProperty = 'new' + settingType.charAt(0).toUpperCase() + settingType.slice(1);
       data[newInputProperty] = newInputValue;
     }
 
     dispatch(action(data))
       .then((res) => {
-        alert(`Updated ${id}`);
+        alert(`Updated ${settingType}`);
 
         if (confirmationRequired) {
           setNewEditMode(false);
@@ -120,8 +129,8 @@ const AccountUserSettingsItem = ({ id, type, label, value, action, validation, c
   const handleEdit = () => {
     if (confirmationRequired) {
       setNewEditMode(true);
-      setLabelValue(`Confirm current ${id}`);
-      if (['password'].includes(id)) {
+      setLabelValue(`Confirm current ${settingType}`);
+      if (['password'].includes(settingType)) {
         setInputValue('');
       }
     }
@@ -149,14 +158,14 @@ const AccountUserSettingsItem = ({ id, type, label, value, action, validation, c
         <Col xs={12} md={10}>
           <Row>
             <Col xs={12}>
-              <label htmlFor={id}>{labelValue}</label>
+              <label htmlFor={settingType}>{labelValue}</label>
             </Col>
           </Row>
           <Row>
             <Col xs={12} md={7}>
               <Form.Control
-                name={id}
-                type={type}
+                name={settingType}
+                type={inputType}
                 value={inputValue}
                 readOnly={!editMode}
                 onChange={(e) => handleChange(e)}
@@ -169,10 +178,10 @@ const AccountUserSettingsItem = ({ id, type, label, value, action, validation, c
               )}
               {newEditMode && (
                 <>
-                  <label htmlFor={`new-${id}`}>{`New ${id}`}</label>
+                  <label htmlFor={`new-${settingType}`}>{`New ${settingType}`}</label>
                   <Form.Control
-                    name={`new-${id}`}
-                    type={type}
+                    name={`new-${settingType}`}
+                    type={inputType}
                     value={newInputValue}
                     onChange={(e) => handleChange(e)}
                     onBlur={(e) => handleBlur(e)}
@@ -186,7 +195,7 @@ const AccountUserSettingsItem = ({ id, type, label, value, action, validation, c
               )}
             </Col>
             <Col xs={12} md={5}>
-              <div className="buttons-wrapper">
+              <div className="buttons-container">
                 {!editMode && (
                   <Button type="button" variant="primary" disabled={editMode} onClick={handleEdit}>
                     Edit

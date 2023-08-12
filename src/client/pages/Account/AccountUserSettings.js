@@ -11,8 +11,8 @@ const AccountUserSettings = () => {
   return (
     <div className="user-settings">
       <AccountUserSettingsItem
-        id="username"
-        type="text"
+        inputType="text"
+        settingType="username"
         label="Username"
         value={username}
         validation={validateFields.validateUsername}
@@ -21,8 +21,8 @@ const AccountUserSettings = () => {
       />
 
       <AccountUserSettingsItem
-        id="password"
-        type="password"
+        inputType="password"
+        settingType="password"
         label="Password"
         value="****"
         validation={validateFields.validatePassword}

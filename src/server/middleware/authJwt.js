@@ -2,15 +2,18 @@ import jwt from 'jsonwebtoken';
 import db from 'server/models';
 import CalendarService from 'server/services/CalendarService';
 import UserService from 'server/services/UserService';
+import EventService from 'server/services/EventService';
 
 const User = db.User;
 const RefreshToken = db.RefreshToken;
 const Role = db.Role;
 const Calendar = db.Calendar;
+const Event = db.Event;
 const { TokenExpiredError } = jwt;
 
 const calendarService = new CalendarService(Calendar);
 const userService = new UserService(User, RefreshToken, Role);
+const eventService = new EventService(Event);
 
 const catchTokenError = (e, res) => {
   if (e instanceof TokenExpiredError) {
@@ -81,15 +84,12 @@ const verifyURIAuth = async (req, res, next) => {
     }
 
     case '/api/v1/events/:eventId': {
-      // fetch user calendars
-      const userCalendars = await calendarService.getUserCalendars(req.auth.user);
+      // fetch target event
+      const event = await eventService.getOne(req.params.eventId);
+      // fetch corresponding calendar
+      const calendar = await calendarService.getOne(event.data.calendar);
 
-      // Get ids of non-system user calendars
-      const userCalendarIds = userCalendars.data
-        .filter((calendar) => calendar.user_id === req.auth.user)
-        .map((calendar) => calendar.id);
-
-      if (!userCalendarIds.includes(req.body.calendar)) {
+      if (req.auth.user !== calendar.data.user_id) {
         return res.status(403).send({ message: 'Requires admin role!', errorCode: 'role' });
       }
       return next();

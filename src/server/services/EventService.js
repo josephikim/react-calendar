@@ -15,6 +15,13 @@ class EventService {
     }
   };
 
+  getOne = async (eventId) => {
+    // Mongoose returns null for .findById query with no matches
+    const result = await this.model.findById(eventId);
+
+    return new HttpResponse(result);
+  };
+
   getUserEvents = async (calendarIds) => {
     try {
       // Mongoose returns [] for .find query with no matches

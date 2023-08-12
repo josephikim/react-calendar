@@ -28,13 +28,6 @@ const calendarsSlice = createSlice({
       state.byId = byId;
       state.allIds = allIds;
     },
-    calendarAdded(state, action) {
-      state.byId = {
-        ...state.byId,
-        [action.payload.id]: action.payload
-      };
-      state.allIds = [...state.allIds, action.payload.id];
-    },
     calendarUpdated(state, action) {
       state.byId = {
         ...state.byId,
@@ -51,7 +44,7 @@ const calendarsSlice = createSlice({
   }
 });
 
-export const { calendarsUpdated, calendarAdded, calendarUpdated, calendarDeleted } = calendarsSlice.actions;
+export const { calendarsUpdated, calendarUpdated, calendarDeleted } = calendarsSlice.actions;
 
 export default calendarsSlice.reducer;
 
@@ -63,7 +56,7 @@ export const createCalendar = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/calendars', data);
 
-    return dispatch(calendarsUpdated(res.data));
+    dispatch(calendarsUpdated(res.data));
   } catch (e) {
     throw e;
   }
@@ -73,7 +66,7 @@ export const updateCalendar = (data) => async (dispatch) => {
   try {
     const res = await userApi.put(`/calendars/${data.id}`, data);
 
-    return dispatch(calendarUpdated(res.data));
+    dispatch(calendarUpdated(res.data));
   } catch (e) {
     throw e;
   }
@@ -83,7 +76,7 @@ export const updateCalendarSettings = (data) => async (dispatch) => {
   try {
     const res = await userApi.put(`/calendars/${data.id}/settings`, data);
 
-    return dispatch(calendarsUpdated(res.data));
+    dispatch(calendarsUpdated(res.data));
   } catch (e) {
     throw e;
   }
@@ -93,7 +86,7 @@ export const deleteCalendar = (id) => async (dispatch) => {
   try {
     const res = await userApi.delete(`/calendars/${id}`);
 
-    return dispatch(calendarDeleted(res.data.id));
+    dispatch(calendarDeleted(res.data.id));
   } catch (e) {
     throw e;
   }

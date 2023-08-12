@@ -179,7 +179,7 @@ const CalendarEventForm = () => {
       }
 
       // convert Date objs to strings
-      const update = {
+      const data = {
         title: title.value.trim(),
         desc: desc.trim(),
         start: isAllDay === true ? allDayStart.toISOString() : start.toISOString(),
@@ -190,9 +190,9 @@ const CalendarEventForm = () => {
 
       if (clickedButtonId === 'add-event-btn') {
         // Dispatch createEvent action
-        dispatch(createEvent(update))
+        dispatch(createEvent(data))
           .then(() => {
-            alert(`Added new event: "${update.title}"`);
+            alert(`Added new event: "${data.title}"`);
           })
           .catch((e) => {
             const error = e.response?.data ?? e;
@@ -207,17 +207,19 @@ const CalendarEventForm = () => {
         if (!event) return;
 
         // Check for valid update
-        if (!isValidEventUpdate(event, update)) {
+        if (!isValidEventUpdate(event, data)) {
           alert('No changes to event detected!');
           return;
         }
 
-        // If valid update, dispatch updateEvent action
-        update.id = event.id;
+        // If valid update, dispatch update action
 
-        dispatch(updateEvent(update))
+        // insert event id
+        data.id = event.id;
+
+        dispatch(updateEvent(data))
           .then(() => {
-            alert(`Updated event: "${update.title}"`);
+            alert(`Updated event: "${data.title}"`);
           })
           .catch((e) => {
             const error = e.response?.data ?? e;
@@ -226,13 +228,13 @@ const CalendarEventForm = () => {
           });
       }
     } else {
-      const titleUpdate = {
-        ...title,
-        validateOnChange: true,
-        error: titleError
-      };
-
-      setTitle(titleUpdate);
+      setTitle((data) => {
+        return {
+          ...data,
+          validateOnChange: true,
+          error: titleError
+        };
+      });
       setIsSubmitCalled(false);
     }
   };
@@ -251,19 +253,22 @@ const CalendarEventForm = () => {
     const deleteConfirmation = confirm('Are you sure you want to delete this event?');
     if (deleteConfirmation === false) return;
 
-    const isValidTarget =
-      calendars[targetEvent.calendar].user_id === userId && calendars[targetEvent.calendar].userDefault === false;
+    const isValidTarget = calendars[targetEvent.calendar].user_id === userId;
 
     if (!isValidTarget) {
       alert('Deletion not allowed!');
       return;
     }
 
-    dispatch(deleteEvent(targetEvent.id)).catch((e) => {
-      const error = e.response?.data ?? e;
-      alert(`Error deleting event: ${error.message ?? error.statusText}`);
-      setError(error.message);
-    });
+    dispatch(deleteEvent(targetEvent.id))
+      .then(() => {
+        alert(`Deleted event: "${targetEvent.title}"`);
+      })
+      .catch((e) => {
+        const error = e.response?.data ?? e;
+        alert(`Error deleting event: ${error.message ?? error.statusText}`);
+        setError(error.message);
+      });
   };
 
   const isValidEventUpdate = (event, update) => {

@@ -87,7 +87,7 @@ const AccountUserSettingsItem = ({
     }
 
     dispatch(action(data))
-      .then((res) => {
+      .then(() => {
         alert(`Updated ${settingType}`);
 
         if (confirmationRequired) {

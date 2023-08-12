@@ -90,7 +90,7 @@ export const createEvent = (data) => async (dispatch) => {
 
     dispatch(eventAdded(res.data));
 
-    // set selection to newly created event
+    // set selection to created event
     dispatch(
       rbcSelectionUpdated({
         slot: null,
@@ -112,13 +112,13 @@ export const updateEvent = (data) => async (dispatch) => {
   }
 };
 
-export const deleteEvent = (id) => async (dispatch) => {
+export const deleteEvent = (eventId) => async (dispatch) => {
   try {
-    const res = await userApi.delete(`/events/${id}`);
+    const res = await userApi.delete(`/events/${eventId}`);
 
     dispatch(eventDeleted(res.data.id));
 
-    // Reset initial calendar slot
+    // Reset calendar slot
     dispatch(
       rbcSelectionUpdated({
         slot: getCurrentDaySlot(),

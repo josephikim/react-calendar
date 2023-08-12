@@ -92,8 +92,6 @@ export const updateUser = (data) => async (dispatch, getState) => {
     const res = await userApi.put(`/users/${userId}`, data);
 
     dispatch(usernameUpdated(res.data.username));
-
-    return res.data;
   } catch (e) {
     throw e;
   }

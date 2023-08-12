@@ -19,6 +19,7 @@ const AccountCalendarSettings = () => {
       {calendarIdsSorted.map((id) => (
         <AccountCalendarSettingsItem
           key={id}
+          id={`calendar-${id}`}
           inputType="text"
           settingType="name"
           calendar={calendars[id]}
@@ -30,6 +31,7 @@ const AccountCalendarSettings = () => {
       ))}
 
       <AccountCalendarSettingsItem
+        id="new-calendar"
         inputType="text"
         settingType="name"
         label="Add new calendar"

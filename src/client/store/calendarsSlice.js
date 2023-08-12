@@ -63,8 +63,7 @@ export const createCalendar = (data) => async (dispatch) => {
   try {
     const res = await userApi.post('/calendars', data);
 
-    console.log('createcalendar res.data', res.data);
-    // dispatch(calendarsUpdated(res.data));
+    return dispatch(calendarsUpdated(res.data));
   } catch (e) {
     throw e;
   }
@@ -74,7 +73,7 @@ export const updateCalendar = (data) => async (dispatch) => {
   try {
     const res = await userApi.put(`/calendars/${data.id}`, data);
 
-    dispatch(calendarUpdated(res.data));
+    return dispatch(calendarUpdated(res.data));
   } catch (e) {
     throw e;
   }
@@ -84,7 +83,7 @@ export const updateCalendarSettings = (data) => async (dispatch) => {
   try {
     const res = await userApi.put(`/calendars/${data.id}/settings`, data);
 
-    dispatch(calendarsUpdated(res.data));
+    return dispatch(calendarsUpdated(res.data));
   } catch (e) {
     throw e;
   }
@@ -94,7 +93,7 @@ export const deleteCalendar = (id) => async (dispatch) => {
   try {
     const res = await userApi.delete(`/calendars/${id}`);
 
-    dispatch(calendarDeleted(res.data.id));
+    return dispatch(calendarDeleted(res.data.id));
   } catch (e) {
     throw e;
   }

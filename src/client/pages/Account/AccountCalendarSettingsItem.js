@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Row, Col, Button, Form, Badge } from 'react-bootstrap';
 import { getErrorMessage } from 'client/utils/errors';
-
 import './AccountCalendarSettingsItem.css';
 
 const AccountCalendarSettingsItem = ({
+  id,
   inputType,
   settingType,
   label,
@@ -25,7 +25,7 @@ const AccountCalendarSettingsItem = ({
   const [validateOnChange, setValidateOnChange] = useState(false);
 
   const isValidEditTarget = calendar && calendar.user_id !== 'system';
-  const isValidDeleteTarget = calendar && calendar.user_id !== 'system' && calendar.userDefault === false;
+  const isValidDeleteTarget = isValidEditTarget && calendar.userDefault === false;
 
   const handleChange = (e) => {
     const targetValue = e.target.value;
@@ -57,12 +57,12 @@ const AccountCalendarSettingsItem = ({
       [settingType]: inputValue
     };
 
-    if (calendar == null) {
+    if (id === 'new-calendar') {
       // create calendar
       dispatch(createAction(data))
-        .then((res) => {
-          alert(`Created ${res.data}`);
-
+        .then(() => {
+          alert(`Created ${data[settingType]}`);
+          setInputValue('');
           setInputError('');
           setValidateOnChange(false);
         })
@@ -73,9 +73,13 @@ const AccountCalendarSettingsItem = ({
         });
     } else {
       // update calendar
+
+      // insert calendar id
+      data.id = calendar.id;
+
       dispatch(updateAction(data))
-        .then((res) => {
-          alert(`Updated ${res.data}`);
+        .then(() => {
+          alert(`Updated ${data[settingType]}`);
 
           if (fixedEditMode == null) {
             setEditMode(false);
@@ -92,19 +96,13 @@ const AccountCalendarSettingsItem = ({
   };
 
   const handleDelete = () => {
-    if (!isValidDeleteTarget) return;
-
     if (confirm(`Are you sure you want to delete ${calendar.name}?`) == false) {
       return;
     }
 
     dispatch(deleteAction(calendar.id))
-      .then((res) => {
-        alert(`Deleted ${res.name}`);
-
-        setEditMode(false);
-        setInputError('');
-        setValidateOnChange(false);
+      .then(() => {
+        alert(`Deleted ${calendar.name}`);
       })
       .catch((e) => {
         const msg = getErrorMessage(e);
@@ -131,6 +129,53 @@ const AccountCalendarSettingsItem = ({
     setInputValue(calendar ? calendar[settingType] : '');
     setInputError('');
     setValidateOnChange(false);
+  };
+
+  const renderButtons = () => {
+    if (isValidEditTarget) {
+      if (editMode === true) {
+        if (isValidDeleteTarget) {
+          return (
+            <>
+              <Button type="button" variant="success" onClick={handleSave}>
+                Save
+              </Button>
+              <Button type="button" variant="danger" onClick={handleDelete}>
+                Delete
+              </Button>
+              <Button type="button" variant="secondary" onClick={handleCancelEdit}>
+                Cancel
+              </Button>
+            </>
+          );
+        } else {
+          return (
+            <>
+              <Button type="button" variant="success" onClick={handleSave}>
+                Save
+              </Button>
+              <Button type="button" variant="secondary" onClick={handleCancelEdit}>
+                Cancel
+              </Button>
+            </>
+          );
+        }
+      } else {
+        return (
+          <Button type="button" variant="primary" disabled={editMode} onClick={handleEdit}>
+            Edit
+          </Button>
+        );
+      }
+    }
+    if (fixedEditMode === true) {
+      return (
+        <Button type="button" variant="success" onClick={handleSave}>
+          Save
+        </Button>
+      );
+    }
+    return null;
   };
 
   return (
@@ -177,33 +222,7 @@ const AccountCalendarSettingsItem = ({
               )}
             </Col>
             <Col xs={12} md={5}>
-              <div className="buttons-container">
-                {!editMode && isValidEditTarget && (
-                  <Button type="button" variant="primary" disabled={editMode} onClick={handleEdit}>
-                    Edit
-                  </Button>
-                )}
-                {editMode && (
-                  <>
-                    <Button type="button" variant="success" onClick={handleSave}>
-                      Save
-                    </Button>
-
-                    {fixedEditMode == null && (
-                      <>
-                        {isValidDeleteTarget && (
-                          <Button type="button" variant="danger" onClick={handleDelete}>
-                            Delete
-                          </Button>
-                        )}
-                        <Button type="button" variant="secondary" onClick={handleCancelEdit}>
-                          Cancel
-                        </Button>
-                      </>
-                    )}
-                  </>
-                )}
-              </div>
+              <div className="buttons-container">{renderButtons()}</div>
             </Col>
           </Row>
         </Col>

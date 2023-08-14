@@ -1,0 +1,20 @@
+.container {
+  align-items: center;
+  padding: 6px 0px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 0px;
+  color: #ffffff;
+  padding: 4px 8px;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.badge {
+  position: absolute;
+  right: 8px;
+}

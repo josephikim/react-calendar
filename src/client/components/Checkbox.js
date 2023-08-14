@@ -1,10 +1,15 @@
 import React from 'react';
 
-import 'client/styles/Checkbox.css';
+const checkboxStyles = {
+  width: '24px',
+  height: '24px',
+  textAlign: 'center',
+  verticalAlign: 'middle'
+};
 
 const Checkbox = ({ id, checked, handleChange }) => (
-  <div className="Checkbox">
-    <input type="checkbox" id={id} checked={checked} onChange={(event) => handleChange(event)} />
+  <div>
+    <input style={checkboxStyles} type="checkbox" id={id} checked={checked} onChange={(event) => handleChange(event)} />
   </div>
 );
 

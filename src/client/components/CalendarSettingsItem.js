@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Row, Col, Button, Form, Badge } from 'react-bootstrap';
 import { getErrorMessage } from 'client/utils/errors';
-import './AccountCalendarSettingsItem.css';
+import styles from 'client/styles/CalendarSettingsItem.module.css';
 
-const AccountCalendarSettingsItem = ({
+const CalendarSettingsItem = ({
   id,
+  userId,
   inputType,
   settingType,
   label,
@@ -24,8 +25,9 @@ const AccountCalendarSettingsItem = ({
   const [inputError, setInputError] = useState('');
   const [validateOnChange, setValidateOnChange] = useState(false);
 
-  const isValidEditTarget = calendar && calendar.user_id !== 'system';
-  const isValidDeleteTarget = isValidEditTarget && calendar.userDefault === false;
+  const isEditable = calendar?.user_id === userId;
+  const isDeleteable = isEditable && calendar.userDefault === false;
+  const isBadged = calendar?.userDefault === true || calendar?.user_id === 'system';
 
   const handleChange = (e) => {
     const targetValue = e.target.value;
@@ -132,103 +134,116 @@ const AccountCalendarSettingsItem = ({
   };
 
   const renderButtons = () => {
-    if (isValidEditTarget) {
-      if (editMode === true) {
-        if (isValidDeleteTarget) {
-          return (
-            <>
-              <Button type="button" variant="success" onClick={handleSave}>
-                Save
-              </Button>
-              <Button type="button" variant="danger" onClick={handleDelete}>
-                Delete
-              </Button>
-              <Button type="button" variant="secondary" onClick={handleCancelEdit}>
-                Cancel
-              </Button>
-            </>
-          );
-        } else {
-          return (
-            <>
-              <Button type="button" variant="success" onClick={handleSave}>
-                Save
-              </Button>
-              <Button type="button" variant="secondary" onClick={handleCancelEdit}>
-                Cancel
-              </Button>
-            </>
-          );
-        }
-      } else {
-        return (
-          <Button type="button" variant="primary" disabled={editMode} onClick={handleEdit}>
-            Edit
-          </Button>
-        );
-      }
-    }
     if (fixedEditMode === true) {
       return (
-        <Button type="button" variant="success" onClick={handleSave}>
-          Save
-        </Button>
+        <Col lg={4}>
+          <Button className={styles.button} type="button" variant="success" onClick={handleSave}>
+            Save
+          </Button>
+        </Col>
+      );
+    }
+
+    if (isEditable) {
+      return (
+        <Col lg={4}>
+          {editMode === true && (
+            <>
+              <Button className={styles.button} type="button" variant="success" onClick={handleSave}>
+                Save
+              </Button>
+              {isDeleteable && (
+                <Button className={styles.button} type="button" variant="danger" onClick={handleDelete}>
+                  Delete
+                </Button>
+              )}
+              <Button className={styles.button} type="button" variant="secondary" onClick={handleCancelEdit}>
+                Cancel
+              </Button>
+            </>
+          )}
+          {editMode === false && (
+            <Button className={styles.button} type="button" variant="primary" disabled={editMode} onClick={handleEdit}>
+              Edit
+            </Button>
+          )}
+        </Col>
+      );
+    }
+
+    return <Col lg={4}></Col>;
+  };
+
+  const renderBadges = () => {
+    if (isBadged) {
+      return (
+        <Col lg={4}>
+          <div className={styles.badgesContainer}>
+            {calendar.userDefault === true && (
+              <Badge style={{ width: '70px', padding: '0.5rem' }} pill variant="primary">
+                Default
+              </Badge>
+            )}
+            {calendar.user_id === 'system' && (
+              <Badge style={{ width: '70px', padding: '0.5rem' }} pill variant="secondary">
+                System
+              </Badge>
+            )}
+          </div>
+        </Col>
+      );
+    } else {
+      return <Col lg={4}></Col>;
+    }
+  };
+
+  const renderLabel = () => {
+    if (label) {
+      return (
+        <Row>
+          <Col lg={4}></Col>
+          <Col lg={4}>
+            <label className={styles.label} htmlFor={settingType}>
+              {labelValue}
+            </label>
+          </Col>
+        </Row>
       );
     }
     return null;
   };
 
   return (
-    <div className="calendar-settings-item">
+    <div className={styles.container}>
+      {renderLabel()}
       <Row>
-        <Col md={2}>
-          {calendar && (
-            <div className="badges-container">
-              {calendar.userDefault === true && (
-                <Badge pill variant="primary">
-                  Default
-                </Badge>
-              )}
-              {calendar.user_id === 'system' && (
-                <Badge pill variant="secondary">
-                  System
-                </Badge>
-              )}
-            </div>
-          )}
+        {renderBadges()}
+        <Col lg={4}>
+          <Form.Control
+            className={styles.input}
+            name={settingType}
+            type={inputType}
+            value={inputValue}
+            readOnly={!editMode}
+            onChange={(e) => handleChange(e)}
+            onBlur={(e) => handleBlur(e)}
+          />
         </Col>
-        <Col xs={12} md={10}>
-          {label && (
-            <Row>
-              <Col xs={12}>
-                <label htmlFor={settingType}>{labelValue}</label>
-              </Col>
-            </Row>
-          )}
-          <Row>
-            <Col xs={12} md={7}>
-              <Form.Control
-                name={settingType}
-                type={inputType}
-                value={inputValue}
-                readOnly={!editMode}
-                onChange={(e) => handleChange(e)}
-                onBlur={(e) => handleBlur(e)}
-              />
-              {inputError && (
-                <div className="input-error text-danger">
-                  <small>{inputError}</small>
-                </div>
-              )}
-            </Col>
-            <Col xs={12} md={5}>
-              <div className="buttons-container">{renderButtons()}</div>
-            </Col>
-          </Row>
-        </Col>
+        {renderButtons()}
       </Row>
+
+      {inputError && (
+        <Row>
+          <Col lg={4}></Col>
+          <Col lg={8}>
+            <div className="input-error text-danger mt-2 mb-2">
+              <small>{inputError}</small>
+            </div>
+          </Col>
+        </Row>
+      )}
     </div>
   );
 };
 
-export default AccountCalendarSettingsItem;
+export default CalendarSettingsItem;

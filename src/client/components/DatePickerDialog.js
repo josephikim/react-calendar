@@ -3,9 +3,9 @@ import { format, isValid, parse } from 'date-fns';
 import FocusTrap from 'focus-trap-react';
 import { DayPicker } from 'react-day-picker';
 import { usePopper } from 'react-popper';
-import './CalendarDatePickerDialog.css';
+import styles from 'client/styles/DatePickerDialog.module.css';
 
-const CalendarDatePickerDialog = (props) => {
+const DatePickerDialog = (props) => {
   const { isDisabled, value } = props;
   const popperRef = useRef(null);
   const buttonRef = useRef(null);
@@ -79,8 +79,8 @@ const CalendarDatePickerDialog = (props) => {
   };
 
   return (
-    <div className="CalendarDatePickerDialog">
-      <div className="inputContainer" ref={popperRef}>
+    <div>
+      <div className={styles.inputContainer} ref={popperRef}>
         <input
           id={props.inputId}
           type="text"
@@ -88,18 +88,18 @@ const CalendarDatePickerDialog = (props) => {
           placeholder={format(new Date(), props.dateFormat)}
           value={format(inputValue, props.dateFormat)}
           onChange={handleInputChange}
-          className="input-reset"
+          className={`${styles.input} input-reset`}
           onClick={handleButtonClick}
         />
         <button
           ref={buttonRef}
           type="button"
           disabled={isDisabled}
-          className="pa2 bg-white button-reset ba"
+          className={`${styles.button} pa2 bg-white button-reset ba`}
           aria-label="Pick a date"
           onClick={handleButtonClick}
         >
-          <span role="img" aria-label="calendar icon">
+          <span className={styles.calendarIcon} role="img" aria-label="calendar icon">
             📅
           </span>
         </button>
@@ -120,7 +120,7 @@ const CalendarDatePickerDialog = (props) => {
           <div
             tabIndex={-1}
             style={popper.styles.popper}
-            className="dialog-sheet"
+            className={styles.dialogSheet}
             {...popper.attributes.popper}
             ref={setPopperElement}
             role="dialog"
@@ -140,4 +140,4 @@ const CalendarDatePickerDialog = (props) => {
   );
 };
 
-export default CalendarDatePickerDialog;
+export default DatePickerDialog;

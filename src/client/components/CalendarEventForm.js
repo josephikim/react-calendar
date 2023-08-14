@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import _ from 'lodash';
 import TimePicker from 'react-time-picker';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import { validateFields } from 'client/validation.js';
@@ -17,8 +16,8 @@ import {
   isSingleDayAllDaySpan
 } from 'client/utils/dates';
 import CalendarSelectMenu from './CalendarSelectMenu';
-import CalendarDatePickerDialog from './CalendarDatePickerDialog';
-import './CalendarEventForm.css';
+import DatePickerDialog from './DatePickerDialog';
+import styles from 'client/styles/CalendarEventForm.module.css';
 import 'react-day-picker/dist/style.css';
 import 'react-time-picker/dist/TimePicker.css';
 
@@ -328,8 +327,8 @@ const CalendarEventForm = () => {
   };
 
   return (
-    <Form className="CalendarEventForm">
-      <Row>
+    <Form className={styles.container}>
+      <Row className="mb-3">
         <Col>
           <label htmlFor="title" className="text-primary">
             Event Title (required)
@@ -337,7 +336,7 @@ const CalendarEventForm = () => {
 
           <textarea
             id="title"
-            className="input"
+            className={styles.textarea}
             disabled={isSystemEventSelected}
             rows="1"
             value={title.value}
@@ -353,7 +352,7 @@ const CalendarEventForm = () => {
         </Col>
       </Row>
 
-      <Row>
+      <Row className="mb-3">
         <Col>
           <label htmlFor="desc" className="text-primary">
             Event Description
@@ -361,7 +360,7 @@ const CalendarEventForm = () => {
 
           <textarea
             id="desc"
-            className="input"
+            className={styles.textarea}
             disabled={isSystemEventSelected}
             rows="6"
             value={desc}
@@ -372,14 +371,18 @@ const CalendarEventForm = () => {
         </Col>
       </Row>
 
-      <Row className="two-column">
+      <Row className="mb-3">
         <Col xs={6}>
           <Row>
             <Col>
               <label htmlFor="startDate" className="text-primary">
                 Start Date
               </label>
-              <CalendarDatePickerDialog
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <DatePickerDialog
                 inputId="startDate"
                 isDisabled={isSystemEventSelected}
                 dateFormat={dateFormat}
@@ -394,7 +397,12 @@ const CalendarEventForm = () => {
           <Row>
             <Col>
               <label className="text-primary">Start Time</label>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
               <TimePicker
+                className={styles.timePicker}
                 disableClock
                 clearIcon={null}
                 disabled={isSystemEventSelected}
@@ -406,15 +414,18 @@ const CalendarEventForm = () => {
         </Col>
       </Row>
 
-      <Row className="two-column">
+      <Row className="mb-3">
         <Col xs={6}>
           <Row>
             <Col>
               <label htmlFor="endDate" className="text-primary">
                 End Date
               </label>
-
-              <CalendarDatePickerDialog
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <DatePickerDialog
                 inputId="endDate"
                 isDisabled={isSystemEventSelected}
                 dateFormat={dateFormat}
@@ -429,7 +440,12 @@ const CalendarEventForm = () => {
           <Row>
             <Col>
               <label className="text-primary">End Time</label>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
               <TimePicker
+                className={styles.timePicker}
                 disableClock
                 clearIcon={null}
                 disabled={isSystemEventSelected}
@@ -441,7 +457,7 @@ const CalendarEventForm = () => {
         </Col>
       </Row>
 
-      <Row>
+      <Row className="mb-3">
         <Col>
           <label htmlFor="all-day" className="text-primary">
             All Day Event
@@ -457,7 +473,7 @@ const CalendarEventForm = () => {
         </Col>
       </Row>
 
-      <Row>
+      <Row className="mb-5">
         <Col>
           <CalendarSelectMenu
             values={calendarSelectMenuValues}
@@ -468,13 +484,13 @@ const CalendarEventForm = () => {
         </Col>
       </Row>
 
-      <Row className="two-column">
+      <Row className="mb-3">
         <Col>
           {currentSelection.slot && (
             <Button
               type="submit"
               id="add-event-btn"
-              className="btn"
+              className={styles.button}
               variant="primary"
               disabled={isSystemEventSelected}
               onMouseDown={() => setIsSubmitCalled(true)}
@@ -484,31 +500,28 @@ const CalendarEventForm = () => {
             </Button>
           )}
           {currentSelection.event && (
-            <Button
-              type="submit"
-              id="update-event-btn"
-              className="btn"
-              variant="success"
-              disabled={isSystemEventSelected}
-              onClick={(e) => handleSubmit(e)}
-            >
-              Save
-            </Button>
-          )}
-        </Col>
-
-        <Col>
-          {currentSelection.event && (
-            <Button
-              type="submit"
-              id="delete-event-btn"
-              className="btn"
-              variant="danger"
-              disabled={isSystemEventSelected}
-              onClick={handleDelete}
-            >
-              Delete
-            </Button>
+            <>
+              <Button
+                type="submit"
+                id="update-event-btn"
+                className={styles.button}
+                variant="success"
+                disabled={isSystemEventSelected}
+                onClick={(e) => handleSubmit(e)}
+              >
+                Save
+              </Button>
+              <Button
+                type="submit"
+                id="delete-event-btn"
+                className={styles.button}
+                variant="danger"
+                disabled={isSystemEventSelected}
+                onClick={handleDelete}
+              >
+                Delete
+              </Button>
+            </>
           )}
         </Col>
       </Row>

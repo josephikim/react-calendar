@@ -1,11 +1,11 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
-import Register from 'client/pages/Register/Register';
-import Login from 'client/pages/Login/Login';
-import Calendar from 'client/pages/Calendar/Calendar';
-import Account from 'client/pages/Account/Account';
+import { Container } from 'react-bootstrap';
+import RegisterPage from 'client/pages/RegisterPage';
+import LoginPage from 'client/pages/LoginPage';
+import CalendarPage from 'client/pages/CalendarPage';
+import AccountPage from 'client/pages/AccountPage';
 import PublicRoute from 'client/components/PublicRoute';
 import PrivateRoute from 'client/components/PrivateRoute';
 import Header from 'client/components/Header';
@@ -16,14 +16,16 @@ const App = () => {
   const isAuthenticated = !!accessToken;
 
   return (
-    <div className="App">
+    <div>
       <Header authenticated={isAuthenticated} />
-      <Switch>
-        <PublicRoute restricted={isAuthenticated} component={Register} path="/register" exact />
-        <PublicRoute restricted={isAuthenticated} component={Login} path="/login" exact />
-        <PrivateRoute component={Account} path="/account" exact />
-        <PrivateRoute component={Calendar} path="/" exact />
-      </Switch>
+      <Container fluid>
+        <Switch>
+          <PublicRoute restricted={isAuthenticated} component={RegisterPage} path="/register" exact />
+          <PublicRoute restricted={isAuthenticated} component={LoginPage} path="/login" exact />
+          <PrivateRoute component={AccountPage} path="/account" exact />
+          <PrivateRoute component={CalendarPage} path="/" exact />
+        </Switch>
+      </Container>
       <Footer />
     </div>
   );

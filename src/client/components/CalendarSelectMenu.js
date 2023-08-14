@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const CalendarSelectMenu = ({ disabled, values, options, onChange }) => {
   return (
-    <div className="CalendarSelectMenu">
+    <div>
       <label htmlFor="title" className="text-primary">
         Calendar (
         <small>

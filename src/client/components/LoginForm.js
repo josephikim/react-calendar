@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Form, Button } from 'react-bootstrap';
 import { validateFields } from 'client/validation.js';
-import { registerUser } from 'client/store/userSlice';
-
-import './RegisterForm.css';
+import { loginUser } from 'client/store/userSlice';
 
 const initialState = {
   username: {
@@ -17,17 +15,13 @@ const initialState = {
     value: '',
     validateOnChange: false,
     error: null
-  },
-  passwordConfirm: {
-    value: '',
-    error: null
   }
 };
-const RegisterForm = () => {
+
+const LoginForm = () => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState(initialState.username);
   const [password, setPassword] = useState(initialState.password);
-  const [passwordConfirm, setPasswordConfirm] = useState(initialState.passwordConfirm);
 
   const handleBlur = (validationFunc, event) => {
     const {
@@ -86,14 +80,6 @@ const RegisterForm = () => {
           };
         });
         break;
-      case 'passwordConfirm':
-        setPasswordConfirm((data) => {
-          return {
-            ...data,
-            value
-          };
-        });
-        break;
       default:
         break;
     }
@@ -104,19 +90,18 @@ const RegisterForm = () => {
 
     const usernameError = validateFields.validateUsername(username.value);
     const passwordError = validateFields.validatePassword(password.value);
-    const passwordConfirmError = validateFields.validatePasswordConfirm(password.value, passwordConfirm.value);
 
-    if ([usernameError, passwordError, passwordConfirmError].every((e) => e === false)) {
+    if ([usernameError, passwordError].every((e) => e === false)) {
       // no input errors, submit the form
       const data = {
         username: username.value,
         password: password.value
       };
 
-      dispatch(registerUser(data)).catch((e) => {
+      dispatch(loginUser(data)).catch((e) => {
         const error = e.response?.data ?? e;
         const errorCode = error?.errorCode ?? null;
-        alert(`Registration error: ${error.message ?? error.statusText}`);
+        alert(`Login error: ${error.message ?? error.statusText}`);
 
         // Update state to reflect response errors
         if (errorCode) {
@@ -129,6 +114,7 @@ const RegisterForm = () => {
                 };
               });
               break;
+
             case 'password':
               setPassword((data) => {
                 return {
@@ -143,7 +129,7 @@ const RegisterForm = () => {
         }
       });
     } else {
-      // update state with input errors
+      // update state with errors
       if (usernameError) {
         setUsername((data) => {
           return {
@@ -163,22 +149,17 @@ const RegisterForm = () => {
           };
         });
       }
-
-      if (passwordConfirmError) {
-        setPasswordConfirm((data) => {
-          return {
-            ...data,
-            error: passwordConfirmError
-          };
-        });
-      }
     }
   };
 
+  const buttonStyles = {
+    margin: '18px 0px'
+  };
+
   return (
-    <Form className="RegisterForm">
+    <Form>
       <div className="text-primary">
-        <h4>New User Registration</h4>
+        <h4>User Login</h4>
       </div>
 
       <Form.Group controlId="username">
@@ -210,29 +191,17 @@ const RegisterForm = () => {
         <small>{password.error}</small>
       </div>
 
-      <Form.Group controlId="passwordConfirm">
-        <Form.Label className="text-primary">Confirm Password</Form.Label>
-        <Form.Control
-          type="password"
-          name="passwordConfirm"
-          placeholder="Confirm password"
-          onChange={(event) => handleChange(null, event)}
-        />
-      </Form.Group>
-
-      <div className="text-danger">
-        <small>{passwordConfirm.error}</small>
-      </div>
-
-      <Button type="submit" name="register-form-btn" variant="primary" onClick={handleSubmit}>
-        Register
+      <Button type="submit" name="login-form-btn" variant="primary" style={buttonStyles} onClick={handleSubmit}>
+        Login
       </Button>
 
       <div>
-        Already registered? Please <Link to="/login">login</Link>.
+        <span>
+          New user? Please <Link to="/register">register</Link>.
+        </span>
       </div>
     </Form>
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

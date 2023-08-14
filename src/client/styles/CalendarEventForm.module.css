@@ -1,0 +1,12 @@
+.textarea {
+  width: 100%;
+}
+
+.button {
+  width: 100px;
+  margin-right: 1.5rem;
+}
+
+.timePicker {
+  width: 100%;
+}

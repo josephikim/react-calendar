@@ -1,0 +1,41 @@
+.container {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  color: dodgerblue;
+}
+
+.badgesContainer {
+  display: flex;
+  height: 100%;
+  justify-content: right;
+  align-items: center;
+}
+
+.button {
+  display: inline !important;
+  width: 75px;
+  margin-right: 10px;
+}
+
+@media screen and (max-width: 992px) {
+  .container {
+    margin-bottom: 1rem;
+  }
+
+  .badgesContainer {
+    display: flex;
+    height: 100%;
+    padding-bottom: 1rem;
+    justify-content: left;
+  }
+
+  .input {
+    margin-bottom: 1rem;
+  }
+
+  .button {
+    margin-bottom: 1rem;
+  }
+}

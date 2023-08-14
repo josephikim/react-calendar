@@ -2,8 +2,8 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Row, Col, Badge } from 'react-bootstrap';
 import { updateCalendarSettings } from 'client/store/calendarsSlice';
-import Checkbox from 'client/components/Checkbox';
-import './CalendarToggleMenu.css';
+import Checkbox from './Checkbox';
+import styles from 'client/styles/CalendarToggleMenuItem.module.css';
 
 const CalendarToggleMenuItem = ({ id, calendar }) => {
   const dispatch = useDispatch();
@@ -24,21 +24,21 @@ const CalendarToggleMenuItem = ({ id, calendar }) => {
   };
 
   return (
-    <Row id="calendar-toggle">
+    <Row className={styles.container}>
       <Col xs={2}>
         <Checkbox id={id} checked={calendar.visibility} handleChange={handleVisibilityChange} />
       </Col>
 
       <Col xs={10}>
-        <label htmlFor={id} style={{ backgroundColor: calendar.color }}>
+        <label className={styles.label} htmlFor={id} style={{ backgroundColor: calendar.color }}>
           {calendar.name}
           {calendar.userDefault === true && (
-            <Badge pill variant="light">
+            <Badge className={styles.badge} pill variant="light">
               Default
             </Badge>
           )}
           {calendar.user_id === 'system' && (
-            <Badge pill variant="light">
+            <Badge className={styles.badge} pill variant="light">
               System
             </Badge>
           )}

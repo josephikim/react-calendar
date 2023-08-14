@@ -1,0 +1,15 @@
+.label {
+  color: dodgerblue;
+}
+
+.button {
+  display: inline;
+  width: 75px;
+  margin-right: 10px;
+}
+
+@media screen and (max-width: 992px) {
+  .container {
+    margin-bottom: 1rem;
+  }
+}

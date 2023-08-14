@@ -2,16 +2,15 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { validateFields } from 'client/validation';
 import { updateUser } from 'client/store/userSlice';
-import AccountUserSettingsItem from './AccountUserSettingsItem';
-import './AccountUserSettings.css';
+import UserSettingsItem from './UserSettingsItem';
 
-const AccountUserSettings = () => {
+const UserSettings = () => {
   const userId = useSelector((state) => state.user.id);
   const username = useSelector((state) => state.user.username);
 
   return (
-    <div className="user-settings">
-      <AccountUserSettingsItem
+    <div>
+      <UserSettingsItem
         userId={userId}
         inputType="text"
         settingType="username"
@@ -22,7 +21,7 @@ const AccountUserSettings = () => {
         confirmationRequired={false}
       />
 
-      <AccountUserSettingsItem
+      <UserSettingsItem
         userId={userId}
         inputType="password"
         settingType="password"
@@ -36,4 +35,4 @@ const AccountUserSettings = () => {
   );
 };
 
-export default AccountUserSettings;
+export default UserSettings;

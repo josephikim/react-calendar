@@ -44,6 +44,7 @@
     "async": "^3.2.0",
     "axios": "^0.21.1",
     "babel-loader": "^8.2.5",
+    "babel-plugin-react-css-modules": "^5.2.6",
     "bcrypt": "^5.0.1",
     "bootstrap": "^4.6.0",
     "core-js": "^2.6.5",

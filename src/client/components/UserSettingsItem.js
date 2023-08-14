@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import { getErrorMessage } from 'client/utils/errors';
+import styles from 'client/styles/UserSettingsItem.module.css';
 
-import './AccountUserSettingsItem.css';
-
-const AccountUserSettingsItem = ({
+const UserSettingsItem = ({
   userId,
   inputType,
   settingType,
@@ -154,18 +153,21 @@ const AccountUserSettingsItem = ({
   };
 
   return (
-    <div className="user-settings-item">
-      <Row>
-        <Col md={2}></Col>
-        <Col xs={12} md={10}>
+    <div>
+      <Row className={styles.container}>
+        <Col lg={4}></Col>
+        <Col lg={8}>
           <Row>
-            <Col xs={12}>
-              <label htmlFor={settingType}>{labelValue}</label>
+            <Col>
+              <label htmlFor={settingType} className={styles.label}>
+                {labelValue}
+              </label>
             </Col>
           </Row>
           <Row>
-            <Col xs={12} md={7}>
+            <Col lg={6}>
               <Form.Control
+                className="mb-3"
                 name={settingType}
                 type={inputType}
                 value={inputValue}
@@ -174,14 +176,15 @@ const AccountUserSettingsItem = ({
                 onBlur={(e) => handleBlur(e)}
               />
               {inputError && (
-                <div className="input-error text-danger">
+                <div className="input-error text-danger mb-3">
                   <small>{inputError}</small>
                 </div>
               )}
               {newEditMode && (
                 <>
-                  <label htmlFor={`new-${settingType}`}>{`New ${settingType}`}</label>
+                  <label htmlFor={`new-${settingType}`} className={styles.label}>{`New ${settingType}`}</label>
                   <Form.Control
+                    className="mb-3"
                     name={`new-${settingType}`}
                     type={inputType}
                     value={newInputValue}
@@ -189,26 +192,32 @@ const AccountUserSettingsItem = ({
                     onBlur={(e) => handleBlur(e)}
                   />
                   {newInputError && (
-                    <div className="new-input-error text-danger">
+                    <div className="new-input-error text-danger mb-3">
                       <small>{newInputError}</small>
                     </div>
                   )}
                 </>
               )}
             </Col>
-            <Col xs={12} md={5}>
+            <Col lg={6}>
               <div className="buttons-container">
                 {!editMode && (
-                  <Button type="button" variant="primary" disabled={editMode} onClick={handleEdit}>
+                  <Button
+                    className={styles.button}
+                    type="button"
+                    variant="primary"
+                    disabled={editMode}
+                    onClick={handleEdit}
+                  >
                     Edit
                   </Button>
                 )}
                 {editMode && (
                   <>
-                    <Button type="button" variant="success" onClick={handleSave}>
+                    <Button className={styles.button} type="button" variant="success" onClick={handleSave}>
                       Save
                     </Button>
-                    <Button type="button" variant="secondary" onClick={handleCancelEdit}>
+                    <Button className={styles.button} type="button" variant="secondary" onClick={handleCancelEdit}>
                       Cancel
                     </Button>
                   </>
@@ -222,4 +231,4 @@ const AccountUserSettingsItem = ({
   );
 };
 
-export default AccountUserSettingsItem;
+export default UserSettingsItem;

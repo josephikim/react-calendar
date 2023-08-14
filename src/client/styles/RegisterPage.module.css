@@ -1,15 +1,4 @@
-.Register {
-  min-height: 800px;
-  margin-top: 50px;
-}
-
-.Register #about {
-  width: 450px;
-  margin: 0 auto;
-  padding-top: 35px;
-}
-
-.Register .register-img {
+.mockup {
   width: 100%;
   max-width: 500px;
   /* box-shadow */
@@ -18,7 +7,7 @@
   box-shadow: rgba(0, 0, 0, 0.3) 0 0 8px;
 }
 
-.Register dialog {
+.dialog {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -26,6 +15,6 @@
   z-index: 1;
 }
 
-.Register .register-img-mockup {
+.mockupFull {
   width: 1080px;
 }

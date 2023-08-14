@@ -1,14 +1,10 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { Row, Col, Button } from 'react-bootstrap';
-import { updateCalendarSettings } from 'client/store/calendarsSlice';
+import { Row, Col } from 'react-bootstrap';
 import CalendarToggleMenuItem from './CalendarToggleMenuItem';
-import './CalendarToggleMenu.css';
+import styles from 'client/styles/CalendarToggleMenu.module.css';
 
 const CalendarToggleMenu = ({ calendars, calendarIds }) => {
-  const dispatch = useDispatch();
-
-  // order calendars for render:
+  // sort calendars for render:
   // 1. system cals
   // 2. user default cal
   // 3. remaining user cals
@@ -17,7 +13,7 @@ const CalendarToggleMenu = ({ calendars, calendarIds }) => {
     .sort((a, b) => (calendars[b].user_id === 'system') - (calendars[a].user_id === 'system'));
 
   return (
-    <div className="CalendarToggleMenu">
+    <div className={styles.container}>
       <Row>
         <Col>
           <label className="text-primary">My Calendars</label>

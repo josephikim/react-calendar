@@ -1,52 +1,47 @@
 import React from 'react';
-import { Navbar, Nav, Container, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-
-import { logoutUser } from 'client/store/userSlice';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Navbar, Nav, Col } from 'react-bootstrap';
+import { logoutUser } from 'client/store/userSlice';
 import UserIndicator from './UserIndicator';
-
-import 'client/styles/Header.css';
+import styles from 'client/styles/Header.module.css';
 
 const Header = ({ authenticated }) => {
   const dispatch = useDispatch();
 
   return (
-    <Navbar className="Header fixed-top" collapseOnSelect expands="md" bg="primary" variant="dark">
-      <Container>
+    <Navbar className={`${styles.navbar} fixed-top`} bg="primary" variant="dark">
+      <div className={styles.container}>
         <Col md={3}>{authenticated && <UserIndicator />}</Col>
-        <Col md={6}>
+        <Col md={6} className="text-center">
           <Navbar.Brand>React Calendar App</Navbar.Brand>
         </Col>
         <Col md={3}>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
-            <Nav>
-              <Nav.Link as={Link} to="/">
-                Home
+          <Nav className="justify-content-end">
+            <Nav.Link as={Link} to="/">
+              Home
+            </Nav.Link>
+
+            <Nav.Link as={Link} to="/account">
+              Account
+            </Nav.Link>
+
+            {authenticated ? null : (
+              <Nav.Link as={Link} to="/register">
+                Register
               </Nav.Link>
+            )}
 
-              <Nav.Link as={Link} to="/account">
-                Account
+            {authenticated ? (
+              <Nav.Link onClick={() => dispatch(logoutUser())}>Logout</Nav.Link>
+            ) : (
+              <Nav.Link as={Link} to="/login">
+                Login
               </Nav.Link>
-
-              {authenticated ? null : (
-                <Nav.Link as={Link} to="/register">
-                  Register
-                </Nav.Link>
-              )}
-
-              {authenticated ? (
-                <Nav.Link onClick={() => dispatch(logoutUser())}>Logout</Nav.Link>
-              ) : (
-                <Nav.Link as={Link} to="/login">
-                  Login
-                </Nav.Link>
-              )}
-            </Nav>
-          </Navbar.Collapse>
+            )}
+          </Nav>
         </Col>
-      </Container>
+      </div>
     </Navbar>
   );
 };

@@ -25,11 +25,13 @@ const CalendarPage = () => {
 
   // app state
   const calendars = useSelector((state) => state.calendars.byId);
+  const calendarIds = useSelector((state) => state.calendars.allIds);
   const currentSelection = useSelector(deserializedRbcSelectionSelector);
 
   // derived state
   const isCurrentSelectionSet = currentSelection.slot || currentSelection.event;
   const isDefaultCalLoaded = _.some(calendars, ['userDefault', true]);
+  const defaultCalendarId = calendarIds.find((id) => calendars[id].userDefault === true);
 
   const renderJsx = () => {
     if (isCurrentSelectionSet && isDefaultCalLoaded) {
@@ -42,7 +44,12 @@ const CalendarPage = () => {
             <RbcWrapper calendars={calendars} currentSelection={currentSelection} />
           </Col>
           <Col xs={12} lg={3}>
-            <CalendarEventForm currentSelection={currentSelection} />
+            <CalendarEventForm
+              currentSelection={currentSelection}
+              calendars={calendars}
+              calendarIds={calendarIds}
+              defaultCalendarId={defaultCalendarId}
+            />
           </Col>
         </Row>
       );

@@ -1,5 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { getCurrentDaySlot } from 'client/utils/rbc';
+import { getSmartSlot } from 'client/utils/rbc';
 import { defaultView } from 'config/appConfig';
 
 export const initialState = {
@@ -87,7 +87,7 @@ export const initCalendar = () => (dispatch) => {
   // Set initial calendar slot
   dispatch(
     rbcSelectionUpdated({
-      slot: getCurrentDaySlot(),
+      slot: getSmartSlot(),
       event: null
     })
   );

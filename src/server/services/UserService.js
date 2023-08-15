@@ -161,6 +161,7 @@ class UserService {
 
   updateCalendarSettings = async (userId, data) => {
     try {
+      // get calendar settings properties from model schema
       const calendarSettingsKeys = Object.keys(this.model.schema.tree.calendarSettings[0]);
 
       const diffedData = {};
@@ -188,8 +189,7 @@ class UserService {
       );
 
       if (!user) {
-        // User not found
-        throw new NotFoundError('Invalid user id');
+        throw new NotFoundError(`Update failed with user id: ${userId}`);
       }
 
       const httpResponse = new HttpResponse(user.calendarSettings);

@@ -5,13 +5,12 @@ import { DayPicker } from 'react-day-picker';
 import { usePopper } from 'react-popper';
 import styles from 'client/styles/DatePickerDialog.module.css';
 
-const DatePickerDialog = (props) => {
-  const { isDisabled, value } = props;
+const DatePickerDialog = ({ inputId, value, isDisabled, dateFormat, stateSetter }) => {
   const popperRef = useRef(null);
   const buttonRef = useRef(null);
 
   // stores Date objects
-  const [inputValue, setInputValue] = useState(props.value);
+  const [inputValue, setInputValue] = useState(value);
 
   // stores booleans
   const [isPopperOpen, setIsPopperOpen] = useState(false);
@@ -21,8 +20,8 @@ const DatePickerDialog = (props) => {
 
   // Hook to update input value based on prop change
   useEffect(() => {
-    setInputValue(props.value);
-  }, [props.value]);
+    setInputValue(value);
+  }, [value]);
 
   // Initialize popper
   const popper = usePopper(popperRef.current, popperElement, {
@@ -46,20 +45,12 @@ const DatePickerDialog = (props) => {
   const updateEventFormDates = (date) => {
     date.setHours(value.getHours(), value.getMinutes());
 
-    if (props.inputId === 'startDate') {
-      props.setStart(date);
-    }
-
-    if (props.inputId === 'endDate') {
-      props.setEnd(date);
-    }
-
-    return;
+    return stateSetter(date);
   };
 
   const handleInputChange = (e) => {
     setInputValue(e.currentTarget.value);
-    const date = parse(e.currentTarget.value, props.dateFormat, new Date());
+    const date = parse(e.currentTarget.value, dateFormat, new Date());
 
     if (isValid(date)) {
       updateEventFormDates(date);
@@ -82,11 +73,11 @@ const DatePickerDialog = (props) => {
     <div>
       <div className={styles.inputContainer} ref={popperRef}>
         <input
-          id={props.inputId}
+          id={inputId}
           type="text"
           disabled={isDisabled}
-          placeholder={format(new Date(), props.dateFormat)}
-          value={format(inputValue, props.dateFormat)}
+          placeholder={format(new Date(), dateFormat)}
+          value={format(inputValue, dateFormat)}
           onChange={handleInputChange}
           className={`${styles.input} input-reset`}
           onClick={handleButtonClick}

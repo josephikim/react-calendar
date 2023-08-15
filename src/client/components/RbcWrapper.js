@@ -65,7 +65,7 @@ const RbcWrapper = ({ calendars, currentSelection }) => {
     const { slot: currentSlot } = currentSelection;
 
     // If selected slot matches current slot, do nothing
-    if (!isValidSlot(currentSlot, slot)) return;
+    if (!isNewSlot(currentSlot, slot)) return;
 
     const serializedSlot = {
       ...slot,
@@ -77,9 +77,9 @@ const RbcWrapper = ({ calendars, currentSelection }) => {
     dispatch(onSelectSlot(serializedSlot));
   };
 
-  // Returns true if candidate slot and current slot are unique from each other.
+  // Returns true if candidate slot and current slot are unique.
   // Comparisons are made using primitive values of Date objects i.e. date.getTime()
-  const isValidSlot = (currentSlot, candidateSlot) => {
+  const isNewSlot = (currentSlot, candidateSlot) => {
     if (!currentSlot) return true;
 
     const isUnique =

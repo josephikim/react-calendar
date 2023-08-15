@@ -18,23 +18,6 @@ export const getDayEnd = (date) => {
   return end;
 };
 
-// returns new date with time at current hour
-export const getSmartStart = (date) => {
-  const start = new Date(date);
-  const current = new Date();
-  start.setHours(current.getHours(), 0, 0, 0);
-  return start;
-};
-
-// returns new date with time at one hour following current hour
-export const getSmartEnd = (date) => {
-  const end = new Date(date);
-  const current = new Date();
-  end.setDate(end.getDate() - 1);
-  end.setHours(current.getHours() + 1, 0, 0, 0);
-  return end;
-};
-
 // checks if start time is before end time
 export const isValidStartTime = (start, end) => {
   if (start.getTime() > end.getTime()) {
@@ -52,15 +35,15 @@ export const isValidEndTime = (start, end) => {
 };
 
 // check if start and end both equal 12:00am
-export const isAllDaySpan = (start, end) => {
+export const isAllDaySpan = (slot) => {
   if (
-    start.getHours() === 0 &&
-    start.getMinutes() === 0 &&
-    start.getSeconds() === 0 &&
-    end.getHours() === 0 &&
-    end.getMinutes() === 0 &&
-    end.getSeconds() === 0 &&
-    start.getTime() !== end.getTime()
+    slot.start.getHours() === 0 &&
+    slot.start.getMinutes() === 0 &&
+    slot.start.getSeconds() === 0 &&
+    slot.end.getHours() === 0 &&
+    slot.end.getMinutes() === 0 &&
+    slot.end.getSeconds() === 0 &&
+    slot.start.getTime() !== slot.end.getTime()
   ) {
     return true;
   }
@@ -68,8 +51,8 @@ export const isAllDaySpan = (start, end) => {
 };
 
 // check if start and end both equal 12:00am exactly 24 hours apart
-export const isSingleDayAllDaySpan = (start, end) => {
-  if (isAllDaySpan(start, end) && end.getTime() - start.getTime() === 86400000) {
+export const isSingleDayAllDaySpan = (slot) => {
+  if (isAllDaySpan(slot) && slot.end.getTime() - slot.start.getTime() === 86400000) {
     return true;
   }
   return false;

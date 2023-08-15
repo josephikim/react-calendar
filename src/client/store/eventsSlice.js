@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { rbcSelectionUpdated } from './appSlice';
 import { userApi } from 'client/utils/axios';
-import { getCurrentDaySlot } from 'client/utils/rbc';
+import { getSmartSlot } from 'client/utils/rbc';
 
 export const initialState = {
   byId: {},
@@ -121,7 +121,7 @@ export const deleteEvent = (eventId) => async (dispatch) => {
     // Reset calendar slot
     dispatch(
       rbcSelectionUpdated({
-        slot: getCurrentDaySlot(),
+        slot: getSmartSlot(),
         event: null
       })
     );

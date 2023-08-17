@@ -5,12 +5,12 @@ import { DayPicker } from 'react-day-picker';
 import { usePopper } from 'react-popper';
 import styles from 'client/styles/DatePickerDialog.module.css';
 
-const DatePickerDialog = ({ inputId, value, isDisabled, dateFormat, stateSetter }) => {
+const DatePickerDialog = ({ inputId, date, isDisabled, dateFormat, onDateSelect }) => {
   const popperRef = useRef(null);
   const buttonRef = useRef(null);
 
   // stores Date objects
-  const [inputValue, setInputValue] = useState(value);
+  const [inputValue, setInputValue] = useState(date);
 
   // stores booleans
   const [isPopperOpen, setIsPopperOpen] = useState(false);
@@ -20,8 +20,8 @@ const DatePickerDialog = ({ inputId, value, isDisabled, dateFormat, stateSetter 
 
   // Hook to update input value based on prop change
   useEffect(() => {
-    setInputValue(value);
-  }, [value]);
+    setInputValue(date);
+  }, [date]);
 
   // Initialize popper
   const popper = usePopper(popperRef.current, popperElement, {
@@ -41,13 +41,6 @@ const DatePickerDialog = ({ inputId, value, isDisabled, dateFormat, stateSetter 
     buttonRef?.current?.focus();
   };
 
-  // Updates CalendarEventForm start/end dates (date portion only)
-  const updateEventFormDates = (date) => {
-    date.setHours(value.getHours(), value.getMinutes());
-
-    return stateSetter(date);
-  };
-
   const handleInputChange = (e) => {
     setInputValue(e.currentTarget.value);
     const date = parse(e.currentTarget.value, dateFormat, new Date());
@@ -61,10 +54,14 @@ const DatePickerDialog = ({ inputId, value, isDisabled, dateFormat, stateSetter 
     setIsPopperOpen(true);
   };
 
-  const handleDaySelect = (date) => {
-    if (date instanceof Date && !isNaN(date)) {
-      setInputValue(date);
-      updateEventFormDates(date);
+  const handleSelect = (selected) => {
+    if (selected instanceof Date && !isNaN(selected)) {
+      setInputValue(selected);
+
+      selected.setHours(date.getHours(), date.getMinutes());
+      // function passed through props from parent
+      onDateSelect(inputId, selected);
+
       closePopper();
     }
   };
@@ -122,7 +119,7 @@ const DatePickerDialog = ({ inputId, value, isDisabled, dateFormat, stateSetter 
               mode="single"
               defaultMonth={inputValue}
               selected={inputValue}
-              onSelect={handleDaySelect}
+              onSelect={handleSelect}
             />
           </div>
         </FocusTrap>

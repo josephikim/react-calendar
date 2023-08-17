@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { Row, Col } from 'react-bootstrap';
-import { initCalendar, deserializedRbcSelectionSelector } from 'client/store/appSlice';
+import { initCalendar } from 'client/store/appSlice';
 import { getUserEvents } from 'client/store/eventsSlice';
 import ContentWrapper from 'client/components/ContentWrapper';
 import RbcWrapper from 'client/components/RbcWrapper';
@@ -26,26 +26,26 @@ const CalendarPage = () => {
   // app state
   const calendars = useSelector((state) => state.calendars.byId);
   const calendarIds = useSelector((state) => state.calendars.allIds);
-  const currentSelection = useSelector(deserializedRbcSelectionSelector);
+  const rbcSelection = useSelector((state) => state.app.rbcSelection);
 
   // derived state
-  const isCurrentSelectionSet = currentSelection.slot || currentSelection.event;
+  const isRbcSelectionSet = rbcSelection.slot || rbcSelection.event;
   const isDefaultCalLoaded = _.some(calendars, ['userDefault', true]);
   const defaultCalendarId = calendarIds.find((id) => calendars[id].userDefault === true);
 
   const renderJsx = () => {
-    if (isCurrentSelectionSet && isDefaultCalLoaded) {
+    if (isRbcSelectionSet && isDefaultCalLoaded) {
       return (
         <Row>
           <Col xs={12} lg={2}>
             <CalendarToggleMenu calendars={calendars} />
           </Col>
           <Col xs={12} lg={7}>
-            <RbcWrapper calendars={calendars} currentSelection={currentSelection} />
+            <RbcWrapper calendars={calendars} />
           </Col>
           <Col xs={12} lg={3}>
             <CalendarEventForm
-              currentSelection={currentSelection}
+              rbcSelection={rbcSelection}
               calendars={calendars}
               calendarIds={calendarIds}
               defaultCalendarId={defaultCalendarId}

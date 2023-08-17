@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { rbcSelectionUpdated } from './appSlice';
+import { onSelectSlot, onSelectEvent } from './appSlice';
 import { userApi } from 'client/utils/axios';
-import { getSmartSlot } from 'client/utils/rbc';
+import { getCurrentDaySlot } from 'client/utils/rbc';
 
 export const initialState = {
   byId: {},
@@ -91,12 +91,7 @@ export const createEvent = (data) => async (dispatch) => {
     dispatch(eventAdded(res.data));
 
     // set selection to created event
-    dispatch(
-      rbcSelectionUpdated({
-        slot: null,
-        event: res.data
-      })
-    );
+    dispatch(onSelectEvent(res.data));
   } catch (e) {
     throw e;
   }
@@ -107,6 +102,9 @@ export const updateEvent = (data) => async (dispatch) => {
     const res = await userApi.put(`/events/${data.id}`, data);
 
     dispatch(eventUpdated(res.data));
+
+    // set selection to updated event
+    dispatch(onSelectEvent(res.data));
   } catch (e) {
     throw e;
   }
@@ -119,12 +117,7 @@ export const deleteEvent = (eventId) => async (dispatch) => {
     dispatch(eventDeleted(res.data.id));
 
     // Reset calendar slot
-    dispatch(
-      rbcSelectionUpdated({
-        slot: getSmartSlot(),
-        event: null
-      })
-    );
+    dispatch(onSelectSlot(getCurrentDaySlot()));
   } catch (e) {
     throw e;
   }

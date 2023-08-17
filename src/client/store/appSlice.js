@@ -1,6 +1,7 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { getSmartSlot } from 'client/utils/rbc';
+import { getCurrentDaySlot } from 'client/utils/rbc';
 import { defaultView } from 'config/appConfig';
+import { addToLocalStorageObject } from 'client/utils/localStorage';
 
 export const initialState = {
   rbcSelection: {},
@@ -24,37 +25,6 @@ export const { rbcSelectionUpdated, rbcViewUpdated } = appSlice.actions;
 
 export default appSlice.reducer;
 
-// State selectors
-const selectRbcSelection = (state) => state.app.rbcSelection;
-
-//
-// Memoized selectors
-//
-
-// returns times as Date objects
-export const deserializedRbcSelectionSelector = createSelector([selectRbcSelection], (rbcSelection) => {
-  const selectedSlot = rbcSelection.slot;
-  const selectedEvent = rbcSelection.event;
-
-  const deserializedSlot = selectedSlot
-    ? {
-        ...selectedSlot,
-        start: new Date(selectedSlot.start),
-        end: new Date(selectedSlot.end),
-        slots: selectedSlot.slots.map((slot) => new Date(slot))
-      }
-    : null;
-
-  const deserializedEvent = selectedEvent
-    ? { ...selectedEvent, start: new Date(selectedEvent.start), end: new Date(selectedEvent.end) }
-    : null;
-
-  return {
-    slot: deserializedSlot,
-    event: deserializedEvent
-  };
-});
-
 //
 // Bound action creators
 //
@@ -75,6 +45,8 @@ export const onSelectEvent = (serializedEvent) => (dispatch) => {
       event: serializedEvent
     })
   );
+
+  localStorage.removeItem('formValues');
 };
 
 export const onSelectView = (view) => (dispatch) => {
@@ -87,7 +59,7 @@ export const initCalendar = () => (dispatch) => {
   // Set initial calendar slot
   dispatch(
     rbcSelectionUpdated({
-      slot: getSmartSlot(),
+      slot: getCurrentDaySlot(),
       event: null
     })
   );

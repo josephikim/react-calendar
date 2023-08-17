@@ -76,6 +76,7 @@
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "react-time-picker": "^6.2.0",
+    "react-use": "^17.4.0",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.9",

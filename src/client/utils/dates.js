@@ -36,23 +36,17 @@ export const isValidEndTime = (start, end) => {
 
 // check if start and end both equal 12:00am
 export const isAllDaySpan = (slot) => {
+  const startDate = new Date(slot.start);
+  const endDate = new Date(slot.end);
   if (
-    slot.start.getHours() === 0 &&
-    slot.start.getMinutes() === 0 &&
-    slot.start.getSeconds() === 0 &&
-    slot.end.getHours() === 0 &&
-    slot.end.getMinutes() === 0 &&
-    slot.end.getSeconds() === 0 &&
-    slot.start.getTime() !== slot.end.getTime()
+    startDate.getHours() === 0 &&
+    startDate.getMinutes() === 0 &&
+    startDate.getSeconds() === 0 &&
+    endDate.getHours() === 0 &&
+    endDate.getMinutes() === 0 &&
+    endDate.getSeconds() === 0 &&
+    startDate.getTime() !== endDate.getTime()
   ) {
-    return true;
-  }
-  return false;
-};
-
-// check if start and end both equal 12:00am exactly 24 hours apart
-export const isSingleDayAllDaySpan = (slot) => {
-  if (isAllDaySpan(slot) && slot.end.getTime() - slot.start.getTime() === 86400000) {
     return true;
   }
   return false;

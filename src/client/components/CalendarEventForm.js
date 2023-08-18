@@ -1,24 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useDeepCompareEffect } from 'react-use';
 import TimePicker from 'react-time-picker';
 import _ from 'lodash';
-import {
-  deserializedRbcSelectionSelector,
-  serializedRbcSelectionSelector,
-  selectRbcSelection
-} from 'client/store/appSlice';
 import { createEvent, updateEvent, deleteEvent } from 'client/store/eventsSlice';
 import { validateFields } from 'client/validation.js';
-import {
-  getDayStart,
-  getDayEnd,
-  isValidStartTime,
-  isValidEndTime,
-  isAllDaySpan,
-  isSingleDayAllDaySpan
-} from 'client/utils/dates';
+import { getDayStart, getDayEnd, isAllDaySpan } from 'client/utils/dates';
 import { isValidEventUpdate } from 'client/utils/events';
+import { isValidTimeSpan } from 'client/utils/dates';
 import { addToLocalStorageObject } from 'client/utils/localStorage';
 import { parseTimePickerValues } from 'client/utils/timePicker';
 import { getErrorMessage } from 'client/utils/errors';
@@ -51,7 +40,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
   // useDeepCompareEffect has same signature as useEffect, but allows deep comparison of dependencies
   useDeepCompareEffect(() => {
     if (rbcSelection.event) {
-      setFormValues((data) => ({
+      const update = {
         title: {
           value: rbcSelection.event.title,
           validateOnChange: false,
@@ -62,61 +51,67 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         end: new Date(rbcSelection.event.end),
         allDay: rbcSelection.event.allDay,
         calendarId: rbcSelection.event.calendar
+      };
+      setFormValues((data) => ({
+        ...data,
+        ...update
       }));
     }
 
     if (rbcSelection.slot) {
-      const startDate = new Date(rbcSelection.slot.start);
-      const endDate = new Date(rbcSelection.slot.end);
-
       const localFormValues = localStorage.getItem('formValues');
 
       if (localFormValues) {
-        const _obj = JSON.parse(localFormValues);
+        // update form values using local form values
+        // combine dates from rbc selection and times from local form values if available
+        const localObj = JSON.parse(localFormValues);
 
         // convert start and end values to Date objects
         ['start', 'end'].forEach((key) => {
-          if (_obj[key]) {
-            const dateFromLocal = new Date(_obj[key]);
-            const dateFromRbcSlot = new Date(rbcSelection.slot[key]);
-            dateFromRbcSlot.setHours(dateFromLocal.getHours());
-            dateFromRbcSlot.setMinutes(dateFromLocal.getMinutes());
-            dateFromRbcSlot.setSeconds(dateFromLocal.getSeconds());
-            _obj[key] = dateFromRbcSlot;
+          if (localObj[key]) {
+            const dateFromLocal = new Date(localObj[key]);
+            const dateFromRbc = new Date(rbcSelection.slot[key]);
+
+            dateFromRbc.setHours(dateFromLocal.getHours());
+            dateFromRbc.setMinutes(dateFromLocal.getMinutes());
+            dateFromRbc.setSeconds(dateFromLocal.getSeconds());
+
+            localObj[key] = dateFromRbc;
           }
         });
 
-        const newState = {
-          title: _obj.title ?? {
+        const update = {
+          title: localObj.title ?? {
             value: '',
             validateOnChange: false,
             error: ''
           },
-          desc: _obj.desc ?? '',
-          start: _obj.start ?? new Date(rbcSelection.slot.start),
-          end: _obj.end ?? new Date(rbcSelection.slot.end),
-          allDayStart: getDayStart(_obj.start ?? new Date(rbcSelection.slot.start)),
-          allDayEnd: getDayEnd(_obj.end ?? new Date(rbcSelection.slot.end)),
-          calendarId: defaultCalendarId
+          desc: localObj.desc ?? '',
+          start: localObj.start ?? new Date(rbcSelection.slot.start),
+          end: localObj.end ?? new Date(rbcSelection.slot.end),
+          allDayStart: getDayStart(localObj.start ?? new Date(rbcSelection.slot.start)),
+          allDayEnd: getDayEnd(localObj.end ?? new Date(rbcSelection.slot.end)),
+          calendarId: localObj.calendarId ?? defaultCalendarId
         };
 
         setFormValues((data) => ({
           ...data,
-          ...newState
+          ...update
         }));
 
-        addToLocalStorageObject('formValues', 'start', newState.start.toISOString());
-        addToLocalStorageObject('formValues', 'end', newState.end.toISOString());
+        addToLocalStorageObject('formValues', 'start', update.start.toISOString());
+        addToLocalStorageObject('formValues', 'end', update.end.toISOString());
       } else {
-        const newState = {
+        // if no local storage data, reset form values
+        const update = {
           title: {
             value: '',
             validateOnChange: false,
             error: ''
           },
           desc: '',
-          start: startDate,
-          end: endDate,
+          start: new Date(rbcSelection.slot.start),
+          end: new Date(rbcSelection.slot.end),
           allDayStart: getDayStart(new Date(rbcSelection.slot.start)),
           allDayEnd: getDayEnd(new Date(rbcSelection.slot.end)),
           calendarId: defaultCalendarId
@@ -124,7 +119,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
 
         setFormValues((data) => ({
           ...data,
-          ...newState
+          ...update
         }));
       }
     }
@@ -133,6 +128,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
   // set allDay state based on changes to start or end values
   useEffect(() => {
     const allDay = isAllDaySpan(formValues.start, formValues.end);
+
     setFormValues((data) => ({ ...data, allDay }));
   }, [formValues.start, formValues.end]);
 
@@ -146,12 +142,10 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       delete json.start;
       delete json.end;
 
-      const newState = {
+      setFormValues({
         ...formValues,
         ...json
-      };
-
-      setFormValues(newState);
+      });
     }
   }, []);
 
@@ -210,6 +204,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       });
       addToLocalStorageObject('formValues', 'start', date.toISOString());
     }
+
     if (id === 'endDate') {
       setFormValues((data) => {
         return {
@@ -237,6 +232,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
 
       addToLocalStorageObject('formValues', 'start', newStart.toISOString());
     }
+
     if (id === 'end') {
       const newEnd = new Date(formValues.end);
       newEnd.setHours(hour, min);
@@ -265,6 +261,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       'start',
       checked ? formValues.allDayStart.toISOString() : formValues.start.toISOString()
     );
+
     addToLocalStorageObject(
       'formValues',
       'end',
@@ -286,10 +283,22 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         calendarId
       };
     });
+
     addToLocalStorageObject('formValues', 'calendarId', calendarId);
   };
 
   const handleAdd = () => {
+    // Check for valid time span
+    if (
+      !isValidTimeSpan(
+        formValues.allDay ? formValues.allDayStart : formValues.start,
+        formValues.allday ? formValues.allDayEnd : formValues.end
+      )
+    ) {
+      alert('End time should be after start time. Please try again.');
+      return;
+    }
+
     const inputError = validateFields.validateTitle(formValues.title.value.trim());
 
     if (!inputError) {
@@ -329,6 +338,17 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
   };
 
   const handleUpdate = () => {
+    // Check for valid time span
+    if (
+      !isValidTimeSpan(
+        formValues.allDay ? formValues.allDayStart : formValues.start,
+        formValues.allday ? formValues.allDayEnd : formValues.end
+      )
+    ) {
+      alert('End time should be after start time. Please try again.');
+      return;
+    }
+
     const inputError = validateFields.validateTitle(formValues.title.value.trim());
 
     if (!inputError) {

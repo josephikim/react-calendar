@@ -18,17 +18,9 @@ export const getDayEnd = (date) => {
   return end;
 };
 
-// checks if start time is before end time
-export const isValidStartTime = (start, end) => {
-  if (start.getTime() > end.getTime()) {
-    return false;
-  }
-  return true;
-};
-
-// checks if end time is after start time
-export const isValidEndTime = (start, end) => {
-  if (end.getTime() <= start.getTime()) {
+// returns true if start time is before end time
+export const isValidTimeSpan = (start, end) => {
+  if (start.getTime() >= end.getTime()) {
     return false;
   }
   return true;

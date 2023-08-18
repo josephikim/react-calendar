@@ -12,6 +12,7 @@ const RbcWrapper = ({ calendars }) => {
   const dispatch = useDispatch();
 
   // app state
+  const view = useSelector((state) => state.app.rbcView);
   const calendarIds = useSelector((state) => state.calendars.allIds);
   const events = useSelector(rbcEventsSelector);
 
@@ -74,7 +75,7 @@ const RbcWrapper = ({ calendars }) => {
         selectable
         localizer={localizer}
         events={visibleEvents}
-        defaultView="month"
+        view={view}
         onView={(view) => handleView(view)}
         defaultDate={new Date()}
         scrollToTime={new Date(1970, 1, 1, 6)}

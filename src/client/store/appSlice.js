@@ -5,7 +5,7 @@ import { addToLocalStorageObject } from 'client/utils/localStorage';
 
 export const initialState = {
   rbcSelection: {},
-  rbcView: null
+  rbcView: defaultView
 };
 
 const appSlice = createSlice({
@@ -81,5 +81,4 @@ export const initCalendar = () => (dispatch) => {
       })
     );
   }
-  dispatch(rbcViewUpdated(defaultView));
 };

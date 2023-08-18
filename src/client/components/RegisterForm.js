@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { validateFields } from 'client/validation.js';
 import { registerUser } from 'client/store/userSlice';
+import { getErrorMessage } from 'client/utils/errors';
 
 const initialState = {
   username: {
@@ -102,9 +103,8 @@ const RegisterForm = () => {
       };
 
       dispatch(registerUser(data)).catch((e) => {
-        const error = e.response?.data ?? e;
-        const errorCode = error?.errorCode ?? null;
-        alert(`Registration error: ${error.message ?? error.statusText}`);
+        const msg = getErrorMessage(e);
+        alert(`Registration error: ${msg}`);
 
         // Update state to reflect response errors
         if (errorCode) {

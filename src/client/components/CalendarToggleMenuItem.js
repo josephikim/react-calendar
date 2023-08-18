@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Row, Col, Badge } from 'react-bootstrap';
 import { updateCalendarSettings } from 'client/store/calendarsSlice';
+import { getErrorMessage } from 'client/utils/errors';
 import Checkbox from './Checkbox';
 import styles from 'client/styles/CalendarToggleMenuItem.module.css';
 
@@ -18,8 +19,8 @@ const CalendarToggleMenuItem = ({ id, calendar }) => {
     };
 
     dispatch(updateCalendarSettings(data)).catch((e) => {
-      const error = e.response?.data ?? e;
-      alert(`Error updating visibility: ${error.message ?? error.statusText}`);
+      const msg = getErrorMessage(e);
+      alert(`Error updating visibility: ${msg}`);
     });
   };
 

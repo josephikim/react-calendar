@@ -61,13 +61,11 @@ const selectEventIds = (state) => state.events.allIds;
 
 // returns array of events with start/end as Date type
 export const rbcEventsSelector = createSelector([selectEvents, selectEventIds], (events, eventIds) => {
-  return eventIds.map((eventId) => {
-    return {
-      ...events[eventId],
-      start: new Date(events[eventId].start),
-      end: new Date(events[eventId].end)
-    };
-  });
+  return eventIds.map((eventId) => ({
+    ...events[eventId],
+    start: new Date(events[eventId].start),
+    end: new Date(events[eventId].end)
+  }));
 });
 
 //

@@ -67,16 +67,14 @@ class UserService {
 
     const httpResponse = new HttpResponse(response);
 
-    const flattenedCalendarSettings = httpResponse.data.calendarSettings.map((entry) => {
-      return {
-        id: entry.calendar.id,
-        name: entry.calendar.name,
-        user_id: entry.calendar.user_id,
-        userDefault: entry.userDefault,
-        visibility: entry.visibility,
-        color: entry.color
-      };
-    });
+    const flattenedCalendarSettings = httpResponse.data.calendarSettings.map((entry) => ({
+      id: entry.calendar.id,
+      name: entry.calendar.name,
+      user_id: entry.calendar.user_id,
+      userDefault: entry.userDefault,
+      visibility: entry.visibility,
+      color: entry.color
+    }));
 
     httpResponse.data.calendarSettings = flattenedCalendarSettings;
 
@@ -194,14 +192,12 @@ class UserService {
 
       const httpResponse = new HttpResponse(user.calendarSettings);
 
-      const flattenedCalendarSettings = httpResponse.data.map((entry) => {
-        return {
-          id: entry.calendar,
-          userDefault: entry.userDefault,
-          visibility: entry.visibility,
-          color: entry.color
-        };
-      });
+      const flattenedCalendarSettings = httpResponse.data.map((entry) => ({
+        id: entry.calendar,
+        userDefault: entry.userDefault,
+        visibility: entry.visibility,
+        color: entry.color
+      }));
 
       httpResponse.data = flattenedCalendarSettings;
 

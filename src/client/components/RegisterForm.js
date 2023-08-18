@@ -35,24 +35,20 @@ const RegisterForm = () => {
     switch (name) {
       case 'username':
         if (username.validateOnChange === false) {
-          setUsername((data) => {
-            return {
-              ...data,
-              validateOnChange: true,
-              error: validationFunc(data.value)
-            };
-          });
+          setUsername((data) => ({
+            ...data,
+            validateOnChange: true,
+            error: validationFunc(data.value)
+          }));
         }
         break;
       case 'password':
         if (password.validateOnChange === false) {
-          setPassword((data) => {
-            return {
-              ...data,
-              validateOnChange: true,
-              error: validationFunc(data.value)
-            };
-          });
+          setPassword((data) => ({
+            ...data,
+            validateOnChange: true,
+            error: validationFunc(data.value)
+          }));
         }
         break;
       default:
@@ -67,30 +63,24 @@ const RegisterForm = () => {
 
     switch (name) {
       case 'username':
-        setUsername((data) => {
-          return {
-            ...data,
-            value,
-            error: data.validateOnChange ? validationFunc(value) : null
-          };
-        });
+        setUsername((data) => ({
+          ...data,
+          value,
+          error: data.validateOnChange ? validationFunc(value) : null
+        }));
         break;
       case 'password':
-        setPassword((data) => {
-          return {
-            ...data,
-            value,
-            error: data.validateOnChange ? validationFunc(value) : null
-          };
-        });
+        setPassword((data) => ({
+          ...data,
+          value,
+          error: data.validateOnChange ? validationFunc(value) : null
+        }));
         break;
       case 'passwordConfirm':
-        setPasswordConfirm((data) => {
-          return {
-            ...data,
-            value
-          };
-        });
+        setPasswordConfirm((data) => ({
+          ...data,
+          value
+        }));
         break;
       default:
         break;
@@ -120,20 +110,18 @@ const RegisterForm = () => {
         if (errorCode) {
           switch (errorCode) {
             case 'username':
-              setUsername((data) => {
-                return {
-                  ...data,
-                  error: error.message
-                };
-              });
+              setUsername((data) => ({
+                ...data,
+                validateOnChange: true,
+                error: error.message
+              }));
               break;
             case 'password':
-              setPassword((data) => {
-                return {
-                  ...data,
-                  error: error.message
-                };
-              });
+              setPassword((data) => ({
+                ...data,
+                validateOnChange: true,
+                error: error.message
+              }));
               break;
             default:
               break;
@@ -143,32 +131,26 @@ const RegisterForm = () => {
     } else {
       // update state with input errors
       if (usernameError) {
-        setUsername((data) => {
-          return {
-            ...data,
-            validateOnChange: true,
-            error: usernameError
-          };
-        });
+        setUsername((data) => ({
+          ...data,
+          validateOnChange: true,
+          error: usernameError
+        }));
       }
 
       if (passwordError) {
-        setPassword((data) => {
-          return {
-            ...data,
-            validateOnChange: true,
-            error: passwordError
-          };
-        });
+        setPassword((data) => ({
+          ...data,
+          validateOnChange: true,
+          error: passwordError
+        }));
       }
 
       if (passwordConfirmError) {
-        setPasswordConfirm((data) => {
-          return {
-            ...data,
-            error: passwordConfirmError
-          };
-        });
+        setPasswordConfirm((data) => ({
+          ...data,
+          error: passwordConfirmError
+        }));
       }
     }
   };

@@ -152,40 +152,34 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
   // derived state
   const isSystemEventSelected = rbcSelection.event && calendars[rbcSelection.event.calendar].user_id === 'system';
   const calendarSelectMenuValues = [calendars[formValues.calendarId]];
-  const calendarSelectMenuOptions = calendarIds.map((id) => {
-    return {
-      id,
-      name: calendars[id].name,
-      disabled: calendars[id].user_id === 'system'
-    };
-  });
+  const calendarSelectMenuOptions = calendarIds.map((id) => ({
+    id,
+    name: calendars[id].name,
+    disabled: calendars[id].user_id === 'system'
+  }));
 
   const handleTitleChange = (validationFunc, e) => {
-    setFormValues((data) => {
-      return {
-        ...data,
-        title: {
-          ...data.title,
-          value: e.target.value,
-          error: data.title['validateOnChange'] ? validationFunc(e.target.value) : ''
-        }
-      };
-    });
+    setFormValues((data) => ({
+      ...data,
+      title: {
+        ...data.title,
+        value: e.target.value,
+        error: data.title['validateOnChange'] ? validationFunc(e.target.value) : ''
+      }
+    }));
   };
 
   const handleBlur = (validationFunc, e) => {
     if (e.target.id === 'title') {
       if (formValues.title['validateOnChange'] === false) {
-        setFormValues((data) => {
-          return {
-            ...data,
-            title: {
-              ...data.title,
-              validateOnChange: true,
-              error: validationFunc(data.title.value)
-            }
-          };
-        });
+        setFormValues((data) => ({
+          ...data,
+          title: {
+            ...data.title,
+            validateOnChange: true,
+            error: validationFunc(data.title.value)
+          }
+        }));
       }
       addToLocalStorageObject('formValues', 'title', { ...formValues.title });
     }
@@ -196,22 +190,18 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
 
   const handleDateSelect = (id, date) => {
     if (id === 'startDate') {
-      setFormValues((data) => {
-        return {
-          ...data,
-          start: date
-        };
-      });
+      setFormValues((data) => ({
+        ...data,
+        start: date
+      }));
       addToLocalStorageObject('formValues', 'start', date.toISOString());
     }
 
     if (id === 'endDate') {
-      setFormValues((data) => {
-        return {
-          ...data,
-          end: date
-        };
-      });
+      setFormValues((data) => ({
+        ...data,
+        end: date
+      }));
       addToLocalStorageObject('formValues', 'end', date.toISOString());
     }
   };
@@ -223,12 +213,10 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       const newStart = new Date(formValues.start);
       newStart.setHours(hour, min);
 
-      setFormValues((data) => {
-        return {
-          ...data,
-          start: newStart
-        };
-      });
+      setFormValues((data) => ({
+        ...data,
+        start: newStart
+      }));
 
       addToLocalStorageObject('formValues', 'start', newStart.toISOString());
     }
@@ -237,12 +225,10 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       const newEnd = new Date(formValues.end);
       newEnd.setHours(hour, min);
 
-      setFormValues((data) => {
-        return {
-          ...data,
-          end: newEnd
-        };
-      });
+      setFormValues((data) => ({
+        ...data,
+        end: newEnd
+      }));
 
       addToLocalStorageObject('formValues', 'end', newEnd.toISOString());
     }
@@ -277,12 +263,10 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
     // No change detected
     if (calendarId === formValues.calendarId) return;
 
-    setFormValues((data) => {
-      return {
-        ...data,
-        calendarId
-      };
-    });
+    setFormValues((data) => ({
+      ...data,
+      calendarId
+    }));
 
     addToLocalStorageObject('formValues', 'calendarId', calendarId);
   };
@@ -324,16 +308,14 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         });
     } else {
       // update title state
-      setFormValues((data) => {
-        return {
-          ...data,
-          title: {
-            ...data.title,
-            validateOnChange: true,
-            error: inputError
-          }
-        };
-      });
+      setFormValues((data) => ({
+        ...data,
+        title: {
+          ...data.title,
+          validateOnChange: true,
+          error: inputError
+        }
+      }));
     }
   };
 
@@ -379,16 +361,14 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
           alert(`Error updating event: ${msg}`);
         });
     } else {
-      setFormValues((data) => {
-        return {
-          ...data,
-          title: {
-            ...data.title,
-            validateOnChange: true,
-            error: inputError
-          }
-        };
-      });
+      setFormValues((data) => ({
+        ...data,
+        title: {
+          ...data.title,
+          validateOnChange: true,
+          error: inputError
+        }
+      }));
     }
   };
 

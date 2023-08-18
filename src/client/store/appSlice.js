@@ -54,13 +54,32 @@ export const onSelectView = (view) => (dispatch) => {
 };
 
 export const initCalendar = () => (dispatch) => {
-  dispatch(rbcViewUpdated(defaultView));
+  const currentDaySlot = getCurrentDaySlot();
+  const localFormValues = localStorage.getItem('formValues');
 
-  // Set initial calendar slot
-  dispatch(
-    rbcSelectionUpdated({
-      slot: getCurrentDaySlot(),
-      event: null
-    })
-  );
+  if (localFormValues) {
+    const json = JSON.parse(localFormValues);
+
+    const initialSlot = {
+      action: 'click',
+      start: json.start ?? currentDaySlot.start,
+      end: json.end ?? currentDaySlot.end,
+      slots: [json.start ?? currentDaySlot.start]
+    };
+
+    dispatch(
+      rbcSelectionUpdated({
+        slot: initialSlot,
+        event: null
+      })
+    );
+  } else {
+    dispatch(
+      rbcSelectionUpdated({
+        slot: currentDaySlot,
+        event: null
+      })
+    );
+  }
+  dispatch(rbcViewUpdated(defaultView));
 };

@@ -41,12 +41,14 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
     desc: rbcSelection.event?.desc ?? '',
     start: new Date(rbcSelection.event?.start ?? rbcSelection.slot.start),
     end: new Date(rbcSelection.event?.end ?? rbcSelection.slot.end),
+    allDayStart: getDayStart(new Date(rbcSelection.event?.start ?? rbcSelection.slot.start)),
+    allDayEnd: getDayEnd(new Date(rbcSelection.event?.end ?? rbcSelection.slot.end)),
     allDay: rbcSelection.event?.allDay ?? false,
     calendarId: rbcSelection.event?.calendar ?? defaultCalendarId
   });
 
-  // update form values based on RBC selection
-  // useDeepCompareEffect has same signature as useEffect, but allows deep comparison of props
+  // update form values based on rbc selection
+  // useDeepCompareEffect has same signature as useEffect, but allows deep comparison of dependencies
   useDeepCompareEffect(() => {
     if (rbcSelection.event) {
       setFormValues((data) => ({
@@ -70,49 +72,69 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       const localFormValues = localStorage.getItem('formValues');
 
       if (localFormValues) {
-        const json = JSON.parse(localFormValues);
+        const _obj = JSON.parse(localFormValues);
 
         // convert start and end values to Date objects
         ['start', 'end'].forEach((key) => {
-          if (json[key]) {
-            const dateFromJson = new Date(json[key]);
-            const dateFromSlot = new Date(rbcSelection.slot[key]);
-            dateFromSlot.setHours(dateFromJson.getHours());
-            dateFromSlot.setMinutes(dateFromJson.getMinutes());
-            dateFromSlot.setSeconds(dateFromJson.getSeconds());
-            json[key] = dateFromSlot;
+          if (_obj[key]) {
+            const dateFromLocal = new Date(_obj[key]);
+            const dateFromRbcSlot = new Date(rbcSelection.slot[key]);
+            dateFromRbcSlot.setHours(dateFromLocal.getHours());
+            dateFromRbcSlot.setMinutes(dateFromLocal.getMinutes());
+            dateFromRbcSlot.setSeconds(dateFromLocal.getSeconds());
+            _obj[key] = dateFromRbcSlot;
           }
         });
 
         const newState = {
-          title: {
-            value: json.title?.value ?? '',
-            validateOnChange: json.title?.validateOnChange ?? false,
-            error: json.title?.error ?? ''
+          title: _obj.title ?? {
+            value: '',
+            validateOnChange: false,
+            error: ''
           },
-          desc: json.desc ?? '',
-          start: json.start ?? rbcSelection.slot.start,
-          end: json.end ?? rbcSelection.slot.end,
-          allDay: isAllDaySpan(rbcSelection.slot),
+          desc: _obj.desc ?? '',
+          start: _obj.start ?? new Date(rbcSelection.slot.start),
+          end: _obj.end ?? new Date(rbcSelection.slot.end),
+          allDayStart: getDayStart(_obj.start ?? new Date(rbcSelection.slot.start)),
+          allDayEnd: getDayEnd(_obj.end ?? new Date(rbcSelection.slot.end)),
           calendarId: defaultCalendarId
         };
 
-        setFormValues(newState);
+        setFormValues((data) => ({
+          ...data,
+          ...newState
+        }));
+
+        addToLocalStorageObject('formValues', 'start', newState.start.toISOString());
+        addToLocalStorageObject('formValues', 'end', newState.end.toISOString());
+      } else {
+        const newState = {
+          title: {
+            value: '',
+            validateOnChange: false,
+            error: ''
+          },
+          desc: '',
+          start: startDate,
+          end: endDate,
+          allDayStart: getDayStart(new Date(rbcSelection.slot.start)),
+          allDayEnd: getDayEnd(new Date(rbcSelection.slot.end)),
+          calendarId: defaultCalendarId
+        };
+
+        setFormValues((data) => ({
+          ...data,
+          ...newState
+        }));
       }
-      setFormValues({
-        title: {
-          value: '',
-          validateOnChange: false,
-          error: ''
-        },
-        desc: '',
-        start: startDate,
-        end: endDate,
-        allDay: isAllDaySpan(rbcSelection.slot),
-        calendarId: defaultCalendarId
-      });
     }
   }, [rbcSelection]);
+
+  // set allDay state based on changes to start or end values
+  useEffect(() => {
+    const allDay = isAllDaySpan(formValues.start, formValues.end);
+    setFormValues((data) => ({ ...data, allDay }));
+  }, [formValues.start, formValues.end]);
 
   // set form values on component mount using localStorage values if found
   useEffect(() => {
@@ -121,12 +143,8 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
     if (localFormValues) {
       const json = JSON.parse(localFormValues);
 
-      // convert start and end values to Date objects
-      ['start', 'end'].forEach((key) => {
-        if (json[key]) {
-          json[key] = new Date(json[key]);
-        }
-      });
+      delete json.start;
+      delete json.end;
 
       const newState = {
         ...formValues,
@@ -235,13 +253,23 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
   };
 
   const handleAllDaySelect = (event) => {
-    setFormValues((data) => {
-      return {
-        ...data,
-        allDay: event.target.checked
-      };
-    });
-    addToLocalStorageObject('formValues', 'allDay', event.target.checked);
+    const checked = event.target.checked;
+
+    setFormValues((data) => ({
+      ...data,
+      allDay: checked
+    }));
+
+    addToLocalStorageObject(
+      'formValues',
+      'start',
+      checked ? formValues.allDayStart.toISOString() : formValues.start.toISOString()
+    );
+    addToLocalStorageObject(
+      'formValues',
+      'end',
+      checked ? formValues.allDayEnd.toISOString() : formValues.end.toISOString()
+    );
   };
 
   const handleCalendarSelect = (values) => {
@@ -271,8 +299,8 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       const data = {
         title: formValues.title.value.trim(),
         desc: formValues.desc.trim(),
-        start: formValues.start,
-        end: formValues.end,
+        start: formValues.allDay ? formValues.allDayStart.toISOString() : formValues.start.toISOString(),
+        end: formValues.allday ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
         allDay: formValues.allDay,
         calendar: formValues.calendarId
       };
@@ -311,8 +339,8 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         id: rbcSelection.event.id,
         title: formValues.title.value.trim(),
         desc: formValues.desc.trim(),
-        start: formValues.start,
-        end: formValues.end,
+        start: formValues.allDay ? formValues.allDayStart.toISOString() : formValues.start.toISOString(),
+        end: formValues.allday ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
         allDay: formValues.allDay,
         calendar: formValues.calendarId
       };
@@ -409,7 +437,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
             <Col>
               <DatePickerDialog
                 inputId="startDate"
-                date={formValues.start}
+                date={formValues.allDay ? formValues.allDayStart : formValues.start}
                 isDisabled={isSystemEventSelected}
                 dateFormat={'y-MM-dd'}
                 onDateSelect={handleDateSelect}
@@ -432,7 +460,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
                 clearIcon={null}
                 disabled={isSystemEventSelected}
                 onChange={(value) => handleTimeSelect('start', value)}
-                value={formValues.start}
+                value={formValues.allDay ? formValues.allDayStart : formValues.start}
               />
             </Col>
           </Row>
@@ -451,7 +479,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
             <Col>
               <DatePickerDialog
                 inputId="endDate"
-                date={formValues.end}
+                date={formValues.allDay ? formValues.allDayEnd : formValues.end}
                 isDisabled={isSystemEventSelected}
                 dateFormat={'y-MM-dd'}
                 onDateSelect={handleDateSelect}
@@ -474,7 +502,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
                 clearIcon={null}
                 disabled={isSystemEventSelected}
                 onChange={(value) => handleTimeSelect('end', value)}
-                value={formValues.end}
+                value={formValues.allDay ? formValues.allDayEnd : formValues.end}
               />
             </Col>
           </Row>

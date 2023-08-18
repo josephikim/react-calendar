@@ -34,18 +34,16 @@ export const isValidEndTime = (start, end) => {
   return true;
 };
 
-// check if start and end both equal 12:00am
-export const isAllDaySpan = (slot) => {
-  const startDate = new Date(slot.start);
-  const endDate = new Date(slot.end);
+// returns true if start and end both equal 12:00am
+export const isAllDaySpan = (start, end) => {
   if (
-    startDate.getHours() === 0 &&
-    startDate.getMinutes() === 0 &&
-    startDate.getSeconds() === 0 &&
-    endDate.getHours() === 0 &&
-    endDate.getMinutes() === 0 &&
-    endDate.getSeconds() === 0 &&
-    startDate.getTime() !== endDate.getTime()
+    start.getHours() === 0 &&
+    start.getMinutes() === 0 &&
+    start.getSeconds() === 0 &&
+    end.getHours() === 0 &&
+    end.getMinutes() === 0 &&
+    end.getSeconds() === 0 &&
+    start.getTime() !== end.getTime()
   ) {
     return true;
   }

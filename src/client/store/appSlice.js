@@ -1,10 +1,12 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { getCurrentDaySlot } from 'client/utils/rbc';
 import { defaultView } from 'config/appConfig';
-import { addToLocalStorageObject } from 'client/utils/localStorage';
 
-export const initialState = {
-  rbcSelection: {},
+const initialState = {
+  rbcSelection: {
+    slot: getCurrentDaySlot(),
+    event: null
+  },
   rbcView: defaultView
 };
 
@@ -51,34 +53,4 @@ export const onSelectEvent = (serializedEvent) => (dispatch) => {
 
 export const onSelectView = (view) => (dispatch) => {
   dispatch(rbcViewUpdated(view));
-};
-
-export const initCalendar = () => (dispatch) => {
-  const currentDaySlot = getCurrentDaySlot();
-  const localFormValues = localStorage.getItem('formValues');
-
-  if (localFormValues) {
-    const json = JSON.parse(localFormValues);
-
-    const initialSlot = {
-      action: 'click',
-      start: json.start ?? currentDaySlot.start,
-      end: json.end ?? currentDaySlot.end,
-      slots: [json.start ?? currentDaySlot.start]
-    };
-
-    dispatch(
-      rbcSelectionUpdated({
-        slot: initialSlot,
-        event: null
-      })
-    );
-  } else {
-    dispatch(
-      rbcSelectionUpdated({
-        slot: currentDaySlot,
-        event: null
-      })
-    );
-  }
 };

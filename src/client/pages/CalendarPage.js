@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { Row, Col } from 'react-bootstrap';
-import { initCalendar } from 'client/store/appSlice';
 import { getUserEvents } from 'client/store/eventsSlice';
 import ContentWrapper from 'client/components/ContentWrapper';
 import RbcWrapper from 'client/components/RbcWrapper';
@@ -17,7 +16,6 @@ const CalendarPage = () => {
 
   useEffect(() => {
     if (shouldInitData.current) {
-      dispatch(initCalendar());
       dispatch(getUserEvents());
       shouldInitData.current = false;
     }

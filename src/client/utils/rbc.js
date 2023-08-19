@@ -6,10 +6,8 @@ export const getCurrentDaySlot = () => {
   end.setDate(end.getDate() + 1);
 
   return {
-    action: 'click',
     start: start.toISOString(),
-    end: end.toISOString(),
-    slots: [start.toISOString()]
+    end: end.toISOString()
   };
 };
 
@@ -21,9 +19,7 @@ export const getSmartSlot = () => {
   end.setHours(end.getHours() + 2, 0, 0, 0);
 
   return {
-    action: 'click',
     start: start.toISOString(),
-    end: end.toISOString(),
-    slots: [start.toISOString()]
+    end: end.toISOString()
   };
 };

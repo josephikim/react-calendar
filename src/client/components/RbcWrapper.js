@@ -56,10 +56,8 @@ const RbcWrapper = ({ calendars }) => {
 
   const handleSelectSlot = (slot) => {
     const serializedSlot = {
-      ...slot,
       start: slot.start.toISOString(),
-      end: slot.end.toISOString(),
-      slots: slot.slots.map((slot) => slot.toISOString())
+      end: slot.end.toISOString()
     };
 
     dispatch(onSelectSlot(serializedSlot));

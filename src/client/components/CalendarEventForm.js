@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDeepCompareEffect } from 'react-use';
 import TimePicker from 'react-time-picker';
@@ -49,9 +49,12 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         desc: rbcSelection.event.desc,
         start: new Date(rbcSelection.event.start),
         end: new Date(rbcSelection.event.end),
+        allDayStart: getDayStart(new Date(rbcSelection.event.start)),
+        allDayEnd: getDayEnd(new Date(rbcSelection.event.end)),
         allDay: rbcSelection.event.allDay,
         calendarId: rbcSelection.event.calendar
       };
+
       setFormValues((data) => ({
         ...data,
         ...update
@@ -96,7 +99,8 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
 
         setFormValues((data) => ({
           ...data,
-          ...update
+          ...update,
+          allDay: isAllDaySpan(update.start, update.end)
         }));
 
         addToLocalStorageObject('formValues', 'start', update.start.toISOString());
@@ -119,35 +123,12 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
 
         setFormValues((data) => ({
           ...data,
-          ...update
+          ...update,
+          allDay: isAllDaySpan(update.start, update.end)
         }));
       }
     }
   }, [rbcSelection]);
-
-  // set allDay state based on changes to start or end values
-  useEffect(() => {
-    const allDay = isAllDaySpan(formValues.start, formValues.end);
-
-    setFormValues((data) => ({ ...data, allDay }));
-  }, [formValues.start, formValues.end]);
-
-  // set form values on component mount using localStorage values if found
-  useEffect(() => {
-    const localFormValues = localStorage.getItem('formValues');
-
-    if (localFormValues) {
-      const json = JSON.parse(localFormValues);
-
-      delete json.start;
-      delete json.end;
-
-      setFormValues({
-        ...formValues,
-        ...json
-      });
-    }
-  }, []);
 
   // derived state
   const isSystemEventSelected = rbcSelection.event && calendars[rbcSelection.event.calendar].user_id === 'system';
@@ -192,7 +173,9 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
     if (id === 'startDate') {
       setFormValues((data) => ({
         ...data,
-        start: date
+        start: date,
+        allDayStart: getDayStart(date),
+        allDay: isAllDaySpan(start, formValues.end)
       }));
       addToLocalStorageObject('formValues', 'start', date.toISOString());
     }
@@ -200,7 +183,9 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
     if (id === 'endDate') {
       setFormValues((data) => ({
         ...data,
-        end: date
+        end: date,
+        allDayEnd: getDayEnd(date),
+        allDay: isAllDaySpan(formValues.start, end)
       }));
       addToLocalStorageObject('formValues', 'end', date.toISOString());
     }
@@ -215,7 +200,8 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
 
       setFormValues((data) => ({
         ...data,
-        start: newStart
+        start: newStart,
+        allDay: isAllDaySpan(newStart, formValues.end)
       }));
 
       addToLocalStorageObject('formValues', 'start', newStart.toISOString());
@@ -227,7 +213,8 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
 
       setFormValues((data) => ({
         ...data,
-        end: newEnd
+        end: newEnd,
+        allDay: isAllDaySpan(formValues.start, newEnd)
       }));
 
       addToLocalStorageObject('formValues', 'end', newEnd.toISOString());

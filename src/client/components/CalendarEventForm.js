@@ -175,7 +175,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         ...data,
         start: date,
         allDayStart: getDayStart(date),
-        allDay: isAllDaySpan(start, formValues.end)
+        allDay: isAllDaySpan(date, formValues.end)
       }));
       addToLocalStorageObject('formValues', 'start', date.toISOString());
     }
@@ -185,7 +185,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         ...data,
         end: date,
         allDayEnd: getDayEnd(date),
-        allDay: isAllDaySpan(formValues.start, end)
+        allDay: isAllDaySpan(formValues.start, date)
       }));
       addToLocalStorageObject('formValues', 'end', date.toISOString());
     }
@@ -281,7 +281,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         desc: formValues.desc.trim(),
         start: formValues.allDay ? formValues.allDayStart.toISOString() : formValues.start.toISOString(),
         end: formValues.allday ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
-        allDay: formValues.allDay,
+        allDay: isAllDaySpan(formValues.start, formValues.end),
         calendar: formValues.calendarId
       };
 
@@ -330,7 +330,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         desc: formValues.desc.trim(),
         start: formValues.allDay ? formValues.allDayStart.toISOString() : formValues.start.toISOString(),
         end: formValues.allday ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
-        allDay: formValues.allDay,
+        allDay: isAllDaySpan(formValues.start, formValues.end),
         calendar: formValues.calendarId
       };
 

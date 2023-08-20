@@ -114,6 +114,9 @@ export const deleteEvent = (eventId) => async (dispatch) => {
 
     dispatch(eventDeleted(res.data.id));
 
+    // clear local form values
+    localStorage.removeItem('formValues');
+
     // Reset calendar slot
     dispatch(onSelectSlot(getCurrentDaySlot()));
   } catch (e) {

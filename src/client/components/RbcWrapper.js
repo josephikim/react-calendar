@@ -8,7 +8,7 @@ import { rbcEventsSelector } from 'client/store/eventsSlice';
 import styles from 'client/styles/RbcWrapper.module.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-const RbcWrapper = ({ calendars }) => {
+const RbcWrapper = ({ calendars, rbcSelection }) => {
   const dispatch = useDispatch();
 
   // app state
@@ -75,7 +75,7 @@ const RbcWrapper = ({ calendars }) => {
         events={visibleEvents}
         view={view}
         onView={(view) => handleView(view)}
-        defaultDate={new Date()}
+        defaultDate={new Date(rbcSelection.slot?.start ?? rbcSelection.event.start)}
         scrollToTime={new Date(1970, 1, 1, 6)}
         onSelectEvent={(e) => handleSelectEvent(e)}
         onSelectSlot={(slot) => handleSelectSlot(slot)}

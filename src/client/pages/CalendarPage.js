@@ -39,14 +39,14 @@ const CalendarPage = () => {
             <CalendarToggleMenu calendars={calendars} />
           </Col>
           <Col xs={12} lg={7}>
-            <RbcWrapper calendars={calendars} />
+            <RbcWrapper calendars={calendars} rbcSelection={rbcSelection} />
           </Col>
           <Col xs={12} lg={3}>
             <CalendarEventForm
-              rbcSelection={rbcSelection}
               calendars={calendars}
               calendarIds={calendarIds}
               defaultCalendarId={defaultCalendarId}
+              rbcSelection={rbcSelection}
             />
           </Col>
         </Row>

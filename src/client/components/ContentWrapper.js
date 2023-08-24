@@ -4,7 +4,7 @@ import { Row, Col } from 'react-bootstrap';
 const style = { marginRight: '7%', marginLeft: '7%', marginTop: '2rem', marginBottom: '2rem' };
 
 const ContentWrapper = ({ children }) => (
-  <Row className="ContentWrapper">
+  <Row>
     <Col>
       <div style={style}>{children}</div>
     </Col>

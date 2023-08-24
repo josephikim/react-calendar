@@ -9,15 +9,16 @@
 
 .button {
   position: absolute;
-  line-height: 25px;
   right: 0;
   top: 0;
   bottom: 0;
   padding: 0;
+  border: 1px solid dimgray;
 }
 
 .calendarIcon {
-  font-size: 1.75rem;
+  padding: 0.2rem;
+  min-width: 32px;
 }
 
 .dialogSheet {

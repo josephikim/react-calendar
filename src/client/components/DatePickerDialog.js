@@ -83,7 +83,7 @@ const DatePickerDialog = ({ inputId, date, isDisabled, dateFormat, onDateSelect 
           ref={buttonRef}
           type="button"
           disabled={isDisabled}
-          className={`${styles.button} pa2 bg-white button-reset ba`}
+          className={`${styles.button} bg-white ba`}
           aria-label="Pick a date"
           onClick={handleButtonClick}
         >

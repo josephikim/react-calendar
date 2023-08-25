@@ -10,11 +10,11 @@ const AccountPage = () => {
       <Row className="justify-content-center">
         <Col md={8}>
           <ContentWrapper>
-            <div align="center" className="heading text-primary text-center mt-4 mb-5">
+            <div className="heading text-primary text-center mt-4 mb-5">
               <h4>Account Settings</h4>
             </div>
             <UserSettings />
-            <div align="center" className="heading text-primary text-center mt-4  mb-5">
+            <div className="heading text-primary text-center mt-4  mb-5">
               <h4>Calendar Settings</h4>
             </div>
             <CalendarSettings />

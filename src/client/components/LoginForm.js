@@ -95,6 +95,8 @@ const LoginForm = () => {
         const msg = getErrorMessage(e);
         alert(`Login error: ${msg}`);
 
+        const errorCode = e.response?.data?.errorCode
+        
         // Update state to reflect response errors
         if (errorCode) {
           switch (errorCode) {

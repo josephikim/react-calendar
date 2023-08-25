@@ -106,6 +106,8 @@ const RegisterForm = () => {
         const msg = getErrorMessage(e);
         alert(`Registration error: ${msg}`);
 
+        const errorCode = e.response?.data?.errorCode
+        
         // Update state to reflect response errors
         if (errorCode) {
           switch (errorCode) {

@@ -106,8 +106,8 @@ const RegisterForm = () => {
         const msg = getErrorMessage(e);
         alert(`Registration error: ${msg}`);
 
-        const errorCode = e.response?.data?.errorCode
-        
+        const errorCode = e.response?.data?.errorCode;
+
         // Update state to reflect response errors
         if (errorCode) {
           switch (errorCode) {
@@ -115,14 +115,14 @@ const RegisterForm = () => {
               setUsername((data) => ({
                 ...data,
                 validateOnChange: true,
-                error: error.message
+                error: msg
               }));
               break;
             case 'password':
               setPassword((data) => ({
                 ...data,
                 validateOnChange: true,
-                error: error.message
+                error: msg
               }));
               break;
             default:

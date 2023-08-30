@@ -95,8 +95,8 @@ const LoginForm = () => {
         const msg = getErrorMessage(e);
         alert(`Login error: ${msg}`);
 
-        const errorCode = e.response?.data?.errorCode
-        
+        const errorCode = e.response?.data?.errorCode;
+
         // Update state to reflect response errors
         if (errorCode) {
           switch (errorCode) {
@@ -104,7 +104,7 @@ const LoginForm = () => {
               setUsername((data) => ({
                 ...data,
                 validateOnChange: true,
-                error: error.message
+                error: msg
               }));
               break;
 
@@ -112,7 +112,7 @@ const LoginForm = () => {
               setPassword((data) => ({
                 ...data,
                 validateOnChange: true,
-                error: error.message
+                error: msg
               }));
               break;
             default:

@@ -137,7 +137,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
     name: calendars[id].name,
     disabled: calendars[id].user_id === 'system'
   }));
-  const calendarSelectMenuValues = calendarSelectMenuOptions.filter(option => option.id === formValues.calendarId);
+  const calendarSelectMenuValues = calendarSelectMenuOptions.filter((option) => option.id === formValues.calendarId);
 
   const handleTitleChange = (validationFunc, e) => {
     setFormValues((data) => ({

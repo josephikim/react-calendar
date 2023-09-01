@@ -36,6 +36,9 @@ mongoose
     Calendar.find({ user_id: 'system', name: 'US Holidays' })
       .countDocuments()
       .exec(function (err, count) {
+        if (err) {
+          throw new Error(err);
+        }
         if (count === 0) {
           const data = {
             name: 'US Holidays',
@@ -43,6 +46,7 @@ mongoose
           };
 
           calendarService.create(data);
+          console.log('Created US Holidays calendar.');
         }
       });
   })

@@ -48,8 +48,9 @@ const makeEvents = async () => {
     holidays.forEach((holiday) => {
       const startDate = new Date(holiday.date.iso);
       startDate.setHours(0, 0, 0, 0);
-      const endDate = new Date(startDate);
-      endDate.setDate(endDate.getDate() + 1);
+      const endDate = new Date(holiday.date.iso);
+      endDate.setHours(0, 0, 0, 0);
+      endDate.setDate(startDate.getDate() + 1);
 
       const event = {
         title: holiday.name,

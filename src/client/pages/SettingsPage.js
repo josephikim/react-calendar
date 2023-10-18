@@ -4,14 +4,14 @@ import UserSettings from 'client/components/UserSettings';
 import CalendarSettings from 'client/components/CalendarSettings';
 import ContentWrapper from 'client/components/ContentWrapper';
 
-const AccountPage = () => {
+const SettingsPage = () => {
   return (
     <div>
       <Row className="justify-content-center">
         <Col md={8}>
           <ContentWrapper>
             <div className="heading text-primary text-center mt-4 mb-5">
-              <h4>Account Settings</h4>
+              <h4>User Settings</h4>
             </div>
             <UserSettings />
             <div className="heading text-primary text-center mt-4  mb-5">
@@ -25,4 +25,4 @@ const AccountPage = () => {
   );
 };
 
-export default AccountPage;
+export default SettingsPage;

@@ -8,7 +8,7 @@ import TimeZoneSettingsItem from './TimeZoneSettingsItem';
 const UserSettings = () => {
   const userId = useSelector((state) => state.user.id);
   const username = useSelector((state) => state.user.username);
-  const timezone = useSelector((state) => state.user.timezone);
+  const gmtOffset = useSelector((state) => state.user.gmtOffset);
 
   return (
     <div>
@@ -34,7 +34,7 @@ const UserSettings = () => {
         confirmationRequired={true}
       />
 
-      <TimeZoneSettingsItem value={timezone ?? '-8'} />
+      <TimeZoneSettingsItem userId={userId} gmtOffset={gmtOffset || -8} />
     </div>
   );
 };

@@ -8,7 +8,8 @@ export const initialState = {
   username: null,
   accessToken: null,
   refreshToken: null,
-  roles: []
+  roles: [],
+  timezone: {}
 };
 
 const userSlice = createSlice({
@@ -29,6 +30,9 @@ const userSlice = createSlice({
     },
     rolesUpdated(state, action) {
       state.roles = action.payload.map((item) => item.name);
+    },
+    timeZoneUpdated(state, action) {
+      state.timeZone = action.payload;
     }
   }
 });

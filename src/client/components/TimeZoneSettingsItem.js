@@ -3,26 +3,27 @@ import { useDispatch } from 'react-redux';
 import { Select } from 'react-dropdown-select';
 import { Row, Col, Button } from 'react-bootstrap';
 import timezones from 'config/timeZones';
+import { updateUser } from 'client/store/userSlice';
 import { validateFields } from 'client/validation';
 import { getErrorMessage } from 'client/utils/errors';
 import styles from 'client/styles/TimeZoneSettingsItem.module.css';
 
-const TimeZoneSettingsItem = ({ value }) => {
+const TimeZoneSettingsItem = ({ userId, gmtOffset }) => {
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState(value);
+  const [timezoneInput, setTimezoneInput] = useState(timezones.find((timezone) => timezone.gmtOffset === gmtOffset));
   const [inputError, setInputError] = useState('');
 
   const handleSave = () => {
     // check for input errors
-    const inputError = validateFields.validateTimeZone(dropdownValue);
+    const inputError = validateFields.validateTimeZone(timezoneInput.gmtOffset.toString());
 
     if (inputError) {
       setInputError(inputError);
       return;
     }
 
-    if (dropdownValue === value) {
+    if (timezoneInput.gmtOffset === gmtOffset) {
       // no change in input
       alert('No change detected. Please try again.');
       return;
@@ -30,23 +31,22 @@ const TimeZoneSettingsItem = ({ value }) => {
 
     // no input errors, dispatch action
     const data = {
-      gmt_offset: dropdownValue.value,
-      desc: dropdownValue.label
+      userId,
+      ...timezoneInput
     };
 
-    console.log('dispatching update action...');
-    // dispatch(updateTimeZone(data))
-    //   .then(() => {
-    //     alert(`Updated time zone: ${data.desc}`);
+    dispatch(updateUser(data))
+      .then(() => {
+        alert(`Updated time zone: ${data.desc}`);
 
-    //     setEditMode(false);
-    //     setInputError('');
-    //   })
-    //   .catch((e) => {
-    //     const msg = getErrorMessage(e);
-    //     alert(`Error updating time zone: ${msg}`);
-    //     setInputError(msg);
-    //   });
+        setEditMode(false);
+        setInputError('');
+      })
+      .catch((e) => {
+        const msg = getErrorMessage(e);
+        alert(`Error updating time zone: ${msg}`);
+        setInputError(msg);
+      });
   };
 
   const handleEdit = () => {
@@ -55,18 +55,15 @@ const TimeZoneSettingsItem = ({ value }) => {
 
   const handleCancelEdit = () => {
     setEditMode(false);
-    setDropdownValue(value);
+    setTimezoneInput(gmtOffset);
   };
 
   const handleDropdownSelect = (values) => {
     if (values.length < 1) return;
 
-    const gmt_offset = values[0].value;
+    const input = values[0];
 
-    // No change detected
-    if (gmt_offset === value) return;
-
-    setDropdownValue(gmt_offset);
+    setTimezoneInput(input);
   };
 
   const renderButtons = () => {
@@ -91,22 +88,17 @@ const TimeZoneSettingsItem = ({ value }) => {
     );
   };
 
-  const dropdownOptions = timezones.map((entry) => ({
-    value: entry.gmt_offset,
-    label: entry.desc
-  }));
-
-  dropdownOptions.sort((a, b) => parseInt(a.value) < parseInt(b.value));
+  const dropdownOptions = timezones.sort((a, b) => a.gmtOffset < b.gmtOffset);
 
   // selected dropdown values
-  const dropdownValues = dropdownOptions.filter((option) => option.value === value);
+  const dropdownValues = dropdownOptions.filter((option) => option.gmtOffset === timezoneInput.gmtOffset);
 
   return (
     <div className={styles.container}>
       <Row>
         <Col lg={4}></Col>
         <Col lg={4}>
-          <label className={styles.label} htmlFor="timezone">
+          <label className={styles.label} htmlFor="time_zone">
             Time Zone
           </label>
         </Col>
@@ -121,6 +113,8 @@ const TimeZoneSettingsItem = ({ value }) => {
             disabled={!editMode}
             values={dropdownValues}
             options={dropdownOptions}
+            labelField="desc"
+            valueField="gmtOffset"
             onChange={(values) => handleDropdownSelect(values)}
           />
         </Col>

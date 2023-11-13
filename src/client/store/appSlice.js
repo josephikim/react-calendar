@@ -1,5 +1,6 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { getCurrentDaySlot } from 'client/utils/rbc';
+import { getLocalTimeZone } from 'client/utils/dates';
 import { defaultView } from 'config/appConfig';
 
 const initialState = {
@@ -7,7 +8,8 @@ const initialState = {
     slot: getCurrentDaySlot(),
     event: null
   },
-  rbcView: defaultView
+  rbcView: defaultView,
+  timeZone: getLocalTimeZone()
 };
 
 const appSlice = createSlice({

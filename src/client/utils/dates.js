@@ -41,3 +41,8 @@ export const isAllDaySpan = (start, end) => {
   }
   return false;
 };
+
+// returns local IANA time zone string
+export const getLocalTimeZone = () => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Los_Angeles';
+};

@@ -149,11 +149,6 @@ class UserService {
         user.username = data.username;
       }
 
-      // update time zone
-      if (data.timeZone) {
-        user.timeZone = data.timeZone;
-      }
-
       const result = await user.save();
 
       return new HttpResponse(result);

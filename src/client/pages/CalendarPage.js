@@ -25,6 +25,7 @@ const CalendarPage = () => {
   const calendars = useSelector((state) => state.calendars.byId);
   const calendarIds = useSelector((state) => state.calendars.allIds);
   const rbcSelection = useSelector((state) => state.app.rbcSelection);
+  const timeZone = useSelector((state) => state.app.timeZone);
 
   // derived state
   const isRbcSelectionSet = rbcSelection.slot || rbcSelection.event;
@@ -47,6 +48,7 @@ const CalendarPage = () => {
               calendarIds={calendarIds}
               defaultCalendarId={defaultCalendarId}
               rbcSelection={rbcSelection}
+              timeZone={timeZone}
             />
           </Col>
         </Row>

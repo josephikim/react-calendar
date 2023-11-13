@@ -18,7 +18,7 @@ import styles from 'client/styles/CalendarEventForm.module.css';
 import 'react-day-picker/dist/style.css';
 import 'react-time-picker/dist/TimePicker.css';
 
-const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalendarId }) => {
+const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalendarId, timeZone }) => {
   const dispatch = useDispatch();
 
   const [formValues, setFormValues] = useState({
@@ -33,7 +33,8 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
     allDayStart: getDayStart(new Date(rbcSelection.event?.start ?? rbcSelection.slot.start)),
     allDayEnd: getDayEnd(new Date(rbcSelection.event?.end ?? rbcSelection.slot.end)),
     allDay: rbcSelection.event?.allDay ?? false,
-    calendarId: rbcSelection.event?.calendar ?? defaultCalendarId
+    calendarId: rbcSelection.event?.calendar ?? defaultCalendarId,
+    timeZone: timeZone
   });
 
   // update form values based on rbc selection
@@ -282,6 +283,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         start: formValues.allDay ? formValues.allDayStart.toISOString() : formValues.start.toISOString(),
         end: formValues.allday ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
         allDay: isAllDaySpan(formValues.start, formValues.end),
+        timeZone: timeZone,
         calendar: formValues.calendarId
       };
 

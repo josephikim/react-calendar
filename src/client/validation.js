@@ -56,13 +56,6 @@ class ValidateFields {
     }
     return false;
   }
-
-  validateTimeZone(value) {
-    if (!validator.isInt(value, { min: -12, max: 12 })) {
-      return 'GMT offset between -12 and +12 is required';
-    }
-    return false;
-  }
 }
 
 const validateFields = new ValidateFields();

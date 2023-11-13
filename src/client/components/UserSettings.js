@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { validateFields } from 'client/validation';
 import { updateUser } from 'client/store/userSlice';
 import UserSettingsItem from './UserSettingsItem';
-import TimeZoneSettingsItem from './TimeZoneSettingsItem';
 
 const UserSettings = () => {
   const userId = useSelector((state) => state.user.id);
@@ -33,8 +32,6 @@ const UserSettings = () => {
         updateAction={updateUser}
         confirmationRequired={true}
       />
-
-      <TimeZoneSettingsItem userId={userId} gmtOffset={gmtOffset || -8} />
     </div>
   );
 };

@@ -21,6 +21,10 @@ const schema = new mongoose.Schema({
     required: true,
     default: false
   },
+  timeZone: {
+    type: String,
+    required: true
+  },
   calendar: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

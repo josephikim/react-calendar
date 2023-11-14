@@ -1,4 +1,4 @@
-const dotenv = require('dotenv').config({ path: '.env.production' });
+const dotenv = require('dotenv').config({ path: '.env.development' });
 const MongoClient = require('mongodb').MongoClient;
 const axios = require('axios');
 
@@ -46,19 +46,18 @@ const makeEvents = async () => {
     const holidays = response.data.response.holidays;
 
     holidays.forEach((holiday) => {
-      const startDate = new Date(holiday.date.iso);
-      startDate.setHours(0, 0, 0, 0);
-      const endDate = new Date(holiday.date.iso);
-      endDate.setHours(0, 0, 0, 0);
-      endDate.setDate(startDate.getDate() + 1);
+      let utcStartDate = new Date(holiday.date.iso.toLocaleString('en-US', { timeZone: 'UTC' }));
+      let utcEndDate = new Date(holiday.date.iso.toLocaleString('en-US', { timeZone: 'UTC' }));
+      utcEndDate.setDate(utcStartDate.getDate() + 1);
 
       const event = {
         title: holiday.name,
         desc: holiday.description,
-        start: startDate.toISOString(),
-        end: endDate.toISOString(),
+        start: utcStartDate.toISOString(),
+        end: utcEndDate.toISOString(),
         allDay: true,
-        calendar: calendar._id
+        calendar: calendar._id,
+        timeZone: 'Etc/UTC'
       };
       events.push(event);
     });

@@ -61,11 +61,24 @@ const selectEventIds = (state) => state.events.allIds;
 
 // returns array of events with start/end as Date type
 export const rbcEventsSelector = createSelector([selectEvents, selectEventIds], (events, eventIds) => {
-  return eventIds.map((eventId) => ({
-    ...events[eventId],
-    start: new Date(events[eventId].start),
-    end: new Date(events[eventId].end)
-  }));
+  return eventIds.map((eventId) => {
+    const tzOffset = new Date(events[eventId].start).getTimezoneOffset() * 60000; //offset in milliseconds
+
+    let startDate = new Date(events[eventId].start);
+    let endDate = new Date(events[eventId].end);
+
+    // for UTC dates (ie system events), modify to account for time zone offset
+    if (events[eventId].timeZone === 'Etc/UTC') {
+      startDate = new Date(startDate.getTime() + tzOffset);
+      endDate = new Date(endDate.getTime() + tzOffset);
+    }
+
+    return {
+      ...events[eventId],
+      start: startDate,
+      end: endDate
+    };
+  });
 });
 
 //

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Navbar, Nav, Col } from 'react-bootstrap';
 import { logoutUser } from 'client/store/userSlice';
 import UserIndicator from './UserIndicator';
+import TimeZoneIndicator from './TimeZoneIndicator';
 import styles from 'client/styles/Header.module.css';
 
 const Header = ({ authenticated }) => {
@@ -12,11 +13,18 @@ const Header = ({ authenticated }) => {
   return (
     <Navbar className={`${styles.navbar} fixed-top`} bg="primary" variant="dark">
       <div className={styles.container}>
-        <Col md={3}>{authenticated && <UserIndicator />}</Col>
-        <Col md={6} className="text-center">
+        <Col md={4}>
+          {authenticated && (
+            <>
+              <UserIndicator />
+              <TimeZoneIndicator />
+            </>
+          )}
+        </Col>
+        <Col md={4} className="text-center">
           <Navbar.Brand>React Calendar App</Navbar.Brand>
         </Col>
-        <Col md={3}>
+        <Col md={4}>
           <Nav className="justify-content-end">
             <Nav.Link as={Link} to="/">
               Home

@@ -1,0 +1,5 @@
+.indicator {
+  padding-right: 0.5rem;
+  margin-right: 0.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}

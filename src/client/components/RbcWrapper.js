@@ -8,11 +8,11 @@ import { rbcEventsSelector } from 'client/store/eventsSlice';
 import styles from 'client/styles/RbcWrapper.module.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-const RbcWrapper = ({ calendars, rbcSelection }) => {
+const RbcWrapper = ({ calendars, rbcSelection, view }) => {
   const dispatch = useDispatch();
 
   // app state
-  const view = useSelector((state) => state.app.rbcView);
+
   const calendarIds = useSelector((state) => state.calendars.allIds);
   const events = useSelector(rbcEventsSelector);
 
@@ -57,7 +57,8 @@ const RbcWrapper = ({ calendars, rbcSelection }) => {
   const handleSelectSlot = (slot) => {
     const serializedSlot = {
       start: slot.start.toISOString(),
-      end: slot.end.toISOString()
+      end: slot.end.toISOString(),
+      action: slot.action
     };
 
     dispatch(onSelectSlot(serializedSlot));

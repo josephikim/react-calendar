@@ -18,7 +18,7 @@ import styles from 'client/styles/CalendarEventForm.module.css';
 import 'react-day-picker/dist/style.css';
 import 'react-time-picker/dist/TimePicker.css';
 
-const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalendarId, timeZone }) => {
+const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalendarId, timeZone, view }) => {
   const dispatch = useDispatch();
 
   const [formValues, setFormValues] = useState({
@@ -62,27 +62,34 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       }));
     }
 
+    // update slot selection with localstorage values if available
     if (rbcSelection.slot) {
       const localFormValues = localStorage.getItem('formValues');
 
       if (localFormValues) {
-        // update form values using local form values
-        // combine dates from rbc selection and times from local form values if available
-        const localObj = JSON.parse(localFormValues);
+        let localObj = JSON.parse(localFormValues);
+        let rbcStartDate = new Date(rbcSelection.slot.start);
+        let rbcEndDate = new Date(rbcSelection.slot.end);
 
-        // convert start and end values to Date objects
-        ['start', 'end'].forEach((key) => {
-          if (localObj[key]) {
-            const dateFromLocal = new Date(localObj[key]);
-            const dateFromRbc = new Date(rbcSelection.slot[key]);
-
-            dateFromRbc.setHours(dateFromLocal.getHours());
-            dateFromRbc.setMinutes(dateFromLocal.getMinutes());
-            dateFromRbc.setSeconds(dateFromLocal.getSeconds());
-
-            localObj[key] = dateFromRbc;
+        // for month view single day slot, update start and end using localstorage values if times are not equal to 12:00 am
+        if (view === 'month' && rbcSelection.slot.action === 'click') {
+          if (localObj.start) {
+            let localStartDate = new Date(localObj.start);
+            if (localStartDate.getHours() !== 0 || localStartDate.getMinutes !== 0) {
+              rbcStartDate.setHours(localStartDate.getHours());
+              rbcStartDate.setMinutes(localStartDate.getMinutes());
+            }
           }
-        });
+          if (localObj.end) {
+            let localEndDate = new Date(localObj.end);
+            if (localEndDate.getHours() !== 0 || localEndDate.getMinutes() !== 0) {
+              // use rbc start date as basis for updated end date
+              rbcEndDate = new Date(rbcStartDate);
+              rbcEndDate.setHours(localEndDate.getHours());
+              rbcEndDate.setMinutes(localEndDate.getMinutes());
+            }
+          }
+        }
 
         const update = {
           title: localObj.title ?? {
@@ -91,10 +98,10 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
             error: ''
           },
           desc: localObj.desc ?? '',
-          start: localObj.start ?? new Date(rbcSelection.slot.start),
-          end: localObj.end ?? new Date(rbcSelection.slot.end),
-          allDayStart: getDayStart(localObj.start ?? new Date(rbcSelection.slot.start)),
-          allDayEnd: getDayEnd(localObj.end ?? new Date(rbcSelection.slot.end)),
+          start: rbcStartDate,
+          end: rbcEndDate,
+          allDayStart: getDayStart(rbcStartDate),
+          allDayEnd: getDayEnd(rbcEndDate),
           calendarId: localObj.calendarId ?? defaultCalendarId
         };
 

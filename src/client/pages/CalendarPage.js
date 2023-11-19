@@ -26,6 +26,7 @@ const CalendarPage = () => {
   const calendarIds = useSelector((state) => state.calendars.allIds);
   const rbcSelection = useSelector((state) => state.app.rbcSelection);
   const timeZone = useSelector((state) => state.app.timeZone);
+  const view = useSelector((state) => state.app.rbcView);
 
   // derived state
   const isRbcSelectionSet = rbcSelection.slot || rbcSelection.event;
@@ -40,7 +41,7 @@ const CalendarPage = () => {
             <CalendarToggleMenu calendars={calendars} />
           </Col>
           <Col xs={12} lg={7}>
-            <RbcWrapper calendars={calendars} rbcSelection={rbcSelection} />
+            <RbcWrapper calendars={calendars} rbcSelection={rbcSelection} view={view} />
           </Col>
           <Col xs={12} lg={3}>
             <CalendarEventForm
@@ -49,6 +50,7 @@ const CalendarPage = () => {
               defaultCalendarId={defaultCalendarId}
               rbcSelection={rbcSelection}
               timeZone={timeZone}
+              view={view}
             />
           </Col>
         </Row>

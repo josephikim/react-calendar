@@ -1,11 +1,16 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { getCurrentDaySlot } from 'client/utils/rbc';
+import { getSmartDates } from 'client/utils/rbc';
 import { getLocalTimeZone } from 'client/utils/dates';
 import { defaultView } from 'config/appConfig';
 
+let smartDates = getSmartDates();
+
 const initialState = {
   rbcSelection: {
-    slot: getCurrentDaySlot(),
+    slot: {
+      start: smartDates.start.toISOString(),
+      end: smartDates.end.toISOString()
+    },
     event: null
   },
   rbcView: defaultView,

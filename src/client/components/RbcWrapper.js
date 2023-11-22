@@ -5,6 +5,7 @@ import timezone from 'dayjs/plugin/timezone';
 import { Calendar as ReactBigCalendar, dayjsLocalizer } from 'react-big-calendar';
 import { onSelectSlot, onSelectEvent, onSelectView } from 'client/store/appSlice';
 import { rbcEventsSelector } from 'client/store/eventsSlice';
+import { getSmartDates } from 'client/utils/rbc';
 import styles from 'client/styles/RbcWrapper.module.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -60,6 +61,12 @@ const RbcWrapper = ({ calendars, rbcSelection, view }) => {
       end: slot.end.toISOString(),
       action: slot.action
     };
+
+    if (view === 'month' && slot.action === 'click') {
+      let smartDates = getSmartDates(new Date(slot.start));
+      serializedSlot.smartStart = smartDates.start.toISOString();
+      serializedSlot.smartEnd = smartDates.end.toISOString();
+    }
 
     dispatch(onSelectSlot(serializedSlot));
   };

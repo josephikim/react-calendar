@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { onSelectSlot, onSelectEvent } from './appSlice';
 import { userApi } from 'client/utils/axios';
-import { getCurrentDaySlot } from 'client/utils/rbc';
+import { getSmartDates } from 'client/utils/rbc';
 
 export const initialState = {
   byId: {},
@@ -131,7 +131,10 @@ export const deleteEvent = (eventId) => async (dispatch) => {
     localStorage.removeItem('formValues');
 
     // Reset calendar slot
-    dispatch(onSelectSlot(getCurrentDaySlot()));
+    let deletedEventStart = res.data.start;
+    let smartDates = getSmartDates(new Date(deletedEventStart));
+
+    dispatch(onSelectSlot({ start: smartDates.start.toISOString(), end: smartDates.end.toISOString() }));
   } catch (e) {
     throw e;
   }

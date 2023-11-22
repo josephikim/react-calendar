@@ -8,11 +8,16 @@ export const loadState = () => {
       return undefined;
     }
 
-    const json = JSON.parse(serializedState);
+    let json = JSON.parse(serializedState);
+    let slot = json.app.rbcSelection.slot;
+    let formValues = localStorage.getItem('formValues');
 
-    const jsonWithUpdatedSlot = updateRbcSlotWithFormValues(json);
+    // If app state's selection is a slot and form values are available, update slot
+    if (slot && formValues) {
+      json.app.rbcSelection.slot = updateSlotWithFormValues(slot, formValues);
+    }
 
-    return jsonWithUpdatedSlot;
+    return json;
   } catch (e) {
     return undefined;
   }
@@ -27,37 +32,12 @@ export const saveState = (state) => {
   }
 };
 
-// Check local storage for saved form values
-// If exists, return json with updated rbc slot
-export const updateRbcSlotWithFormValues = (json) => {
-  // If last rbc selection was an event, don't update json
-  if (json.app.rbcSelection.event) return json;
+export const updateSlotWithFormValues = (slot, formValues) => {
+  let json = JSON.parse(formValues);
 
-  const localFormValues = localStorage.getItem('formValues');
-
-  if (localFormValues) {
-    const localFormValuesJson = JSON.parse(localFormValues);
-
-    const updatedSlot = {
-      ...json.app.rbcSelection.slot,
-      start: localFormValuesJson.start ?? json.app.rbcSelection.slot.start,
-      end: localFormValuesJson.end ?? json.app.rbcSelection.slot.end
-      // slots: [json.start ?? json.app.rbcSelection.slot.slots]
-    };
-
-    const updatedJson = {
-      ...json,
-      app: {
-        ...json.app,
-        rbcSelection: {
-          ...json.app.rbcSelection,
-          slot: updatedSlot
-        }
-      }
-    };
-
-    return updatedJson;
-  }
-
-  return json;
+  return {
+    ...slot,
+    start: json.start ?? slot.start,
+    end: json.end ?? slot.end
+  };
 };

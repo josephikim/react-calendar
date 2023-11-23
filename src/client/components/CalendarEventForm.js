@@ -8,7 +8,7 @@ import { validateFields } from 'client/validation.js';
 import { getDayStart, getDayEnd, isAllDaySpan } from 'client/utils/dates';
 import { isValidEventUpdate } from 'client/utils/events';
 import { isValidTimeSpan } from 'client/utils/dates';
-import { addToLocalStorageObject } from 'client/utils/localStorage';
+import { updateLocalStorage } from 'client/utils/localStorage';
 import { parseTimePickerValues } from 'client/utils/timePicker';
 import { getErrorMessage } from 'client/utils/errors';
 import { Row, Col, Button, Form } from 'react-bootstrap';
@@ -41,7 +41,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
   // useDeepCompareEffect has same signature as useEffect, but allows deep comparison of dependencies
   useDeepCompareEffect(() => {
     if (rbcSelection.event) {
-      const update = {
+      let update = {
         title: {
           value: rbcSelection.event.title,
           validateOnChange: false,
@@ -64,77 +64,83 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
 
     // update slot selection with localstorage values if available
     if (rbcSelection.slot) {
+      let update = {
+        title: {
+          value: '',
+          validateOnChange: false,
+          error: ''
+        },
+        desc: '',
+        start: rbcSelection.slot.smartStart
+          ? new Date(rbcSelection.slot.smartStart)
+          : new Date(rbcSelection.slot.start),
+        end: rbcSelection.slot.smartEnd ? new Date(rbcSelection.slot.smartEnd) : new Date(rbcSelection.slot.end),
+        allDayStart: getDayStart(new Date(rbcSelection.slot.start)),
+        allDayEnd: getDayEnd(new Date(rbcSelection.slot.end)),
+        calendarId: defaultCalendarId
+      };
+
       const localFormValues = localStorage.getItem('formValues');
 
       if (localFormValues) {
-        let localObj = JSON.parse(localFormValues);
-        let rbcStartDate = new Date(rbcSelection.slot.start);
-        let rbcEndDate = new Date(rbcSelection.slot.end);
+        let localJson = JSON.parse(localFormValues);
 
-        // for month view single day slot, update start and end using localstorage values if times are not equal to 12:00 am
-        if (view === 'month' && rbcSelection.slot.action === 'click') {
-          if (localObj.start) {
-            let localStartDate = new Date(localObj.start);
-            if (localStartDate.getHours() !== 0 || localStartDate.getMinutes !== 0) {
-              rbcStartDate.setHours(localStartDate.getHours());
-              rbcStartDate.setMinutes(localStartDate.getMinutes());
-            }
-          }
-          if (localObj.end) {
-            let localEndDate = new Date(localObj.end);
-            if (localEndDate.getHours() !== 0 || localEndDate.getMinutes() !== 0) {
-              // use rbc start date as basis for updated end date
-              rbcEndDate = new Date(rbcStartDate);
-              rbcEndDate.setHours(localEndDate.getHours());
-              rbcEndDate.setMinutes(localEndDate.getMinutes());
+        // modify title, description, calendarId
+        if (localJson.title) update.title = localJson.title;
+        if (localJson.desc) update.desc = localJson.desc;
+        if (localJson.calendarId) update.calendarId = localJson.calendarId;
+
+        // modify start and end dates if all following conditions met:
+        // 1. month view, single day slot (ie action: 'click')
+        // 2. local start/end dates both exist
+        // 3. local start date is before end date
+        // 4. local start/end dates span less than 24 hours
+        // 5. local start/end dates not equal start/end dates in update obj
+        if (view === 'month' && rbcSelection.slot.action === 'click' && localJson.start && localJson.end) {
+          let localStartDate = new Date(localJson.start);
+          let localEndDate = new Date(localJson.end);
+
+          let isLocalDatesSpanValid =
+            localEndDate.getTime() - localStartDate.getTime() > 0 &&
+            localEndDate.getTime() - localStartDate.getTime() < 86400000;
+
+          let isLocalAndPropTimesUnique =
+            localStartDate.getHours() !== update.start.getHours() ||
+            localStartDate.getMinutes() !== update.start.getMinutes() ||
+            localEndDate.getHours() !== update.end.getHours() ||
+            localEndDate.getMinutes() !== update.end.getMinutes();
+
+          const isLocalDatesValid = isLocalDatesSpanValid && isLocalAndPropTimesUnique;
+
+          if (isLocalDatesValid) {
+            update.end = new Date(update.start); // This mitigates the case where smart dates span two days
+            update.start.setHours(localStartDate.getHours());
+            update.start.setMinutes(localStartDate.getMinutes());
+            update.end.setHours(localEndDate.getHours());
+            update.end.setMinutes(localEndDate.getMinutes());
+          } else {
+            // clear start and end dates from localstorage
+            delete localJson.start;
+            delete localJson.end;
+
+            if (Object.keys(localJson).length === 0) {
+              localStorage.removeItem('formValues');
+            } else {
+              localStorage.formValues = JSON.stringify(localJson);
             }
           }
         }
-
-        const update = {
-          title: localObj.title ?? {
-            value: '',
-            validateOnChange: false,
-            error: ''
-          },
-          desc: localObj.desc ?? '',
-          start: rbcStartDate,
-          end: rbcEndDate,
-          allDayStart: getDayStart(rbcStartDate),
-          allDayEnd: getDayEnd(rbcEndDate),
-          calendarId: localObj.calendarId ?? defaultCalendarId
-        };
-
-        setFormValues((data) => ({
-          ...data,
-          ...update,
-          allDay: isAllDaySpan(update.start, update.end)
-        }));
-
-        addToLocalStorageObject('formValues', 'start', update.start.toISOString());
-        addToLocalStorageObject('formValues', 'end', update.end.toISOString());
-      } else {
-        // if no local storage data, reset form values
-        const update = {
-          title: {
-            value: '',
-            validateOnChange: false,
-            error: ''
-          },
-          desc: '',
-          start: new Date(rbcSelection.slot.start),
-          end: new Date(rbcSelection.slot.end),
-          allDayStart: getDayStart(new Date(rbcSelection.slot.start)),
-          allDayEnd: getDayEnd(new Date(rbcSelection.slot.end)),
-          calendarId: defaultCalendarId
-        };
-
-        setFormValues((data) => ({
-          ...data,
-          ...update,
-          allDay: isAllDaySpan(update.start, update.end)
-        }));
       }
+
+      update.allDay = isAllDaySpan(update.start, update.end);
+
+      updateLocalStorage('formValues', 'start', update.start.toISOString());
+      updateLocalStorage('formValues', 'end', update.end.toISOString());
+
+      setFormValues((data) => ({
+        ...data,
+        ...update
+      }));
     }
   }, [rbcSelection]);
 
@@ -170,10 +176,10 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
           }
         }));
       }
-      addToLocalStorageObject('formValues', 'title', { ...formValues.title });
+      updateLocalStorage('formValues', 'title', { ...formValues.title });
     }
     if (e.target.id === 'desc') {
-      addToLocalStorageObject('formValues', 'desc', formValues.desc);
+      updateLocalStorage('formValues', 'desc', formValues.desc);
     }
   };
 
@@ -182,51 +188,57 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       setFormValues((data) => ({
         ...data,
         start: date,
-        allDayStart: getDayStart(date),
-        allDay: isAllDaySpan(date, formValues.end)
+        allDayStart: getDayStart(date)
       }));
-      addToLocalStorageObject('formValues', 'start', date.toISOString());
+      updateLocalStorage('formValues', 'start', date.toISOString());
     }
 
     if (id === 'endDate') {
       setFormValues((data) => ({
         ...data,
         end: date,
-        allDayEnd: getDayEnd(date),
-        allDay: isAllDaySpan(formValues.start, date)
+        allDayEnd: getDayEnd(date)
       }));
-      addToLocalStorageObject('formValues', 'end', date.toISOString());
+      updateLocalStorage('formValues', 'end', date.toISOString());
     }
   };
 
   const handleTimeSelect = (id, timeStr) => {
     const [hour, min] = parseTimePickerValues(timeStr);
 
+    let update = { start: formValues.start, end: formValues.end };
+
     if (id === 'start') {
       const newStart = new Date(formValues.start);
       newStart.setHours(hour, min);
 
-      setFormValues((data) => ({
-        ...data,
-        start: newStart,
-        allDay: isAllDaySpan(newStart, formValues.end)
-      }));
+      update.start = newStart;
 
-      addToLocalStorageObject('formValues', 'start', newStart.toISOString());
+      if (formValues.allDay === true) {
+        update.end = formValues.allDayEnd;
+      }
     }
 
     if (id === 'end') {
       const newEnd = new Date(formValues.end);
       newEnd.setHours(hour, min);
 
-      setFormValues((data) => ({
-        ...data,
-        end: newEnd,
-        allDay: isAllDaySpan(formValues.start, newEnd)
-      }));
+      update.end = newEnd;
 
-      addToLocalStorageObject('formValues', 'end', newEnd.toISOString());
+      if (formValues.allDay === true) {
+        update.start = formValues.allDayStart;
+      }
     }
+
+    update.allDay = isAllDaySpan(update.start, update.end);
+
+    setFormValues((data) => ({
+      ...data,
+      ...update
+    }));
+
+    updateLocalStorage('formValues', 'start', update.start.toISOString());
+    updateLocalStorage('formValues', 'end', update.end.toISOString());
   };
 
   const handleAllDaySelect = (event) => {
@@ -237,13 +249,13 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       allDay: checked
     }));
 
-    addToLocalStorageObject(
+    updateLocalStorage(
       'formValues',
       'start',
       checked ? formValues.allDayStart.toISOString() : formValues.start.toISOString()
     );
 
-    addToLocalStorageObject(
+    updateLocalStorage(
       'formValues',
       'end',
       checked ? formValues.allDayEnd.toISOString() : formValues.end.toISOString()
@@ -263,7 +275,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       calendarId
     }));
 
-    addToLocalStorageObject('formValues', 'calendarId', calendarId);
+    updateLocalStorage('formValues', 'calendarId', calendarId);
   };
 
   const handleAdd = () => {
@@ -271,7 +283,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
     if (
       !isValidTimeSpan(
         formValues.allDay ? formValues.allDayStart : formValues.start,
-        formValues.allday ? formValues.allDayEnd : formValues.end
+        formValues.allDay ? formValues.allDayEnd : formValues.end
       )
     ) {
       alert('End time should be after start time. Please try again.');
@@ -288,8 +300,8 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         title: formValues.title.value.trim(),
         desc: formValues.desc.trim(),
         start: formValues.allDay ? formValues.allDayStart.toISOString() : formValues.start.toISOString(),
-        end: formValues.allday ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
-        allDay: isAllDaySpan(formValues.start, formValues.end),
+        end: formValues.allDay ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
+        allDay: formValues.allDay,
         timeZone: timeZone,
         calendar: formValues.calendarId
       };
@@ -320,7 +332,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
     if (
       !isValidTimeSpan(
         formValues.allDay ? formValues.allDayStart : formValues.start,
-        formValues.allday ? formValues.allDayEnd : formValues.end
+        formValues.allDay ? formValues.allDayEnd : formValues.end
       )
     ) {
       alert('End time should be after start time. Please try again.');
@@ -338,7 +350,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         title: formValues.title.value.trim(),
         desc: formValues.desc.trim(),
         start: formValues.allDay ? formValues.allDayStart.toISOString() : formValues.start.toISOString(),
-        end: formValues.allday ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
+        end: formValues.allDay ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
         allDay: isAllDaySpan(formValues.start, formValues.end),
         calendar: formValues.calendarId
       };

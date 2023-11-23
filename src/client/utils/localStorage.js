@@ -4,7 +4,7 @@
  * @param {String} key   The localStorage() value object key
  * @param {String} value The localStorage() value object value
  */
-export const addToLocalStorageObject = (name, key, value) => {
+export const updateLocalStorage = (name, key, value) => {
   // Get the existing data
   let existing = localStorage.getItem(name);
 

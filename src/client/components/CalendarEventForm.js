@@ -184,23 +184,27 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
   };
 
   const handleDateSelect = (id, date) => {
+    let update = { start: formValues.start, end: formValues.end };
+
     if (id === 'startDate') {
-      setFormValues((data) => ({
-        ...data,
-        start: date,
-        allDayStart: getDayStart(date)
-      }));
-      updateLocalStorage('formValues', 'start', date.toISOString());
+      update.start = date;
+      update.allDayStart = getDayStart(date);
     }
 
     if (id === 'endDate') {
-      setFormValues((data) => ({
-        ...data,
-        end: date,
-        allDayEnd: getDayEnd(date)
-      }));
-      updateLocalStorage('formValues', 'end', date.toISOString());
+      update.end = date;
+      update.allDayEnd = getDayEnd(date);
     }
+
+    update.allDay = isAllDaySpan(update.start, update.end);
+
+    setFormValues((data) => ({
+      ...data,
+      ...update
+    }));
+
+    updateLocalStorage('formValues', 'start', update.start.toISOString());
+    updateLocalStorage('formValues', 'end', update.end.toISOString());
   };
 
   const handleTimeSelect = (id, timeStr) => {
@@ -213,10 +217,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       newStart.setHours(hour, min);
 
       update.start = newStart;
-
-      if (formValues.allDay === true) {
-        update.end = formValues.allDayEnd;
-      }
+      update.allDayStart = getDayStart(newStart);
     }
 
     if (id === 'end') {
@@ -224,10 +225,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
       newEnd.setHours(hour, min);
 
       update.end = newEnd;
-
-      if (formValues.allDay === true) {
-        update.start = formValues.allDayStart;
-      }
+      update.allDayEnd = getDayEnd(newEnd);
     }
 
     update.allDay = isAllDaySpan(update.start, update.end);

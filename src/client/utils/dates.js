@@ -29,11 +29,11 @@ export const isValidTimeSpan = (start, end) => {
 // returns true if start and end both equal 12:00am
 export const isAllDaySpan = (start, end) => {
   if (
+    start.getTime() < end.getTime() &&
     start.getHours() === 0 &&
     start.getMinutes() === 0 &&
     end.getHours() === 0 &&
-    end.getMinutes() === 0 &&
-    start.getTime() !== end.getTime()
+    end.getMinutes() === 0
   ) {
     return true;
   }

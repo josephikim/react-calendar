@@ -8,7 +8,7 @@ export const getDayStart = (date) => {
 // returns day following given date with time set to 12:00am
 export const getDayEnd = (date) => {
   // if time is 12:00, return date as is
-  if (date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0) {
+  if (date.getHours() === 0 && date.getMinutes() === 0) {
     return date;
   }
 
@@ -31,10 +31,8 @@ export const isAllDaySpan = (start, end) => {
   if (
     start.getHours() === 0 &&
     start.getMinutes() === 0 &&
-    start.getSeconds() === 0 &&
     end.getHours() === 0 &&
     end.getMinutes() === 0 &&
-    end.getSeconds() === 0 &&
     start.getTime() !== end.getTime()
   ) {
     return true;

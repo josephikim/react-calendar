@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
 import { Calendar as ReactBigCalendar, dayjsLocalizer } from 'react-big-calendar';
 import { onSelectSlot, onSelectEvent, onSelectView } from 'client/store/appSlice';
 import { rbcEventsSelector } from 'client/store/eventsSlice';
@@ -13,12 +12,10 @@ const RbcWrapper = ({ calendars, rbcSelection, view }) => {
   const dispatch = useDispatch();
 
   // app state
-
   const calendarIds = useSelector((state) => state.calendars.allIds);
   const events = useSelector(rbcEventsSelector);
 
   // RBC setup
-  dayjs.extend(timezone);
   const localizer = dayjsLocalizer(dayjs);
 
   // derived states

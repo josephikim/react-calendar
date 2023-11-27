@@ -299,7 +299,7 @@ const CalendarEventForm = ({ rbcSelection, calendars, calendarIds, defaultCalend
         desc: formValues.desc.trim(),
         start: formValues.allDay ? formValues.allDayStart.toISOString() : formValues.start.toISOString(),
         end: formValues.allDay ? formValues.allDayEnd.toISOString() : formValues.end.toISOString(),
-        allDay: formValues.allDay,
+        allDay: isAllDaySpan(formValues.start, formValues.end),
         timeZone: timeZone,
         calendar: formValues.calendarId
       };

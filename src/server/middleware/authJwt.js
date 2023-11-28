@@ -50,14 +50,14 @@ const verifyURIAuth = async (req, res, next) => {
   const url = req.baseUrl + req.route.path;
 
   switch (url) {
-    case '/api/v1/users/:userId': {
+    case `${req.baseUrl}/:userId`: {
       if (req.auth.user !== req.params.userId) {
         return res.status(403).send({ message: 'Requires admin role!', errorCode: 'role' });
       }
       return next();
     }
 
-    case '/api/v1/calendars/:calendarId': {
+    case `${req.baseUrl}/:calendarId`: {
       // fetch target calendar
       const calendar = await calendarService.getOne(req.params.calendarId);
 
@@ -67,7 +67,7 @@ const verifyURIAuth = async (req, res, next) => {
       return next();
     }
 
-    case '/api/v1/calendars/:calendarId/settings': {
+    case `${req.baseUrl}/:calendarId/settings`: {
       // fetch target user
       // Mongoose returns null for .findOne query with no matches
       const user = await User.findOne({
@@ -83,7 +83,7 @@ const verifyURIAuth = async (req, res, next) => {
       return next();
     }
 
-    case '/api/v1/events/:eventId': {
+    case `${req.baseUrl}/:eventId`: {
       // fetch target event
       const event = await eventService.getOne(req.params.eventId);
       // fetch corresponding calendar

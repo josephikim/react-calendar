@@ -1,6 +1,8 @@
 # React Calendar
 
-<img src="src/client/assets/calendar.png" width="500"  />
+<img src="src/client/assets/cal-month.png" width="500"  />
+<img src="src/client/assets/cal-week.png" width="500"  />
+<img src="src/client/assets/cal-agenda.png" width="500"  />
 
 ## Description
 

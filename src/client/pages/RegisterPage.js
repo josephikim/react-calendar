@@ -3,7 +3,7 @@ import { Col, Row } from 'react-bootstrap';
 import RegisterForm from 'client/components/RegisterForm';
 import ContentWrapper from 'client/components/ContentWrapper';
 import styles from 'client/styles/RegisterPage.module.css';
-import mockup from 'client/assets/calendar.png';
+import mockup from 'client/assets/cal-month.png';
 
 const RegisterPage = () => {
   const [isOpen, setIsOpen] = useState(false);
